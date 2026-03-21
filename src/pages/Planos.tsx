@@ -13,10 +13,42 @@ export function PlanosPage() {
   const editarPlano = usePlanoStore((s) => s.editarPlano);
   const excluirPlano = usePlanoStore((s) => s.excluirPlano);
   const setPlanoAtivo = usePlanoStore((s) => s.setPlanoAtivo);
-  const uploadPlanoLogo = usePlanoStore((s) => s.uploadPlanoLogo);
 
   const [openCriar, setOpenCriar] = React.useState(false);
   const [editing, setEditing] = React.useState<PlanoEstudo | null>(null);
+
+  const orgaoSuggestions = React.useMemo(() => {
+    const s = new Set<string>();
+    planos.forEach((p) => {
+      if (p.orgao?.trim()) s.add(p.orgao.trim());
+    });
+    return Array.from(s).sort((a, b) => a.localeCompare(b, "pt-BR"));
+  }, [planos]);
+
+  const cargoSuggestions = React.useMemo(() => {
+    const s = new Set<string>();
+    planos.forEach((p) => {
+      if (p.cargo?.trim()) s.add(p.cargo.trim());
+    });
+    return Array.from(s).sort((a, b) => a.localeCompare(b, "pt-BR"));
+  }, [planos]);
+
+  const bancaSuggestions = React.useMemo(() => {
+    const s = new Set<string>();
+    planos.forEach((p) => {
+      if (p.banca?.trim()) s.add(p.banca.trim());
+    });
+    return Array.from(s).sort((a, b) => a.localeCompare(b, "pt-BR"));
+  }, [planos]);
+
+  const suggestionProps = React.useMemo(
+    () => ({
+      orgaoSuggestions,
+      cargoSuggestions,
+      bancaSuggestions,
+    }),
+    [orgaoSuggestions, cargoSuggestions, bancaSuggestions],
+  );
 
   return (
     <div>
@@ -25,7 +57,10 @@ export function PlanosPage() {
           <h1 className="text-lg font-medium text-neutral-800 dark:text-neutral-100">Planos de Estudo</h1>
           <p className="text-xs text-neutral-400">Gerencie seus planos para cada concurso</p>
         </div>
-        <button className="rounded-md bg-primary-600 px-3 py-2 text-sm font-medium text-white hover:bg-primary-800" onClick={() => setOpenCriar(true)}>
+        <button
+          className="rounded-md bg-primary-600 px-3 py-2 text-sm font-medium text-white hover:bg-primary-800"
+          onClick={() => setOpenCriar(true)}
+        >
           + Novo Plano
         </button>
       </div>
@@ -68,8 +103,9 @@ export function PlanosPage() {
         onClose={() => setOpenCriar(false)}
         title="Novo plano de estudo"
         submitText="Criar Plano"
+        {...suggestionProps}
         onSubmit={async (values) => {
-          const created = await criarPlano({
+          await criarPlano({
             nome: values.nome,
             orgao: values.orgao,
             cargo: values.cargo,
@@ -78,7 +114,6 @@ export function PlanosPage() {
             status: values.status,
             ativo: values.ativo,
           });
-          if (created?.id && values.logo_file) await uploadPlanoLogo(created.id, values.logo_file);
           toast.success("Plano criado com sucesso!");
         }}
       />
@@ -88,6 +123,7 @@ export function PlanosPage() {
         onClose={() => setEditing(null)}
         title="Editar plano"
         submitText="Salvar"
+        {...suggestionProps}
         initialValues={
           editing
             ? {
@@ -112,11 +148,9 @@ export function PlanosPage() {
             dataProva: values.data_prova || undefined,
             ativo: values.ativo,
           });
-          if (values.logo_file) await uploadPlanoLogo(editing.id, values.logo_file);
           toast.success("Plano atualizado!");
         }}
       />
     </div>
   );
 }
-

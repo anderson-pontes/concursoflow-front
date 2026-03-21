@@ -1,10 +1,9 @@
 import React from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import {
   BarChart3,
   Bell,
   BriefcaseBusiness,
-  ChevronRight,
   Clock3,
   FileText,
   Folder,
@@ -14,8 +13,6 @@ import {
   Timer,
 } from "lucide-react";
 import { usePlanoStore } from "@/stores/planoStore";
-
-import { useAuthStore } from "@/stores/authStore";
 
 const navSections = [
   {
@@ -46,15 +43,7 @@ const navSections = [
 ];
 
 export function Sidebar({ mobileOpen, onMobileClose }: { mobileOpen?: boolean; onMobileClose?: () => void }) {
-  const user = useAuthStore((s) => s.user);
   const planosCount = usePlanoStore((s) => s.planos.length);
-  const navigate = useNavigate();
-  const initials = (user?.name ?? "CF")
-    .split(" ")
-    .map((p) => p[0])
-    .join("")
-    .slice(0, 2)
-    .toUpperCase();
 
   return (
     <>
@@ -64,7 +53,7 @@ export function Sidebar({ mobileOpen, onMobileClose }: { mobileOpen?: boolean; o
       />
       <aside
         className={[
-          "fixed inset-y-0 left-0 z-50 w-[220px] transform border-r border-primary-700 bg-primary-600 transition-transform duration-200 dark:border-neutral-700 dark:bg-neutral-800 md:static md:flex md:translate-x-0",
+          "fixed inset-y-0 left-0 z-50 w-64 transform border-r border-primary-700 bg-primary-600 transition-transform duration-200 dark:border-neutral-700 dark:bg-neutral-800 md:static md:flex md:translate-x-0",
           mobileOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0",
         ].join(" ")}
       >
@@ -145,25 +134,6 @@ export function Sidebar({ mobileOpen, onMobileClose }: { mobileOpen?: boolean; o
               </div>
             ))}
           </nav>
-
-          <div className="border-t border-primary-700 p-2 dark:border-neutral-700">
-            <button
-              type="button"
-              className="flex w-full items-center gap-2.5 rounded-lg px-2 py-2 text-left hover:bg-primary-500 dark:hover:bg-neutral-700"
-              onClick={() => navigate("/dashboard")}
-            >
-              <div className="flex h-7 w-7 items-center justify-center rounded-full bg-white/15 text-xs font-medium text-white">
-                {initials}
-              </div>
-              <div className="min-w-0 flex-1">
-                <div className="truncate text-xs font-medium text-white dark:text-neutral-100">
-                  {user?.name ?? "Usuário"}
-                </div>
-                <div className="truncate text-[10px] text-primary-200">CGU — TI · ativo</div>
-              </div>
-              <ChevronRight className="h-4 w-4 text-primary-200" />
-            </button>
-          </div>
         </div>
       </aside>
     </>

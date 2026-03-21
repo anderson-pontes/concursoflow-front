@@ -6,6 +6,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 
 import { api } from "@/services/api";
+import { fetchCurrentUser } from "@/services/currentUser";
 import { useAuthStore } from "@/stores/authStore";
 
 const loginSchema = z.object({
@@ -18,6 +19,7 @@ type LoginForm = z.infer<typeof loginSchema>;
 export function Login() {
   const navigate = useNavigate();
   const setTokens = useAuthStore((s) => s.setTokens);
+  const setUser = useAuthStore((s) => s.setUser);
 
   const form = useForm<LoginForm>({
     resolver: zodResolver(loginSchema),
@@ -39,8 +41,14 @@ export function Login() {
         refresh_token: string;
       };
     },
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
       setTokens({ accessToken: data.access_token, refreshToken: data.refresh_token });
+      try {
+        const user = await fetchCurrentUser();
+        setUser(user);
+      } catch {
+        setUser(null);
+      }
       navigate("/dashboard");
     },
   });

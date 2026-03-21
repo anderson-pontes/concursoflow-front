@@ -6,6 +6,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 
 import { api } from "@/services/api";
+import { fetchCurrentUser } from "@/services/currentUser";
 import { useAuthStore } from "@/stores/authStore";
 
 const registerSchema = z
@@ -21,6 +22,7 @@ type RegisterForm = z.infer<typeof registerSchema>;
 export function Register() {
   const navigate = useNavigate();
   const setTokens = useAuthStore((s) => s.setTokens);
+  const setUser = useAuthStore((s) => s.setUser);
 
   const form = useForm<RegisterForm>({
     resolver: zodResolver(registerSchema),
@@ -36,8 +38,14 @@ export function Register() {
         refresh_token: string;
       };
     },
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
       setTokens({ accessToken: data.access_token, refreshToken: data.refresh_token });
+      try {
+        const user = await fetchCurrentUser();
+        setUser(user);
+      } catch {
+        setUser(null);
+      }
       navigate("/dashboard");
     },
   });

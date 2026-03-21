@@ -2,8 +2,16 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Bell, LogOut, Menu, Moon, Search, Sun } from "lucide-react";
 
-import { useAuthStore } from "@/stores/authStore";
 import { PlanoSwitcher } from "@/components/planos/PlanoSwitcher";
+import { primeiroNome } from "@/lib/userDisplay";
+import { useAuthStore } from "@/stores/authStore";
+
+function saudacaoPorHora(): string {
+  const h = new Date().getHours();
+  if (h < 12) return "Bom dia";
+  if (h < 18) return "Boa tarde";
+  return "Boa noite";
+}
 
 export function Header({ onOpenSidebar }: { onOpenSidebar?: () => void }) {
   const user = useAuthStore((s) => s.user);
@@ -53,6 +61,7 @@ export function Header({ onOpenSidebar }: { onOpenSidebar?: () => void }) {
   }, []);
 
   const filteredActions = actions.filter((a) => a.label.toLowerCase().includes(cmdQuery.toLowerCase()));
+  const nomeSaudacao = primeiroNome(user?.name, "Concurseiro");
   const initials = (user?.name ?? "CF")
     .split(" ")
     .map((p) => p[0])
@@ -60,50 +69,54 @@ export function Header({ onOpenSidebar }: { onOpenSidebar?: () => void }) {
     .slice(0, 2)
     .toUpperCase();
 
+  const iconBtn =
+    "inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 transition-colors hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500 dark:border-neutral-600 dark:bg-neutral-900/50 dark:text-neutral-200 dark:hover:bg-neutral-900";
+
   return (
-    <header className="h-14 border-b border-primary-700 bg-primary-600 px-6 dark:border-neutral-700 dark:bg-neutral-800">
-      <div className="flex h-full items-center justify-between">
-        <div className="flex items-center gap-3">
+    <header className="border-b border-slate-200 bg-white dark:border-neutral-700 dark:bg-neutral-800">
+      <div className="flex min-h-14 flex-col gap-3 px-4 py-3 md:h-14 md:flex-row md:items-center md:justify-between md:py-0 md:pl-6 md:pr-6">
+        <div className="flex min-w-0 items-center gap-3">
           <button
             type="button"
-            className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-primary-400 text-primary-100 hover:bg-primary-500 md:hidden"
+            className={`${iconBtn} md:hidden`}
             onClick={onOpenSidebar}
+            aria-label="Abrir menu"
           >
             <Menu className="h-4 w-4" />
           </button>
-          <div className="flex flex-col">
-            <span className="text-sm font-medium text-white dark:text-neutral-100">
-              Bom dia, {user?.name ?? "Concurseiro"}!
+          <div className="min-w-0 flex flex-col">
+            <span className="truncate text-sm font-semibold text-slate-900 dark:text-neutral-50">
+              {saudacaoPorHora()}, {nomeSaudacao}!
             </span>
-            <span className="text-xs text-primary-200">Estude com foco e consistência.</span>
+            <span className="hidden text-xs text-slate-500 dark:text-neutral-300 sm:block">
+              Estude com foco e consistência.
+            </span>
           </div>
         </div>
 
-        <div className="flex items-center gap-2.5">
+        <div className="flex flex-wrap items-center gap-2 md:justify-end">
           <PlanoSwitcher />
 
-          <button
-            type="button"
-            className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-primary-400 text-primary-100 hover:bg-primary-500 dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-700"
-          >
+          <button type="button" className={iconBtn} title="Notificações" aria-label="Notificações">
             <Bell className="h-4 w-4" />
           </button>
 
           <button
             type="button"
-            className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-primary-400 text-primary-100 hover:bg-primary-500 dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-700"
+            className={iconBtn}
             onClick={() => {
               setCmdOpen(true);
               setCmdQuery("");
             }}
-            title="Buscar (⌘K)"
+            title="Buscar (Ctrl+K)"
+            aria-label="Buscar"
           >
             <Search className="h-4 w-4" />
           </button>
 
           <button
             type="button"
-            className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-primary-400 text-primary-100 hover:bg-primary-500 dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-700"
+            className={iconBtn}
             onClick={() => {
               const next = !isDark;
               setIsDark(next);
@@ -111,6 +124,7 @@ export function Header({ onOpenSidebar }: { onOpenSidebar?: () => void }) {
               window.localStorage.setItem("theme", next ? "dark" : "light");
             }}
             title={isDark ? "Ativar modo claro" : "Ativar modo escuro"}
+            aria-label={isDark ? "Ativar modo claro" : "Ativar modo escuro"}
           >
             {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
           </button>
@@ -118,18 +132,19 @@ export function Header({ onOpenSidebar }: { onOpenSidebar?: () => void }) {
           <div className="relative">
             <button
               type="button"
-              className="flex h-7 w-7 items-center justify-center rounded-full bg-white/15 text-xs font-medium text-white"
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary-100 text-xs font-semibold text-primary-800 ring-2 ring-white transition hover:bg-primary-200 dark:bg-primary-600/30 dark:text-primary-100 dark:ring-neutral-800"
               onClick={() => setUserMenuOpen((v) => !v)}
               title="Menu do usuário"
+              aria-expanded={userMenuOpen}
             >
               {initials}
             </button>
 
             {userMenuOpen ? (
-              <div className="absolute right-0 z-[120] mt-2 w-44 rounded-xl border border-neutral-200 bg-white p-1.5 shadow-md dark:border-neutral-700 dark:bg-neutral-800">
+              <div className="absolute right-0 z-[120] mt-2 w-44 rounded-xl border border-slate-200 bg-white p-1.5 shadow-lg dark:border-neutral-600 dark:bg-neutral-900 dark:shadow-xl">
                 <button
                   type="button"
-                  className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 text-left text-xs text-danger-600 hover:bg-danger-50"
+                  className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 text-left text-xs text-danger-600 hover:bg-danger-50 dark:text-danger-400 dark:hover:bg-danger-950/40"
                   onClick={() => {
                     logout();
                     setUserMenuOpen(false);
@@ -172,7 +187,7 @@ export function Header({ onOpenSidebar }: { onOpenSidebar?: () => void }) {
               onChange={(e) => setCmdQuery(e.target.value)}
             />
 
-            <div className="mt-3 space-y-1 max-h-64 overflow-auto">
+            <div className="mt-3 max-h-64 space-y-1 overflow-auto">
               <button
                 type="button"
                 className="w-full rounded-lg px-3 py-2 text-left text-sm hover:bg-muted"
@@ -219,4 +234,3 @@ export function Header({ onOpenSidebar }: { onOpenSidebar?: () => void }) {
     </header>
   );
 }
-

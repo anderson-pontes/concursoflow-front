@@ -7,6 +7,7 @@ import { Register } from "./pages/Auth/Register";
 import { Dashboard } from "./pages/Dashboard";
 import { Concursos } from "./pages/Concursos";
 import { Disciplinas } from "./pages/Disciplinas";
+import { DisciplinaDashboard } from "./pages/DisciplinaDashboard";
 import { Cronograma } from "./pages/Cronograma";
 import { Pomodoro } from "./pages/Pomodoro";
 import { Questoes } from "./pages/Questoes";
@@ -56,6 +57,14 @@ export default function App() {
         element={
           <Layout requireAuth={!isAuthed}>
             <PlanoDetalhePage />
+          </Layout>
+        }
+      />
+      <Route
+        path="/disciplinas/:disciplinaId"
+        element={
+          <Layout requireAuth={!isAuthed}>
+            <DisciplinaDashboard />
           </Layout>
         }
       />

@@ -1,5 +1,6 @@
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
+import { useSearchParams } from "react-router-dom";
 
 import { api } from "@/services/api";
 import { usePomodoroStore } from "@/stores/pomodoroStore";
@@ -19,8 +20,10 @@ type Disciplina = {
 };
 
 export function Pomodoro() {
+  const [searchParams] = useSearchParams();
   const setMode = usePomodoroStore((s) => s.setMode);
   const setDisciplinaId = usePomodoroStore((s) => s.setDisciplinaId);
+  const disciplinaId = usePomodoroStore((s) => s.disciplinaId);
   const mode = usePomodoroStore((s) => s.mode);
   const focusMinutes = usePomodoroStore((s) => s.focusMinutes);
   const shortBreakMinutes = usePomodoroStore((s) => s.shortBreakMinutes);
@@ -61,8 +64,8 @@ export function Pomodoro() {
             ) : (
               <select
                 className="mt-1 w-full rounded-lg border border-border/40 bg-background px-3 py-2 text-sm outline-none"
-                onChange={(e) => setDisciplinaId(e.target.value)}
-                defaultValue=""
+                value={disciplinaId ?? ""}
+                onChange={(e) => setDisciplinaId(e.target.value || null)}
               >
                 <option value="" disabled>
                   Selecione...
