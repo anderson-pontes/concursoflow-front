@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { api } from "@/services/api";
 import { usePlanoAtivo, usePlanoStore } from "@/stores/planoStore";
+import { RegistroEstudoModal } from "@/components/estudos/RegistroEstudoModal";
 
 type DisciplinaOption = {
   id: string; // disciplina_id (global)
@@ -109,6 +110,7 @@ export function Cronograma() {
     tipo: "estudo",
     ativo: true,
   });
+  const [openRegistro, setOpenRegistro] = React.useState(false);
 
   React.useEffect(() => {
     if (!form.disciplina_id && disciplinas && disciplinas.length > 0) {
@@ -134,6 +136,9 @@ export function Cronograma() {
           <h2 className="text-lg font-semibold">Cronograma</h2>
           <p className="text-sm text-muted-foreground">Blocos de estudo por semana (visão simplificada).</p>
         </div>
+        <button type="button" className="rounded-md bg-teal-500 px-3 py-2 text-xs font-semibold text-white" onClick={() => setOpenRegistro(true)}>
+          Novo registro
+        </button>
       </div>
 
       <div className="rounded-xl border border-border/40 bg-background/70 p-4">
@@ -254,6 +259,7 @@ export function Cronograma() {
         <h3 className="text-sm font-semibold">Stats (últimos 7 dias)</h3>
         <pre className="mt-2 overflow-auto text-xs text-muted-foreground">{stats ? JSON.stringify(stats, null, 2) : "—"}</pre>
       </div>
+      <RegistroEstudoModal open={openRegistro} onClose={() => setOpenRegistro(false)} defaultDisciplinaId={form.disciplina_id || null} />
     </div>
   );
 }

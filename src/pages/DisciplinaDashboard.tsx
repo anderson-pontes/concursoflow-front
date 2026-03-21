@@ -1,6 +1,6 @@
 import React from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { Link, useParams, useSearchParams } from "react-router-dom";
 import {
   ArrowLeft,
   BookOpen,
@@ -15,6 +15,7 @@ import {
   X,
 } from "lucide-react";
 import { toast } from "sonner";
+import { RegistroEstudoModal } from "@/components/estudos/RegistroEstudoModal";
 
 import { api } from "@/services/api";
 import { cn } from "@/lib/utils";
@@ -67,7 +68,6 @@ function KpiCard({
 
 export function DisciplinaDashboard() {
   const { disciplinaId } = useParams<{ disciplinaId: string }>();
-  const navigate = useNavigate();
   const qc = useQueryClient();
   const isDemoMode = useDisciplinaDashboardDemoMode();
 
@@ -78,6 +78,7 @@ export function DisciplinaDashboard() {
   }, []);
 
   const [novoTopico, setNovoTopico] = React.useState("");
+  const [openRegistro, setOpenRegistro] = React.useState(false);
   const [editing, setEditing] = React.useState<{ id: string; descricao: string } | null>(null);
   const [menuRow, setMenuRow] = React.useState<string | null>(null);
   const menuRef = React.useRef<HTMLDivElement>(null);
@@ -205,7 +206,7 @@ export function DisciplinaDashboard() {
         </div>
         <button
           type="button"
-          onClick={() => navigate(`/pomodoro?disciplinaId=${disciplinaId}`)}
+          onClick={() => setOpenRegistro(true)}
           className="inline-flex items-center justify-center rounded-lg bg-primary-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-primary-700 focus-visible:outline focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-900"
         >
           Adicionar Estudo
@@ -487,6 +488,7 @@ export function DisciplinaDashboard() {
           </div>
         </div>
       ) : null}
+      <RegistroEstudoModal open={openRegistro} onClose={() => setOpenRegistro(false)} defaultDisciplinaId={disciplinaId} />
     </div>
   );
 }

@@ -5,6 +5,7 @@ import { useSearchParams } from "react-router-dom";
 import { api } from "@/services/api";
 import { usePomodoroStore } from "@/stores/pomodoroStore";
 import { PomodoroTimer } from "@/components/pomodoro/PomodoroTimer";
+import { RegistroEstudoModal } from "@/components/estudos/RegistroEstudoModal";
 
 type Disciplina = {
   id: string;
@@ -35,12 +36,16 @@ export function Pomodoro() {
     queryKey: ["disciplinas-all"],
     queryFn: async () => (await api.get("/disciplinas")).data as Disciplina[],
   });
+  const [openRegistro, setOpenRegistro] = React.useState(false);
 
   return (
     <div className="space-y-4">
       <div>
         <h2 className="text-lg font-semibold">Pomodoro</h2>
         <p className="text-sm text-muted-foreground">Timer e registro automático das sessões.</p>
+        <button type="button" className="mt-2 rounded-md bg-teal-500 px-3 py-1.5 text-xs font-semibold text-white" onClick={() => setOpenRegistro(true)}>
+          Registro manual
+        </button>
       </div>
 
       <div className="rounded-xl border border-border/40 bg-background/70 p-4">
@@ -129,6 +134,7 @@ export function Pomodoro() {
       </div>
 
       <PomodoroTimer />
+      <RegistroEstudoModal open={openRegistro} onClose={() => setOpenRegistro(false)} defaultDisciplinaId={disciplinaId} />
     </div>
   );
 }

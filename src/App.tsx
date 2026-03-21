@@ -17,6 +17,7 @@ import { Flashcards } from "./pages/Flashcards";
 import { Materiais } from "./pages/Materiais";
 import { PlanosPage } from "./pages/Planos";
 import { PlanoDetalhePage } from "./pages/PlanoDetalhe";
+import { AdminEstudos } from "./pages/AdminEstudos";
 
 export default function App() {
   const accessToken = useAuthStore((s) => s.accessToken);
@@ -129,6 +130,14 @@ export default function App() {
         element={
           <Layout requireAuth={!isAuthed}>
             <Materiais />
+          </Layout>
+        }
+      />
+      <Route
+        path="/admin/estudos"
+        element={
+          <Layout requireAuth={!isAuthed}>
+            <AdminEstudos />
           </Layout>
         }
       />

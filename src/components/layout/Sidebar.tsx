@@ -19,8 +19,10 @@ const navSections = [
     label: "PRINCIPAL",
     items: [
       { to: "/dashboard", label: "Dashboard", icon: Grid2x2 },
-      { to: "/cronograma", label: "Cronograma", icon: Clock3 },
+      { to: "/concursos", label: "Meus Concursos", icon: BriefcaseBusiness, end: true },
       { to: "/disciplinas", label: "Disciplinas", icon: List },
+      { to: "/concursos/planos", label: "Planos de Estudo", icon: List },
+      { to: "/cronograma", label: "Cronograma", icon: Clock3 },
     ],
   },
   {
@@ -35,9 +37,9 @@ const navSections = [
   {
     label: "OUTROS",
     items: [
-      { to: "/concursos", label: "Concursos", icon: BriefcaseBusiness },
       { to: "/avisos", label: "Avisos", icon: Bell },
       { to: "/materiais", label: "Materiais", icon: Folder },
+      { to: "/admin/estudos", label: "Admin Estudos", icon: FileText },
     ],
   },
 ];
@@ -81,6 +83,7 @@ export function Sidebar({ mobileOpen, onMobileClose }: { mobileOpen?: boolean; o
                     <NavLink
                       key={item.to}
                       to={item.to}
+                      end={"end" in item ? item.end : false}
                       onClick={onMobileClose}
                       className={({ isActive }) =>
                         [
@@ -93,43 +96,13 @@ export function Sidebar({ mobileOpen, onMobileClose }: { mobileOpen?: boolean; o
                     >
                       <item.icon className="h-4 w-4 shrink-0 text-primary-200" />
                       <span>{item.label}</span>
-                    </NavLink>
-                  ))}
-                  {section.label === "OUTROS" ? (
-                    <div className="ml-3 mt-1 space-y-0.5 border-l border-primary-500 pl-3 dark:border-neutral-700">
-                      <NavLink
-                        to="/concursos"
-                        onClick={onMobileClose}
-                        className={({ isActive }) =>
-                          [
-                            "flex items-center gap-2 rounded-lg px-2 py-1.5 text-xs transition-colors",
-                            isActive
-                              ? "bg-white/15 text-white"
-                              : "text-primary-100 hover:bg-primary-500 hover:text-white dark:text-neutral-300 dark:hover:bg-neutral-700",
-                          ].join(" ")
-                        }
-                      >
-                        Meus Concursos
-                      </NavLink>
-                      <NavLink
-                        to="/concursos/planos"
-                        onClick={onMobileClose}
-                        className={({ isActive }) =>
-                          [
-                            "flex items-center gap-2 rounded-lg px-2 py-1.5 text-xs transition-colors",
-                            isActive
-                              ? "bg-white/15 text-white"
-                              : "text-primary-100 hover:bg-primary-500 hover:text-white dark:text-neutral-300 dark:hover:bg-neutral-700",
-                          ].join(" ")
-                        }
-                      >
-                        <span>Planos de Estudo</span>
+                      {item.to === "/concursos/planos" ? (
                         <span className="ml-auto rounded-full bg-white/15 px-1.5 text-[10px] text-white">
                           {planosCount}
                         </span>
-                      </NavLink>
-                    </div>
-                  ) : null}
+                      ) : null}
+                    </NavLink>
+                  ))}
                 </div>
               </div>
             ))}
