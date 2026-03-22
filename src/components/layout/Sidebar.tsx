@@ -12,6 +12,7 @@ import {
   SquareStack,
   Timer,
 } from "lucide-react";
+import { AprovingoLogo } from "@/components/branding/AprovingoLogo";
 import { usePlanoStore } from "@/stores/planoStore";
 
 const navSections = [
@@ -60,15 +61,9 @@ export function Sidebar({ mobileOpen, onMobileClose }: { mobileOpen?: boolean; o
         ].join(" ")}
       >
         <div className="flex h-full w-full flex-col">
-          <div className="border-b border-primary-700 p-4 dark:border-neutral-700">
-            <div className="flex items-center gap-2.5">
-              <div className="flex h-[30px] w-[30px] items-center justify-center rounded-lg bg-white">
-                <svg viewBox="0 0 24 24" className="h-4 w-4 text-primary-600" fill="none" aria-hidden="true">
-                  <path d="M12 3 4 7.5 12 12l8-4.5L12 3Z" stroke="currentColor" strokeWidth="1.8" />
-                  <path d="M7 10.5V14c0 1.7 2.2 3 5 3s5-1.3 5-3v-3.5" stroke="currentColor" strokeWidth="1.8" />
-                </svg>
-              </div>
-              <span className="text-sm font-medium text-white dark:text-neutral-100">ConcursoFlow</span>
+          <div className="border-b border-primary-700 px-4 py-2.5 dark:border-neutral-700">
+            <div className="flex min-w-0 items-center justify-center md:justify-start">
+              <AprovingoLogo className="h-9 w-auto max-w-[92%] shrink-0 object-contain object-left sm:h-11" />
             </div>
           </div>
 

@@ -35,7 +35,7 @@ export const useAuthStore = create<AuthState>()(
           user: null,
         }),
     }),
-    { name: "concursoflow-auth" },
+    { name: "aprovingo-auth" },
   ),
 );
 

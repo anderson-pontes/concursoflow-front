@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 
+import { AprovingoLogo } from "@/components/branding/AprovingoLogo";
 import { api } from "@/services/api";
 import { fetchCurrentUser } from "@/services/currentUser";
 import { useAuthStore } from "@/stores/authStore";
@@ -66,14 +67,8 @@ export function Login() {
           <div className="absolute -bottom-20 -left-10 w-64 h-64 rounded-full bg-primary-800 opacity-50" />
 
           <div className="relative z-10">
-            <div className="flex items-center gap-2.5 mb-7">
-              <div className="w-9 h-9 bg-white rounded-lg flex items-center justify-center">
-                <svg viewBox="0 0 24 24" className="w-5 h-5 text-primary-600" fill="none" aria-hidden="true">
-                  <path d="M12 3 4 7.5 12 12l8-4.5L12 3Z" stroke="currentColor" strokeWidth="1.8" />
-                  <path d="M7 10.5V14c0 1.7 2.2 3 5 3s5-1.3 5-3v-3.5" stroke="currentColor" strokeWidth="1.8" />
-                </svg>
-              </div>
-              <span className="text-white font-medium text-lg">ConcursoFlow</span>
+            <div className="mb-7 flex min-w-0 items-center">
+              <AprovingoLogo className="h-12 w-auto max-w-[min(100%,220px)] shrink-0 sm:h-14" />
             </div>
             <h2 className="text-white text-2xl font-medium leading-snug mb-3">
               Sua aprovação começa com organização.

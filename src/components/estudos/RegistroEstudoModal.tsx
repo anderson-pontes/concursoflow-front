@@ -16,10 +16,37 @@ type Props = {
   open: boolean;
   onClose: () => void;
   defaultDisciplinaId?: string | null;
+  /** Quando definido, o modal carrega a sessão e salva com PATCH. */
+  sessaoId?: string | null;
+  onSaved?: () => void;
 };
 
 type DisciplinaOpt = { id: string; nome: string };
-type TopicoOpt = { id: string; nome: string };
+type TopicoOpt = { id: string; nome: string; status?: string };
+
+type SessaoEstudoApi = {
+  id: string;
+  disciplina_id: string;
+  topico_id: string | null;
+  topico_ids: string[];
+  plano_id: string | null;
+  categoria_id: string | null;
+  data_referencia: string | null;
+  inicio: string;
+  fim: string | null;
+  duracao_minutos: number;
+  tempo_estudo_segundos: number;
+  material: string | null;
+  comentarios: string | null;
+  teoria_finalizada: boolean;
+  contabilizar_no_planejamento: boolean;
+  programar_revisoes: boolean;
+  revisoes_dias: number[];
+  questoes_acertos: number;
+  questoes_erros: number;
+  questoes_em_branco: number;
+  paginas_blocos: { inicio: number; fim: number }[];
+};
 
 const NOVA_CATEGORIA_VALUE = "__nova_categoria__";
 /** Valor sentinela para o Select de disciplina quando nada está selecionado */
@@ -75,7 +102,7 @@ function TimeSegment({ label, value, onInc, onDec }: TimeSegmentProps) {
   );
 }
 
-export function RegistroEstudoModal({ open, onClose, defaultDisciplinaId }: Props) {
+export function RegistroEstudoModal({ open, onClose, defaultDisciplinaId, sessaoId, onSaved }: Props) {
   const qc = useQueryClient();
   const planoAtivo = usePlanoAtivo();
   const listarPlanoDisciplinas = usePlanoStore((s) => s.listarPlanoDisciplinas);
@@ -112,8 +139,27 @@ export function RegistroEstudoModal({ open, onClose, defaultDisciplinaId }: Prop
   const tempoDisplay = React.useMemo(() => fmtHms(hours, minutes, seconds), [hours, minutes, seconds]);
 
   React.useEffect(() => {
-    if (open) setDisciplinaId(defaultDisciplinaId ?? "");
-  }, [defaultDisciplinaId, open]);
+    if (!open) return;
+    if (sessaoId) return;
+    setHours(0);
+    setMinutes(25);
+    setSeconds(0);
+    setSelectedTopicos([]);
+    setTopicoBusca("");
+    setMaterial("");
+    setComentarios("");
+    setTeoriaFinalizada(false);
+    setContabilizar(true);
+    setProgramarRevisoes(false);
+    setAcertos(0);
+    setErros(0);
+    setBranco(0);
+    setPaginas([{ inicio: "", fim: "" }]);
+    setSaveAndNew(false);
+    setDisciplinaId(defaultDisciplinaId ?? "");
+    setDateKind("hoje");
+    setDateCustom(new Date().toISOString().slice(0, 10));
+  }, [open, sessaoId, defaultDisciplinaId]);
 
   React.useEffect(() => {
     if (!open) return;
@@ -150,10 +196,81 @@ export function RegistroEstudoModal({ open, onClose, defaultDisciplinaId }: Prop
     enabled: open && Boolean(disciplinaId),
     queryFn: async () => {
       const res = await api.get(`/disciplinas/${disciplinaId}/topicos`);
-      const rows = res.data as { id: string; descricao: string }[];
-      return rows.map((t) => ({ id: String(t.id), nome: t.descricao })) as TopicoOpt[];
+      const rows = res.data as { id: string; descricao: string; status: string }[];
+      return rows.map((t) => ({
+        id: String(t.id),
+        nome: t.descricao,
+        status: t.status,
+      })) as TopicoOpt[];
     },
   });
+
+  const { data: sessaoData, isLoading: loadingSessao } = useQuery({
+    queryKey: ["sessao-estudo", sessaoId],
+    queryFn: async () => (await api.get(`/sessoes-estudo/${sessaoId}`)).data as SessaoEstudoApi,
+    enabled: open && Boolean(sessaoId),
+  });
+
+  const hydratedRef = React.useRef<string | null>(null);
+  React.useEffect(() => {
+    if (!open || !sessaoId) {
+      hydratedRef.current = null;
+      return;
+    }
+    if (!sessaoData) return;
+    if (hydratedRef.current === sessaoData.id) return;
+    hydratedRef.current = sessaoData.id;
+    setDisciplinaId(sessaoData.disciplina_id);
+    if (sessaoData.categoria_id) setCategoriaId(sessaoData.categoria_id);
+    const refDate =
+      sessaoData.data_referencia?.slice(0, 10) ?? new Date(sessaoData.inicio).toISOString().slice(0, 10);
+    setDateKind("outro");
+    setDateCustom(refDate);
+    const seg = sessaoData.tempo_estudo_segundos ?? 0;
+    setHours(Math.floor(seg / 3600));
+    setMinutes(Math.floor((seg % 3600) / 60));
+    setSeconds(seg % 60);
+    setMaterial(sessaoData.material ?? "");
+    setComentarios(sessaoData.comentarios ?? "");
+    setTeoriaFinalizada(sessaoData.teoria_finalizada);
+    setContabilizar(sessaoData.contabilizar_no_planejamento);
+    setProgramarRevisoes(sessaoData.programar_revisoes);
+    setRevisoesDias(
+      sessaoData.revisoes_dias?.length ? [...sessaoData.revisoes_dias] : [1, 7, 30, 60, 120],
+    );
+    setAcertos(sessaoData.questoes_acertos);
+    setErros(sessaoData.questoes_erros);
+    setBranco(sessaoData.questoes_em_branco);
+    const pags = (sessaoData.paginas_blocos ?? []).map((b) => ({
+      inicio: String(b.inicio),
+      fim: String(b.fim),
+    }));
+    setPaginas(pags.length ? pags : [{ inicio: "", fim: "" }]);
+    const ids =
+      sessaoData.topico_ids?.length > 0
+        ? sessaoData.topico_ids
+        : sessaoData.topico_id
+          ? [sessaoData.topico_id]
+          : [];
+    setSelectedTopicos(
+      ids.map((id) => ({
+        id,
+        nome: (topicos ?? []).find((t) => t.id === id)?.nome ?? "Tópico",
+        status: (topicos ?? []).find((t) => t.id === id)?.status,
+      })),
+    );
+  }, [open, sessaoId, sessaoData, topicos]);
+
+  React.useEffect(() => {
+    if (!sessaoData || !topicos?.length) return;
+    setSelectedTopicos((prev) =>
+      prev.map((p) => ({
+        ...p,
+        nome: topicos.find((t) => t.id === p.id)?.nome ?? p.nome,
+        status: topicos.find((t) => t.id === p.id)?.status ?? p.status,
+      })),
+    );
+  }, [topicos, sessaoData?.id]);
 
   React.useEffect(() => {
     if (!categoriaId && categorias?.length) setCategoriaId(categorias[0].id);
@@ -168,11 +285,18 @@ export function RegistroEstudoModal({ open, onClose, defaultDisciplinaId }: Prop
     setTopicoBusca("");
   }, [disciplinaId]);
 
+  const listaTopicosCheckbox = React.useMemo(() => {
+    const list = topicos ?? [];
+    const showAll = programarRevisoes || acertos > 0 || erros > 0 || branco > 0;
+    if (showAll) return list;
+    return list.filter((t) => t.status !== "dominado");
+  }, [topicos, programarRevisoes, acertos, erros, branco]);
+
   const filteredTopicos = React.useMemo(() => {
     const term = topicoBusca.trim().toLowerCase();
-    if (!term) return topicos ?? [];
-    return (topicos ?? []).filter((t) => t.nome.toLowerCase().includes(term));
-  }, [topicos, topicoBusca]);
+    if (!term) return listaTopicosCheckbox;
+    return listaTopicosCheckbox.filter((t) => t.nome.toLowerCase().includes(term));
+  }, [listaTopicosCheckbox, topicoBusca]);
 
   const isTopicoSelected = React.useCallback(
     (id: string) => selectedTopicos.some((t) => t.id === id),
@@ -206,7 +330,7 @@ export function RegistroEstudoModal({ open, onClose, defaultDisciplinaId }: Prop
     },
     onSuccess: (row) => {
       qc.invalidateQueries({ queryKey: ["disciplina-topicos-registro", disciplinaId] });
-      setSelectedTopicos((s) => [...s, { id: row.id, nome: row.descricao }]);
+      setSelectedTopicos((s) => [...s, { id: row.id, nome: row.descricao, status: "nao_iniciado" }]);
       setNovoTopicoNome("");
       toast.success("Tópico criado.");
     },
@@ -216,15 +340,22 @@ export function RegistroEstudoModal({ open, onClose, defaultDisciplinaId }: Prop
     mutationFn: async () => {
       const baseDate = fmtDateValue(dateKind, dateCustom);
       const now = new Date();
-      const inicio = new Date(`${baseDate}T${now.toTimeString().slice(0, 8)}`);
       const segundos = hmsToSeconds(hours, minutes, seconds);
+      let inicio: Date;
+      if (sessaoId && sessaoData) {
+        const o = new Date(sessaoData.inicio);
+        const [y, mo, d] = baseDate.split("-").map(Number);
+        inicio = new Date(y, mo - 1, d, o.getHours(), o.getMinutes(), o.getSeconds());
+      } else {
+        inicio = new Date(`${baseDate}T${now.toTimeString().slice(0, 8)}`);
+      }
       const fim = new Date(inicio.getTime() + segundos * 1000);
 
-      await api.post("/sessoes-estudo", {
+      const body = {
         disciplina_id: disciplinaId,
         topico_id: selectedTopicos[0]?.id ?? null,
         topico_ids: selectedTopicos.map((t) => t.id),
-        plano_id: planoAtivo?.id ?? null,
+        plano_id: sessaoId && sessaoData ? sessaoData.plano_id : (planoAtivo?.id ?? null),
         categoria_id: categoriaId || null,
         data_referencia: baseDate,
         inicio: inicio.toISOString(),
@@ -243,12 +374,32 @@ export function RegistroEstudoModal({ open, onClose, defaultDisciplinaId }: Prop
         paginas_blocos: paginas
           .filter((p) => p.inicio && p.fim)
           .map((p) => ({ inicio: Number(p.inicio), fim: Number(p.fim) })),
-        videoaulas_blocos: [],
+        videoaulas_blocos: [] as unknown[],
         comentarios: comentarios || null,
-      });
+      };
+
+      if (sessaoId) {
+        await api.patch(`/sessoes-estudo/${sessaoId}`, body);
+      } else {
+        await api.post("/sessoes-estudo", body);
+      }
     },
     onSuccess: () => {
-      toast.success("Registro salvo");
+      toast.success(sessaoId ? "Registro atualizado" : "Registro salvo");
+      qc.invalidateQueries({ queryKey: ["disciplina-dashboard"] });
+      qc.invalidateQueries({ queryKey: ["topico-sessoes"] });
+      if (sessaoId) {
+        qc.invalidateQueries({ queryKey: ["sessao-estudo", sessaoId] });
+      }
+      if (disciplinaId) {
+        qc.invalidateQueries({ queryKey: ["topicos", disciplinaId] });
+        qc.invalidateQueries({ queryKey: ["disciplina-topicos-registro", disciplinaId] });
+      }
+      onSaved?.();
+      if (sessaoId) {
+        onClose();
+        return;
+      }
       if (saveAndNew) {
         setHours(0);
         setMinutes(25);
@@ -302,12 +453,12 @@ export function RegistroEstudoModal({ open, onClose, defaultDisciplinaId }: Prop
   if (!open) return null;
 
   const modal = (
-    <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/55 p-4" role="dialog" aria-modal="true" aria-labelledby="registro-estudo-titulo">
+    <div className="fixed inset-0 z-[10002] flex items-center justify-center bg-black/55 p-4" role="dialog" aria-modal="true" aria-labelledby="registro-estudo-titulo">
       <div className="max-h-[94vh] w-full max-w-4xl overflow-y-auto rounded-2xl border-[0.5px] border-slate-200/90 bg-white shadow-2xl dark:border-neutral-700 dark:bg-neutral-950">
         <div className="border-b border-[0.5px] border-slate-200/90 px-6 py-5 dark:border-neutral-800">
           <div className="flex items-center justify-between">
             <h2 id="registro-estudo-titulo" className="text-2xl font-semibold text-slate-900 dark:text-neutral-100">
-              Registro de estudo
+              {sessaoId ? "Editar registro de estudo" : "Registro de estudo"}
             </h2>
             <button
               type="button"
@@ -320,7 +471,12 @@ export function RegistroEstudoModal({ open, onClose, defaultDisciplinaId }: Prop
           </div>
         </div>
 
-        <div className="space-y-5 px-6 pt-5 pb-10">
+        <div className="relative space-y-5 px-6 pt-5 pb-10">
+          {sessaoId && loadingSessao ? (
+            <div className="absolute inset-0 z-10 flex items-center justify-center rounded-xl bg-white/80 dark:bg-neutral-950/80">
+              <p className="text-sm font-medium text-slate-600 dark:text-neutral-300">Carregando registro…</p>
+            </div>
+          ) : null}
           <div className="flex flex-wrap items-center gap-2">
             <Calendar className="h-4 w-4" style={{ color: PRIMARY }} aria-hidden />
             {(["hoje", "ontem", "outro"] as const).map((k) => (
@@ -412,6 +568,10 @@ export function RegistroEstudoModal({ open, onClose, defaultDisciplinaId }: Prop
 
           <section className="rounded-xl border-[0.5px] border-slate-200/90 bg-white p-3 dark:border-neutral-800 dark:bg-neutral-900/50">
             <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-neutral-400">Tópicos estudados</p>
+            <p className="mt-1 text-[11px] leading-snug text-slate-500 dark:text-neutral-500">
+              Tópicos já concluídos no edital ficam ocultos aqui, exceto se você marcar &quot;Programar revisões&quot; ou preencher questões
+              (certas/erradas/branco) — aí todos aparecem para revisão ou registro de desempenho.
+            </p>
 
             <div className="mt-2 rounded-lg border-[0.5px] border-slate-300 px-3 py-2 dark:border-neutral-700">
               <div className="flex items-center gap-2">
@@ -635,17 +795,19 @@ export function RegistroEstudoModal({ open, onClose, defaultDisciplinaId }: Prop
                   Programar revisões
                 </Label>
               </div>
-              <div className="flex items-start gap-2.5">
-                <Checkbox
-                  id="registro-salvar-e-novo"
-                  className="mt-0.5"
-                  checked={saveAndNew}
-                  onCheckedChange={(v) => setSaveAndNew(v === true)}
-                />
-                <Label htmlFor="registro-salvar-e-novo" className="cursor-pointer pt-0.5 text-sm font-normal leading-snug text-slate-700 dark:text-neutral-300">
-                  Salvar e criar novo
-                </Label>
-              </div>
+              {!sessaoId ? (
+                <div className="flex items-start gap-2.5">
+                  <Checkbox
+                    id="registro-salvar-e-novo"
+                    className="mt-0.5"
+                    checked={saveAndNew}
+                    onCheckedChange={(v) => setSaveAndNew(v === true)}
+                  />
+                  <Label htmlFor="registro-salvar-e-novo" className="cursor-pointer pt-0.5 text-sm font-normal leading-snug text-slate-700 dark:text-neutral-300">
+                    Salvar e criar novo
+                  </Label>
+                </div>
+              ) : null}
             </div>
           </section>
         </div>
@@ -672,11 +834,11 @@ export function RegistroEstudoModal({ open, onClose, defaultDisciplinaId }: Prop
               }
               saveMutation.mutate();
             }}
-            disabled={saveMutation.isPending}
+            disabled={saveMutation.isPending || (Boolean(sessaoId) && loadingSessao)}
             className="rounded-xl px-4 py-2 text-sm font-semibold text-white shadow-sm transition disabled:opacity-60"
             style={{ backgroundColor: PRIMARY }}
           >
-            Salvar registro
+            {sessaoId ? "Salvar alterações" : "Salvar registro"}
           </button>
         </div>
       </div>

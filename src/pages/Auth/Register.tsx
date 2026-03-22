@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 
+import { AprovingoLogo } from "@/components/branding/AprovingoLogo";
 import { api } from "@/services/api";
 import { fetchCurrentUser } from "@/services/currentUser";
 import { useAuthStore } from "@/stores/authStore";
@@ -59,6 +60,9 @@ export function Register() {
   return (
     <div className="mx-auto flex min-h-screen max-w-md items-center justify-center p-4">
       <div className="w-full space-y-4 rounded-xl border border-border/40 bg-background/70 p-6">
+        <div className="flex justify-center">
+          <AprovingoLogo className="h-10 w-auto max-w-[200px] shrink-0 object-contain sm:h-11" />
+        </div>
         <div>
           <h1 className="text-xl font-semibold">Criar conta</h1>
           <p className="text-sm text-muted-foreground">Cadastre seus dados para começar.</p>

@@ -8,6 +8,8 @@ const config: Config = {
       fontFamily: {
         sans: ["Inter", "system-ui", "sans-serif"],
         mono: ["JetBrains Mono", "ui-monospace", "SFMono-Regular", "Menlo", "monospace"],
+        display: ['"DM Serif Display"', "Georgia", "serif"],
+        dm: ['"DM Sans"', "Inter", "system-ui", "sans-serif"],
       },
       borderRadius: {
         // Cards (rounded-lg = 8px) e botões (rounded-md = 6px)

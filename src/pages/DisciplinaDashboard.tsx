@@ -7,6 +7,8 @@ import {
   Check,
   Circle,
   Clock,
+  Eye,
+  FileText,
   MoreHorizontal,
   Pencil,
   Plus,
@@ -16,6 +18,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { RegistroEstudoModal } from "@/components/estudos/RegistroEstudoModal";
+import { TopicoDetalhesModal } from "@/components/estudos/TopicoDetalhesModal";
 
 import { api } from "@/services/api";
 import { cn } from "@/lib/utils";
@@ -79,6 +82,8 @@ export function DisciplinaDashboard() {
 
   const [novoTopico, setNovoTopico] = React.useState("");
   const [openRegistro, setOpenRegistro] = React.useState(false);
+  const [editSessaoId, setEditSessaoId] = React.useState<string | null>(null);
+  const [detalhesTopico, setDetalhesTopico] = React.useState<{ id: string; descricao: string } | null>(null);
   const [editing, setEditing] = React.useState<{ id: string; descricao: string } | null>(null);
   const [menuRow, setMenuRow] = React.useState<string | null>(null);
   const menuRef = React.useRef<HTMLDivElement>(null);
@@ -235,7 +240,7 @@ export function DisciplinaDashboard() {
       ) : null}
 
       {k ? (
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
           <KpiCard title="Tempo de estudo">
             <div className="flex items-center gap-2">
               <Clock className="h-8 w-8 text-primary-500" />
@@ -274,10 +279,20 @@ export function DisciplinaDashboard() {
               <span className="text-slate-400">Branco {k.questoes_branco_total}</span>
             </div>
           </KpiCard>
+
+          <KpiCard title="Páginas estudadas">
+            <div className="flex items-center gap-2">
+              <FileText className="h-8 w-8 text-sky-500" />
+              <span className="text-2xl font-bold text-slate-900 dark:text-neutral-100">
+                {(k.paginas_lidas_total ?? 0).toLocaleString("pt-BR")}
+              </span>
+            </div>
+            <p className="mt-1 text-xs text-slate-500">Soma dos blocos de páginas nos registros de estudo</p>
+          </KpiCard>
         </div>
       ) : isLoading ? (
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-          {[1, 2, 3, 4].map((i) => (
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+          {[1, 2, 3, 4, 5].map((i) => (
             <div key={i} className="h-28 animate-pulse rounded-xl bg-slate-100 dark:bg-neutral-800" />
           ))}
         </div>
@@ -325,7 +340,7 @@ export function DisciplinaDashboard() {
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[860px] border-collapse text-left text-sm">
+          <table className="w-full min-w-[940px] border-collapse text-left text-sm">
             <thead>
               <tr className="border-b border-slate-200 bg-slate-50/80 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:border-neutral-700 dark:bg-neutral-900/50 dark:text-neutral-400">
                 <th className="w-12 px-4 py-3 text-center" scope="col">
@@ -346,8 +361,11 @@ export function DisciplinaDashboard() {
                 <th className="px-4 py-3 text-center" scope="col">
                   Aproveitamento
                 </th>
-                <th className="px-4 py-3" scope="col">
+                <th className="px-4 py-3 text-center" scope="col">
                   Tempo
+                </th>
+                <th className="px-4 py-3 text-center" scope="col">
+                  Páginas
                 </th>
                 <th className="w-14 px-2 py-3" scope="col">
                   <span className="sr-only">Ações</span>
@@ -407,6 +425,9 @@ export function DisciplinaDashboard() {
                   <td className="whitespace-nowrap px-4 py-3 text-slate-600 dark:text-neutral-300">
                     {fmtTempoTopico(row.tempo_estudo_minutos)}
                   </td>
+                  <td className="px-4 py-3 text-center tabular-nums text-slate-700 dark:text-neutral-200">
+                    {(row.paginas_lidas ?? 0) > 0 ? (row.paginas_lidas ?? 0).toLocaleString("pt-BR") : "—"}
+                  </td>
                   <td className="relative px-2 py-3">
                     <div ref={menuRow === row.id ? menuRef : undefined}>
                       <button
@@ -420,7 +441,18 @@ export function DisciplinaDashboard() {
                         <MoreHorizontal className="h-4 w-4" />
                       </button>
                       {menuRow === row.id ? (
-                        <div className="absolute right-2 z-20 mt-1 w-36 rounded-lg border border-slate-200 bg-white py-1 shadow-lg dark:border-neutral-600 dark:bg-neutral-900">
+                        <div className="absolute right-2 z-20 mt-1 w-44 rounded-lg border border-slate-200 bg-white py-1 shadow-lg dark:border-neutral-600 dark:bg-neutral-900">
+                          <button
+                            type="button"
+                            className="flex w-full items-center gap-2 px-3 py-2 text-left text-xs hover:bg-slate-50 dark:hover:bg-neutral-800"
+                            onClick={() => {
+                              setMenuRow(null);
+                              setDetalhesTopico({ id: row.id, descricao: row.descricao });
+                            }}
+                          >
+                            <Eye className="h-3.5 w-3.5" />
+                            Ver detalhes
+                          </button>
                           <button
                             type="button"
                             className="flex w-full items-center gap-2 px-3 py-2 text-left text-xs hover:bg-slate-50 dark:hover:bg-neutral-800"
@@ -430,7 +462,7 @@ export function DisciplinaDashboard() {
                             }}
                           >
                             <Pencil className="h-3.5 w-3.5" />
-                            Editar
+                            Renomear
                           </button>
                           <button
                             type="button"
@@ -488,7 +520,28 @@ export function DisciplinaDashboard() {
           </div>
         </div>
       ) : null}
-      <RegistroEstudoModal open={openRegistro} onClose={() => setOpenRegistro(false)} defaultDisciplinaId={disciplinaId} />
+      <RegistroEstudoModal
+        open={openRegistro || Boolean(editSessaoId)}
+        onClose={() => {
+          setOpenRegistro(false);
+          setEditSessaoId(null);
+        }}
+        defaultDisciplinaId={disciplinaId}
+        sessaoId={editSessaoId}
+        onSaved={() => {
+          qc.invalidateQueries({ queryKey: ["topico-sessoes", disciplinaId] });
+        }}
+      />
+      {detalhesTopico && disciplinaId ? (
+        <TopicoDetalhesModal
+          open
+          disciplinaId={disciplinaId}
+          topicoId={detalhesTopico.id}
+          topicoNome={detalhesTopico.descricao}
+          onClose={() => setDetalhesTopico(null)}
+          onEditSessao={(sid) => setEditSessaoId(sid)}
+        />
+      ) : null}
     </div>
   );
 }

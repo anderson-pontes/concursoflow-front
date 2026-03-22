@@ -9,6 +9,7 @@ export type DisciplinaDashboardKpis = {
   topicos_concluidos: number;
   topicos_pendentes: number;
   topicos_total: number;
+  paginas_lidas_total: number;
 };
 
 export type DisciplinaDashboardTopicoRow = {
@@ -21,6 +22,7 @@ export type DisciplinaDashboardTopicoRow = {
   em_branco: number;
   aproveitamento_pct: number;
   tempo_estudo_minutos: number;
+  paginas_lidas: number;
 };
 
 export type DisciplinaDashboardResponse = {

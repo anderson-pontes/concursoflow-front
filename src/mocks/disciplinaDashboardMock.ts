@@ -16,6 +16,7 @@ export function getMockDisciplinaDashboard(disciplinaId: string): DisciplinaDash
       topicos_concluidos: 7,
       topicos_pendentes: 6,
       topicos_total: 13,
+      paginas_lidas_total: 1284,
     },
     topicos: [
       {
@@ -28,6 +29,7 @@ export function getMockDisciplinaDashboard(disciplinaId: string): DisciplinaDash
         em_branco: 2,
         aproveitamento_pct: 84.0,
         tempo_estudo_minutos: 340,
+        paginas_lidas: 120,
       },
       {
         id: "a1000000-0000-4000-8000-000000000002",
@@ -39,6 +41,7 @@ export function getMockDisciplinaDashboard(disciplinaId: string): DisciplinaDash
         em_branco: 0,
         aproveitamento_pct: 76.0,
         tempo_estudo_minutos: 280,
+        paginas_lidas: 98,
       },
       {
         id: "a1000000-0000-4000-8000-000000000003",
@@ -50,6 +53,7 @@ export function getMockDisciplinaDashboard(disciplinaId: string): DisciplinaDash
         em_branco: 3,
         aproveitamento_pct: 83.3,
         tempo_estudo_minutos: 420,
+        paginas_lidas: 142,
       },
       {
         id: "a1000000-0000-4000-8000-000000000004",
@@ -61,6 +65,7 @@ export function getMockDisciplinaDashboard(disciplinaId: string): DisciplinaDash
         em_branco: 1,
         aproveitamento_pct: 84.8,
         tempo_estudo_minutos: 195,
+        paginas_lidas: 72,
       },
       {
         id: "a1000000-0000-4000-8000-000000000005",
@@ -72,6 +77,7 @@ export function getMockDisciplinaDashboard(disciplinaId: string): DisciplinaDash
         em_branco: 0,
         aproveitamento_pct: 73.1,
         tempo_estudo_minutos: 120,
+        paginas_lidas: 55,
       },
       {
         id: "a1000000-0000-4000-8000-000000000006",
@@ -83,6 +89,7 @@ export function getMockDisciplinaDashboard(disciplinaId: string): DisciplinaDash
         em_branco: 2,
         aproveitamento_pct: 90.0,
         tempo_estudo_minutos: 210,
+        paginas_lidas: 88,
       },
       {
         id: "a1000000-0000-4000-8000-000000000007",
@@ -94,6 +101,7 @@ export function getMockDisciplinaDashboard(disciplinaId: string): DisciplinaDash
         em_branco: 1,
         aproveitamento_pct: 66.7,
         tempo_estudo_minutos: 75,
+        paginas_lidas: 34,
       },
       {
         id: "a1000000-0000-4000-8000-000000000008",
@@ -105,6 +113,7 @@ export function getMockDisciplinaDashboard(disciplinaId: string): DisciplinaDash
         em_branco: 0,
         aproveitamento_pct: 0,
         tempo_estudo_minutos: 0,
+        paginas_lidas: 0,
       },
       {
         id: "a1000000-0000-4000-8000-000000000009",
@@ -116,6 +125,7 @@ export function getMockDisciplinaDashboard(disciplinaId: string): DisciplinaDash
         em_branco: 0,
         aproveitamento_pct: 94.3,
         tempo_estudo_minutos: 155,
+        paginas_lidas: 62,
       },
       {
         id: "a1000000-0000-4000-8000-00000000000a",
@@ -127,6 +137,7 @@ export function getMockDisciplinaDashboard(disciplinaId: string): DisciplinaDash
         em_branco: 2,
         aproveitamento_pct: 65.6,
         tempo_estudo_minutos: 180,
+        paginas_lidas: 71,
       },
       {
         id: "a1000000-0000-4000-8000-00000000000b",
@@ -138,6 +149,7 @@ export function getMockDisciplinaDashboard(disciplinaId: string): DisciplinaDash
         em_branco: 1,
         aproveitamento_pct: 78.9,
         tempo_estudo_minutos: 90,
+        paginas_lidas: 40,
       },
       {
         id: "a1000000-0000-4000-8000-00000000000c",
@@ -149,6 +161,7 @@ export function getMockDisciplinaDashboard(disciplinaId: string): DisciplinaDash
         em_branco: 0,
         aproveitamento_pct: 88.9,
         tempo_estudo_minutos: 60,
+        paginas_lidas: 28,
       },
       {
         id: "a1000000-0000-4000-8000-00000000000d",
@@ -160,6 +173,7 @@ export function getMockDisciplinaDashboard(disciplinaId: string): DisciplinaDash
         em_branco: 0,
         aproveitamento_pct: 75.0,
         tempo_estudo_minutos: 45,
+        paginas_lidas: 22,
       },
     ],
   };
