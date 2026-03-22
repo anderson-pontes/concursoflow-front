@@ -12,42 +12,10 @@
       href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=DM+Serif+Display:ital@0;1&family=Fredoka:wght@700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap"
       rel="stylesheet"
     />
-    <script type="module" crossorigin src="/assets/index-D2q5Ldz2.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-BGlvnVpY.css">
+    <script type="module" crossorigin src="/assets/index-CZ7e96J4.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-DQ_94yHb.css">
   </head>
   <body class="min-h-screen bg-background text-foreground">
-    <!-- Filtro global: contorno branco “bubble” na logo raster (logo2.svg) -->
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      style="position: fixed; width: 0; height: 0; overflow: hidden; pointer-events: none"
-      aria-hidden="true"
-      focusable="false"
-    >
-      <defs>
-        <filter
-          id="aprovingoLogoWhiteOutline"
-          color-interpolation-filters="sRGB"
-          x="-40%"
-          y="-40%"
-          width="180%"
-          height="180%"
-        >
-          <!-- Elimina o halo lavanda suave do PNG no alfa antes de dilatar -->
-          <feComponentTransfer in="SourceAlpha" result="alphaCore">
-            <feFuncA type="linear" slope="18" intercept="-1.4" />
-          </feComponentTransfer>
-          <!-- Só o anel: dilatado menos o núcleo (sem “prato” branco por baixo) -->
-          <feMorphology in="alphaCore" operator="dilate" radius="4" result="dilated" />
-          <feComposite in="dilated" in2="alphaCore" operator="out" result="ringMask" />
-          <feFlood flood-color="#ffffff" flood-opacity="1" result="white" />
-          <feComposite in="white" in2="ringMask" operator="in" result="whiteRing" />
-          <feMerge>
-            <feMergeNode in="whiteRing" />
-            <feMergeNode in="SourceGraphic" />
-          </feMerge>
-        </filter>
-      </defs>
-    </svg>
     <div id="root"></div>
   </body>
 </html>

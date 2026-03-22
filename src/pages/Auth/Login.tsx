@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 
+import aprovinhoUrl from "@/assets/aprovinho.svg";
 import { AprovingoLogo } from "@/components/branding/AprovingoLogo";
 import { api } from "@/services/api";
 import { fetchCurrentUser } from "@/services/currentUser";
@@ -76,6 +77,14 @@ export function Login() {
             <p className="text-primary-200 text-sm leading-relaxed">
               Gerencie seus estudos, acompanhe seu progresso e alcance sua meta com mais foco.
             </p>
+            <div className="mt-6 flex w-full max-w-full justify-start">
+              <img
+                src={aprovinhoUrl}
+                alt="Aprovinho"
+                className="h-auto w-full max-w-[min(100%,340px)] object-contain object-left sm:max-w-[min(100%,400px)] lg:max-w-[min(100%,460px)]"
+                decoding="async"
+              />
+            </div>
           </div>
 
           <div className="relative z-10 flex flex-col gap-2.5">

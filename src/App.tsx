@@ -18,6 +18,7 @@ import { Materiais } from "./pages/Materiais";
 import { PlanosPage } from "./pages/Planos";
 import { PlanoDetalhePage } from "./pages/PlanoDetalhe";
 import { AdminEstudos } from "./pages/AdminEstudos";
+import { Perfil } from "./pages/Perfil";
 
 export default function App() {
   const accessToken = useAuthStore((s) => s.accessToken);
@@ -34,6 +35,14 @@ export default function App() {
         element={
           <Layout requireAuth={!isAuthed}>
             <Dashboard />
+          </Layout>
+        }
+      />
+      <Route
+        path="/perfil"
+        element={
+          <Layout requireAuth={!isAuthed}>
+            <Perfil />
           </Layout>
         }
       />
