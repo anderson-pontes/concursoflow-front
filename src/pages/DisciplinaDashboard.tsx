@@ -17,9 +17,10 @@ import {
   X,
 } from "lucide-react";
 import { toast } from "sonner";
-import { RegistroEstudoModal } from "@/components/estudos/RegistroEstudoModal";
+import { RegistroEstudoModal, type RegistroDefaultTopico } from "@/components/estudos/RegistroEstudoModal";
 import { TopicoDetalhesModal } from "@/components/estudos/TopicoDetalhesModal";
 
+import { TopicosModal } from "@/components/disciplinas/TopicosModal";
 import { api } from "@/services/api";
 import { cn } from "@/lib/utils";
 import { getMockDisciplinaDashboard } from "@/mocks/disciplinaDashboardMock";
@@ -80,9 +81,10 @@ export function DisciplinaDashboard() {
     });
   }, []);
 
-  const [novoTopico, setNovoTopico] = React.useState("");
+  const [topicosModalOpen, setTopicosModalOpen] = React.useState(false);
   const [openRegistro, setOpenRegistro] = React.useState(false);
   const [editSessaoId, setEditSessaoId] = React.useState<string | null>(null);
+  const [registroTopicosPrefill, setRegistroTopicosPrefill] = React.useState<RegistroDefaultTopico[] | null>(null);
   const [detalhesTopico, setDetalhesTopico] = React.useState<{ id: string; descricao: string } | null>(null);
   const [editing, setEditing] = React.useState<{ id: string; descricao: string } | null>(null);
   const [menuRow, setMenuRow] = React.useState<string | null>(null);
@@ -120,28 +122,33 @@ export function DisciplinaDashboard() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["disciplina-dashboard", disciplinaId] });
       qc.invalidateQueries({ queryKey: ["topicos", disciplinaId] });
+      qc.invalidateQueries({ queryKey: ["disciplinas"] });
     },
     onError: (err) => {
       if (err instanceof Error && err.message === "DEMO_MODE") demoToast();
     },
   });
 
-  const criarTopico = useMutation({
-    mutationFn: async (descricao: string) => {
+  const criarTopicos = useMutation({
+    mutationFn: async (descricoes: string[]) => {
       if (isDemoMode) {
         throw new Error("DEMO_MODE");
       }
-      await api.post(`/disciplinas/${disciplinaId}/topicos`, {
-        descricao,
-        status: "nao_iniciado",
-        numero_ordem: 0,
-      });
+      for (const descricao of descricoes) {
+        await api.post(`/disciplinas/${disciplinaId}/topicos`, {
+          descricao,
+          status: "nao_iniciado",
+          numero_ordem: 0,
+        });
+      }
     },
-    onSuccess: () => {
+    onSuccess: (_, descricoes) => {
       qc.invalidateQueries({ queryKey: ["disciplina-dashboard", disciplinaId] });
       qc.invalidateQueries({ queryKey: ["topicos", disciplinaId] });
-      setNovoTopico("");
-      toast.success("Tópico criado.");
+      qc.invalidateQueries({ queryKey: ["disciplinas"] });
+      toast.success(
+        descricoes.length > 1 ? `${descricoes.length} tópicos criados.` : "Tópico criado.",
+      );
     },
     onError: (err) => {
       if (err instanceof Error && err.message === "DEMO_MODE") demoToast();
@@ -158,6 +165,7 @@ export function DisciplinaDashboard() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["disciplina-dashboard", disciplinaId] });
       qc.invalidateQueries({ queryKey: ["topicos", disciplinaId] });
+      qc.invalidateQueries({ queryKey: ["disciplinas"] });
       setEditing(null);
       toast.success("Tópico atualizado.");
     },
@@ -176,6 +184,7 @@ export function DisciplinaDashboard() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["disciplina-dashboard", disciplinaId] });
       qc.invalidateQueries({ queryKey: ["topicos", disciplinaId] });
+      qc.invalidateQueries({ queryKey: ["disciplinas"] });
       toast.success("Tópico removido.");
     },
     onError: (err) => {
@@ -211,7 +220,10 @@ export function DisciplinaDashboard() {
         </div>
         <button
           type="button"
-          onClick={() => setOpenRegistro(true)}
+          onClick={() => {
+            setRegistroTopicosPrefill(null);
+            setOpenRegistro(true);
+          }}
           className="inline-flex items-center justify-center rounded-lg bg-primary-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-primary-700 focus-visible:outline focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-900"
         >
           Adicionar Estudo
@@ -305,39 +317,33 @@ export function DisciplinaDashboard() {
         </div>
 
         <div className="border-b border-slate-100 p-4 dark:border-neutral-800">
-          <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-            <input
-              className={cn(
-                "h-10 flex-1 rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm outline-none transition",
-                "focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 dark:border-neutral-600 dark:bg-neutral-900 dark:text-neutral-100",
-                isDemoMode && "cursor-not-allowed opacity-60",
-              )}
-              placeholder="Novo tópico (ex.: Impostos Municipais)"
-              value={novoTopico}
-              disabled={isDemoMode}
-              onChange={(e) => setNovoTopico(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  e.preventDefault();
-                  const t = novoTopico.trim();
-                  if (t && !isDemoMode) criarTopico.mutate(t);
-                }
-              }}
-            />
-            <button
-              type="button"
-              disabled={!novoTopico.trim() || criarTopico.isPending || isDemoMode}
-              onClick={() => {
-                const t = novoTopico.trim();
-                if (t && !isDemoMode) criarTopico.mutate(t);
-              }}
-              className="inline-flex h-10 shrink-0 items-center justify-center gap-1.5 rounded-lg bg-primary-600 px-4 text-sm font-semibold text-white hover:bg-primary-700 disabled:opacity-50"
-            >
-              <Plus className="h-4 w-4" />
-              Criar
-            </button>
-          </div>
+          <button
+            type="button"
+            disabled={isDemoMode}
+            onClick={() => setTopicosModalOpen(true)}
+            className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-primary-700 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            <Plus className="h-4 w-4" />
+            Adicionar tópicos
+          </button>
+          <p className="mt-2 text-xs text-slate-500 dark:text-neutral-500">
+            Adicione um ou vários tópicos de uma vez; no modal, cada linha vira um tópico.
+          </p>
         </div>
+
+        <TopicosModal
+          open={topicosModalOpen}
+          onClose={() => setTopicosModalOpen(false)}
+          disciplinaId={disciplinaId}
+          disabled={isDemoMode}
+          onSave={async (topicos) => {
+            if (isDemoMode) {
+              demoToast();
+              throw new Error("DEMO_MODE");
+            }
+            await criarTopicos.mutateAsync(topicos);
+          }}
+        />
 
         <div className="overflow-x-auto">
           <table className="w-full min-w-[940px] border-collapse text-left text-sm">
@@ -451,7 +457,19 @@ export function DisciplinaDashboard() {
                             }}
                           >
                             <Eye className="h-3.5 w-3.5" />
-                            Ver detalhes
+                            Ver registros de estudo
+                          </button>
+                          <button
+                            type="button"
+                            className="flex w-full items-center gap-2 px-3 py-2 text-left text-xs hover:bg-slate-50 dark:hover:bg-neutral-800"
+                            onClick={() => {
+                              setMenuRow(null);
+                              setRegistroTopicosPrefill([{ id: row.id, nome: row.descricao }]);
+                              setOpenRegistro(true);
+                            }}
+                          >
+                            <Plus className="h-3.5 w-3.5" />
+                            Novo registro neste tópico
                           </button>
                           <button
                             type="button"
@@ -525,11 +543,14 @@ export function DisciplinaDashboard() {
         onClose={() => {
           setOpenRegistro(false);
           setEditSessaoId(null);
+          setRegistroTopicosPrefill(null);
         }}
         defaultDisciplinaId={disciplinaId}
+        defaultTopicos={editSessaoId ? null : registroTopicosPrefill}
         sessaoId={editSessaoId}
         onSaved={() => {
           qc.invalidateQueries({ queryKey: ["topico-sessoes", disciplinaId] });
+          qc.invalidateQueries({ queryKey: ["disciplina-dashboard", disciplinaId] });
         }}
       />
       {detalhesTopico && disciplinaId ? (

@@ -12,10 +12,20 @@ import { createCategoria, listCategorias } from "@/services/categorias";
 import { getRevisoesConfig } from "@/services/revisoesConfig";
 import { usePlanoAtivo, usePlanoStore } from "@/stores/planoStore";
 
+export type RegistroDefaultTopico = { id: string; nome: string };
+
 type Props = {
   open: boolean;
   onClose: () => void;
   defaultDisciplinaId?: string | null;
+  /** Tópicos pré-selecionados ao abrir um registro novo (sem sessaoId). */
+  defaultTopicos?: RegistroDefaultTopico[] | null;
+  /** Duração em segundos pré-preenchida (vinda do timer). Ignorada ao editar sessão existente. */
+  defaultDuracaoSegundos?: number | null;
+  /** Questões pré-preenchidas do timer. Ignoradas ao editar sessão existente. */
+  defaultAcertos?: number | null;
+  defaultErros?: number | null;
+  defaultBranco?: number | null;
   /** Quando definido, o modal carrega a sessão e salva com PATCH. */
   sessaoId?: string | null;
   onSaved?: () => void;
@@ -102,7 +112,29 @@ function TimeSegment({ label, value, onInc, onDec }: TimeSegmentProps) {
   );
 }
 
-export function RegistroEstudoModal({ open, onClose, defaultDisciplinaId, sessaoId, onSaved }: Props) {
+function dedupeTopicosPorId(rows: RegistroDefaultTopico[]): TopicoOpt[] {
+  const seen = new Set<string>();
+  const out: TopicoOpt[] = [];
+  for (const t of rows) {
+    if (!t.id || seen.has(t.id)) continue;
+    seen.add(t.id);
+    out.push({ id: t.id, nome: t.nome });
+  }
+  return out;
+}
+
+export function RegistroEstudoModal({
+  open,
+  onClose,
+  defaultDisciplinaId,
+  defaultTopicos,
+  defaultDuracaoSegundos,
+  defaultAcertos,
+  defaultErros,
+  defaultBranco,
+  sessaoId,
+  onSaved,
+}: Props) {
   const qc = useQueryClient();
   const planoAtivo = usePlanoAtivo();
   const listarPlanoDisciplinas = usePlanoStore((s) => s.listarPlanoDisciplinas);
@@ -138,28 +170,34 @@ export function RegistroEstudoModal({ open, onClose, defaultDisciplinaId, sessao
 
   const tempoDisplay = React.useMemo(() => fmtHms(hours, minutes, seconds), [hours, minutes, seconds]);
 
+  const defaultTopicosSignature = (defaultTopicos ?? [])
+    .map((t) => `${t.id}:${t.nome}`)
+    .sort()
+    .join(";");
+
   React.useEffect(() => {
     if (!open) return;
     if (sessaoId) return;
-    setHours(0);
-    setMinutes(25);
-    setSeconds(0);
-    setSelectedTopicos([]);
+    const totalSeg = defaultDuracaoSegundos ?? 0;
+    setHours(Math.floor(totalSeg / 3600));
+    setMinutes(totalSeg > 0 ? Math.floor((totalSeg % 3600) / 60) : 25);
+    setSeconds(totalSeg > 0 ? totalSeg % 60 : 0);
+    setSelectedTopicos(dedupeTopicosPorId(defaultTopicos ?? []));
     setTopicoBusca("");
     setMaterial("");
     setComentarios("");
     setTeoriaFinalizada(false);
     setContabilizar(true);
     setProgramarRevisoes(false);
-    setAcertos(0);
-    setErros(0);
-    setBranco(0);
+    setAcertos(defaultAcertos ?? 0);
+    setErros(defaultErros ?? 0);
+    setBranco(defaultBranco ?? 0);
     setPaginas([{ inicio: "", fim: "" }]);
     setSaveAndNew(false);
     setDisciplinaId(defaultDisciplinaId ?? "");
     setDateKind("hoje");
     setDateCustom(new Date().toISOString().slice(0, 10));
-  }, [open, sessaoId, defaultDisciplinaId]);
+  }, [open, sessaoId, defaultDisciplinaId, defaultTopicosSignature, defaultDuracaoSegundos, defaultAcertos, defaultErros, defaultBranco]);
 
   React.useEffect(() => {
     if (!open) return;
@@ -287,10 +325,11 @@ export function RegistroEstudoModal({ open, onClose, defaultDisciplinaId, sessao
 
   const listaTopicosCheckbox = React.useMemo(() => {
     const list = topicos ?? [];
-    const showAll = programarRevisoes || acertos > 0 || erros > 0 || branco > 0;
-    if (showAll) return list;
+    const nomeCategoria = categorias?.find((c) => c.id === categoriaId)?.nome?.trim().toLowerCase();
+    const isCategoriaTeoria = nomeCategoria === "teoria";
+    if (!isCategoriaTeoria) return list;
     return list.filter((t) => t.status !== "dominado");
-  }, [topicos, programarRevisoes, acertos, erros, branco]);
+  }, [topicos, categorias, categoriaId]);
 
   const filteredTopicos = React.useMemo(() => {
     const term = topicoBusca.trim().toLowerCase();
@@ -569,8 +608,7 @@ export function RegistroEstudoModal({ open, onClose, defaultDisciplinaId, sessao
           <section className="rounded-xl border-[0.5px] border-slate-200/90 bg-white p-3 dark:border-neutral-800 dark:bg-neutral-900/50">
             <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-neutral-400">Tópicos estudados</p>
             <p className="mt-1 text-[11px] leading-snug text-slate-500 dark:text-neutral-500">
-              Tópicos já concluídos no edital ficam ocultos aqui, exceto se você marcar &quot;Programar revisões&quot; ou preencher questões
-              (certas/erradas/branco) — aí todos aparecem para revisão ou registro de desempenho.
+              Com a categoria Teoria, só aparecem tópicos ainda não finalizados (não dominados). Nas outras categorias, todos os tópicos da disciplina ficam visíveis, incluindo os já concluídos.
             </p>
 
             <div className="mt-2 rounded-lg border-[0.5px] border-slate-300 px-3 py-2 dark:border-neutral-700">

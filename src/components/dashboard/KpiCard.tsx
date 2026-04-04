@@ -21,11 +21,11 @@ export function KpiCard({
   return (
     <div className="rounded-xl border border-neutral-200 bg-white p-4 dark:border-neutral-700 dark:bg-neutral-800">
       <div className="mb-2 flex items-center gap-1.5 text-[11px] text-neutral-400">
-        <BarChart3 className="h-3.5 w-3.5" />
-        {label}
+        <BarChart3 className="h-3.5 w-3.5 shrink-0" />
+        <span className="truncate">{label}</span>
       </div>
-      <div className="mb-0.5 text-2xl font-medium text-neutral-800 dark:text-neutral-100">{value}</div>
-      <div className="text-[11px] text-neutral-400">{sub}</div>
+      <div className="mb-0.5 min-w-0 truncate text-2xl font-medium text-neutral-800 dark:text-neutral-100">{value}</div>
+      <div className="min-w-0 truncate text-[11px] text-neutral-400">{sub}</div>
 
       {progress !== undefined ? (
         <div className="mt-2.5 h-1 overflow-hidden rounded-full bg-neutral-100">

@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-export type PomodoroMode = "pomodoro" | "livre";
+export type PomodoroMode = "pomodoro" | "livre" | "cronometro";
 
 type PomodoroState = {
   mode: PomodoroMode;
@@ -10,10 +10,12 @@ type PomodoroState = {
   cyclesTarget: number;
 
   disciplinaId: string | null;
+  topicoId: string | null;
 
   setMode: (mode: PomodoroMode) => void;
   setDisciplinaId: (id: string | null) => void;
-  setConfig: (cfg: Partial<Omit<PomodoroState, "setMode" | "setDisciplinaId" | "setConfig">>) => void;
+  setTopicoId: (id: string | null) => void;
+  setConfig: (cfg: Partial<Omit<PomodoroState, "setMode" | "setDisciplinaId" | "setTopicoId" | "setConfig">>) => void;
 };
 
 export const usePomodoroStore = create<PomodoroState>((set) => ({
@@ -24,13 +26,14 @@ export const usePomodoroStore = create<PomodoroState>((set) => ({
   cyclesTarget: 4,
 
   disciplinaId: null,
+  topicoId: null,
 
   setMode: (mode) => set({ mode }),
   setDisciplinaId: (disciplinaId) => set({ disciplinaId }),
+  setTopicoId: (topicoId) => set({ topicoId }),
   setConfig: (cfg) =>
     set((s) => ({
       ...s,
       ...cfg,
     })),
 }));
-

@@ -1,13 +1,22 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Aprovingo">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="Aprovingo">
   <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#4F46E5" />
-      <stop offset="100%" stop-color="#4338CA" />
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6366F1"/>
+      <stop offset="50%" stop-color="#4F46E5"/>
+      <stop offset="100%" stop-color="#3730A3"/>
+    </linearGradient>
+    <linearGradient id="bk" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FCD34D"/>
+      <stop offset="100%" stop-color="#F59E0B"/>
     </linearGradient>
   </defs>
-  <rect x="4" y="4" width="56" height="56" rx="14" fill="url(#bg)" />
-  <path d="M32 16 14 25.5 32 35l18-9.5L32 16Z" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
-  <path d="M20 33v8.5c0 3.2 5.4 5.5 12 5.5s12-2.3 12-5.5V33" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
-  <circle cx="50.5" cy="45.5" r="8.5" fill="#10B981" />
-  <path d="m46.5 45.5 2.8 2.8 5-5" fill="none" stroke="#FFFFFF" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" />
+  <rect width="32" height="32" rx="9" fill="url(#bg)"/>
+  <!-- Arara estilizada (formas largas = legível em favicon pequeno) -->
+  <path fill="#F8FAFC" d="M15.2 7.5c-3.6 0-6.6 2.4-7.4 5.7-.5 2.1.1 4.2 1.4 5.7-.9.4-1.7 1.1-2.2 2-.9 1.7-.4 3.8 1.1 4.8 1.3.9 3 .7 4.3-.3.8 1.1 2.2 1.8 3.6 1.8s2.8-.7 3.6-1.8c1.3 1 3 1.2 4.3.3 1.5-1 2-3.1 1.1-4.8-.5-.9-1.3-1.6-2.2-2 1.3-1.5 1.9-3.6 1.4-5.7-.8-3.3-3.8-5.7-7.4-5.7h-.2Z"/>
+  <path fill="url(#bk)" d="M19 11.5 25 14l-5 3.5c-.4.3-1 .1-1.2-.4l-1.2-3 1.4-2.6Z"/>
+  <circle cx="13.5" cy="13" r="1.6" fill="#1E1B4B"/>
+  <circle cx="13.8" cy="12.6" r="0.5" fill="#F8FAFC"/>
+  <!-- Aprovação -->
+  <circle cx="24" cy="24" r="6" fill="#10B981"/>
+  <path fill="none" stroke="#ECFDF5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="m21.2 24 1.8 1.8 3.8-3.8"/>
 </svg>

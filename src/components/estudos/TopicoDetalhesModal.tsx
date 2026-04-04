@@ -5,6 +5,8 @@ import { useQuery } from "@tanstack/react-query";
 
 import { api } from "@/services/api";
 
+export type VideoaulaBlocoResumo = { titulo: string; inicio: string; fim: string };
+
 export type SessaoTopicoResumo = {
   id: string;
   inicio: string;
@@ -17,6 +19,7 @@ export type SessaoTopicoResumo = {
   questoes_erros: number;
   questoes_em_branco: number;
   paginas_blocos: { inicio: number; fim: number }[];
+  videoaulas_blocos?: VideoaulaBlocoResumo[];
   teoria_finalizada: boolean;
   tipo: string;
   data_referencia: string | null;
@@ -51,6 +54,15 @@ function fmtMinutos(m: number) {
   const h = Math.floor(m / 60);
   const r = m % 60;
   return r ? `${h}h ${r}min` : `${h}h`;
+}
+
+function fmtDuracaoSegundos(total: number) {
+  if (total <= 0) return "—";
+  const h = Math.floor(total / 3600);
+  const m = Math.floor((total % 3600) / 60);
+  const s = total % 60;
+  if (h > 0) return `${h}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+  return `${m}:${String(s).padStart(2, "0")}`;
 }
 
 function QuestoesBar({ certas, erradas, branco }: { certas: number; erradas: number; branco: number }) {
@@ -187,14 +199,23 @@ export function TopicoDetalhesModal({ open, disciplinaId, topicoId, topicoNome, 
                   >
                     <div className="flex items-start justify-between gap-3 border-b border-border/80 bg-muted/50 px-4 py-3 dark:bg-neutral-800/40">
                       <div className="font-dm min-w-0">
-                        <p className="text-[11px] font-medium text-muted-foreground">{fmtData(s.inicio)}</p>
+                        <p className="text-[11px] font-medium text-muted-foreground">Início {fmtData(s.inicio)}</p>
+                        {s.fim ? (
+                          <p className="mt-0.5 text-[11px] text-muted-foreground">Fim {fmtData(s.fim)}</p>
+                        ) : null}
                         {s.data_referencia ? (
                           <p className="mt-0.5 text-[11px] text-muted-foreground">Ref. {s.data_referencia}</p>
                         ) : null}
+                        <p className="mt-0.5 text-[11px] text-muted-foreground">
+                          Tipo {s.tipo?.trim() ? s.tipo : "—"}
+                        </p>
                       </div>
                       <button
                         type="button"
-                        onClick={() => onEditSessao(s.id)}
+                        onClick={() => {
+                          onClose();
+                          onEditSessao(s.id);
+                        }}
                         className="font-dm inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-border bg-card px-3 py-1.5 text-xs font-medium text-foreground transition hover:bg-muted"
                       >
                         <Pencil className="h-3.5 w-3.5 text-muted-foreground" />
@@ -208,6 +229,11 @@ export function TopicoDetalhesModal({ open, disciplinaId, topicoId, topicoNome, 
                         <span className="font-dm text-2xl font-semibold tabular-nums tracking-tight text-foreground">
                           {fmtMinutos(s.duracao_minutos)}
                         </span>
+                        {s.tempo_estudo_segundos > 0 ? (
+                          <span className="font-dm text-xs text-muted-foreground">
+                            (cronômetro {fmtDuracaoSegundos(s.tempo_estudo_segundos)})
+                          </span>
+                        ) : null}
                         {s.teoria_finalizada ? (
                           <span className="font-dm ml-1 inline-flex items-center rounded-full bg-success-50 px-2.5 py-0.5 text-[11px] font-semibold text-success-800 dark:bg-success-800/35 dark:text-success-100">
                             Teoria finalizada
@@ -235,6 +261,27 @@ export function TopicoDetalhesModal({ open, disciplinaId, topicoId, topicoNome, 
                             </span>
                           ))}
                         </p>
+                      ) : null}
+
+                      {s.videoaulas_blocos && s.videoaulas_blocos.length > 0 ? (
+                        <div className="font-dm mt-3">
+                          <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                            Videoaulas
+                          </p>
+                          <ul className="mt-1.5 list-inside list-disc space-y-1 text-xs text-muted-foreground">
+                            {s.videoaulas_blocos.map((v, i) => (
+                              <li key={i}>
+                                <span className="text-foreground">{v.titulo || "Sem título"}</span>
+                                {v.inicio || v.fim ? (
+                                  <span className="text-muted-foreground">
+                                    {" "}
+                                    ({v.inicio || "—"} – {v.fim || "—"})
+                                  </span>
+                                ) : null}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
                       ) : null}
 
                       {s.programar_revisoes && s.revisoes_dias?.length ? (
