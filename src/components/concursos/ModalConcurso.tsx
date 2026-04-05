@@ -1,5 +1,5 @@
 import React from "react";
-import { FileText, ImageIcon, X } from "lucide-react";
+import { FileText, ImageIcon } from "lucide-react";
 
 import { CreatableSelect } from "@/components/concursos/CreatableSelect";
 import { FileDropZone } from "@/components/concursos/FileDropZone";
@@ -38,12 +38,57 @@ type ModalConcursoProps = {
   bancaSuggestions: string[];
 };
 
-const statusOptions: { value: string; label: string }[] = [
-  { value: "ativo", label: "Ativo" },
-  { value: "suspenso", label: "Suspenso" },
-  { value: "realizado", label: "Realizado" },
-  { value: "eliminado", label: "Eliminado" },
-];
+function isEncerradoStatus(s: string | null) {
+  return s === "realizado" || s === "eliminado";
+}
+
+function FloatingInput({
+  id,
+  label,
+  value,
+  onChange,
+  required,
+  optional,
+  disabled,
+}: {
+  id: string;
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  required?: boolean;
+  optional?: boolean;
+  disabled?: boolean;
+}) {
+  return (
+    <div className="relative">
+      <input
+        id={id}
+        type="text"
+        value={value}
+        disabled={disabled}
+        placeholder=" "
+        onChange={(e) => onChange(e.target.value)}
+        className={cn(
+          "peer h-14 w-full rounded-[10px] border-[1.5px] border-[#E5E7EB] bg-white px-4 pb-2.5 pt-5 text-sm text-[#1A1A2E] outline-none transition",
+          "placeholder:text-transparent focus:border-[#6C3FC5] focus:shadow-[0_0_0_3px_#EDE9FE]",
+          "disabled:cursor-not-allowed disabled:opacity-50",
+        )}
+      />
+      <label
+        htmlFor={id}
+        className={cn(
+          "pointer-events-none absolute left-4 top-1/2 origin-left -translate-y-1/2 text-sm text-[#9CA3AF] transition-all duration-200",
+          "peer-focus:top-3 peer-focus:translate-y-0 peer-focus:text-[11px] peer-focus:font-medium peer-focus:text-[#6C3FC5]",
+          "peer-[:not(:placeholder-shown)]:top-3 peer-[:not(:placeholder-shown)]:translate-y-0 peer-[:not(:placeholder-shown)]:text-[11px] peer-[:not(:placeholder-shown)]:font-medium",
+        )}
+      >
+        {label}
+        {required ? <span className="text-[#EF4444]"> *</span> : null}
+        {optional ? <span className="font-normal text-[#9CA3AF]"> (opcional)</span> : null}
+      </label>
+    </div>
+  );
+}
 
 export function ModalConcurso({
   open,
@@ -59,38 +104,49 @@ export function ModalConcurso({
   if (!open) return null;
 
   const isEdit = Boolean(editing);
+  const encerradoTab = isEncerradoStatus(input.status);
+
+  const modalShadow = "0 24px 64px rgba(0,0,0,0.18)";
 
   return (
     <div
-      className="fixed inset-0 z-[140] flex items-center justify-center bg-slate-900/50 p-4 backdrop-blur-[2px] dark:bg-black/60"
+      className="fixed inset-0 z-[140] flex items-end justify-center bg-black/45 p-0 backdrop-blur-[4px] sm:items-center sm:p-4"
       role="dialog"
       aria-modal="true"
       aria-labelledby="modal-concurso-title"
       onMouseDown={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
+      style={{ fontFamily: "Inter, system-ui, sans-serif" }}
     >
       <div
         className={cn(
-          "relative flex max-h-[min(92vh,900px)] w-full max-w-xl flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xl",
-          "dark:border-neutral-700 dark:bg-neutral-950",
+          "flex max-h-[92vh] w-full max-w-[680px] flex-col overflow-hidden bg-white",
+          "max-sm:min-h-[100dvh] max-sm:rounded-none sm:max-h-[92vh] sm:rounded-[20px]",
         )}
+        style={{ boxShadow: modalShadow }}
       >
-        <button
-          type="button"
-          onClick={onClose}
-          className="absolute right-3 top-3 z-10 rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-700 dark:hover:bg-neutral-800 dark:hover:text-neutral-200"
-          aria-label="Fechar"
-        >
-          <X className="h-5 w-5" />
-        </button>
-
-        <div className="border-b border-slate-100 px-6 pb-4 pt-6 pr-14 dark:border-neutral-800">
-          <h2 id="modal-concurso-title" className="text-lg font-semibold tracking-tight text-slate-900 dark:text-neutral-50">
-            {isEdit ? "Editar concurso" : "Novo concurso"}
-          </h2>
-          <p className="mt-1 text-sm text-slate-500 dark:text-neutral-400">Preencha os dados abaixo</p>
-        </div>
+        <header className="relative shrink-0 border-b border-[#F3F4F6] px-6 pb-4 pt-6 pr-14">
+          <button
+            type="button"
+            onClick={onClose}
+            className="absolute right-3 top-3 rounded-lg p-2 text-2xl leading-none text-[#9CA3AF] transition-colors duration-200 hover:bg-[#F9FAFB] hover:text-[#1A1A2E]"
+            aria-label="Fechar"
+          >
+            ×
+          </button>
+          <div className="flex items-start gap-3">
+            <span className="text-2xl leading-none" aria-hidden>
+              🏆
+            </span>
+            <div>
+              <h2 id="modal-concurso-title" className="text-[20px] font-bold text-[#1A1A2E]">
+                {isEdit ? "Editar concurso" : "Novo concurso"}
+              </h2>
+              <p className="mt-1 text-sm text-[#6B7280]">Preencha os dados do concurso que você está preparando</p>
+            </div>
+          </div>
+        </header>
 
         <form
           className="flex min-h-0 flex-1 flex-col"
@@ -99,157 +155,160 @@ export function ModalConcurso({
             onSubmit();
           }}
         >
-          <div className="min-h-0 flex-1 overflow-y-auto px-6 py-5">
-            <div className="space-y-5">
-              <div>
-                <label htmlFor="concurso-nome" className="mb-1.5 block text-xs font-medium text-slate-600 dark:text-neutral-400">
-                  Nome
-                </label>
-                <input
-                  id="concurso-nome"
-                  required
-                  value={input.nome}
-                  onChange={(e) => setInput((s) => ({ ...s, nome: e.target.value }))}
-                  className={cn(
-                    "h-10 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900 shadow-sm outline-none transition",
-                    "placeholder:text-slate-400 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20",
-                    "dark:border-neutral-600 dark:bg-neutral-900 dark:text-neutral-100 dark:focus:border-primary-400 dark:focus:ring-primary-400/20",
-                  )}
-                  placeholder="Ex.: Analista — CGU 2025"
-                />
-              </div>
+          <div className="min-h-0 flex-1 overflow-y-auto px-7 py-7">
+            <div className="space-y-8">
+              <section>
+                <p className="mb-4 text-[12px] font-medium uppercase tracking-[1px] text-[#9CA3AF]">📋 Identificação</p>
+                <div className="space-y-4">
+                  <FloatingInput
+                    id="concurso-nome"
+                    label="Nome do concurso"
+                    required
+                    value={input.nome}
+                    disabled={isPending}
+                    onChange={(v) => setInput((s) => ({ ...s, nome: v }))}
+                  />
 
-              <div className="grid gap-4 sm:grid-cols-2">
-                <CreatableSelect
-                  id="concurso-orgao"
-                  label="Órgão"
-                  value={input.orgao}
-                  onChange={(v) => setInput((s) => ({ ...s, orgao: v }))}
-                  suggestions={orgaoSuggestions}
-                  placeholder="Ex.: CGU, SEFAZ…"
-                />
-                <div>
-                  <label
-                    htmlFor="concurso-status"
-                    className="mb-1.5 block text-xs font-medium text-slate-600 dark:text-neutral-400"
-                  >
-                    Status
-                  </label>
-                  <div className="relative">
-                    <select
-                      id="concurso-status"
-                      value={input.status ?? "ativo"}
-                      onChange={(e) => setInput((s) => ({ ...s, status: e.target.value }))}
-                      className={cn(
-                        "h-10 w-full cursor-pointer appearance-none rounded-lg border border-slate-200 bg-white px-3 py-2 pr-9 text-sm text-slate-900 shadow-sm outline-none transition",
-                        "focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20",
-                        "dark:border-neutral-600 dark:bg-neutral-900 dark:text-neutral-100 dark:focus:border-primary-400",
-                      )}
-                    >
-                      {statusOptions.map((o) => (
-                        <option key={o.value} value={o.value}>
-                          {o.label}
-                        </option>
-                      ))}
-                    </select>
-                    <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-neutral-500">
-                      ▾
-                    </span>
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <CreatableSelect
+                      id="concurso-orgao"
+                      label="Órgão"
+                      required
+                      appearance="aprov"
+                      value={input.orgao}
+                      onChange={(v) => setInput((s) => ({ ...s, orgao: v }))}
+                      suggestions={orgaoSuggestions}
+                      placeholder="Ex.: CGU, SEFAZ…"
+                      disabled={isPending}
+                    />
+                    <div>
+                      <span className="mb-1.5 block text-xs font-medium text-[#6B7280]">Status</span>
+                      <div className="flex rounded-[10px] bg-[#F3F4F6] p-1">
+                        <button
+                          type="button"
+                          disabled={isPending}
+                          onClick={() => setInput((s) => ({ ...s, status: "ativo" }))}
+                          className={cn(
+                            "flex-1 rounded-lg py-2.5 text-sm font-semibold transition-all duration-200",
+                            !encerradoTab
+                              ? "bg-white text-[#6C3FC5] shadow-[0_1px_4px_rgba(0,0,0,0.12)]"
+                              : "bg-transparent text-[#6B7280]",
+                          )}
+                        >
+                          Ativo
+                        </button>
+                        <button
+                          type="button"
+                          disabled={isPending}
+                          onClick={() => setInput((s) => ({ ...s, status: "realizado" }))}
+                          className={cn(
+                            "flex-1 rounded-lg py-2.5 text-sm font-semibold transition-all duration-200",
+                            encerradoTab
+                              ? "bg-white text-[#6C3FC5] shadow-[0_1px_4px_rgba(0,0,0,0.12)]"
+                              : "bg-transparent text-[#6B7280]",
+                          )}
+                        >
+                          Encerrado
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <FloatingInput
+                      id="concurso-cargo"
+                      label="Cargo"
+                      optional
+                      value={input.cargo ?? ""}
+                      disabled={isPending}
+                      onChange={(v) => setInput((s) => ({ ...s, cargo: v || null }))}
+                    />
+                    <CreatableSelect
+                      id="concurso-banca"
+                      label="Banca"
+                      optional
+                      appearance="aprov"
+                      value={input.banca ?? ""}
+                      onChange={(v) => setInput((s) => ({ ...s, banca: v || null }))}
+                      suggestions={bancaSuggestions}
+                      placeholder="Ex.: Cespe, FGV…"
+                      disabled={isPending}
+                    />
                   </div>
                 </div>
-              </div>
+              </section>
 
-              <div className="grid gap-4 sm:grid-cols-2">
-                <div>
-                  <label htmlFor="concurso-cargo" className="mb-1.5 block text-xs font-medium text-slate-600 dark:text-neutral-400">
-                    Cargo <span className="font-normal text-slate-400">(opcional)</span>
-                  </label>
-                  <input
-                    id="concurso-cargo"
-                    value={input.cargo ?? ""}
-                    onChange={(e) => setInput((s) => ({ ...s, cargo: e.target.value || null }))}
-                    className={cn(
-                      "h-10 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900 shadow-sm outline-none transition",
-                      "focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20",
-                      "dark:border-neutral-600 dark:bg-neutral-900 dark:text-neutral-100",
-                    )}
-                    placeholder="Ex.: Analista de TI"
-                  />
+              <section>
+                <p className="mb-4 text-[12px] font-medium uppercase tracking-[1px] text-[#9CA3AF]">📎 Documentos (opcional)</p>
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div>
+                    <FileDropZone
+                      id="concurso-logo"
+                      label=""
+                      description="Logo do órgão"
+                      hint="PNG, JPG até 2MB"
+                      accept="image/png,image/jpeg,image/webp,image/svg+xml,image/*"
+                      file={input.logo_file}
+                      onFileChange={(f) => setInput((s) => ({ ...s, logo_file: f }))}
+                      icon={ImageIcon}
+                      disabled={isPending}
+                      variant="aprov"
+                      leading="🖼️"
+                    />
+                    {isEdit && editing?.logo_url && !input.logo_file ? (
+                      <p className="mt-2 text-xs text-[#9CA3AF]">Logo atual mantida. Envie um novo arquivo para substituir.</p>
+                    ) : null}
+                  </div>
+                  <div>
+                    <FileDropZone
+                      id="concurso-edital"
+                      label=""
+                      description="Edital em PDF"
+                      hint="PDF até 50MB"
+                      accept=".pdf,application/pdf,image/png,image/jpeg,image/webp,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                      file={input.edital_file}
+                      onFileChange={(f) => setInput((s) => ({ ...s, edital_file: f }))}
+                      icon={FileText}
+                      disabled={isPending}
+                      variant="aprov"
+                      leading="📄"
+                    />
+                    {isEdit && editing?.edital_url && !input.edital_file ? (
+                      <p className="mt-2 text-xs text-[#9CA3AF]">Edital atual mantido. Envie um novo arquivo para substituir.</p>
+                    ) : null}
+                  </div>
                 </div>
-                <CreatableSelect
-                  id="concurso-banca"
-                  label="Banca"
-                  optional
-                  value={input.banca ?? ""}
-                  onChange={(v) => setInput((s) => ({ ...s, banca: v || null }))}
-                  suggestions={bancaSuggestions}
-                  placeholder="Ex.: Cespe, FGV…"
-                />
-              </div>
-
-              <div className="grid gap-4 sm:grid-cols-2">
-                <div>
-                  <FileDropZone
-                    id="concurso-logo"
-                    label="Upload da logo (opcional)"
-                    description="Logo do órgão"
-                    accept="image/png,image/jpeg,image/webp,image/svg+xml,image/*"
-                    file={input.logo_file}
-                    onFileChange={(f) => setInput((s) => ({ ...s, logo_file: f }))}
-                    icon={ImageIcon}
-                    disabled={isPending}
-                  />
-                  {isEdit && editing?.logo_url && !input.logo_file ? (
-                    <p className="mt-2 text-xs text-slate-500 dark:text-neutral-400">
-                      Logo atual mantida. Envie um novo arquivo para substituir.
-                    </p>
-                  ) : null}
-                </div>
-                <div>
-                  <FileDropZone
-                    id="concurso-edital"
-                    label="Upload do edital (opcional)"
-                    description="PDF ou documento"
-                    accept=".pdf,application/pdf,image/png,image/jpeg,image/webp,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                    file={input.edital_file}
-                    onFileChange={(f) => setInput((s) => ({ ...s, edital_file: f }))}
-                    icon={FileText}
-                    disabled={isPending}
-                  />
-                  {isEdit && editing?.edital_url && !input.edital_file ? (
-                    <p className="mt-2 text-xs text-slate-500 dark:text-neutral-400">
-                      Edital atual mantido. Envie um novo arquivo para substituir.
-                    </p>
-                  ) : null}
-                </div>
-              </div>
+              </section>
             </div>
           </div>
 
-          <div className="flex shrink-0 items-center justify-end gap-3 border-t border-slate-100 bg-slate-50/80 px-6 py-4 dark:border-neutral-800 dark:bg-neutral-900/50">
-            <button
-              type="button"
-              onClick={onClose}
-              className={cn(
-                "rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 shadow-sm transition",
-                "hover:bg-slate-50 focus-visible:outline focus-visible:ring-2 focus-visible:ring-primary-500/30",
-                "dark:border-neutral-600 dark:bg-neutral-900 dark:text-neutral-200 dark:hover:bg-neutral-800",
-              )}
-            >
-              Cancelar
-            </button>
-            <button
-              type="submit"
-              disabled={isPending || !input.nome.trim() || !input.orgao.trim()}
-              className={cn(
-                "rounded-lg bg-primary-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition",
-                "hover:bg-primary-700 focus-visible:outline focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2",
-                "disabled:pointer-events-none disabled:opacity-50 dark:focus-visible:ring-offset-neutral-950",
-              )}
-            >
-              {isPending ? "Salvando…" : isEdit ? "Salvar" : "Criar"}
-            </button>
-          </div>
+          <footer className="flex shrink-0 flex-wrap items-center justify-between gap-3 border-t border-[#F3F4F6] bg-white px-7 py-4">
+            <p className="text-xs text-[#9CA3AF]">* Campos obrigatórios</p>
+            <div className="ml-auto flex flex-wrap items-center gap-3">
+              <button
+                type="button"
+                onClick={onClose}
+                className="rounded-[10px] border border-[#E5E7EB] bg-white px-4 py-2.5 text-sm font-semibold text-[#6B7280] transition-colors duration-200 hover:bg-[#F9FAFB]"
+              >
+                Cancelar
+              </button>
+              <button
+                type="submit"
+                disabled={isPending || !input.nome.trim() || !input.orgao.trim()}
+                className="inline-flex items-center gap-2 rounded-[10px] bg-[#6C3FC5] px-5 py-2.5 text-sm font-bold text-white shadow-sm transition-all duration-200 hover:-translate-y-px hover:bg-[#5B32A8] disabled:pointer-events-none disabled:opacity-50"
+              >
+                {isPending ? "Salvando…" : isEdit ? (
+                  <>
+                    Salvar alterações <span aria-hidden>✓</span>
+                  </>
+                ) : (
+                  <>
+                    Criar concurso <span aria-hidden>→</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </footer>
         </form>
       </div>
     </div>

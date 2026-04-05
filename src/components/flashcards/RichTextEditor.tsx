@@ -9,7 +9,7 @@ import Highlight from "@tiptap/extension-highlight";
 import Image from "@tiptap/extension-image";
 import {
   Bold, Italic, Underline as UnderlineIcon,
-  List, ListOrdered, Undo, Redo, ImageIcon, Link2Off,
+  List, ListOrdered, Undo, Redo,
 } from "lucide-react";
 
 import { toast } from "sonner";
@@ -40,12 +40,11 @@ function ResizableImageView({
             width: "100%",
             maxWidth: "100%",
             borderRadius: 8,
-            outline: selected ? "3px solid #6366f1" : showControls ? "2px solid #a5b4fc" : "none",
+            outline: selected ? "3px solid #6C3FC5" : showControls ? "2px solid #c4b5fd" : "none",
             transition: "outline 0.15s",
           }}
         />
 
-        {/* Delete button */}
         {showControls ? (
           <button
             type="button"
@@ -67,7 +66,6 @@ function ResizableImageView({
           </button>
         ) : null}
 
-        {/* Width controls */}
         {showControls ? (
           <div
             style={{
@@ -86,7 +84,7 @@ function ResizableImageView({
                 type="button"
                 onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); updateAttributes({ widthPct: p }); }}
                 style={{
-                  background: widthPct === p ? "#6366f1" : "rgba(255,255,255,0.15)",
+                  background: widthPct === p ? "#6C3FC5" : "rgba(255,255,255,0.15)",
                   color: "#fff", border: "none", borderRadius: 5,
                   padding: "2px 7px", fontSize: 11, cursor: "pointer", fontWeight: 600,
                 }}
@@ -101,7 +99,6 @@ function ResizableImageView({
   );
 }
 
-/* ─── ResizableImage extension ────────────────────────────────────────────── */
 const ResizableImage = Image.extend({
   addAttributes() {
     return {
@@ -124,7 +121,8 @@ const ResizableImage = Image.extend({
   },
 });
 
-/* ─── Toolbar button ──────────────────────────────────────────────────────── */
+const TB = "inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-sm transition-colors duration-200 ease-out";
+
 function ToolBtn({
   onClick, active, disabled, title, children,
 }: {
@@ -141,10 +139,10 @@ function ToolBtn({
       disabled={disabled}
       onMouseDown={(e) => { e.preventDefault(); onClick(); }}
       className={[
-        "inline-flex h-7 w-7 items-center justify-center rounded text-sm transition-colors",
+        TB,
         active
-          ? "bg-primary-100 text-primary-700 dark:bg-primary-900/40 dark:text-primary-300"
-          : "text-muted-foreground hover:bg-muted hover:text-card-foreground",
+          ? "bg-[#F3F0FF] text-[#6C3FC5]"
+          : "text-[#6B7280] hover:bg-[#F3F0FF] hover:text-[#6C3FC5]",
         disabled ? "opacity-40" : "",
       ].join(" ")}
     >
@@ -153,7 +151,6 @@ function ToolBtn({
   );
 }
 
-/* ─── Color palette ───────────────────────────────────────────────────────── */
 const TEXT_COLORS = [
   "#000000", "#374151", "#dc2626", "#ea580c", "#ca8a04",
   "#16a34a", "#2563eb", "#7c3aed", "#db2777", "#ffffff",
@@ -164,8 +161,8 @@ const HIGHLIGHT_COLORS = [
 ];
 
 function ColorPicker({
-  colors, onSelect, title,
-}: { colors: string[]; onSelect: (c: string) => void; title: string }) {
+  colors, onSelect, title, variant = "text",
+}: { colors: string[]; onSelect: (c: string) => void; title: string; variant?: "text" | "highlight" }) {
   const [open, setOpen] = React.useState(false);
   return (
     <div className="relative">
@@ -173,13 +170,21 @@ function ColorPicker({
         type="button"
         title={title}
         onMouseDown={(e) => { e.preventDefault(); setOpen((o) => !o); }}
-        className="inline-flex h-7 w-7 items-center justify-center rounded text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-card-foreground"
+        className={`${TB} text-[#6B7280] hover:bg-[#F3F0FF] hover:text-[#6C3FC5]`}
       >
-        <span className="text-xs font-bold">A</span>
+        {variant === "highlight" ? (
+          <span className="text-xs font-bold leading-none">
+            <span className="rounded-sm bg-yellow-300 px-0.5 text-[10px] text-neutral-900">A</span>
+          </span>
+        ) : (
+          <span className="text-xs font-bold underline decoration-neutral-800 decoration-2 underline-offset-2">
+            A
+          </span>
+        )}
       </button>
       {open ? (
         <div
-          className="absolute left-0 top-8 z-50 flex flex-wrap gap-1 rounded-lg border border-border bg-card p-2 shadow-lg"
+          className="absolute left-0 top-9 z-50 flex flex-wrap gap-1 rounded-lg border border-[#E5E7EB] bg-white p-2 shadow-lg"
           style={{ width: 140 }}
           onMouseLeave={() => setOpen(false)}
         >
@@ -188,7 +193,7 @@ function ColorPicker({
               key={c}
               type="button"
               onMouseDown={(e) => { e.preventDefault(); onSelect(c); setOpen(false); }}
-              className="h-5 w-5 rounded border border-border/40 transition-transform hover:scale-110"
+              className="h-5 w-5 rounded border border-neutral-200/60 transition-transform hover:scale-110"
               style={{ background: c }}
               title={c}
             />
@@ -199,17 +204,23 @@ function ColorPicker({
   );
 }
 
-/* ─── Props ───────────────────────────────────────────────────────────────── */
+const IMG_TOOLTIP =
+  "Inserir imagem · Depois, passe o mouse para redimensionar (25–100%) ou excluir";
+
 type RichTextEditorProps = {
   value: string;
   onChange: (html: string) => void;
   placeholder?: string;
   minHeight?: number;
+  maxHeight?: number;
 };
 
-/* ─── Editor ──────────────────────────────────────────────────────────────── */
 export function RichTextEditor({
-  value, onChange, placeholder = "Digite o conteúdo...", minHeight = 140,
+  value,
+  onChange,
+  placeholder = "Digite o conteúdo...",
+  minHeight = 220,
+  maxHeight = 380,
 }: RichTextEditorProps) {
   const [uploading, setUploading] = React.useState(false);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
@@ -229,7 +240,6 @@ export function RichTextEditor({
     },
   });
 
-  /* sync value on external reset */
   React.useEffect(() => {
     if (editor && value !== editor.getHTML()) {
       editor.commands.setContent(value);
@@ -257,110 +267,100 @@ export function RichTextEditor({
   if (!editor) return null;
 
   return (
-    <div className="overflow-hidden rounded-xl border border-border bg-card">
-      {/* Toolbar */}
-      <div className="flex flex-wrap items-center gap-0.5 border-b border-border bg-muted/30 px-2 py-1.5">
-        {/* History */}
-        <ToolBtn onClick={() => editor.chain().focus().undo().run()} title="Desfazer" disabled={!editor.can().undo()}>
-          <Undo className="h-3.5 w-3.5" />
-        </ToolBtn>
-        <ToolBtn onClick={() => editor.chain().focus().redo().run()} title="Refazer" disabled={!editor.can().redo()}>
-          <Redo className="h-3.5 w-3.5" />
-        </ToolBtn>
-
-        <div className="mx-1 h-5 w-px bg-border" />
-
-        {/* Text style */}
-        <ToolBtn onClick={() => editor.chain().focus().toggleBold().run()} active={editor.isActive("bold")} title="Negrito">
-          <Bold className="h-3.5 w-3.5" />
-        </ToolBtn>
-        <ToolBtn onClick={() => editor.chain().focus().toggleItalic().run()} active={editor.isActive("italic")} title="Itálico">
-          <Italic className="h-3.5 w-3.5" />
-        </ToolBtn>
-        <ToolBtn onClick={() => editor.chain().focus().toggleUnderline().run()} active={editor.isActive("underline")} title="Sublinhado">
-          <UnderlineIcon className="h-3.5 w-3.5" />
-        </ToolBtn>
-
-        <div className="mx-1 h-5 w-px bg-border" />
-
-        {/* Color */}
-        <ColorPicker
-          colors={TEXT_COLORS}
-          title="Cor do texto"
-          onSelect={(c) => editor.chain().focus().setColor(c).run()}
-        />
-        <ColorPicker
-          colors={HIGHLIGHT_COLORS}
-          title="Destaque (fundo)"
-          onSelect={(c) => editor.chain().focus().toggleHighlight({ color: c }).run()}
-        />
-        <ToolBtn
-          onClick={() => editor.chain().focus().unsetColor().unsetHighlight().run()}
-          title="Remover cor e destaque"
-        >
-          <Link2Off className="h-3.5 w-3.5" />
-        </ToolBtn>
-
-        <div className="mx-1 h-5 w-px bg-border" />
-
-        {/* Lists */}
-        <ToolBtn onClick={() => editor.chain().focus().toggleBulletList().run()} active={editor.isActive("bulletList")} title="Lista">
-          <List className="h-3.5 w-3.5" />
-        </ToolBtn>
-        <ToolBtn onClick={() => editor.chain().focus().toggleOrderedList().run()} active={editor.isActive("orderedList")} title="Lista numerada">
-          <ListOrdered className="h-3.5 w-3.5" />
-        </ToolBtn>
-
-        <div className="mx-1 h-5 w-px bg-border" />
-
-        {/* Image upload */}
-        <ToolBtn
-          onClick={() => fileInputRef.current?.click()}
-          title="Inserir imagem (clique sobre ela para redimensionar ou excluir)"
-          disabled={uploading}
-        >
-          <ImageIcon className="h-3.5 w-3.5" />
-        </ToolBtn>
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept="image/*"
-          className="hidden"
-          onChange={(e) => {
-            const file = e.target.files?.[0];
-            if (file) void handleImageUpload(file);
-            e.target.value = "";
-          }}
-        />
-        {uploading ? (
-          <span className="ml-1 text-[10px] text-muted-foreground">Enviando...</span>
-        ) : null}
-      </div>
-
-      {/* Hint */}
-      <div className="border-b border-border/40 bg-muted/10 px-3 py-1 text-[10px] text-muted-foreground/70">
-        Passe o mouse sobre uma imagem para redimensioná-la (25% / 50% / 75% / 100%) ou excluí-la.
-      </div>
-
-      {/* Editor area */}
+    <div
+      className="overflow-hidden rounded-[10px] border-[1.5px] border-[#E5E7EB] bg-white transition-[border-color,box-shadow] duration-200 ease-out focus-within:border-[#6C3FC5] focus-within:shadow-[0_0_0_3px_#EDE9FE]"
+      style={{ boxSizing: "border-box" }}
+    >
       <div
-        className="prose prose-sm dark:prose-invert max-w-none cursor-text px-4 py-3"
-        style={{ minHeight, position: "relative" }}
-        onClick={() => editor.commands.focus()}
+        className="flex flex-nowrap items-center gap-0.5 overflow-x-auto border-b border-[#E5E7EB] bg-[#FAFAFA] px-1.5 py-1.5"
+        style={{ scrollbarWidth: "thin" }}
       >
-        {editor.isEmpty ? (
-          <p
-            className="select-none text-sm text-muted-foreground/60"
-            style={{ position: "absolute", pointerEvents: "none" }}
-          >
-            {placeholder}
-          </p>
-        ) : null}
-        <EditorContent editor={editor} />
-      </div>
+          <ToolBtn onClick={() => editor.chain().focus().undo().run()} title="Desfazer · Ctrl+Z" disabled={!editor.can().undo()}>
+            <Undo className="h-4 w-4" />
+          </ToolBtn>
+          <ToolBtn onClick={() => editor.chain().focus().redo().run()} title="Refazer · Ctrl+Shift+Z" disabled={!editor.can().redo()}>
+            <Redo className="h-4 w-4" />
+          </ToolBtn>
 
+          <div className="mx-1 h-6 w-px shrink-0 bg-[#E5E7EB]" aria-hidden />
+
+          <ToolBtn onClick={() => editor.chain().focus().toggleBold().run()} active={editor.isActive("bold")} title="Negrito · Ctrl+B">
+            <Bold className="h-4 w-4" />
+          </ToolBtn>
+          <ToolBtn onClick={() => editor.chain().focus().toggleItalic().run()} active={editor.isActive("italic")} title="Itálico · Ctrl+I">
+            <Italic className="h-4 w-4" />
+          </ToolBtn>
+          <ToolBtn onClick={() => editor.chain().focus().toggleUnderline().run()} active={editor.isActive("underline")} title="Sublinhado · Ctrl+U">
+            <UnderlineIcon className="h-4 w-4" />
+          </ToolBtn>
+          <ColorPicker
+            colors={TEXT_COLORS}
+            title="Cor do texto"
+            onSelect={(c) => editor.chain().focus().setColor(c).run()}
+            variant="text"
+          />
+          <ColorPicker
+            colors={HIGHLIGHT_COLORS}
+            title="Cor de destaque (marca-texto)"
+            onSelect={(c) => editor.chain().focus().toggleHighlight({ color: c }).run()}
+            variant="highlight"
+          />
+
+          <div className="mx-1 h-6 w-px shrink-0 bg-[#E5E7EB]" aria-hidden />
+
+          <ToolBtn onClick={() => editor.chain().focus().toggleBulletList().run()} active={editor.isActive("bulletList")} title="Lista com marcadores">
+            <List className="h-4 w-4" />
+          </ToolBtn>
+          <ToolBtn onClick={() => editor.chain().focus().toggleOrderedList().run()} active={editor.isActive("orderedList")} title="Lista numerada">
+            <ListOrdered className="h-4 w-4" />
+          </ToolBtn>
+          <ToolBtn
+            onClick={() => fileInputRef.current?.click()}
+            title={IMG_TOOLTIP}
+            disabled={uploading}
+          >
+            <span className="text-lg leading-none" aria-hidden>🖼</span>
+          </ToolBtn>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (file) void handleImageUpload(file);
+              e.target.value = "";
+            }}
+          />
+        </div>
+
+        <div
+          className="cursor-text px-4 py-4"
+          style={{
+            maxHeight: maxHeight,
+            minHeight: minHeight,
+            overflowY: "auto",
+            boxSizing: "border-box",
+          }}
+          onClick={() => editor.commands.focus()}
+        >
+          <div
+            className="flashcard-rtc-content prose prose-sm relative max-w-none text-[15px] leading-[1.7] text-[#1A1A2E]"
+            style={{ position: "relative" }}
+          >
+            {editor.isEmpty ? (
+              <p
+                className="pointer-events-none select-none text-[15px] text-[#9CA3AF]"
+                style={{ position: "absolute", left: 0, top: 0, right: 0 }}
+              >
+                {placeholder}
+              </p>
+            ) : null}
+            <EditorContent editor={editor} />
+          </div>
+        </div>
       <style>{`
-        .ProseMirror { outline: none; min-height: ${minHeight}px; }
+        .ProseMirror { outline: none; min-height: ${minHeight}px; font-size: 15px; line-height: 1.7; }
         .ProseMirror p { margin: 0 0 0.5em; }
         .ProseMirror ul { list-style: disc; padding-left: 1.4em; }
         .ProseMirror ol { list-style: decimal; padding-left: 1.4em; }
@@ -369,4 +369,3 @@ export function RichTextEditor({
     </div>
   );
 }
-

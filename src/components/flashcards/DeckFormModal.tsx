@@ -62,6 +62,7 @@ export function DeckFormModal({ open, onClose, deck }: Props) {
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["flashcards-decks"] });
+      qc.invalidateQueries({ queryKey: ["flashcards-metrics"] });
       toast.success(isEdit ? "Baralho atualizado!" : "Baralho criado!");
       onClose();
     },
