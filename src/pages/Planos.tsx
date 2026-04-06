@@ -1,10 +1,9 @@
 import React from "react";
-import { Plus } from "lucide-react";
 import { toast } from "sonner";
 
-import { usePlanoStore } from "@/stores/planoStore";
 import { PlanoCard } from "@/components/planos/PlanoCard";
 import { ModalCriarPlano } from "@/components/planos/ModalCriarPlano";
+import { usePlanoStore } from "@/stores/planoStore";
 import type { PlanoEstudo } from "@/types/plano";
 
 export function PlanosPage() {
@@ -50,32 +49,76 @@ export function PlanosPage() {
     [orgaoSuggestions, cargoSuggestions, bancaSuggestions],
   );
 
+  const summary = React.useMemo(() => {
+    const n = planos.length;
+    const ativos = planos.filter((p) => p.ativo).length;
+    const disc = planos.reduce((acc, p) => acc + (p.stats?.disciplinas_qty ?? 0), 0);
+    const avgProgress =
+      n > 0 ? Math.round(planos.reduce((acc, p) => acc + (p.stats?.progresso_pct ?? 0), 0) / n) : 0;
+    return { n, ativos, disc, avgProgress };
+  }, [planos]);
+
   return (
-    <div>
-      <div className="mb-4 flex items-start justify-between gap-3">
+    <div
+      className="min-h-full space-y-6 pb-8"
+      style={{ fontFamily: "Inter, system-ui, sans-serif", backgroundColor: "#F5F4FA" }}
+    >
+      <style>{`
+        @keyframes plano-card-dot-pulse {
+          0%, 100% { opacity: 1; transform: scale(1); }
+          50% { opacity: 0.55; transform: scale(0.88); }
+        }
+        .plano-card-dot-pulse { animation: plano-card-dot-pulse 2s ease-in-out infinite; }
+      `}</style>
+      <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
         <div>
-          <h1 className="text-lg font-medium text-neutral-800 dark:text-neutral-100">Planos de Estudo</h1>
-          <p className="text-xs text-neutral-400">Gerencie seus planos para cada concurso</p>
+          <h1 className="text-[28px] font-bold leading-tight text-[#1A1A2E]">Planos de Estudo</h1>
+          <p className="mt-1 text-sm text-[#6B7280]">
+            Organize seus estudos por concurso e acompanhe sua evolução
+          </p>
         </div>
         <button
-          className="rounded-md bg-primary-600 px-3 py-2 text-sm font-medium text-white hover:bg-primary-800"
+          type="button"
+          className="inline-flex h-11 shrink-0 items-center justify-center gap-2 rounded-[10px] bg-[#6C3FC5] px-5 text-sm font-bold text-white shadow-sm transition-all duration-200 hover:-translate-y-px hover:bg-[#5B32A8] hover:shadow-[0_4px_14px_rgba(108,63,197,0.35)]"
           onClick={() => setOpenCriar(true)}
         >
-          + Novo Plano
+          <span className="text-lg font-light leading-none">+</span>
+          Novo Plano
         </button>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      <div className="flex flex-wrap gap-3">
+        <span className="inline-flex items-center rounded-full border border-[#E5E7EB] bg-white px-3.5 py-1.5 text-[13px] text-[#6B7280] shadow-[0_2px_16px_rgba(0,0,0,0.07)]">
+          📋 {summary.n} {summary.n === 1 ? "plano criado" : "planos criados"}
+        </span>
+        <span className="inline-flex items-center rounded-full border border-[#E5E7EB] bg-white px-3.5 py-1.5 text-[13px] text-[#6B7280] shadow-[0_2px_16px_rgba(0,0,0,0.07)]">
+          ✅ {summary.ativos} {summary.ativos === 1 ? "ativo" : "ativos"}
+        </span>
+        <span className="inline-flex items-center rounded-full border border-[#E5E7EB] bg-white px-3.5 py-1.5 text-[13px] text-[#6B7280] shadow-[0_2px_16px_rgba(0,0,0,0.07)]">
+          📚 {summary.disc} {summary.disc === 1 ? "disciplina" : "disciplinas"}
+        </span>
+        <span className="inline-flex items-center rounded-full border border-[#E5E7EB] bg-white px-3.5 py-1.5 text-[13px] text-[#6B7280] shadow-[0_2px_16px_rgba(0,0,0,0.07)]">
+          📈 {summary.avgProgress}% de progresso médio
+        </span>
+      </div>
+
+      <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
         <button
           type="button"
-          className="flex min-h-[160px] cursor-pointer flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-primary-200 bg-primary-50 p-6 transition-all hover:border-primary-400 hover:bg-primary-100 dark:border-primary-800 dark:bg-neutral-800"
+          className="flex min-h-[240px] cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-[#C4B5FD] px-5 py-8 text-center transition-all duration-200 ease-out hover:-translate-y-0.5 hover:border-[#6C3FC5] hover:bg-[#EDE9FE]"
+          style={{
+            background: "linear-gradient(135deg, #FAFAFE, #F3F0FF)",
+            boxShadow: "0 2px 16px rgba(0,0,0,0.07)",
+          }}
           onClick={() => setOpenCriar(true)}
         >
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary-100">
-            <Plus className="h-6 w-6 text-primary-600" />
+          <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-[#EDE9FE]">
+            <span className="text-2xl font-light leading-none text-[#6C3FC5]">+</span>
           </div>
-          <div className="text-sm font-medium text-primary-800">Criar novo plano</div>
-          <div className="text-center text-xs text-primary-500">Adicione disciplinas a partir de um edital</div>
+          <span className="text-base font-bold text-[#6C3FC5]">Criar novo plano</span>
+          <span className="mt-1 max-w-[260px] text-[13px] text-[#9CA3AF]">
+            Adicione disciplinas a partir de um edital
+          </span>
         </button>
 
         {planos.map((plano) => (

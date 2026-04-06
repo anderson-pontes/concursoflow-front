@@ -1,11 +1,12 @@
 import React from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Link } from "react-router-dom";
-import { Pencil, Plus, Trash2 } from "lucide-react";
+import { Pencil } from "lucide-react";
+import { toast } from "sonner";
 
 import { DisciplinaCard } from "@/components/disciplinas/DisciplinaCard";
-import { getTopicosProgressFromCounts } from "@/components/disciplinas/disciplinaProgress";
+import { getDisciplinaStatusLabel, getTopicosProgressFromCounts } from "@/components/disciplinas/disciplinaProgress";
 import { api } from "@/services/api";
+import { cn } from "@/lib/utils";
 import { useConcursoStore } from "@/stores/concursoStore";
 import { usePlanoAtivo, usePlanoStore } from "@/stores/planoStore";
 
@@ -31,6 +32,52 @@ type DisciplinaInput = {
   ordem?: number | null;
 };
 
+type FilterSeg = "todas" | "plano" | "fora";
+
+function DisciplinaCardSkeleton() {
+  return (
+    <div
+      className="animate-pulse overflow-hidden rounded-2xl border-[1.5px] border-[#E5E7EB] bg-white shadow-[0_2px_10px_rgba(0,0,0,0.06)]"
+      style={{ fontFamily: "Inter, system-ui, sans-serif" }}
+    >
+      <div className="h-[3px] bg-[#E5E7EB]" />
+      <div className="flex gap-3 px-5 pt-[18px]">
+        <div className="h-9 w-9 shrink-0 rounded-lg bg-[#F3F4F6]" />
+        <div className="min-w-0 flex-1 space-y-2">
+          <div className="h-4 w-2/3 rounded bg-[#F3F4F6]" />
+          <div className="h-3 w-20 rounded-full bg-[#F3F4F6]" />
+        </div>
+      </div>
+      <div className="space-y-2 px-5 py-4">
+        <div className="flex justify-between">
+          <div className="h-3 w-40 rounded bg-[#F3F4F6]" />
+          <div className="h-3 w-8 rounded bg-[#F3F4F6]" />
+        </div>
+        <div className="h-2 rounded-full bg-[#E5E7EB]" />
+      </div>
+      <div className="grid grid-cols-3 gap-2 px-5 pb-3">
+        <div className="mx-auto h-8 w-10 rounded bg-[#F3F4F6]" />
+        <div className="mx-auto h-8 w-10 rounded bg-[#F3F4F6]" />
+        <div className="mx-auto h-8 w-10 rounded bg-[#F3F4F6]" />
+      </div>
+      <div className="border-t border-[#F3F4F6] px-5 py-3">
+        <div className="h-6 w-24 rounded-full bg-[#F3F4F6]" />
+      </div>
+    </div>
+  );
+}
+
+function EmptyDisciplinasIllustration() {
+  return (
+    <svg width="120" height="100" viewBox="0 0 120 100" fill="none" aria-hidden className="text-[#6C3FC5]">
+      <rect x="24" y="58" width="72" height="28" rx="4" fill="currentColor" fillOpacity="0.12" />
+      <rect x="32" y="42" width="56" height="22" rx="4" fill="currentColor" fillOpacity="0.18" />
+      <rect x="40" y="26" width="40" height="22" rx="4" fill="currentColor" fillOpacity="0.28" />
+      <path d="M52 32h16M52 38h12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeOpacity="0.5" />
+    </svg>
+  );
+}
+
 export function Disciplinas() {
   const qc = useQueryClient();
   const planoAtivo = usePlanoAtivo();
@@ -44,7 +91,8 @@ export function Disciplinas() {
   const [newDisciplinaNome, setNewDisciplinaNome] = React.useState("");
   const [editingDisciplina, setEditingDisciplina] = React.useState<Disciplina | null>(null);
   const [editingDisciplinaNome, setEditingDisciplinaNome] = React.useState("");
-  const [deletingDisciplina, setDeletingDisciplina] = React.useState<Disciplina | null>(null);
+  const [filterSeg, setFilterSeg] = React.useState<FilterSeg>("todas");
+  const addInputRef = React.useRef<HTMLInputElement>(null);
 
   const refreshPlanoDisciplinaMap = React.useCallback(async () => {
     if (!planoAtivo?.id) {
@@ -105,140 +153,264 @@ export function Disciplinas() {
     onSuccess: () => refreshPlanoDisciplinaMap(),
   });
 
-  return (
-    <div className="rounded-2xl border border-border/70 bg-card p-4 shadow-sm md:p-6 dark:border-neutral-700 dark:bg-card dark:shadow-none">
-      <div className="mb-5">
-        <h2 className="text-2xl font-bold text-foreground">Disciplinas & Tópicos</h2>
-        <p className="text-sm text-muted-foreground">
-          Gerencie disciplinas e tópicos no mesmo padrão visual do sistema. O <strong className="text-foreground">plano de estudo</strong>{" "}
-          (logo no topo) define o contexto do plano. O <strong className="text-foreground">concurso</strong> das disciplinas é o ativo na
-          sua sessão — cadastre ou organize tópicos no <strong className="text-foreground">painel de cada disciplina</strong> ou concursos em{" "}
-          <Link to="/concursos" className="font-medium text-primary underline-offset-4 hover:underline dark:text-primary-400">
-            Meus Concursos
-          </Link>
-          .
-        </p>
-      </div>
+  const filteredDisciplinas = React.useMemo(() => {
+    return disciplinas.filter((d) => {
+      const inP = Boolean(planoDisciplinaMap[d.id]);
+      if (filterSeg === "plano") return inP;
+      if (filterSeg === "fora") return !inP;
+      return true;
+    });
+  }, [disciplinas, filterSeg, planoDisciplinaMap]);
 
-      <div className="mb-5 rounded-xl border border-border bg-muted/40 p-4 dark:border-neutral-700 dark:bg-muted/20">
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+  const summary = React.useMemo(() => {
+    let emProg = 0;
+    let noPlano = 0;
+    let fora = 0;
+    let pctSum = 0;
+    const n = disciplinas.length;
+    for (const d of disciplinas) {
+      const total = d.topicos_total ?? 0;
+      const estudados = d.topicos_estudados ?? 0;
+      const stats = getTopicosProgressFromCounts(total, estudados);
+      const st = getDisciplinaStatusLabel(stats);
+      if (st.kind === "em_progresso" || st.kind === "iniciando") emProg++;
+      if (planoDisciplinaMap[d.id]) noPlano++;
+      else fora++;
+      pctSum += stats.pct;
+    }
+    const media = n > 0 ? Math.round(pctSum / n) : 0;
+    return { n, emProg, noPlano, fora, media };
+  }, [disciplinas, planoDisciplinaMap]);
+
+  const focusAddInput = () => {
+    addInputRef.current?.focus();
+  };
+
+  const addDisciplina = () => {
+    const nome = newDisciplinaNome.trim();
+    if (!nome || !concursoId) return;
+    createDisciplinaMutation.mutate(
+      {
+        concurso_id: concursoId,
+        nome,
+        sigla: null,
+        total_questoes_prova: null,
+        peso: null,
+        prioridade: null,
+        cor_hex: null,
+        ordem: 0,
+      },
+      {
+        onSuccess: () => {
+          setNewDisciplinaNome("");
+          toast.success("✅ Disciplina adicionada!", { duration: 3000 });
+        },
+      },
+    );
+  };
+
+  return (
+    <div className="min-h-full pb-8" style={{ fontFamily: "Inter, system-ui, sans-serif", backgroundColor: "#F5F4FA" }}>
+      <div className="space-y-5">
+        {/* Linha 1 — título + filtro + CTA */}
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+          <div>
+            <h1 className="text-[28px] font-bold leading-tight text-[#1A1A2E]">Disciplinas & Tópicos</h1>
+            <p className="mt-1 text-sm text-[#6B7280]">Gerencie as disciplinas do seu plano de estudo</p>
+          </div>
+          <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+            <div className="inline-flex rounded-full bg-[#F3F4F6] p-1">
+              {(
+                [
+                  { id: "todas" as const, label: "Todas" },
+                  { id: "plano" as const, label: "No plano" },
+                  { id: "fora" as const, label: "Fora do plano" },
+                ] as const
+              ).map((seg) => (
+                <button
+                  key={seg.id}
+                  type="button"
+                  onClick={() => setFilterSeg(seg.id)}
+                  className={cn(
+                    "rounded-full px-3 py-2 text-sm font-semibold transition-all duration-200",
+                    filterSeg === seg.id
+                      ? "bg-[#6C3FC5] text-white shadow-sm"
+                      : "bg-transparent text-[#6B7280] hover:text-[#1A1A2E]",
+                  )}
+                >
+                  {seg.label}
+                </button>
+              ))}
+            </div>
+            <button
+              type="button"
+              onClick={focusAddInput}
+              className="inline-flex items-center justify-center gap-2 rounded-[10px] bg-[#6C3FC5] px-5 py-2.5 text-sm font-bold text-white shadow-sm transition-all duration-200 hover:-translate-y-px hover:bg-[#5B32A8] hover:shadow-md"
+            >
+              <span className="text-lg leading-none">+</span>
+              Nova disciplina
+            </button>
+          </div>
+        </div>
+
+        {/* Summary bar */}
+        <div className="flex flex-wrap gap-2">
+          <span className="inline-flex items-center rounded-full border border-[#E5E7EB] bg-white px-3.5 py-1.5 text-[13px] text-[#6B7280] shadow-sm">
+            📚 {summary.n} {summary.n === 1 ? "disciplina" : "disciplinas"}
+          </span>
+          <span className="inline-flex items-center rounded-full border border-[#E5E7EB] bg-white px-3.5 py-1.5 text-[13px] text-[#6B7280] shadow-sm">
+            ✅ {summary.emProg} em progresso
+          </span>
+          <span className="inline-flex items-center rounded-full border border-[#E5E7EB] bg-white px-3.5 py-1.5 text-[13px] text-[#6B7280] shadow-sm">
+            📋 {summary.noPlano} no plano · {summary.fora} fora do plano
+          </span>
+          <span className="inline-flex items-center rounded-full border border-[#E5E7EB] bg-white px-3.5 py-1.5 text-[13px] text-[#6B7280] shadow-sm">
+            📈 {summary.media}% de progresso médio
+          </span>
+        </div>
+
+        {!concursoId ? (
+          <div className="rounded-xl border border-amber-200 bg-[#FFFBEB] px-4 py-3 text-sm text-amber-900">
+            Selecione um concurso ativo na sessão para listar e criar disciplinas.
+          </div>
+        ) : null}
+
+        {/* Barra adicionar */}
+        <div
+          className="flex items-center gap-3 rounded-xl border-[1.5px] border-[#E5E7EB] bg-white py-1 pl-4 pr-1 shadow-[0_2px_8px_rgba(0,0,0,0.04)]"
+          style={{ fontFamily: "Inter, system-ui, sans-serif" }}
+        >
+          <span className="shrink-0 text-base text-[#9CA3AF]" aria-hidden>
+            🔍
+          </span>
           <input
-            className="flex-1 rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground outline-none ring-offset-background placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring dark:ring-offset-neutral-900"
-            placeholder="Nova disciplina (ex: Direito Tributário)"
+            ref={addInputRef}
+            className="min-w-0 flex-1 border-0 bg-transparent py-3 text-sm text-[#1A1A2E] outline-none placeholder:text-[#9CA3AF]"
+            placeholder="Adicionar nova disciplina (ex: Direito Tributário)..."
             value={newDisciplinaNome}
             onChange={(e) => setNewDisciplinaNome(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && addDisciplina()}
+            disabled={!concursoId || createDisciplinaMutation.isPending}
           />
           <button
             type="button"
-            className="inline-flex items-center justify-center gap-1 rounded-lg bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700 disabled:opacity-60"
+            className={cn(
+              "shrink-0 rounded-lg bg-[#6C3FC5] px-[18px] py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#5B32A8]",
+              (!newDisciplinaNome.trim() || !concursoId || createDisciplinaMutation.isPending) &&
+                "cursor-not-allowed opacity-45 hover:bg-[#6C3FC5]",
+            )}
             disabled={!concursoId || !newDisciplinaNome.trim() || createDisciplinaMutation.isPending}
-            onClick={() => {
-              const nome = newDisciplinaNome.trim();
-              if (!nome || !concursoId) return;
-              createDisciplinaMutation.mutate({
-                concurso_id: concursoId,
-                nome,
-                sigla: null,
-                total_questoes_prova: null,
-                peso: null,
-                prioridade: null,
-                cor_hex: null,
-                ordem: 0,
-              });
-              setNewDisciplinaNome("");
-            }}
+            onClick={addDisciplina}
           >
-            <Plus className="h-4 w-4" />
-            Adicionar
+            + Adicionar
           </button>
         </div>
-      </div>
 
-      {loadingDisciplinas ? <div className="text-sm text-muted-foreground">Carregando disciplinas...</div> : null}
+        {/* Grid */}
+        {loadingDisciplinas && concursoId ? (
+          <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+            <DisciplinaCardSkeleton />
+            <DisciplinaCardSkeleton />
+          </div>
+        ) : null}
 
-      <div className="grid gap-4 xl:grid-cols-2">
-        {disciplinas.map((disciplina) => {
-          const total = disciplina.topicos_total ?? 0;
-          const estudados = disciplina.topicos_estudados ?? 0;
-          const stats = getTopicosProgressFromCounts(total, estudados);
-          return (
-            <DisciplinaCard
-              key={disciplina.id}
-              disciplina={disciplina}
-              stats={stats}
-              inPlano={Boolean(planoDisciplinaMap[disciplina.id])}
-              canTogglePlano={Boolean(planoAtivo?.id)}
-              onTogglePlano={() => togglePlanoMutation.mutate(disciplina)}
-              onEdit={() => {
-                setEditingDisciplina(disciplina);
-                setEditingDisciplinaNome(disciplina.nome);
-              }}
-              onDelete={() => setDeletingDisciplina(disciplina)}
-            />
-          );
-        })}
+        {!loadingDisciplinas && concursoId && disciplinas.length === 0 ? (
+          <div
+            className="flex flex-col items-center rounded-2xl border-[1.5px] border-[#E5E7EB] bg-white px-6 py-16 text-center shadow-[0_2px_12px_rgba(0,0,0,0.07)]"
+            style={{ fontFamily: "Inter, system-ui, sans-serif" }}
+          >
+            <EmptyDisciplinasIllustration />
+            <h2 className="mt-6 text-lg font-bold text-[#1A1A2E]">Nenhuma disciplina ainda</h2>
+            <p className="mt-2 max-w-[360px] text-sm text-[#6B7280]">
+              Adicione sua primeira disciplina para começar a organizar seus estudos.
+            </p>
+            <button
+              type="button"
+              onClick={focusAddInput}
+              className="mt-8 inline-flex items-center gap-2 rounded-[10px] bg-[#6C3FC5] px-6 py-3 text-sm font-bold text-white shadow-md transition-all hover:-translate-y-px hover:bg-[#5B32A8]"
+            >
+              + Adicionar primeira disciplina
+            </button>
+          </div>
+        ) : null}
+
+        {!loadingDisciplinas && concursoId && disciplinas.length > 0 && filteredDisciplinas.length === 0 ? (
+          <div className="rounded-xl border border-[#E5E7EB] bg-white px-6 py-12 text-center text-sm text-[#6B7280] shadow-sm">
+            Nenhuma disciplina neste filtro.
+          </div>
+        ) : null}
+
+        {!loadingDisciplinas && filteredDisciplinas.length > 0 ? (
+          <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+            {filteredDisciplinas.map((disciplina) => {
+              const total = disciplina.topicos_total ?? 0;
+              const estudados = disciplina.topicos_estudados ?? 0;
+              const stats = getTopicosProgressFromCounts(total, estudados);
+              return (
+                <DisciplinaCard
+                  key={disciplina.id}
+                  disciplina={disciplina}
+                  stats={stats}
+                  inPlano={Boolean(planoDisciplinaMap[disciplina.id])}
+                  canTogglePlano={Boolean(planoAtivo?.id)}
+                  planoAtivoId={planoAtivo?.id ?? null}
+                  onTogglePlano={() => togglePlanoMutation.mutate(disciplina)}
+                  onEdit={() => {
+                    setEditingDisciplina(disciplina);
+                    setEditingDisciplinaNome(disciplina.nome);
+                  }}
+                  onConfirmDelete={async () => {
+                    await deleteDisciplinaMutation.mutateAsync(disciplina.id);
+                    toast.success("🗑️ Disciplina removida.", { duration: 5000 });
+                  }}
+                />
+              );
+            })}
+          </div>
+        ) : null}
       </div>
 
       {editingDisciplina ? (
-        <div className="fixed inset-0 z-[130] flex items-center justify-center bg-black/50 p-4 dark:bg-black/60">
-          <div className="w-full max-w-md rounded-xl border border-border bg-card p-5 text-card-foreground shadow-xl dark:border-neutral-700">
-            <div className="mb-3 flex items-center gap-2">
-              <Pencil className="h-4 w-4 text-primary-600 dark:text-primary-400" />
-              <h3 className="text-base font-semibold">Editar disciplina</h3>
+        <div
+          className="fixed inset-0 z-[130] flex items-center justify-center bg-black/50 p-4"
+          style={{ fontFamily: "Inter, system-ui, sans-serif" }}
+          onMouseDown={(e) => {
+            if (e.target === e.currentTarget) setEditingDisciplina(null);
+          }}
+        >
+          <div className="w-full max-w-md rounded-xl border-[1.5px] border-[#E5E7EB] bg-white p-6 shadow-[0_8px_32px_rgba(0,0,0,0.12)]">
+            <div className="mb-4 flex items-center gap-2">
+              <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#F3F0FF] text-[#6C3FC5]">
+                <Pencil className="h-4 w-4" />
+              </span>
+              <h3 className="text-base font-bold text-[#1A1A2E]">Editar disciplina</h3>
             </div>
             <input
-              className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground"
+              className="w-full rounded-[10px] border border-[#E5E7EB] bg-white px-3 py-2.5 text-sm text-[#1A1A2E] outline-none focus:border-[#6C3FC5] focus:shadow-[0_0_0_3px_#EDE9FE]"
               value={editingDisciplinaNome}
               onChange={(e) => setEditingDisciplinaNome(e.target.value)}
             />
-            <div className="mt-4 flex justify-end gap-2">
+            <div className="mt-5 flex justify-end gap-2">
               <button
-                className="rounded-md border border-border bg-secondary/50 px-3 py-2 text-sm hover:bg-secondary dark:border-neutral-600"
+                type="button"
+                className="rounded-[10px] border border-[#E5E7EB] bg-white px-4 py-2 text-sm font-semibold text-[#6B7280] hover:bg-[#F9FAFB]"
                 onClick={() => setEditingDisciplina(null)}
               >
                 Cancelar
               </button>
               <button
-                className="rounded-md bg-primary-600 px-3 py-2 text-sm font-medium text-white disabled:opacity-60"
+                type="button"
+                className="rounded-[10px] bg-[#6C3FC5] px-4 py-2 text-sm font-bold text-white hover:bg-[#5B32A8] disabled:opacity-50"
                 disabled={!editingDisciplinaNome.trim() || updateDisciplinaMutation.isPending}
                 onClick={async () => {
-                  await updateDisciplinaMutation.mutateAsync({ disciplinaId: editingDisciplina.id, nome: editingDisciplinaNome.trim() });
+                  await updateDisciplinaMutation.mutateAsync({
+                    disciplinaId: editingDisciplina.id,
+                    nome: editingDisciplinaNome.trim(),
+                  });
                   setEditingDisciplina(null);
                 }}
               >
                 Salvar
-              </button>
-            </div>
-          </div>
-        </div>
-      ) : null}
-
-      {deletingDisciplina ? (
-        <div className="fixed inset-0 z-[130] flex items-center justify-center bg-black/50 p-4 dark:bg-black/60">
-          <div className="w-full max-w-md rounded-xl border border-border bg-card p-5 text-card-foreground shadow-xl dark:border-neutral-700">
-            <div className="mb-3 flex items-center gap-2 text-danger-600 dark:text-danger-500">
-              <Trash2 className="h-4 w-4" />
-              <h3 className="text-base font-semibold">Excluir disciplina</h3>
-            </div>
-            <p className="text-sm text-muted-foreground">
-              Confirma a exclusão de <strong className="text-foreground">{deletingDisciplina.nome}</strong>?
-            </p>
-            <div className="mt-4 flex justify-end gap-2">
-              <button
-                className="rounded-md border border-border bg-secondary/50 px-3 py-2 text-sm hover:bg-secondary dark:border-neutral-600"
-                onClick={() => setDeletingDisciplina(null)}
-              >
-                Cancelar
-              </button>
-              <button
-                className="rounded-md bg-danger-600 px-3 py-2 text-sm font-medium text-white disabled:opacity-60"
-                disabled={deleteDisciplinaMutation.isPending}
-                onClick={async () => {
-                  await deleteDisciplinaMutation.mutateAsync(deletingDisciplina.id);
-                  setDeletingDisciplina(null);
-                }}
-              >
-                Excluir
               </button>
             </div>
           </div>
