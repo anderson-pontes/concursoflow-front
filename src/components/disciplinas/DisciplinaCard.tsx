@@ -25,26 +25,26 @@ type DisciplinaCardProps = {
 
 function topStripClass(inPlano: boolean, kind: string) {
   if (!inPlano) return "bg-[#F59E0B]";
-  if (kind === "sem_topicos") return "bg-[#E5E7EB]";
+  if (kind === "sem_topicos") return "bg-[#E5E7EB] dark:bg-[#2D2540]";
   if (kind === "concluida") return "bg-[#6C3FC5]";
-  if (kind === "iniciando") return "bg-[#E5E7EB]";
+  if (kind === "iniciando") return "bg-[#E5E7EB] dark:bg-[#2D2540]";
   return "bg-[#22C55E]";
 }
 
 function headerIconBox(inPlano: boolean, kind: string) {
-  if (!inPlano) return { box: "bg-[#FFFBEB]", emoji: "📂" as const };
-  if (kind === "sem_topicos") return { box: "bg-[#F3F0FF]", emoji: "📋" as const };
-  if (kind === "concluida") return { box: "bg-[#F0FDF4]", emoji: "✅" as const };
-  if (kind === "iniciando") return { box: "bg-[#F3F0FF]", emoji: "📋" as const };
-  return { box: "bg-[#F0FDF4]", emoji: "📖" as const };
+  if (!inPlano) return { box: "bg-[#FFFBEB] dark:bg-[#2D1F0A]", emoji: "📂" as const };
+  if (kind === "sem_topicos") return { box: "bg-[#F3F0FF] dark:bg-[var(--ap-brand-light)]", emoji: "📋" as const };
+  if (kind === "concluida") return { box: "bg-[#F0FDF4] dark:bg-[#052E16]", emoji: "✅" as const };
+  if (kind === "iniciando") return { box: "bg-[#F3F0FF] dark:bg-[var(--ap-brand-light)]", emoji: "📋" as const };
+  return { box: "bg-[#F0FDF4] dark:bg-[#052E16]", emoji: "📖" as const };
 }
 
 function statusBadgeClass(inPlano: boolean, kind: string) {
-  if (!inPlano) return "bg-[#FEF3C7] text-[#D97706]";
-  if (kind === "sem_topicos") return "bg-[#F3F4F6] text-[#6B7280]";
-  if (kind === "concluida") return "bg-[#EDE9FE] text-[#6C3FC5]";
-  if (kind === "iniciando") return "bg-[#DCFCE7] text-[#16A34A]";
-  return "bg-[#DCFCE7] text-[#16A34A]";
+  if (!inPlano) return "bg-[#FEF3C7] text-[#D97706] dark:bg-[#2D1F0A] dark:text-[#F59E0B]";
+  if (kind === "sem_topicos") return "bg-[#F3F4F6] text-[#6B7280] dark:bg-[#1F2937] dark:text-[#6B7280]";
+  if (kind === "concluida") return "bg-[#EDE9FE] text-[#6C3FC5] dark:bg-[#2D2540] dark:text-[#A78BFA]";
+  if (kind === "iniciando") return "bg-[#DCFCE7] text-[#16A34A] dark:bg-[#052E16] dark:text-[#4ADE80]";
+  return "bg-[#DCFCE7] text-[#16A34A] dark:bg-[#052E16] dark:text-[#4ADE80]";
 }
 
 function statusBadgeLabel(inPlano: boolean, stats: { total: number; studied: number }) {
@@ -156,8 +156,9 @@ export function DisciplinaCard({
       tabIndex={0}
       aria-label={`Abrir painel de ${disciplina.nome}`}
       className={cn(
-        "group cursor-pointer overflow-hidden rounded-2xl border-[1.5px] border-[#E5E7EB] bg-white shadow-[0_2px_10px_rgba(0,0,0,0.06)] transition-all duration-200 ease-out outline-none",
+        "group cursor-pointer overflow-hidden rounded-2xl border-[1.5px] border-[var(--border-default)] bg-[var(--bg-surface)] shadow-[0_2px_10px_rgba(0,0,0,0.06)] transition-all duration-200 ease-out outline-none",
         "hover:-translate-y-0.5 hover:border-[#C4B5FD] hover:shadow-[0_8px_28px_rgba(108,63,197,0.12)]",
+        "dark:hover:border-[#3D3060] dark:focus-visible:ring-offset-[var(--bg-page)]",
         "focus-visible:ring-2 focus-visible:ring-[#6C3FC5] focus-visible:ring-offset-2",
       )}
       style={{ fontFamily: "Inter, system-ui, sans-serif" }}
@@ -182,7 +183,7 @@ export function DisciplinaCard({
           >
             {headerIconBox(inPlano, kind).emoji}
           </div>
-          <h3 className="min-w-0 flex-1 truncate text-[15px] font-bold leading-tight text-[#1A1A2E]">{disciplina.nome}</h3>
+          <h3 className="min-w-0 flex-1 truncate text-[15px] font-bold leading-tight text-[var(--text-primary)]">{disciplina.nome}</h3>
           <span className={cn("shrink-0 rounded-full px-2.5 py-0.5 text-xs font-semibold", statusBadgeClass(inPlano, kind))}>
             {statusBadgeLabel(inPlano, stats)}
           </span>
@@ -203,7 +204,7 @@ export function DisciplinaCard({
                 </button>
                 <button
                   type="button"
-                  className="rounded-lg border border-[#E5E7EB] px-2 py-1 text-[11px] font-semibold text-[#6B7280] hover:bg-[#F9FAFB]"
+                  className="rounded-lg border border-[var(--border-default)] px-2 py-1 text-[11px] font-semibold text-[var(--text-secondary)] hover:bg-[#F9FAFB] dark:hover:bg-[var(--bg-surface-hover)]"
                   onClick={cancelDelete}
                 >
                   Cancelar
@@ -215,14 +216,14 @@ export function DisciplinaCard({
                   type="button"
                   aria-expanded={menuOpen}
                   aria-haspopup="menu"
-                  className="flex h-8 w-8 items-center justify-center rounded-lg text-[#9CA3AF] transition-colors hover:bg-[#F3F4F6] hover:text-[#1A1A2E]"
+                  className="flex h-8 w-8 items-center justify-center rounded-lg text-[var(--text-muted)] transition-colors hover:bg-[#F3F4F6] hover:text-[#1A1A2E] dark:hover:bg-[var(--bg-surface-2)] dark:hover:text-[var(--text-primary)]"
                   onClick={() => setMenuOpen((v) => !v)}
                 >
                   <span className="text-lg leading-none">⋯</span>
                 </button>
                 {menuOpen ? (
                   <div
-                    className="absolute right-0 z-[1000] mt-2 min-w-[200px] rounded-xl border border-[#E5E7EB] bg-white p-1.5 shadow-[0_8px_24px_rgba(0,0,0,0.12)]"
+                    className="absolute right-0 z-[1000] mt-2 min-w-[200px] rounded-xl border border-[var(--border-default)] bg-white p-1.5 shadow-[0_8px_24px_rgba(0,0,0,0.12)] dark:border-[var(--border-default)] dark:bg-[var(--bg-surface-2)] dark:shadow-[0_8px_24px_rgba(0,0,0,0.4)]"
                     style={{ animation: "discMenuIn 150ms ease-out" }}
                   >
                     <style>{`
@@ -233,7 +234,7 @@ export function DisciplinaCard({
                     `}</style>
                     <button
                       type="button"
-                      className="flex w-full flex-col items-start gap-0.5 rounded-lg px-3.5 py-2.5 text-left text-sm text-[#1A1A2E] transition-colors hover:bg-[#F3F0FF] hover:text-[#6C3FC5]"
+                      className="flex w-full flex-col items-start gap-0.5 rounded-lg px-3.5 py-2.5 text-left text-sm text-[var(--text-primary)] transition-colors hover:bg-[#F3F0FF] hover:text-[#6C3FC5] dark:hover:bg-[#1E1A2E] dark:hover:text-[#A78BFA]"
                       onClick={() => {
                         setMenuOpen(false);
                         goPainel();
@@ -242,11 +243,11 @@ export function DisciplinaCard({
                       <span className="flex items-center gap-2.5 font-medium">
                         <span aria-hidden>🎯</span> Painel da disciplina
                       </span>
-                      <span className="pl-7 text-[11px] text-[#9CA3AF]">Ver tópicos e progresso</span>
+                      <span className="pl-7 text-[11px] text-[var(--text-muted)]">Ver tópicos e progresso</span>
                     </button>
                     <button
                       type="button"
-                      className="mt-0.5 flex w-full items-center gap-2.5 rounded-lg px-3.5 py-2.5 text-left text-sm text-[#1A1A2E] transition-colors hover:bg-[#F9FAFB]"
+                      className="mt-0.5 flex w-full items-center gap-2.5 rounded-lg px-3.5 py-2.5 text-left text-sm text-[var(--text-primary)] transition-colors hover:bg-[#F9FAFB] dark:hover:bg-[#1A1726]"
                       onClick={() => {
                         setMenuOpen(false);
                         onEdit();
@@ -254,10 +255,10 @@ export function DisciplinaCard({
                     >
                       <span aria-hidden>✏️</span> Editar disciplina
                     </button>
-                    <div className="my-1 h-px bg-[#F3F4F6]" />
+                    <div className="my-1 h-px bg-[var(--border-subtle)]" />
                     <button
                       type="button"
-                      className="flex w-full items-center gap-2.5 rounded-lg px-3.5 py-2.5 text-left text-sm font-medium text-[#EF4444] transition-colors hover:bg-[#FFF5F5]"
+                      className="flex w-full items-center gap-2.5 rounded-lg px-3.5 py-2.5 text-left text-sm font-medium text-[#EF4444] transition-colors hover:bg-[#FFF5F5] dark:hover:bg-[rgba(239,68,68,0.12)]"
                       onClick={armDelete}
                     >
                       <span aria-hidden>🗑️</span> Excluir disciplina
@@ -272,12 +273,12 @@ export function DisciplinaCard({
 
       <div className="px-5 py-3.5">
         <div className="mb-2 flex items-center justify-between text-[13px]">
-          <span className="text-[#6B7280]">
+          <span className="text-[var(--text-secondary)]">
             {stats.studied} de {stats.total} tópicos estudados
           </span>
           <span className={cn("font-bold tabular-nums", pctColorClass(stats.pct))}>{stats.pct}%</span>
         </div>
-        <div className="h-2 overflow-hidden rounded-full bg-[#E5E7EB]">
+        <div className="h-2 overflow-hidden rounded-full bg-[#E5E7EB] dark:bg-[#1E1A2E]">
           <div
             className={cn(
               "h-full rounded-full transition-[width] duration-500 ease-out",
@@ -290,21 +291,21 @@ export function DisciplinaCard({
 
       <div className="grid grid-cols-3 gap-2 px-5 pb-3.5 text-center">
         <div>
-          <div className="text-[13px] font-bold text-[#1A1A2E]">{stats.total}</div>
-          <div className="text-[11px] text-[#9CA3AF]">tópicos</div>
+          <div className="text-[13px] font-bold text-[var(--text-primary)]">{stats.total}</div>
+          <div className="text-[11px] text-[var(--text-muted)]">tópicos</div>
         </div>
         <div>
-          <div className="text-[13px] font-bold text-[#1A1A2E]">{stats.studied}</div>
-          <div className="text-[11px] text-[#9CA3AF]">estudados</div>
+          <div className="text-[13px] font-bold text-[var(--text-primary)]">{stats.studied}</div>
+          <div className="text-[11px] text-[var(--text-muted)]">estudados</div>
         </div>
         <div>
-          <div className="text-[13px] font-bold text-[#1A1A2E]">{restantes}</div>
-          <div className="text-[11px] text-[#9CA3AF]">restantes</div>
+          <div className="text-[13px] font-bold text-[var(--text-primary)]">{restantes}</div>
+          <div className="text-[11px] text-[var(--text-muted)]">restantes</div>
         </div>
       </div>
 
       <div
-        className="flex items-center justify-between border-t border-[#F3F4F6] px-5 py-3 pb-4"
+        className="flex items-center justify-between border-t border-[var(--border-subtle)] px-5 py-3 pb-4"
         onClick={(e) => e.stopPropagation()}
       >
         <button
@@ -312,7 +313,9 @@ export function DisciplinaCard({
           disabled={!canTogglePlano}
           className={cn(
             "rounded-full px-2.5 py-1 text-xs font-semibold transition-opacity",
-            inPlano ? "bg-[#EDE9FE] text-[#6C3FC5]" : "bg-[#FEF3C7] text-[#D97706]",
+            inPlano
+              ? "bg-[#EDE9FE] text-[#6C3FC5] dark:bg-[#2D2540] dark:text-[#A78BFA]"
+              : "bg-[#FEF3C7] text-[#D97706] dark:bg-[#2D1F0A] dark:text-[#F59E0B]",
             !canTogglePlano && "cursor-not-allowed opacity-45",
           )}
           onClick={(e) => {
@@ -324,7 +327,7 @@ export function DisciplinaCard({
         </button>
         <button
           type="button"
-          className="text-xs text-[#9CA3AF] transition-colors hover:text-[#6C3FC5] hover:underline"
+          className="text-xs text-[var(--text-muted)] transition-colors hover:text-[#6C3FC5] hover:underline dark:hover:text-[#A78BFA]"
           onClick={goPainel}
         >
           Ver painel →

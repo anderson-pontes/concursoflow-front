@@ -3,9 +3,17 @@ import { Check, ChevronDown } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
+import { cn } from "@/lib/utils";
 import { usePlanoStore } from "@/stores/planoStore";
 
-export function PlanoSwitcher() {
+type PlanoSwitcherProps = {
+  /** Sidebar estreita (72px): só ícone 🎯 + dropdown à direita */
+  collapsed?: boolean;
+  /** Ex.: fechar drawer mobile após escolher plano */
+  onAfterPick?: () => void;
+};
+
+export function PlanoSwitcher({ collapsed = false, onAfterPick }: PlanoSwitcherProps) {
   const navigate = useNavigate();
   const planos = usePlanoStore((s) => s.planos);
   const planoAtivoId = usePlanoStore((s) => s.planoAtivoId);
@@ -42,64 +50,99 @@ export function PlanoSwitcher() {
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [open]);
 
-  return (
-    <div className="relative" ref={rootRef}>
-      <button
-        type="button"
-        aria-expanded={open}
-        aria-haspopup="listbox"
-        className="flex h-9 max-w-[200px] items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm font-medium text-slate-800 hover:bg-slate-100 dark:border-neutral-600 dark:bg-neutral-900/50 dark:text-neutral-50 dark:hover:bg-neutral-900"
-        onClick={() => setOpen((v) => !v)}
+  const displayName = ativo?.nome ?? "Selecionar plano";
+  const tooltipTitle = displayName;
+
+  const triggerCollapsed = (
+    <button
+      type="button"
+      aria-expanded={open}
+      aria-haspopup="listbox"
+      title={tooltipTitle}
+      className="mx-auto flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-[var(--concurso-border)] bg-[var(--concurso-bg)] text-base transition-[border-color,background-color] duration-200 ease-out hover:border-[#6C3FC5] dark:hover:border-[#6C3FC5]"
+      onClick={() => setOpen((v) => !v)}
+    >
+      <span className="pointer-events-none" aria-hidden>
+        🎯
+      </span>
+    </button>
+  );
+
+  const triggerExpanded = (
+    <button
+      type="button"
+      aria-expanded={open}
+      aria-haspopup="listbox"
+      className="flex w-full cursor-pointer items-center gap-2.5 rounded-xl border border-[var(--concurso-border)] bg-[var(--concurso-bg)] px-3 py-2.5 text-left transition-[border-color,background-color] duration-200 ease-out hover:border-[#6C3FC5] dark:hover:border-[#6C3FC5]"
+      onClick={() => setOpen((v) => !v)}
+    >
+      <div
+        className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#EDE9FE] text-base dark:bg-[#2D2540]"
+        aria-hidden
       >
-        <div className="h-5 w-5 overflow-hidden rounded bg-white dark:bg-neutral-800">
-          {ativo?.logoUrl ? <img src={ativo.logoUrl} className="h-5 w-5 object-cover" /> : null}
-        </div>
-        <span className="max-w-[140px] truncate">{ativo?.nome ?? "Selecionar plano"}</span>
-        <ChevronDown className="h-3.5 w-3.5 shrink-0 opacity-70" />
-      </button>
+        🎯
+      </div>
+      <div className="min-w-0 flex-1 overflow-hidden">
+        <div className="text-[10px] font-medium uppercase tracking-[0.5px] text-[#9CA3AF]">Concurso ativo</div>
+        <div className="truncate text-[13px] font-bold text-[#1A1A2E] dark:text-[#F1F0FF]">{displayName}</div>
+      </div>
+      <ChevronDown className="ml-auto h-3.5 w-3.5 shrink-0 text-[#9CA3AF]" aria-hidden />
+    </button>
+  );
 
-      {open ? (
-        <div className="absolute right-0 z-[120] mt-2 w-[260px] rounded-xl border border-neutral-200 bg-white p-2 shadow-md dark:border-neutral-600 dark:bg-neutral-900 dark:shadow-lg">
-          <div className="px-2 py-1 text-xs text-neutral-500 dark:text-neutral-400">Plano ativo</div>
+  const panel = open ? (
+    <div
+      className={cn(
+        "absolute z-[130] rounded-xl border border-neutral-200 bg-white p-2 shadow-md dark:border-neutral-600 dark:bg-neutral-900 dark:shadow-lg",
+        collapsed ? "left-full top-0 ml-2 w-[260px]" : "left-0 right-0 mt-2",
+      )}
+    >
+      <div className="px-2 py-1 text-xs text-neutral-500 dark:text-neutral-400">Plano ativo</div>
 
-          <div className="space-y-1">
-            {planos.map((p) => (
-              <button
-                key={p.id}
-                type="button"
-                className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left hover:bg-neutral-50 dark:hover:bg-neutral-800"
-                onClick={() => {
-                  setPlanoAtivo(p.id);
-                  setOpen(false);
-                  toast.success(`Plano alterado para ${p.nome}`);
-                }}
-              >
-                <div className="h-7 w-7 overflow-hidden rounded bg-neutral-100 dark:bg-neutral-800">
-                  {p.logoUrl ? <img src={p.logoUrl} className="h-7 w-7 object-cover" /> : null}
-                </div>
-                <div className="min-w-0 flex-1">
-                  <div className="truncate text-sm font-medium text-neutral-800 dark:text-neutral-100">{p.nome}</div>
-                  <div className="truncate text-xs text-neutral-400">{p.orgao}</div>
-                </div>
-                {p.id === planoAtivoId ? <Check className="ml-auto h-3.5 w-3.5 text-primary-600" /> : null}
-              </button>
-            ))}
-          </div>
-
-          <div className="my-1 border-t border-neutral-200 dark:border-neutral-700" />
+      <div className="space-y-1">
+        {planos.map((p) => (
           <button
+            key={p.id}
             type="button"
-            className="w-full rounded-lg px-3 py-2 text-left text-xs text-primary-600 hover:bg-primary-50 dark:text-primary-400 dark:hover:bg-primary-950/50"
+            className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left hover:bg-neutral-50 dark:hover:bg-neutral-800"
             onClick={() => {
+              setPlanoAtivo(p.id);
               setOpen(false);
-              navigate("/concursos/planos");
+              toast.success(`Plano alterado para ${p.nome}`);
+              onAfterPick?.();
             }}
           >
-            + Gerenciar planos
+            <div className="h-7 w-7 overflow-hidden rounded bg-neutral-100 dark:bg-neutral-800">
+              {p.logoUrl ? <img src={p.logoUrl} className="h-7 w-7 object-cover" alt="" /> : null}
+            </div>
+            <div className="min-w-0 flex-1">
+              <div className="truncate text-sm font-medium text-neutral-800 dark:text-neutral-100">{p.nome}</div>
+              <div className="truncate text-xs text-neutral-400">{p.orgao}</div>
+            </div>
+            {p.id === planoAtivoId ? <Check className="ml-auto h-3.5 w-3.5 text-[#6C3FC5]" aria-hidden /> : null}
           </button>
-        </div>
-      ) : null}
+        ))}
+      </div>
+
+      <div className="my-1 border-t border-neutral-200 dark:border-neutral-700" />
+      <button
+        type="button"
+        className="w-full rounded-lg px-3 py-2 text-left text-xs text-[#6C3FC5] hover:bg-[#F3F0FF] dark:text-[#A78BFA] dark:hover:bg-[#1E1A2E]"
+        onClick={() => {
+          setOpen(false);
+          navigate("/concursos/planos");
+          onAfterPick?.();
+        }}
+      >
+        + Gerenciar planos
+      </button>
+    </div>
+  ) : null;
+
+  return (
+    <div className={cn("relative shrink-0", collapsed ? "flex justify-center px-0 pt-3" : "mx-3 mt-3")} ref={rootRef}>
+      {collapsed ? triggerCollapsed : triggerExpanded}
+      {panel}
     </div>
   );
 }
-

@@ -4,36 +4,63 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
+import {
+  AuthEmailField,
+  AuthPasswordField,
+  AuthPrimaryButton,
+  AuthSeparatorOu,
+  AuthTextField,
+  GoogleSignInButton,
+} from "@/components/auth/AuthFields";
+import { AuthShell } from "@/components/auth/AuthShell";
 import { AprovingoLogo } from "@/components/branding/AprovingoLogo";
 import { api } from "@/services/api";
 import { fetchCurrentUser } from "@/services/currentUser";
 import { useAuthStore } from "@/stores/authStore";
+import { cn } from "@/lib/utils";
 
 const registerSchema = z
   .object({
     name: z.string().min(2, "Nome muito curto"),
     email: z.string().email("E-mail inválido"),
     password: z.string().min(6, "Senha muito curta"),
+    confirmPassword: z.string().min(6, "Confirme a senha"),
   })
-  .required();
+  .refine((d) => d.password === d.confirmPassword, {
+    message: "As senhas não coincidem",
+    path: ["confirmPassword"],
+  });
 
 type RegisterForm = z.infer<typeof registerSchema>;
+
+function registerErrorMessage(err: unknown): string {
+  if (axios.isAxiosError(err)) {
+    const d = err.response?.data as { detail?: string | unknown } | undefined;
+    if (typeof d?.detail === "string") return d.detail;
+  }
+  if (err instanceof Error) return err.message;
+  return "Erro ao cadastrar";
+}
 
 export function Register() {
   const navigate = useNavigate();
   const setTokens = useAuthStore((s) => s.setTokens);
   const setUser = useAuthStore((s) => s.setUser);
 
+  const [shakeForm, setShakeForm] = React.useState(false);
+
   const form = useForm<RegisterForm>({
     resolver: zodResolver(registerSchema),
-    defaultValues: { name: "", email: "", password: "" },
-    mode: "onSubmit",
+    defaultValues: { name: "", email: "", password: "", confirmPassword: "" },
+    mode: "onBlur",
   });
 
   const mutation = useMutation({
     mutationFn: async (values: RegisterForm) => {
-      const res = await api.post("/auth/register", values);
+      const { confirmPassword: _c, ...payload } = values;
+      const res = await api.post("/auth/register", payload);
       return res.data as {
         access_token: string;
         refresh_token: string;
@@ -49,90 +76,74 @@ export function Register() {
       }
       navigate("/dashboard");
     },
+    onError: () => {
+      setShakeForm(true);
+      window.setTimeout(() => setShakeForm(false), 450);
+    },
   });
 
   const {
-    register: rhfRegister,
+    register,
     handleSubmit,
     formState: { errors },
   } = form;
 
   return (
-    <div className="mx-auto flex min-h-screen max-w-md items-center justify-center p-4">
-      <div className="w-full space-y-4 rounded-xl border border-border/40 bg-background/70 p-6">
-        <div className="flex justify-center">
-          <AprovingoLogo className="h-10 w-auto max-w-[200px] shrink-0 object-contain sm:h-11" />
+    <AuthShell>
+      <div className="mb-8 flex justify-center md:hidden">
+        <AprovingoLogo className="h-10 w-auto max-w-[200px] shrink-0" />
+      </div>
+
+      <div className="mb-9">
+        <h1 className="text-[28px] font-bold text-[#1A1A2E]">Criar sua conta grátis</h1>
+        <p className="mt-1.5 text-sm text-[#6B7280]">Comece a estudar com mais organização hoje.</p>
+      </div>
+
+      <form className={cn("space-y-[18px]", shakeForm && "auth-form-shake")} onSubmit={handleSubmit((v) => mutation.mutate(v))}>
+        <AuthTextField
+          id="reg-name"
+          label="Nome completo"
+          icon="👤"
+          autoComplete="name"
+          registration={register("name")}
+          error={errors.name?.message}
+        />
+        <AuthEmailField id="reg-email" registration={register("email")} error={errors.email?.message} />
+        <AuthPasswordField id="reg-password" registration={register("password")} error={errors.password?.message} />
+        <AuthPasswordField
+          id="reg-confirm"
+          label="Confirmar senha"
+          registration={register("confirmPassword")}
+          error={errors.confirmPassword?.message}
+        />
+
+        <div className="pt-2">
+          <AuthPrimaryButton loading={mutation.isPending} loadingLabel="Criando...">
+            Criar minha conta →
+          </AuthPrimaryButton>
         </div>
-        <div>
-          <h1 className="text-xl font-semibold">Criar conta</h1>
-          <p className="text-sm text-muted-foreground">Cadastre seus dados para começar.</p>
-        </div>
 
-        <form
-          className="space-y-3"
-          onSubmit={handleSubmit((values) => mutation.mutate(values))}
-        >
-          <label className="block">
-            <span className="text-sm font-medium">Nome</span>
-            <input
-              className="mt-1 w-full rounded-lg border border-border/40 bg-background px-3 py-2 text-sm outline-none"
-              type="text"
-              aria-invalid={errors.name ? "true" : "false"}
-              {...rhfRegister("name")}
-            />
-            {errors.name ? <div className="mt-1 text-xs text-danger-600">{errors.name.message}</div> : null}
-          </label>
+        {mutation.isError ? (
+          <div className="text-sm text-[#EF4444]" role="alert">
+            {registerErrorMessage(mutation.error)}
+          </div>
+        ) : null}
+      </form>
 
-          <label className="block">
-            <span className="text-sm font-medium">E-mail</span>
-            <input
-              className="mt-1 w-full rounded-lg border border-border/40 bg-background px-3 py-2 text-sm outline-none"
-              type="email"
-              aria-invalid={errors.email ? "true" : "false"}
-              {...rhfRegister("email")}
-            />
-            {errors.email ? (
-              <div className="mt-1 text-xs text-danger-600">{errors.email.message}</div>
-            ) : null}
-          </label>
+      <AuthSeparatorOu />
 
-          <label className="block">
-            <span className="text-sm font-medium">Senha</span>
-            <input
-              className="mt-1 w-full rounded-lg border border-border/40 bg-background px-3 py-2 text-sm outline-none"
-              type="password"
-              aria-invalid={errors.password ? "true" : "false"}
-              {...rhfRegister("password")}
-            />
-            {errors.password ? (
-              <div className="mt-1 text-xs text-danger-600">{errors.password.message}</div>
-            ) : null}
-          </label>
+      <GoogleSignInButton />
 
-          <button
-            type="submit"
-            className="mt-2 w-full rounded-md bg-primary-600 px-3 py-2 text-sm font-medium text-white transition-colors duration-150 hover:bg-primary-800 disabled:opacity-60"
-            disabled={mutation.isPending}
-          >
-            {mutation.isPending ? "Criando..." : "Criar"}
-          </button>
-
-          {mutation.isError ? (
-            <div className="text-sm text-danger-600">
-              {mutation.error instanceof Error ? mutation.error.message : "Erro ao cadastrar"}
-            </div>
-          ) : null}
-        </form>
-
+      <p className="mt-7 text-center text-sm text-[#6B7280]">
+        Já tem conta?{" "}
         <button
           type="button"
-          className="w-full rounded-lg border border-border/40 bg-background px-3 py-2 text-sm hover:bg-muted"
           onClick={() => navigate("/login")}
+          className="font-bold text-[#6C3FC5] transition-colors hover:underline"
         >
-          Voltar ao login
+          Entrar
         </button>
-      </div>
-    </div>
+      </p>
+    </AuthShell>
   );
 }
-

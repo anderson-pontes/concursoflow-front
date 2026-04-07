@@ -1,9 +1,8 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { Bell, Menu, Moon, Search, Sun } from "lucide-react";
+import { Bell, Menu, Search } from "lucide-react";
 
 import { UserDropdown } from "@/components/layout/UserDropdown";
-import { PlanoSwitcher } from "@/components/planos/PlanoSwitcher";
 import { primeiroNome } from "@/lib/userDisplay";
 import { useAuthStore } from "@/stores/authStore";
 
@@ -18,7 +17,6 @@ export function Header({ onOpenSidebar }: { onOpenSidebar?: () => void }) {
   const user = useAuthStore((s) => s.user);
   const navigate = useNavigate();
 
-  const [isDark, setIsDark] = React.useState(false);
   const [cmdOpen, setCmdOpen] = React.useState(false);
   const [cmdQuery, setCmdQuery] = React.useState("");
 
@@ -37,13 +35,6 @@ export function Header({ onOpenSidebar }: { onOpenSidebar?: () => void }) {
     ],
     [],
   );
-
-  React.useEffect(() => {
-    const stored = window.localStorage.getItem("theme");
-    const initial = stored ? stored === "dark" : document.documentElement.classList.contains("dark");
-    setIsDark(initial);
-    document.documentElement.classList.toggle("dark", initial);
-  }, []);
 
   React.useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
@@ -87,8 +78,6 @@ export function Header({ onOpenSidebar }: { onOpenSidebar?: () => void }) {
         </div>
 
         <div className="flex flex-wrap items-center gap-2 md:justify-end">
-          <PlanoSwitcher />
-
           <button type="button" className={iconBtn} title="Notificações" aria-label="Notificações">
             <Bell className="h-4 w-4" />
           </button>
@@ -104,21 +93,6 @@ export function Header({ onOpenSidebar }: { onOpenSidebar?: () => void }) {
             aria-label="Buscar"
           >
             <Search className="h-4 w-4" />
-          </button>
-
-          <button
-            type="button"
-            className={iconBtn}
-            onClick={() => {
-              const next = !isDark;
-              setIsDark(next);
-              document.documentElement.classList.toggle("dark", next);
-              window.localStorage.setItem("theme", next ? "dark" : "light");
-            }}
-            title={isDark ? "Ativar modo claro" : "Ativar modo escuro"}
-            aria-label={isDark ? "Ativar modo claro" : "Ativar modo escuro"}
-          >
-            {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
           </button>
 
           <UserDropdown />
@@ -157,13 +131,13 @@ export function Header({ onOpenSidebar }: { onOpenSidebar?: () => void }) {
                 type="button"
                 className="w-full rounded-lg px-3 py-2 text-left text-sm hover:bg-muted"
                 onClick={() => {
-                  const next = !isDark;
-                  setIsDark(next);
+                  const isCurrentlyDark = document.documentElement.classList.contains("dark");
+                  const next = !isCurrentlyDark;
                   document.documentElement.classList.toggle("dark", next);
                   window.localStorage.setItem("theme", next ? "dark" : "light");
                 }}
               >
-                Tema: {isDark ? "Escuro" : "Claro"}
+                Alternar tema claro/escuro
               </button>
 
               {filteredActions.map((a) => (

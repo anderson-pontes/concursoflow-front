@@ -69,25 +69,25 @@ function EmptyConcursosIllustration() {
 function CardSkeleton() {
   return (
     <div
-      className="animate-pulse overflow-hidden rounded-2xl border-[1.5px] border-[#E5E7EB] bg-white"
+      className="animate-pulse overflow-hidden rounded-2xl border-[1.5px] border-[var(--border-default)] bg-[var(--bg-surface)]"
       style={{ boxShadow: CARD_SHADOW }}
     >
-      <div className="border-t-[3px] border-t-[#E5E7EB] p-5">
+      <div className="border-t-[3px] border-t-[var(--border-default)] p-5">
         <div className="flex gap-3">
-          <div className="h-12 w-12 shrink-0 rounded-[10px] bg-[#F3F4F6]" />
+          <div className="h-12 w-12 shrink-0 rounded-[10px] bg-[var(--bg-surface-2)]" />
           <div className="min-w-0 flex-1 space-y-2">
-            <div className="h-4 w-3/4 rounded bg-[#F3F4F6]" />
-            <div className="h-3 w-1/2 rounded bg-[#F3F4F6]" />
+            <div className="h-4 w-3/4 rounded bg-[var(--bg-surface-2)]" />
+            <div className="h-3 w-1/2 rounded bg-[var(--bg-surface-2)]" />
           </div>
         </div>
-        <div className="mt-4 grid grid-cols-3 gap-2 border-t border-[#F3F4F6] pt-4">
-          <div className="h-10 rounded-lg bg-[#F3F4F6]" />
-          <div className="h-10 rounded-lg bg-[#F3F4F6]" />
-          <div className="h-10 rounded-lg bg-[#F3F4F6]" />
+        <div className="mt-4 grid grid-cols-3 gap-2 border-t border-[var(--border-subtle)] pt-4">
+          <div className="h-10 rounded-lg bg-[var(--bg-surface-2)]" />
+          <div className="h-10 rounded-lg bg-[var(--bg-surface-2)]" />
+          <div className="h-10 rounded-lg bg-[var(--bg-surface-2)]" />
         </div>
-        <div className="mt-4 flex gap-2 border-t border-[#F3F4F6] pt-4">
-          <div className="h-9 flex-1 rounded-[10px] bg-[#F3F4F6]" />
-          <div className="h-9 flex-1 rounded-[10px] bg-[#F3F4F6]" />
+        <div className="mt-4 flex gap-2 border-t border-[var(--border-subtle)] pt-4">
+          <div className="h-9 flex-1 rounded-[10px] bg-[var(--bg-surface-2)]" />
+          <div className="h-9 flex-1 rounded-[10px] bg-[var(--bg-surface-2)]" />
         </div>
       </div>
     </div>
@@ -328,10 +328,7 @@ export function Concursos() {
   const listRefreshing = isFetching && !isLoading;
 
   return (
-    <div
-      className="min-h-full space-y-6 pb-8"
-      style={{ fontFamily: "Inter, system-ui, sans-serif", backgroundColor: "#F5F4FA" }}
-    >
+    <div className="min-h-full space-y-6 pb-8" style={{ fontFamily: "Inter, system-ui, sans-serif" }}>
       <style>{`
         @keyframes concurso-dot-pulse {
           0%, 100% { opacity: 1; transform: scale(1); }
@@ -343,8 +340,8 @@ export function Concursos() {
       {/* Header */}
       <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
         <div>
-          <h1 className="text-[28px] font-bold leading-tight text-[#1A1A2E]">Concursos</h1>
-          <p className="mt-1 text-sm text-[#6B7280]">Gerencie seus concursos-alvo e acompanhe seu progresso</p>
+          <h1 className="text-[28px] font-bold leading-tight text-[var(--text-primary)]">Concursos</h1>
+          <p className="mt-1 text-sm text-[var(--text-secondary)]">Gerencie seus concursos-alvo e acompanhe seu progresso</p>
         </div>
 
         <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
@@ -357,11 +354,11 @@ export function Concursos() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Buscar concurso..."
-              className="h-11 w-full rounded-[10px] border-[1.5px] border-[#E5E7EB] bg-white py-2 pl-10 pr-3 text-sm text-[#1A1A2E] outline-none transition placeholder:text-[#9CA3AF] focus:border-[#6C3FC5] focus:shadow-[0_0_0_3px_#EDE9FE]"
+              className="h-11 w-full rounded-[10px] border-[1.5px] border-[var(--border-default)] bg-white py-2 pl-10 pr-3 text-sm text-[var(--text-primary)] outline-none transition placeholder:text-[var(--text-muted)] focus:border-[#6C3FC5] focus:shadow-[0_0_0_3px_#EDE9FE] dark:bg-[var(--bg-surface)] dark:focus:shadow-[0_0_0_3px_rgba(167,139,250,0.2)]"
             />
           </div>
 
-          <div className="inline-flex rounded-[10px] bg-[#F3F4F6] p-1">
+          <div className="inline-flex rounded-[10px] bg-[#F3F4F6] p-1 dark:bg-[var(--bg-surface-2)]">
             {(
               [
                 { id: "todos" as const, label: "Todos" },
@@ -376,8 +373,8 @@ export function Concursos() {
                 className={cn(
                   "rounded-lg px-3 py-2 text-sm font-semibold transition-all duration-200",
                   statusFilter === seg.id
-                    ? "bg-white text-[#6C3FC5] shadow-[0_1px_4px_rgba(0,0,0,0.12)]"
-                    : "bg-transparent text-[#6B7280]",
+                    ? "bg-[#6C3FC5] text-white shadow-[0_1px_4px_rgba(0,0,0,0.12)]"
+                    : "bg-transparent text-[#6B7280] dark:text-[var(--text-secondary)]",
                 )}
               >
                 {seg.label}
@@ -398,13 +395,13 @@ export function Concursos() {
 
       {/* Summary */}
       <div className="flex flex-wrap gap-3">
-        <span className="inline-flex items-center rounded-full border border-[#E5E7EB] bg-white px-3.5 py-1.5 text-[13px] text-[#6B7280] shadow-sm">
+        <span className="inline-flex items-center rounded-full border border-[var(--border-default)] bg-[var(--bg-surface)] px-3.5 py-1.5 text-[13px] text-[var(--text-secondary)] shadow-sm">
           📋 {totalCadastrados} {totalCadastrados === 1 ? "concurso cadastrado" : "concursos cadastrados"}
         </span>
-        <span className="inline-flex items-center rounded-full border border-[#E5E7EB] bg-white px-3.5 py-1.5 text-[13px] text-[#6B7280] shadow-sm">
+        <span className="inline-flex items-center rounded-full border border-[var(--border-default)] bg-[var(--bg-surface)] px-3.5 py-1.5 text-[13px] text-[var(--text-secondary)] shadow-sm">
           ✅ {totalAtivos} {totalAtivos === 1 ? "ativo" : "ativos"}
         </span>
-        <span className="inline-flex items-center rounded-full border border-[#E5E7EB] bg-white px-3.5 py-1.5 text-[13px] text-[#6B7280] shadow-sm">
+        <span className="inline-flex items-center rounded-full border border-[var(--border-default)] bg-[var(--bg-surface)] px-3.5 py-1.5 text-[13px] text-[var(--text-secondary)] shadow-sm">
           📅 Próxima prova: não definida
         </span>
       </div>
@@ -423,12 +420,12 @@ export function Concursos() {
         </div>
       ) : !concursos?.length ? (
         <div
-          className="flex flex-col items-center justify-center rounded-2xl border-[1.5px] border-[#E5E7EB] bg-white px-8 py-16 text-center"
+          className="flex flex-col items-center justify-center rounded-2xl border-[1.5px] border-[var(--border-default)] bg-[var(--bg-surface)] px-8 py-16 text-center"
           style={{ boxShadow: CARD_SHADOW }}
         >
           <EmptyConcursosIllustration />
-          <h2 className="mt-6 text-lg font-bold text-[#1A1A2E]">Nenhum concurso cadastrado ainda</h2>
-          <p className="mt-2 max-w-md text-sm text-[#6B7280]">Adicione seu primeiro concurso-alvo e comece a estudar com foco.</p>
+          <h2 className="mt-6 text-lg font-bold text-[var(--text-primary)]">Nenhum concurso cadastrado ainda</h2>
+          <p className="mt-2 max-w-md text-sm text-[var(--text-secondary)]">Adicione seu primeiro concurso-alvo e comece a estudar com foco.</p>
           <button
             type="button"
             onClick={openCreate}
@@ -445,7 +442,7 @@ export function Concursos() {
           )}
         >
           {filteredConcursos.length === 0 ? (
-            <div className="col-span-full rounded-[12px] border border-[#E5E7EB] bg-white px-6 py-12 text-center text-sm text-[#6B7280] shadow-sm">
+            <div className="col-span-full rounded-[12px] border border-[var(--border-default)] bg-[var(--bg-surface)] px-6 py-12 text-center text-sm text-[var(--text-secondary)] shadow-sm">
               Nenhum concurso encontrado com os filtros atuais.
             </div>
           ) : null}
@@ -479,15 +476,16 @@ export function Concursos() {
               <article
                 key={c.id}
                 className={cn(
-                  "group flex flex-col overflow-hidden rounded-2xl border-x border-b border-[1.5px] border-[#E5E7EB] bg-white transition-all duration-200 ease-out",
+                  "group flex flex-col overflow-hidden rounded-2xl border-x border-b border-[1.5px] border-[var(--border-default)] bg-[var(--bg-surface)] transition-all duration-200 ease-out",
                   encerrado ? "border-t-[3px] border-t-[#9CA3AF]" : "border-t-[3px] border-t-[#6C3FC5]",
                   "hover:-translate-y-0.5 hover:border-x-[#C4B5FD] hover:border-b-[#C4B5FD] hover:shadow-[0_8px_32px_rgba(108,63,197,0.12)]",
+                  "dark:hover:border-x-[var(--border-accent)] dark:hover:border-b-[var(--border-accent)] dark:hover:shadow-[0_8px_32px_rgba(167,139,250,0.10)]",
                 )}
                 style={{ boxShadow: "0 2px 12px rgba(0,0,0,0.06)" }}
               >
                 <div className="px-5 pb-0 pt-5">
                   <div className="flex items-start gap-3">
-                    <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-[10px] border border-[#E5E7EB] bg-[#F3F0FF]">
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-[10px] border border-[var(--border-default)] bg-[#F3F0FF] dark:bg-[var(--ap-brand-light)]">
                       {logo ? (
                         <img src={logo} alt="" className="h-full w-full object-cover" />
                       ) : (
@@ -497,8 +495,8 @@ export function Concursos() {
                       )}
                     </div>
                     <div className="min-w-0 flex-1">
-                      <h3 className="line-clamp-1 text-base font-bold text-[#1A1A2E]">{cargoTitulo}</h3>
-                      <p className="mt-0.5 text-[13px] text-[#6B7280]">{orgaoBanca}</p>
+                      <h3 className="line-clamp-1 text-base font-bold text-[var(--text-primary)]">{cargoTitulo}</h3>
+                      <p className="mt-0.5 text-[13px] text-[var(--text-secondary)]">{orgaoBanca}</p>
                       <div className="mt-1.5 flex min-w-0 flex-wrap items-center gap-2">
                         {encerrado ? (
                           <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-[#F3F4F6] px-2.5 py-1 text-xs font-semibold text-[#6B7280]">
@@ -516,7 +514,7 @@ export function Concursos() {
                         )}
                         {hasLinkedPlano ? (
                           <span
-                            className="max-w-[140px] shrink-0 overflow-hidden text-ellipsis whitespace-nowrap rounded-full bg-[#F3F0FF] px-2 py-0.5 text-[11px] font-semibold text-[#6C3FC5]"
+                            className="max-w-[140px] shrink-0 overflow-hidden text-ellipsis whitespace-nowrap rounded-full bg-[#F3F0FF] px-2 py-0.5 text-[11px] font-semibold text-[#6C3FC5] dark:bg-[var(--ap-brand-light)] dark:text-[var(--ap-brand)]"
                             title={planoNome ?? "Plano vinculado"}
                           >
                             📋 {planoNome ?? "Plano"}
@@ -527,22 +525,22 @@ export function Concursos() {
                   </div>
                 </div>
 
-                <div className="mt-4 border-t border-[#F3F4F6] px-5 py-4">
+                <div className="mt-4 border-t border-[var(--border-subtle)] px-5 py-4">
                   <div className="grid grid-cols-3 gap-2 text-center sm:gap-3">
                     <div>
-                      <p className="text-[11px] font-medium uppercase tracking-wide text-[#9CA3AF]">📚 Disciplinas</p>
-                      <p className="mt-1 text-sm font-bold text-[#1A1A2E]">
+                      <p className="text-[11px] font-medium uppercase tracking-wide text-[var(--text-muted)]">📚 Disciplinas</p>
+                      <p className="mt-1 text-sm font-bold text-[var(--text-primary)]">
                         {cardTotals ? cardTotals.disciplinasCount : "—"}
                       </p>
                     </div>
                     <div>
-                      <p className="text-[11px] font-medium uppercase tracking-wide text-[#9CA3AF]">✅ Questões</p>
-                      <p className="mt-1 text-sm font-bold text-[#1A1A2E]">
+                      <p className="text-[11px] font-medium uppercase tracking-wide text-[var(--text-muted)]">✅ Questões</p>
+                      <p className="mt-1 text-sm font-bold text-[var(--text-primary)]">
                         {cardTotals ? cardTotals.questoesTotal : "—"}
                       </p>
                     </div>
                     <div>
-                      <p className="text-[11px] font-medium uppercase tracking-wide text-[#9CA3AF]">🎯 % Acerto</p>
+                      <p className="text-[11px] font-medium uppercase tracking-wide text-[var(--text-muted)]">🎯 % Acerto</p>
                       {cardTotals ? (
                         <p
                           className={cn(
@@ -553,23 +551,23 @@ export function Concursos() {
                           {cardTotals.acertoMedioPct}%
                         </p>
                       ) : (
-                        <p className="mt-1 text-sm font-bold text-[#1A1A2E]">—</p>
+                        <p className="mt-1 text-sm font-bold text-[var(--text-primary)]">—</p>
                       )}
                     </div>
                   </div>
                 </div>
 
-                <div className="mt-auto flex flex-nowrap items-center gap-2 overflow-hidden border-t border-[#F3F4F6] px-5 py-4">
+                <div className="mt-auto flex flex-nowrap items-center gap-2 overflow-hidden border-t border-[var(--border-subtle)] px-5 py-4">
                   <button
                     type="button"
-                    className="inline-flex min-w-fit shrink-0 items-center justify-center gap-1.5 whitespace-nowrap rounded-[10px] border border-[#E5E7EB] bg-white px-3 py-1.5 text-[13px] font-semibold text-[#6B7280] transition-colors duration-200 hover:bg-[#F9FAFB]"
+                    className="inline-flex min-w-fit shrink-0 items-center justify-center gap-1.5 whitespace-nowrap rounded-[10px] border border-[var(--border-default)] bg-white px-3 py-1.5 text-[13px] font-semibold text-[#374151] transition-colors duration-200 hover:bg-[#F9FAFB] dark:bg-[var(--bg-surface-2)] dark:text-[var(--text-primary)] dark:hover:bg-[var(--bg-surface-hover)]"
                     onClick={() => setDetalhe(c)}
                   >
                     <span aria-hidden>👁</span> Ver detalhes
                   </button>
                   <button
                     type="button"
-                    className="inline-flex min-w-fit shrink-0 items-center justify-center gap-1.5 whitespace-nowrap rounded-[10px] border border-[#E5E7EB] bg-white px-3 py-1.5 text-[13px] font-semibold text-[#6B7280] transition-colors duration-200 hover:bg-[#F9FAFB]"
+                    className="inline-flex min-w-fit shrink-0 items-center justify-center gap-1.5 whitespace-nowrap rounded-[10px] border border-[var(--border-default)] bg-white px-3 py-1.5 text-[13px] font-semibold text-[#374151] transition-colors duration-200 hover:bg-[#F9FAFB] dark:bg-[var(--bg-surface-2)] dark:text-[var(--text-primary)] dark:hover:bg-[var(--bg-surface-hover)]"
                     onClick={() => openEdit(c)}
                   >
                     <span aria-hidden>✏️</span> Editar
@@ -579,7 +577,7 @@ export function Concursos() {
                       href={editalHref}
                       target="_blank"
                       rel="noreferrer"
-                      className="inline-flex shrink-0 items-center gap-1 whitespace-nowrap rounded-full bg-[#F3F0FF] px-3 py-1.5 text-[13px] font-bold text-[#6C3FC5] transition-colors duration-200 hover:bg-violet-100"
+                      className="inline-flex shrink-0 items-center gap-1 whitespace-nowrap rounded-full bg-[#F3F0FF] px-3 py-1.5 text-[13px] font-bold text-[#6C3FC5] transition-colors duration-200 hover:bg-violet-100 dark:bg-[var(--ap-brand-light)] dark:text-[var(--ap-brand)] dark:hover:opacity-90"
                     >
                       <span aria-hidden>📄</span> Edital
                     </a>
@@ -597,7 +595,7 @@ export function Concursos() {
                         </button>
                         <button
                           type="button"
-                          className="shrink-0 whitespace-nowrap rounded-lg border border-[#E5E7EB] px-2 py-1.5 text-[11px] font-semibold text-[#6B7280] hover:bg-[#F9FAFB]"
+                          className="shrink-0 whitespace-nowrap rounded-lg border border-[var(--border-default)] px-2 py-1.5 text-[11px] font-semibold text-[var(--text-secondary)] hover:bg-[#F9FAFB] dark:hover:bg-[var(--bg-surface-hover)]"
                           onClick={() => {
                             setPendingDeleteId(null);
                             if (deleteTimerRef.current) clearTimeout(deleteTimerRef.current);
@@ -609,7 +607,7 @@ export function Concursos() {
                     ) : (
                       <button
                         type="button"
-                        className="flex h-9 min-w-[36px] shrink-0 items-center justify-center rounded-lg p-2 text-lg leading-none text-[#9CA3AF] transition-all duration-200 hover:bg-[#FFF5F5] hover:text-[#EF4444]"
+                        className="flex h-9 min-w-[36px] shrink-0 items-center justify-center rounded-lg p-2 text-lg leading-none text-[var(--text-muted)] transition-all duration-200 hover:bg-[#FFF5F5] hover:text-[#EF4444] dark:hover:bg-[rgba(239,68,68,0.15)] dark:hover:text-[#EF4444]"
                         aria-label="Excluir concurso"
                         onClick={() => armDeletePrompt(c.id)}
                         disabled={deleteMutation.isPending}

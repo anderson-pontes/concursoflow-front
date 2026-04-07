@@ -59,10 +59,7 @@ export function PlanosPage() {
   }, [planos]);
 
   return (
-    <div
-      className="min-h-full space-y-6 pb-8"
-      style={{ fontFamily: "Inter, system-ui, sans-serif", backgroundColor: "#F5F4FA" }}
-    >
+    <div className="min-h-full space-y-6 pb-8" style={{ fontFamily: "Inter, system-ui, sans-serif" }}>
       <style>{`
         @keyframes plano-card-dot-pulse {
           0%, 100% { opacity: 1; transform: scale(1); }
@@ -72,8 +69,8 @@ export function PlanosPage() {
       `}</style>
       <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
         <div>
-          <h1 className="text-[28px] font-bold leading-tight text-[#1A1A2E]">Planos de Estudo</h1>
-          <p className="mt-1 text-sm text-[#6B7280]">
+          <h1 className="text-[28px] font-bold leading-tight text-[var(--text-primary)]">Planos de Estudo</h1>
+          <p className="mt-1 text-sm text-[var(--text-secondary)]">
             Organize seus estudos por concurso e acompanhe sua evolução
           </p>
         </div>
@@ -88,16 +85,16 @@ export function PlanosPage() {
       </div>
 
       <div className="flex flex-wrap gap-3">
-        <span className="inline-flex items-center rounded-full border border-[#E5E7EB] bg-white px-3.5 py-1.5 text-[13px] text-[#6B7280] shadow-[0_2px_16px_rgba(0,0,0,0.07)]">
+        <span className="inline-flex items-center rounded-full border border-[var(--border-default)] bg-[var(--bg-surface)] px-3.5 py-1.5 text-[13px] text-[var(--text-secondary)] shadow-[0_2px_16px_rgba(0,0,0,0.07)]">
           📋 {summary.n} {summary.n === 1 ? "plano criado" : "planos criados"}
         </span>
-        <span className="inline-flex items-center rounded-full border border-[#E5E7EB] bg-white px-3.5 py-1.5 text-[13px] text-[#6B7280] shadow-[0_2px_16px_rgba(0,0,0,0.07)]">
+        <span className="inline-flex items-center rounded-full border border-[var(--border-default)] bg-[var(--bg-surface)] px-3.5 py-1.5 text-[13px] text-[var(--text-secondary)] shadow-[0_2px_16px_rgba(0,0,0,0.07)]">
           ✅ {summary.ativos} {summary.ativos === 1 ? "ativo" : "ativos"}
         </span>
-        <span className="inline-flex items-center rounded-full border border-[#E5E7EB] bg-white px-3.5 py-1.5 text-[13px] text-[#6B7280] shadow-[0_2px_16px_rgba(0,0,0,0.07)]">
+        <span className="inline-flex items-center rounded-full border border-[var(--border-default)] bg-[var(--bg-surface)] px-3.5 py-1.5 text-[13px] text-[var(--text-secondary)] shadow-[0_2px_16px_rgba(0,0,0,0.07)]">
           📚 {summary.disc} {summary.disc === 1 ? "disciplina" : "disciplinas"}
         </span>
-        <span className="inline-flex items-center rounded-full border border-[#E5E7EB] bg-white px-3.5 py-1.5 text-[13px] text-[#6B7280] shadow-[0_2px_16px_rgba(0,0,0,0.07)]">
+        <span className="inline-flex items-center rounded-full border border-[var(--border-default)] bg-[var(--bg-surface)] px-3.5 py-1.5 text-[13px] text-[var(--text-secondary)] shadow-[0_2px_16px_rgba(0,0,0,0.07)]">
           📈 {summary.avgProgress}% de progresso médio
         </span>
       </div>
@@ -105,18 +102,14 @@ export function PlanosPage() {
       <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
         <button
           type="button"
-          className="flex min-h-[240px] cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-[#C4B5FD] px-5 py-8 text-center transition-all duration-200 ease-out hover:-translate-y-0.5 hover:border-[#6C3FC5] hover:bg-[#EDE9FE]"
-          style={{
-            background: "linear-gradient(135deg, #FAFAFE, #F3F0FF)",
-            boxShadow: "0 2px 16px rgba(0,0,0,0.07)",
-          }}
+          className="flex min-h-[240px] cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-[#C4B5FD] bg-gradient-to-br from-[#FAFAFE] to-[#F3F0FF] px-5 py-8 text-center shadow-[0_2px_16px_rgba(0,0,0,0.07)] transition-all duration-200 ease-out hover:-translate-y-0.5 hover:border-[#6C3FC5] hover:from-[#FAFAFE] hover:to-[#EDE9FE] dark:border-[#3D3060] dark:from-[#16131F] dark:to-[#1E1A2E] dark:hover:border-solid dark:hover:border-[#6C3FC5] dark:hover:from-[#1E1A2E] dark:hover:to-[#1E1A2E]"
           onClick={() => setOpenCriar(true)}
         >
-          <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-[#EDE9FE]">
-            <span className="text-2xl font-light leading-none text-[#6C3FC5]">+</span>
+          <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-[#EDE9FE] dark:bg-[#2D2540]">
+            <span className="text-2xl font-light leading-none text-[#6C3FC5] dark:text-[#A78BFA]">+</span>
           </div>
-          <span className="text-base font-bold text-[#6C3FC5]">Criar novo plano</span>
-          <span className="mt-1 max-w-[260px] text-[13px] text-[#9CA3AF]">
+          <span className="text-base font-bold text-[#6C3FC5] dark:text-[#A78BFA]">Criar novo plano</span>
+          <span className="mt-1 max-w-[260px] text-[13px] text-[var(--text-muted)]">
             Adicione disciplinas a partir de um edital
           </span>
         </button>

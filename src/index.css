@@ -14,6 +14,23 @@
     --sidebar-active: #EEF0FF; /* primary-50 */
     --sidebar-active-text: #3730A3; /* primary-800 */
 
+    /* Aprovingo sidebar (layout) — tokens light */
+    --sidebar-ap-border: #f0effe;
+    --sidebar-ap-shadow: 4px 0 24px rgba(108, 63, 197, 0.06);
+    --sidebar-ap-header-border: #f3f0ff;
+    --nav-text: #6b7280;
+    --nav-text-active: #6c3fc5;
+    --nav-bg-hover: #f3f0ff;
+    --nav-bg-active: linear-gradient(135deg, #f3f0ff, #ede9fe);
+    --nav-border-active: #ddd6fe;
+    --nav-active-shadow: 0 2px 8px rgba(108, 63, 197, 0.12);
+    --group-label: #9ca3af;
+    --footer-border: #f0effe;
+    --concurso-bg: #f3f0ff;
+    --concurso-border: #ddd6fe;
+    --tooltip-bg: #1a1a2e;
+    --tooltip-fg: #ffffff;
+
     --card: #ffffff;
     --card-foreground: #0F172A;
     --popover: #ffffff;
@@ -54,6 +71,21 @@
     --sidebar-accent-foreground: #3730A3;
     --sidebar-border: #CBD5E1;
     --sidebar-ring: #4F46E5;
+
+    /* Shell / páginas Concursos, Disciplinas, Planos (tokens Aprovingo) */
+    --bg-page: #f5f4fa;
+    --bg-surface: #ffffff;
+    --bg-surface-2: #fafafa;
+    --bg-surface-hover: #f3f0ff;
+    --border-default: #e5e7eb;
+    --border-subtle: #f3f4f6;
+    --border-accent: #ddd6fe;
+    --text-primary: #1a1a2e;
+    --text-secondary: #6b7280;
+    --text-muted: #9ca3af;
+    --ap-brand: #6c3fc5;
+    --ap-brand-light: #f3f0ff;
+    --ap-brand-hover: #5b32a8;
   }
   .dark {
     --background: #0F172A; /* neutral-900 */
@@ -62,6 +94,23 @@
     --sidebar-bg: #1E293B; /* neutral-800 */
     --sidebar-active: #2D2B5A;
     --sidebar-active-text: #A5B4FC; /* primary-200 */
+
+    /* Aprovingo sidebar — tokens dark */
+    --sidebar-ap-border: #1e1a2e;
+    --sidebar-ap-shadow: 4px 0 24px rgba(0, 0, 0, 0.3);
+    --sidebar-ap-header-border: #1e1a2e;
+    --nav-text: #9ca3af;
+    --nav-text-active: #a78bfa;
+    --nav-bg-hover: #1e1a2e;
+    --nav-bg-active: linear-gradient(135deg, #1e1a2e, #2d2540);
+    --nav-border-active: #3d3060;
+    --nav-active-shadow: 0 2px 8px rgba(108, 63, 197, 0.2);
+    --group-label: #4b5563;
+    --footer-border: #1e1a2e;
+    --concurso-bg: #1e1a2e;
+    --concurso-border: #2d2540;
+    --tooltip-bg: #f1f0ff;
+    --tooltip-fg: #1a1a2e;
 
     --card: #1E293B; /* neutral-800 */
     --card-foreground: #F8FAFC;
@@ -101,11 +150,25 @@
     --sidebar-accent-foreground: #A5B4FC;
     --sidebar-border: #334155;
     --sidebar-ring: #4F46E5;
+
+    --bg-page: #0d0b14;
+    --bg-surface: #13111a;
+    --bg-surface-2: #1a1726;
+    --bg-surface-hover: #1e1a2e;
+    --border-default: #1e1a2e;
+    --border-subtle: #16131f;
+    --border-accent: #2d2540;
+    --text-primary: #f1f0ff;
+    --text-secondary: #9ca3af;
+    --text-muted: #4b5563;
+    --ap-brand: #a78bfa;
+    --ap-brand-light: #1e1a2e;
+    --ap-brand-hover: #8b5cf6;
   }
   body {
-    background-color: var(--background);
+    background-color: var(--bg-page);
     color: var(--foreground);
-    @apply bg-background text-foreground;
+    @apply text-foreground;
   }
   .theme {
     --font-sans: 'Geist Variable', sans-serif;
@@ -117,6 +180,7 @@
     outline-color: var(--ring);
   }
   html {
+    background-color: var(--bg-page);
     @apply font-sans;
   }
 }
@@ -124,5 +188,33 @@
 @layer utilities {
   .text-muted-foreground {
     color: var(--muted-foreground);
+  }
+}
+
+@keyframes sidebar-nav-bar-in {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+@keyframes sidebar-badge-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+}
+
+@keyframes sidebar-tooltip-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
   }
 }

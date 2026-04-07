@@ -72,15 +72,16 @@ export function PlanoCard({
         }
       }}
       className={cn(
-        "group cursor-pointer overflow-hidden rounded-2xl border-[1.5px] border-[#E5E7EB] bg-white transition-all duration-200 ease-out",
+        "group cursor-pointer overflow-hidden rounded-2xl border-[1.5px] border-[var(--border-default)] bg-[var(--bg-surface)] transition-all duration-200 ease-out",
         "shadow-[0_2px_12px_rgba(0,0,0,0.06)] hover:-translate-y-0.5 hover:border-[#C4B5FD] hover:shadow-[0_8px_32px_rgba(108,63,197,0.13)]",
+        "dark:hover:border-[#3D3060]",
       )}
       style={{ fontFamily: "Inter, system-ui, sans-serif" }}
     >
-      <div className={cn("h-1", plano.ativo ? "bg-[#6C3FC5]" : "bg-[#D1D5DB]")} />
+      <div className={cn("h-1", plano.ativo ? "bg-[#6C3FC5]" : "bg-[#D1D5DB] dark:bg-[#2D2540]")} />
 
       <div className="flex items-start gap-3 px-5 pb-0 pt-5">
-        <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-[10px] bg-[#F3F0FF] text-base font-bold text-[#6C3FC5]">
+        <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-[10px] bg-[#F3F0FF] text-base font-bold text-[#6C3FC5] dark:bg-[#2D2540] dark:text-[#A78BFA]">
           {logoSrc ? (
             <img src={logoSrc} alt="" className="h-full w-full object-cover" />
           ) : (
@@ -88,52 +89,52 @@ export function PlanoCard({
           )}
         </div>
         <div className="min-w-0 flex-1">
-          <h3 className="line-clamp-1 text-base font-bold text-[#1A1A2E]">{plano.nome}</h3>
-          <p className="mt-0.5 line-clamp-1 text-[13px] text-[#6B7280]">
+          <h3 className="line-clamp-1 text-base font-bold text-[var(--text-primary)]">{plano.nome}</h3>
+          <p className="mt-0.5 line-clamp-1 text-[13px] text-[var(--text-secondary)]">
             {plano.orgao} • {plano.cargo}
           </p>
         </div>
         <div className="shrink-0">
           {plano.ativo ? (
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-[#D1FAE5] px-2.5 py-0.5 text-xs font-semibold text-[#16A34A]">
-              <span className="plano-card-dot-pulse h-1.5 w-1.5 shrink-0 rounded-full bg-[#16A34A]" aria-hidden />
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-[#D1FAE5] px-2.5 py-0.5 text-xs font-semibold text-[#16A34A] dark:bg-[#052E16] dark:text-[#4ADE80]">
+              <span className="plano-card-dot-pulse h-1.5 w-1.5 shrink-0 rounded-full bg-[#16A34A] dark:bg-[#4ADE80]" aria-hidden />
               Ativo
             </span>
           ) : (
-            <span className="inline-flex items-center gap-1 rounded-full bg-[#F3F4F6] px-2.5 py-0.5 text-xs font-semibold text-[#9CA3AF]">
+            <span className="inline-flex items-center gap-1 rounded-full bg-[#F3F4F6] px-2.5 py-0.5 text-xs font-semibold text-[#9CA3AF] dark:bg-[#1F2937] dark:text-[#6B7280]">
               ○ Inativo
             </span>
           )}
         </div>
       </div>
 
-      <div className="mt-4 border-t border-[#F3F4F6] px-5 py-4">
+      <div className="mt-4 border-t border-[var(--border-subtle)] px-5 py-4">
         <div className="grid grid-cols-3 gap-2 text-center">
           <div>
-            <div className="text-[22px] font-bold leading-tight text-[#1A1A2E]">{stats.disciplinas}</div>
-            <div className="mt-0.5 text-[11px] font-medium uppercase tracking-wide text-[#9CA3AF]">Disciplinas</div>
+            <div className="text-[22px] font-bold leading-tight text-[var(--text-primary)]">{stats.disciplinas}</div>
+            <div className="mt-0.5 text-[11px] font-medium uppercase tracking-wide text-[var(--text-muted)]">Disciplinas</div>
           </div>
           <div>
-            <div className="text-[22px] font-bold leading-tight text-[#1A1A2E]">
+            <div className="text-[22px] font-bold leading-tight text-[var(--text-primary)]">
               {stats.estudados}/{stats.total}
             </div>
-            <div className="mt-0.5 text-[11px] font-medium uppercase tracking-wide text-[#9CA3AF]">Tópicos</div>
+            <div className="mt-0.5 text-[11px] font-medium uppercase tracking-wide text-[var(--text-muted)]">Tópicos</div>
           </div>
           <div>
             <div className={cn("text-[22px] font-bold leading-tight", conclusaoTextClass(stats.pct))}>
               {stats.pct}%
             </div>
-            <div className="mt-0.5 text-[11px] font-medium uppercase tracking-wide text-[#9CA3AF]">Conclusão</div>
+            <div className="mt-0.5 text-[11px] font-medium uppercase tracking-wide text-[var(--text-muted)]">Conclusão</div>
           </div>
         </div>
       </div>
 
       <div className="px-5 pb-4">
         <div className="mb-1.5 flex items-center justify-between text-[13px]">
-          <span className="text-[#6B7280]">Progresso geral</span>
-          <span className="font-bold tabular-nums text-[#6C3FC5]">{stats.pct}%</span>
+          <span className="text-[var(--text-secondary)]">Progresso geral</span>
+          <span className="font-bold tabular-nums text-[#6C3FC5] dark:text-[#A78BFA]">{stats.pct}%</span>
         </div>
-        <div className="h-2 overflow-hidden rounded-full bg-[#E5E7EB]">
+        <div className="h-2 overflow-hidden rounded-full bg-[#E5E7EB] dark:bg-[#1E1A2E]">
           <div
             className="h-full rounded-full bg-gradient-to-r from-[#6C3FC5] to-[#8B5CF6] transition-[width] duration-[600ms] ease-out"
             style={{ width: `${barPct}%` }}
@@ -142,19 +143,21 @@ export function PlanoCard({
       </div>
 
       <div
-        className="flex items-center gap-2 border-t border-[#F3F4F6] px-5 py-3 pb-4"
+        className="flex items-center gap-2 border-t border-[var(--border-subtle)] px-5 py-3 pb-4"
         onClick={(e) => e.stopPropagation()}
         onKeyDown={(e) => e.stopPropagation()}
       >
         <span
           className={cn(
             "shrink-0 rounded-full px-2 py-0.5 text-xs font-semibold capitalize",
-            plano.ativo ? "bg-[#EDE9FE] text-[#6C3FC5]" : "bg-[#F3F4F6] text-[#9CA3AF]",
+            plano.ativo
+              ? "bg-[#EDE9FE] text-[#6C3FC5] dark:bg-[#052E16] dark:text-[#4ADE80]"
+              : "bg-[#F3F4F6] text-[#9CA3AF] dark:bg-[#1F2937] dark:text-[#6B7280]",
           )}
         >
           {plano.ativo ? "ativo" : "inativo"}
         </span>
-        <span className="flex min-w-0 items-center gap-1 text-xs text-[#9CA3AF]">
+        <span className="flex min-w-0 items-center gap-1 text-xs text-[var(--text-muted)]">
           <span aria-hidden>📅</span>
           <span className="truncate">{dataFmt ?? "Sem data definida"}</span>
         </span>
@@ -162,7 +165,7 @@ export function PlanoCard({
           {!plano.ativo ? (
             <button
               type="button"
-              className="inline-flex items-center gap-1 rounded-full border border-[#E5E7EB] bg-white px-2.5 py-1 text-xs font-semibold text-[#6C3FC5] transition-colors hover:bg-[#F3F0FF]"
+              className="inline-flex items-center gap-1 rounded-full border border-[#E5E7EB] bg-white px-2.5 py-1 text-xs font-semibold text-[#6C3FC5] transition-colors hover:bg-[#F3F0FF] dark:border-[#3D3060] dark:bg-[#1E1A2E] dark:text-[#A78BFA] dark:hover:bg-[#2D2540]"
               onClick={() => onAtivar(plano.id)}
             >
               <span aria-hidden>✓</span> Ativar
@@ -170,7 +173,7 @@ export function PlanoCard({
           ) : null}
           <button
             type="button"
-            className="flex h-8 w-8 items-center justify-center rounded-lg text-base transition-colors hover:bg-[#F3F0FF] hover:text-[#6C3FC5]"
+            className="flex h-8 w-8 items-center justify-center rounded-lg text-base transition-colors hover:bg-[#F3F0FF] hover:text-[#6C3FC5] dark:hover:bg-[#1E1A2E] dark:hover:text-[#A78BFA]"
             aria-label="Editar plano"
             onClick={() => onEditar(plano)}
           >
@@ -178,8 +181,7 @@ export function PlanoCard({
           </button>
           <button
             type="button"
-            className="flex h-8 w-8 items-center justify-center rounded-lg text-base transition-colors hover:bg-[#FFF5F5] hover:opacity-90"
-            style={{ color: "#EF4444" }}
+            className="flex h-8 w-8 items-center justify-center rounded-lg text-base text-[#EF4444] transition-colors hover:bg-[#FFF5F5] hover:opacity-90 dark:hover:bg-[rgba(239,68,68,0.12)]"
             aria-label="Excluir plano"
             onClick={() => onExcluir(plano)}
           >

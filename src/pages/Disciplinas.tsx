@@ -37,31 +37,31 @@ type FilterSeg = "todas" | "plano" | "fora";
 function DisciplinaCardSkeleton() {
   return (
     <div
-      className="animate-pulse overflow-hidden rounded-2xl border-[1.5px] border-[#E5E7EB] bg-white shadow-[0_2px_10px_rgba(0,0,0,0.06)]"
+      className="animate-pulse overflow-hidden rounded-2xl border-[1.5px] border-[var(--border-default)] bg-[var(--bg-surface)] shadow-[0_2px_10px_rgba(0,0,0,0.06)]"
       style={{ fontFamily: "Inter, system-ui, sans-serif" }}
     >
-      <div className="h-[3px] bg-[#E5E7EB]" />
+      <div className="h-[3px] bg-[var(--border-default)]" />
       <div className="flex gap-3 px-5 pt-[18px]">
-        <div className="h-9 w-9 shrink-0 rounded-lg bg-[#F3F4F6]" />
+        <div className="h-9 w-9 shrink-0 rounded-lg bg-[var(--bg-surface-2)]" />
         <div className="min-w-0 flex-1 space-y-2">
-          <div className="h-4 w-2/3 rounded bg-[#F3F4F6]" />
-          <div className="h-3 w-20 rounded-full bg-[#F3F4F6]" />
+          <div className="h-4 w-2/3 rounded bg-[var(--bg-surface-2)]" />
+          <div className="h-3 w-20 rounded-full bg-[var(--bg-surface-2)]" />
         </div>
       </div>
       <div className="space-y-2 px-5 py-4">
         <div className="flex justify-between">
-          <div className="h-3 w-40 rounded bg-[#F3F4F6]" />
-          <div className="h-3 w-8 rounded bg-[#F3F4F6]" />
+          <div className="h-3 w-40 rounded bg-[var(--bg-surface-2)]" />
+          <div className="h-3 w-8 rounded bg-[var(--bg-surface-2)]" />
         </div>
-        <div className="h-2 rounded-full bg-[#E5E7EB]" />
+        <div className="h-2 rounded-full bg-[var(--border-default)]" />
       </div>
       <div className="grid grid-cols-3 gap-2 px-5 pb-3">
-        <div className="mx-auto h-8 w-10 rounded bg-[#F3F4F6]" />
-        <div className="mx-auto h-8 w-10 rounded bg-[#F3F4F6]" />
-        <div className="mx-auto h-8 w-10 rounded bg-[#F3F4F6]" />
+        <div className="mx-auto h-8 w-10 rounded bg-[var(--bg-surface-2)]" />
+        <div className="mx-auto h-8 w-10 rounded bg-[var(--bg-surface-2)]" />
+        <div className="mx-auto h-8 w-10 rounded bg-[var(--bg-surface-2)]" />
       </div>
-      <div className="border-t border-[#F3F4F6] px-5 py-3">
-        <div className="h-6 w-24 rounded-full bg-[#F3F4F6]" />
+      <div className="border-t border-[var(--border-subtle)] px-5 py-3">
+        <div className="h-6 w-24 rounded-full bg-[var(--bg-surface-2)]" />
       </div>
     </div>
   );
@@ -210,16 +210,16 @@ export function Disciplinas() {
   };
 
   return (
-    <div className="min-h-full pb-8" style={{ fontFamily: "Inter, system-ui, sans-serif", backgroundColor: "#F5F4FA" }}>
+    <div className="min-h-full pb-8" style={{ fontFamily: "Inter, system-ui, sans-serif" }}>
       <div className="space-y-5">
         {/* Linha 1 — título + filtro + CTA */}
         <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
           <div>
-            <h1 className="text-[28px] font-bold leading-tight text-[#1A1A2E]">Disciplinas & Tópicos</h1>
-            <p className="mt-1 text-sm text-[#6B7280]">Gerencie as disciplinas do seu plano de estudo</p>
+            <h1 className="text-[28px] font-bold leading-tight text-[var(--text-primary)]">Disciplinas & Tópicos</h1>
+            <p className="mt-1 text-sm text-[var(--text-secondary)]">Gerencie as disciplinas do seu plano de estudo</p>
           </div>
           <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
-            <div className="inline-flex rounded-full bg-[#F3F4F6] p-1">
+            <div className="inline-flex rounded-full bg-[#F3F4F6] p-1 dark:bg-[var(--bg-surface-2)]">
               {(
                 [
                   { id: "todas" as const, label: "Todas" },
@@ -235,7 +235,7 @@ export function Disciplinas() {
                     "rounded-full px-3 py-2 text-sm font-semibold transition-all duration-200",
                     filterSeg === seg.id
                       ? "bg-[#6C3FC5] text-white shadow-sm"
-                      : "bg-transparent text-[#6B7280] hover:text-[#1A1A2E]",
+                      : "bg-transparent text-[#6B7280] hover:text-[#1A1A2E] dark:text-[var(--text-secondary)] dark:hover:text-[var(--text-primary)]",
                   )}
                 >
                   {seg.label}
@@ -255,16 +255,16 @@ export function Disciplinas() {
 
         {/* Summary bar */}
         <div className="flex flex-wrap gap-2">
-          <span className="inline-flex items-center rounded-full border border-[#E5E7EB] bg-white px-3.5 py-1.5 text-[13px] text-[#6B7280] shadow-sm">
+          <span className="inline-flex items-center rounded-full border border-[var(--border-default)] bg-[var(--bg-surface)] px-3.5 py-1.5 text-[13px] text-[var(--text-secondary)] shadow-sm">
             📚 {summary.n} {summary.n === 1 ? "disciplina" : "disciplinas"}
           </span>
-          <span className="inline-flex items-center rounded-full border border-[#E5E7EB] bg-white px-3.5 py-1.5 text-[13px] text-[#6B7280] shadow-sm">
+          <span className="inline-flex items-center rounded-full border border-[var(--border-default)] bg-[var(--bg-surface)] px-3.5 py-1.5 text-[13px] text-[var(--text-secondary)] shadow-sm">
             ✅ {summary.emProg} em progresso
           </span>
-          <span className="inline-flex items-center rounded-full border border-[#E5E7EB] bg-white px-3.5 py-1.5 text-[13px] text-[#6B7280] shadow-sm">
+          <span className="inline-flex items-center rounded-full border border-[var(--border-default)] bg-[var(--bg-surface)] px-3.5 py-1.5 text-[13px] text-[var(--text-secondary)] shadow-sm">
             📋 {summary.noPlano} no plano · {summary.fora} fora do plano
           </span>
-          <span className="inline-flex items-center rounded-full border border-[#E5E7EB] bg-white px-3.5 py-1.5 text-[13px] text-[#6B7280] shadow-sm">
+          <span className="inline-flex items-center rounded-full border border-[var(--border-default)] bg-[var(--bg-surface)] px-3.5 py-1.5 text-[13px] text-[var(--text-secondary)] shadow-sm">
             📈 {summary.media}% de progresso médio
           </span>
         </div>
@@ -277,15 +277,15 @@ export function Disciplinas() {
 
         {/* Barra adicionar */}
         <div
-          className="flex items-center gap-3 rounded-xl border-[1.5px] border-[#E5E7EB] bg-white py-1 pl-4 pr-1 shadow-[0_2px_8px_rgba(0,0,0,0.04)]"
+          className="flex items-center gap-3 rounded-xl border-[1.5px] border-[var(--border-default)] bg-white py-1 pl-4 pr-1 shadow-[0_2px_8px_rgba(0,0,0,0.04)] dark:bg-[var(--bg-surface)]"
           style={{ fontFamily: "Inter, system-ui, sans-serif" }}
         >
-          <span className="shrink-0 text-base text-[#9CA3AF]" aria-hidden>
+          <span className="shrink-0 text-base text-[var(--text-muted)]" aria-hidden>
             🔍
           </span>
           <input
             ref={addInputRef}
-            className="min-w-0 flex-1 border-0 bg-transparent py-3 text-sm text-[#1A1A2E] outline-none placeholder:text-[#9CA3AF]"
+            className="min-w-0 flex-1 border-0 bg-transparent py-3 text-sm text-[var(--text-primary)] outline-none placeholder:text-[var(--text-muted)]"
             placeholder="Adicionar nova disciplina (ex: Direito Tributário)..."
             value={newDisciplinaNome}
             onChange={(e) => setNewDisciplinaNome(e.target.value)}
@@ -316,12 +316,12 @@ export function Disciplinas() {
 
         {!loadingDisciplinas && concursoId && disciplinas.length === 0 ? (
           <div
-            className="flex flex-col items-center rounded-2xl border-[1.5px] border-[#E5E7EB] bg-white px-6 py-16 text-center shadow-[0_2px_12px_rgba(0,0,0,0.07)]"
+            className="flex flex-col items-center rounded-2xl border-[1.5px] border-[var(--border-default)] bg-[var(--bg-surface)] px-6 py-16 text-center shadow-[0_2px_12px_rgba(0,0,0,0.07)]"
             style={{ fontFamily: "Inter, system-ui, sans-serif" }}
           >
             <EmptyDisciplinasIllustration />
-            <h2 className="mt-6 text-lg font-bold text-[#1A1A2E]">Nenhuma disciplina ainda</h2>
-            <p className="mt-2 max-w-[360px] text-sm text-[#6B7280]">
+            <h2 className="mt-6 text-lg font-bold text-[var(--text-primary)]">Nenhuma disciplina ainda</h2>
+            <p className="mt-2 max-w-[360px] text-sm text-[var(--text-secondary)]">
               Adicione sua primeira disciplina para começar a organizar seus estudos.
             </p>
             <button
@@ -335,7 +335,7 @@ export function Disciplinas() {
         ) : null}
 
         {!loadingDisciplinas && concursoId && disciplinas.length > 0 && filteredDisciplinas.length === 0 ? (
-          <div className="rounded-xl border border-[#E5E7EB] bg-white px-6 py-12 text-center text-sm text-[#6B7280] shadow-sm">
+          <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] px-6 py-12 text-center text-sm text-[var(--text-secondary)] shadow-sm">
             Nenhuma disciplina neste filtro.
           </div>
         ) : null}
@@ -378,22 +378,22 @@ export function Disciplinas() {
             if (e.target === e.currentTarget) setEditingDisciplina(null);
           }}
         >
-          <div className="w-full max-w-md rounded-xl border-[1.5px] border-[#E5E7EB] bg-white p-6 shadow-[0_8px_32px_rgba(0,0,0,0.12)]">
+          <div className="w-full max-w-md rounded-xl border-[1.5px] border-[var(--border-default)] bg-[var(--bg-surface)] p-6 shadow-[0_8px_32px_rgba(0,0,0,0.12)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.4)]">
             <div className="mb-4 flex items-center gap-2">
-              <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#F3F0FF] text-[#6C3FC5]">
+              <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#F3F0FF] text-[#6C3FC5] dark:bg-[var(--ap-brand-light)] dark:text-[var(--ap-brand)]">
                 <Pencil className="h-4 w-4" />
               </span>
-              <h3 className="text-base font-bold text-[#1A1A2E]">Editar disciplina</h3>
+              <h3 className="text-base font-bold text-[var(--text-primary)]">Editar disciplina</h3>
             </div>
             <input
-              className="w-full rounded-[10px] border border-[#E5E7EB] bg-white px-3 py-2.5 text-sm text-[#1A1A2E] outline-none focus:border-[#6C3FC5] focus:shadow-[0_0_0_3px_#EDE9FE]"
+              className="w-full rounded-[10px] border border-[var(--border-default)] bg-white px-3 py-2.5 text-sm text-[var(--text-primary)] outline-none focus:border-[#6C3FC5] focus:shadow-[0_0_0_3px_#EDE9FE] dark:bg-[var(--bg-surface-2)] dark:focus:shadow-[0_0_0_3px_rgba(167,139,250,0.2)]"
               value={editingDisciplinaNome}
               onChange={(e) => setEditingDisciplinaNome(e.target.value)}
             />
             <div className="mt-5 flex justify-end gap-2">
               <button
                 type="button"
-                className="rounded-[10px] border border-[#E5E7EB] bg-white px-4 py-2 text-sm font-semibold text-[#6B7280] hover:bg-[#F9FAFB]"
+                className="rounded-[10px] border border-[var(--border-default)] bg-[var(--bg-surface)] px-4 py-2 text-sm font-semibold text-[var(--text-secondary)] hover:bg-[#F9FAFB] dark:hover:bg-[var(--bg-surface-hover)]"
                 onClick={() => setEditingDisciplina(null)}
               >
                 Cancelar

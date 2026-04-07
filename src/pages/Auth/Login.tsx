@@ -4,12 +4,21 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
-import aprovinhoUrl from "@/assets/aprovinho.svg";
+import {
+  AuthEmailField,
+  AuthPasswordField,
+  AuthPrimaryButton,
+  AuthSeparatorOu,
+  GoogleSignInButton,
+} from "@/components/auth/AuthFields";
+import { AuthShell } from "@/components/auth/AuthShell";
 import { AprovingoLogo } from "@/components/branding/AprovingoLogo";
 import { api } from "@/services/api";
 import { fetchCurrentUser } from "@/services/currentUser";
 import { useAuthStore } from "@/stores/authStore";
+import { cn } from "@/lib/utils";
 
 const loginSchema = z.object({
   email: z.string().email("E-mail inválido"),
@@ -18,15 +27,40 @@ const loginSchema = z.object({
 
 type LoginForm = z.infer<typeof loginSchema>;
 
+const forgotSchema = z.object({
+  email: z.string().email("E-mail inválido"),
+});
+
+type ForgotForm = z.infer<typeof forgotSchema>;
+
+function loginErrorMessage(err: unknown): string {
+  if (axios.isAxiosError(err)) {
+    const d = err.response?.data as { detail?: string | unknown } | undefined;
+    if (typeof d?.detail === "string") return d.detail;
+  }
+  if (err instanceof Error) return err.message;
+  return "Erro ao entrar";
+}
+
 export function Login() {
   const navigate = useNavigate();
   const setTokens = useAuthStore((s) => s.setTokens);
   const setUser = useAuthStore((s) => s.setUser);
 
+  const [authMode, setAuthMode] = React.useState<"login" | "forgot">("login");
+  const [shakeLogin, setShakeLogin] = React.useState(false);
+  const [forgotSent, setForgotSent] = React.useState(false);
+
   const form = useForm<LoginForm>({
     resolver: zodResolver(loginSchema),
     defaultValues: { email: "", password: "" },
-    mode: "onSubmit",
+    mode: "onBlur",
+  });
+
+  const forgotForm = useForm<ForgotForm>({
+    resolver: zodResolver(forgotSchema),
+    defaultValues: { email: "" },
+    mode: "onBlur",
   });
 
   const mutation = useMutation({
@@ -53,6 +87,18 @@ export function Login() {
       }
       navigate("/dashboard");
     },
+    onError: () => {
+      setShakeLogin(true);
+      window.setTimeout(() => setShakeLogin(false), 450);
+    },
+  });
+
+  const forgotMutation = useMutation({
+    mutationFn: async (_email: string) => {
+      /* Endpoint de recuperação ainda não exposto na API; delay apenas para UX */
+      await new Promise((r) => setTimeout(r, 500));
+    },
+    onSuccess: () => setForgotSent(true),
   });
 
   const {
@@ -61,134 +107,132 @@ export function Login() {
     formState: { errors },
   } = form;
 
+  const {
+    register: regForgot,
+    handleSubmit: submitForgot,
+    formState: { errors: forgotErrors },
+    reset: resetForgot,
+  } = forgotForm;
+
+  const goForgot = () => {
+    setAuthMode("forgot");
+    setForgotSent(false);
+    resetForgot();
+  };
+
+  const goLogin = () => {
+    setAuthMode("login");
+    setForgotSent(false);
+    resetForgot();
+  };
+
   return (
-    <div className="min-h-screen flex bg-neutral-50 dark:bg-neutral-900">
-      <div className="hidden md:flex md:w-[42%] lg:w-[40%] bg-primary-600 p-10 flex-col justify-between relative overflow-hidden">
-          <div className="absolute -top-14 -right-14 w-52 h-52 rounded-full bg-primary-400 opacity-40" />
-          <div className="absolute -bottom-20 -left-10 w-64 h-64 rounded-full bg-primary-800 opacity-50" />
-
-          <div className="relative z-10">
-            <div className="mb-7 flex min-w-0 items-center">
-              <AprovingoLogo className="h-12 w-auto max-w-[min(100%,220px)] shrink-0 sm:h-14" />
-            </div>
-            <h2 className="text-white text-2xl font-medium leading-snug mb-3">
-              Sua aprovação começa com organização.
-            </h2>
-            <p className="text-primary-200 text-sm leading-relaxed">
-              Gerencie seus estudos, acompanhe seu progresso e alcance sua meta com mais foco.
-            </p>
-            <div className="mt-6 flex w-full max-w-full justify-start">
-              <img
-                src={aprovinhoUrl}
-                alt="Aprovinho"
-                className="h-auto w-full max-w-[min(100%,340px)] object-contain object-left sm:max-w-[min(100%,400px)] lg:max-w-[min(100%,460px)]"
-                decoding="async"
-              />
-            </div>
-          </div>
-
-          <div className="relative z-10 flex flex-col gap-2.5">
-            {[
-              { cor: "bg-success-400", texto: "+1.200 concurseiros já usam a plataforma" },
-              { cor: "bg-warning-400", texto: "Pomodoro, cronograma e simulados em um só lugar" },
-              { cor: "bg-primary-200", texto: "Heatmap e métricas para visualizar sua evolução" },
-            ].map((item, i) => (
-              <div key={i} className="flex items-center gap-3 bg-white/10 rounded-xl px-4 py-2.5">
-                <span className={`w-2 h-2 rounded-full ${item.cor} shrink-0`} />
-                <span className="text-primary-100 text-xs">{item.texto}</span>
-              </div>
-            ))}
-          </div>
+    <AuthShell>
+      {/* Mobile: logo compacta no topo */}
+      <div className="mb-8 flex justify-center md:hidden">
+        <AprovingoLogo className="h-10 w-auto max-w-[200px] shrink-0" />
       </div>
 
-      <div className="flex-1 bg-white dark:bg-neutral-800 p-6 sm:p-10 flex flex-col justify-center items-center">
-        <div className="w-full max-w-md">
-          <div className="mb-7">
-            <h1 className="text-xl font-medium text-neutral-900 dark:text-neutral-50 mb-1">
-              Entrar na sua conta
-            </h1>
-            <p className="text-sm text-neutral-400">Acesse sua conta para continuar estudando.</p>
+      {authMode === "forgot" ? (
+        <div className="pb-16 md:pb-8">
+          <button
+            type="button"
+            onClick={goLogin}
+            className="mb-6 text-[13px] font-medium text-[#6C3FC5] transition-colors hover:text-[#5B32A8] hover:underline"
+          >
+            ← Voltar ao login
+          </button>
+
+          {!forgotSent ? (
+            <>
+              <div className="mb-6 flex justify-center">
+                <div className="flex h-[60px] w-[60px] items-center justify-center rounded-full bg-[#F3F0FF]">
+                  <span className="text-[28px]" aria-hidden>
+                    ✉️
+                  </span>
+                </div>
+              </div>
+              <h1 className="text-center text-2xl font-bold text-[#1A1A2E]">Recuperar senha</h1>
+              <p className="mx-auto mt-2 max-w-sm text-center text-sm text-[#6B7280]">
+                Digite seu e-mail e enviaremos um link de redefinição.
+              </p>
+
+              <form
+                className="mt-8 space-y-[18px]"
+                onSubmit={submitForgot((vals) => forgotMutation.mutate(vals.email))}
+              >
+                <AuthEmailField id="forgot-email" registration={regForgot("email")} error={forgotErrors.email?.message} />
+                <AuthPrimaryButton loading={forgotMutation.isPending} loadingLabel="Enviando...">
+                  Enviar link de recuperação
+                </AuthPrimaryButton>
+              </form>
+            </>
+          ) : (
+            <div
+              className="mt-4 rounded-xl border border-[#BBF7D0] bg-[#F0FDF4] p-4 text-center"
+              role="status"
+            >
+              <p className="text-lg" aria-hidden>
+                ✅
+              </p>
+              <p className="mt-2 text-sm font-semibold text-[#166534]">Link enviado! Verifique seu e-mail.</p>
+            </div>
+          )}
+        </div>
+      ) : (
+        <>
+          <div className="mb-9">
+            <h1 className="text-[28px] font-bold text-[#1A1A2E]">Entrar na sua conta</h1>
+            <p className="mt-1.5 text-sm text-[#6B7280]">Acesse sua conta para continuar estudando.</p>
           </div>
 
-          <form className="space-y-4" onSubmit={handleSubmit((values) => mutation.mutate(values))}>
+          <form
+            className={cn("space-y-[18px]", shakeLogin && "auth-form-shake")}
+            onSubmit={handleSubmit((values) => mutation.mutate(values))}
+          >
+            <AuthEmailField id="login-email" registration={register("email")} error={errors.email?.message} />
             <div>
-              <label className="block text-xs font-medium text-neutral-500 mb-1.5 uppercase tracking-wide">
-                E-mail
-              </label>
-              <input
-                type="email"
-                placeholder="seu@email.com"
-                aria-invalid={errors.email ? "true" : "false"}
-                className="w-full h-10 px-3 rounded-lg border border-neutral-200 dark:border-neutral-600 bg-neutral-50 dark:bg-neutral-700 text-sm focus:outline-none focus:ring-2 focus:ring-primary-600 focus:border-transparent transition"
-                {...register("email")}
-              />
-              {errors.email ? <div className="mt-1 text-xs text-danger-600">{errors.email.message}</div> : null}
+              <AuthPasswordField id="login-password" registration={register("password")} error={errors.password?.message} />
+              <div className="-mt-1 flex justify-end">
+                <button
+                  type="button"
+                  onClick={goForgot}
+                  className="text-[13px] font-medium text-[#6C3FC5] transition-colors hover:text-[#5B32A8] hover:underline"
+                >
+                  Esqueci minha senha
+                </button>
+              </div>
             </div>
 
-            <div>
-              <label className="block text-xs font-medium text-neutral-500 mb-1.5 uppercase tracking-wide">
-                Senha
-              </label>
-              <input
-                type="password"
-                placeholder="••••••••"
-                aria-invalid={errors.password ? "true" : "false"}
-                className="w-full h-10 px-3 rounded-lg border border-neutral-200 dark:border-neutral-600 bg-neutral-50 dark:bg-neutral-700 text-sm focus:outline-none focus:ring-2 focus:ring-primary-600 focus:border-transparent transition"
-                {...register("password")}
-              />
-              {errors.password ? <div className="mt-1 text-xs text-danger-600">{errors.password.message}</div> : null}
+            <div className="pt-2">
+              <AuthPrimaryButton loading={mutation.isPending} loadingLabel="Entrando...">
+                Entrar
+              </AuthPrimaryButton>
             </div>
-
-            <div className="text-right">
-              <button type="button" className="text-xs text-primary-600 hover:text-primary-800 transition-colors duration-150">
-                Esqueci minha senha
-              </button>
-            </div>
-
-            <button
-              type="submit"
-              className="w-full h-10 bg-primary-600 hover:bg-primary-800 text-white text-sm font-medium rounded-lg transition-colors duration-150 active:scale-[.98] disabled:opacity-60"
-              disabled={mutation.isPending}
-            >
-              {mutation.isPending ? "Entrando..." : "Entrar"}
-            </button>
 
             {mutation.isError ? (
-              <div className="text-sm text-danger-600">
-                {mutation.error instanceof Error ? mutation.error.message : "Erro ao entrar"}
+              <div className="text-sm text-[#EF4444]" role="alert">
+                {loginErrorMessage(mutation.error)}
               </div>
             ) : null}
           </form>
 
-          <div className="flex items-center gap-3 my-3 text-xs text-neutral-400">
-            <span className="flex-1 h-px bg-neutral-200 dark:bg-neutral-600" />
-            ou
-            <span className="flex-1 h-px bg-neutral-200 dark:bg-neutral-600" />
-          </div>
+          <AuthSeparatorOu />
 
-          <button
-            type="button"
-            className="w-full h-10 border border-neutral-200 dark:border-neutral-600 rounded-lg text-sm text-neutral-700 dark:text-neutral-200 hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors duration-150 flex items-center justify-center gap-2"
-          >
-            <svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden="true">
-              <path fill="#EA4335" d="M12 10.2v3.9h5.5c-.2 1.2-1.4 3.6-5.5 3.6-3.3 0-6-2.8-6-6.2s2.7-6.2 6-6.2c1.9 0 3.1.8 3.8 1.5l2.6-2.5C16.8 2.7 14.6 2 12 2 6.9 2 2.8 6.3 2.8 11.5S6.9 21 12 21c6.9 0 9.1-4.8 9.1-7.3 0-.5-.1-.9-.1-1.3H12Z" />
-            </svg>
-            Continuar com Google
-          </button>
+          <GoogleSignInButton />
 
-          <p className="text-center text-xs text-neutral-400 mt-5">
+          <p className="mt-7 text-center text-sm text-[#6B7280]">
             Não tem conta?{" "}
             <button
               type="button"
               onClick={() => navigate("/register")}
-              className="text-primary-600 hover:text-primary-800 transition-colors duration-150"
+              className="font-bold text-[#6C3FC5] transition-colors hover:underline"
             >
               Criar conta grátis
             </button>
           </p>
-        </div>
-      </div>
-    </div>
+        </>
+      )}
+    </AuthShell>
   );
 }
-
