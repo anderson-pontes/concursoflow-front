@@ -8,6 +8,8 @@ export type MeApiResponse = {
   email: string;
   avatar_url: string | null;
   daily_goal_hours: number;
+  role: string;
+  status: string;
   created_at: string;
   cpf: string | null;
   phone: string | null;
@@ -58,6 +60,8 @@ export function mapMeToAuthUser(data: MeApiResponse): AuthUser {
     email: data.email ?? "",
     avatar_url: data.avatar_url ?? null,
     daily_goal_hours: Number(data.daily_goal_hours ?? 0),
+    role: data.role ?? "user",
+    status: data.status ?? "ativo",
     created_at: typeof data.created_at === "string" ? data.created_at : String(data.created_at),
     cpf: data.cpf ?? null,
     phone: data.phone ?? null,

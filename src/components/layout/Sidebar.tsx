@@ -12,9 +12,11 @@ import {
   FolderOpen,
   Layers,
   LayoutDashboard,
-  Shield,
+  Settings2,
   Timer,
   Trophy,
+  Users,
+  type LucideIcon,
 } from "lucide-react";
 
 import { AprovingoLogo } from "@/components/branding/AprovingoLogo";
@@ -22,6 +24,7 @@ import { PlanoSwitcher } from "@/components/planos/PlanoSwitcher";
 import { resolvePublicUrl } from "@/lib/publicUrl";
 import { primeiroNome } from "@/lib/userDisplay";
 import { cn } from "@/lib/utils";
+import { isAdminUser } from "@/lib/authRoles";
 import { useAuthStore } from "@/stores/authStore";
 import { usePlanoStore } from "@/stores/planoStore";
 
@@ -50,12 +53,17 @@ const navSections = [
     items: [
       { to: "/avisos", label: "Avisos", icon: Bell },
       { to: "/materiais", label: "Materiais", icon: FolderOpen },
-      { to: "/admin/estudos", label: "Admin Estudos", icon: Shield },
+      { to: "/configuracoes/estudos", label: "Config. Estudos", icon: Settings2 },
     ],
   },
-] as const;
+] ;
 
-type NavItemDef = (typeof navSections)[number]["items"][number];
+type NavSection = {
+  label: string;
+  items: { to: string; label: string; icon: LucideIcon; end?: boolean; badgeKey?: "planos" }[];
+};
+
+type NavItemDef = NavSection["items"][number];
 
 function initialsFromName(name: string): string {
   return (
@@ -139,6 +147,20 @@ export function Sidebar({
   const nomeCurto = primeiroNome(user?.name, "Concurseiro");
   const avatarSrc = resolvePublicUrl(user?.avatar_url ?? null);
 
+  const sections = React.useMemo((): NavSection[] => {
+    const base: NavSection[] = navSections.map((s) => ({
+      label: s.label,
+      items: s.items.map((i) => ({ ...i })),
+    }));
+    if (isAdminUser(user)) {
+      base.push({
+        label: "ADMINISTRAÇÃO",
+        items: [{ to: "/admin/usuarios", label: "Gestão de Usuários", icon: Users }],
+      });
+    }
+    return base;
+  }, [user]);
+
   return (
     <>
       <div
@@ -191,7 +213,7 @@ export function Sidebar({
           className="sidebar-nav-scroll flex flex-1 flex-col overflow-y-auto overflow-x-hidden py-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
           onScroll={() => setTooltip(null)}
         >
-          {navSections.map((section) => (
+          {sections.map((section) => (
             <div key={section.label}>
               {showLabels ? (
                 <div className="px-5 pb-1.5 pt-4 text-[10px] font-semibold uppercase tracking-[1.5px] text-[var(--group-label)] transition-opacity duration-200">

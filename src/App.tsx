@@ -18,6 +18,9 @@ import { Materiais } from "./pages/Materiais";
 import { PlanosPage } from "./pages/Planos";
 import { PlanoDetalhePage } from "./pages/PlanoDetalhe";
 import { AdminEstudos } from "./pages/AdminEstudos";
+import { AdminRoute } from "./components/layout/AdminRoute";
+import { GestaoUsuarios } from "./pages/admin/GestaoUsuarios";
+import { UsuarioDetalhe } from "./pages/admin/UsuarioDetalhe";
 import { Perfil } from "./pages/Perfil";
 
 export default function App() {
@@ -143,10 +146,31 @@ export default function App() {
         }
       />
       <Route
-        path="/admin/estudos"
+        path="/configuracoes/estudos"
         element={
           <Layout requireAuth={!isAuthed}>
             <AdminEstudos />
+          </Layout>
+        }
+      />
+      <Route path="/admin/estudos" element={<Navigate to="/configuracoes/estudos" replace />} />
+      <Route
+        path="/admin/usuarios"
+        element={
+          <Layout requireAuth={!isAuthed}>
+            <AdminRoute>
+              <GestaoUsuarios />
+            </AdminRoute>
+          </Layout>
+        }
+      />
+      <Route
+        path="/admin/usuarios/:id"
+        element={
+          <Layout requireAuth={!isAuthed}>
+            <AdminRoute>
+              <UsuarioDetalhe />
+            </AdminRoute>
           </Layout>
         }
       />

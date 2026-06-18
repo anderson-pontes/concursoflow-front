@@ -219,6 +219,14 @@ export function Login() {
 
           <AuthSeparatorOu />
 
+          <button
+            type="button"
+            onClick={() => navigate("/register")}
+            className="flex h-[50px] w-full items-center justify-center rounded-xl border-[1.5px] border-[#6C3FC5] bg-[#F3F0FF] text-[15px] font-semibold text-[#6C3FC5] transition-all hover:bg-[#EDE9FE]"
+          >
+            Criar Conta
+          </button>
+
           <GoogleSignInButton />
 
           <p className="mt-7 text-center text-sm text-[#6B7280]">

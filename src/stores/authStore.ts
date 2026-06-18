@@ -7,6 +7,8 @@ export type AuthUser = {
   email: string;
   avatar_url: string | null;
   daily_goal_hours: number;
+  role: string;
+  status: string;
   created_at: string;
   cpf: string | null;
   phone: string | null;
@@ -36,6 +38,8 @@ function normalizePersistedUser(u: AuthUser | null): AuthUser | null {
     cpf: u.cpf ?? null,
     phone: u.phone ?? null,
     birth_date: u.birth_date ?? null,
+    role: u.role ?? "user",
+    status: u.status ?? "ativo",
     address_cep: u.address_cep ?? null,
     address_street: u.address_street ?? null,
     address_number: u.address_number ?? null,
@@ -64,11 +68,16 @@ export const useAuthStore = create<AuthState>()(
     }),
     {
       name: "aprovingo-auth",
-      version: 2,
+      version: 4,
       migrate: (persisted) => {
         const p = persisted as { state?: { user?: AuthUser | null } };
-        if (p?.state && p.state.user) {
-          p.state.user = normalizePersistedUser(p.state.user);
+        if (p?.state?.user) {
+          const normalized = normalizePersistedUser(p.state.user);
+          if (normalized) {
+            if (!normalized.role) normalized.role = "user";
+            if (!normalized.status) normalized.status = "ativo";
+            p.state.user = normalized;
+          }
         }
         return persisted as never;
       },

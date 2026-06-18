@@ -66,8 +66,8 @@ export function AdminEstudos() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-lg font-semibold">Administração de Estudos</h2>
-        <p className="text-sm text-muted-foreground">Gestão de categorias e dias padrão de revisão.</p>
+        <h2 className="text-lg font-semibold">Configurações de Estudos</h2>
+        <p className="text-sm text-muted-foreground">Suas categorias e dias padrão de revisão.</p>
       </div>
 
       <section className="rounded-xl border border-border/40 bg-background/70 p-4">

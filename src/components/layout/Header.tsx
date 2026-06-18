@@ -1,8 +1,9 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { Bell, Menu, Search } from "lucide-react";
+import { Menu, Search } from "lucide-react";
 
 import { UserDropdown } from "@/components/layout/UserDropdown";
+import { NotificationBell } from "@/components/layout/NotificationBell";
 import { primeiroNome } from "@/lib/userDisplay";
 import { useAuthStore } from "@/stores/authStore";
 
@@ -78,9 +79,7 @@ export function Header({ onOpenSidebar }: { onOpenSidebar?: () => void }) {
         </div>
 
         <div className="flex flex-wrap items-center gap-2 md:justify-end">
-          <button type="button" className={iconBtn} title="Notificações" aria-label="Notificações">
-            <Bell className="h-4 w-4" />
-          </button>
+          <NotificationBell />
 
           <button
             type="button"
