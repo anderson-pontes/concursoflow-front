@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { api } from "@/services/api";
 import { createCategoria, listCategorias } from "@/services/categorias";
 import { getRevisoesConfig } from "@/services/revisoesConfig";
-import { usePlanoAtivo, usePlanoStore } from "@/stores/planoStore";
+import { useConcursoAtivoId } from "@/stores/concursoStore";
 
 export type RegistroDefaultTopico = { id: string; nome: string };
 
@@ -136,8 +136,7 @@ export function RegistroEstudoModal({
   onSaved,
 }: Props) {
   const qc = useQueryClient();
-  const planoAtivo = usePlanoAtivo();
-  const listarPlanoDisciplinas = usePlanoStore((s) => s.listarPlanoDisciplinas);
+  const concursoAtivoId = useConcursoAtivoId();
 
   const [dateKind, setDateKind] = React.useState<"hoje" | "ontem" | "outro">("hoje");
   const [dateCustom, setDateCustom] = React.useState(new Date().toISOString().slice(0, 10));
@@ -221,11 +220,14 @@ export function RegistroEstudoModal({
   });
 
   const { data: disciplinas } = useQuery({
-    queryKey: ["registro-disciplinas", planoAtivo?.id],
-    enabled: open && Boolean(planoAtivo?.id),
+    queryKey: ["registro-disciplinas", concursoAtivoId],
+    enabled: open && Boolean(concursoAtivoId),
     queryFn: async () => {
-      const rows = await listarPlanoDisciplinas(planoAtivo!.id);
-      return rows.map((r) => ({ id: r.disciplinaId, nome: r.nome })) as DisciplinaOpt[];
+      const rows = (await api.get("/disciplinas", { params: { concurso_id: concursoAtivoId } })).data as Array<{
+        id: string;
+        nome: string;
+      }>;
+      return rows.map((r) => ({ id: r.id, nome: r.nome })) as DisciplinaOpt[];
     },
   });
 
@@ -394,7 +396,7 @@ export function RegistroEstudoModal({
         disciplina_id: disciplinaId,
         topico_id: selectedTopicos[0]?.id ?? null,
         topico_ids: selectedTopicos.map((t) => t.id),
-        plano_id: sessaoId && sessaoData ? sessaoData.plano_id : (planoAtivo?.id ?? null),
+        plano_id: sessaoId && sessaoData ? sessaoData.plano_id : null,
         categoria_id: categoriaId || null,
         data_referencia: baseDate,
         inicio: inicio.toISOString(),

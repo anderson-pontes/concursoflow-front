@@ -2,6 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 
 import { cn } from "@/lib/utils";
+import { fmtPeso, fmtPontos, getDisciplinaTotalPontos } from "@/lib/disciplinas/pontos";
 import { getDisciplinaStatusLabel } from "./disciplinaProgress";
 
 export type DisciplinaCardModel = {
@@ -9,53 +10,63 @@ export type DisciplinaCardModel = {
   nome: string;
   sigla: string | null;
   peso: number | null;
+  total_questoes_prova: number | null;
+  total_pontos?: number | null;
   ordem: number;
 };
 
 type DisciplinaCardProps = {
   disciplina: DisciplinaCardModel;
   stats: { total: number; studied: number; pct: number };
-  inPlano: boolean;
-  canTogglePlano: boolean;
-  planoAtivoId?: string | null;
-  onTogglePlano: () => void;
+  inConcurso: boolean;
+  concursoCount?: number;
+  canToggleConcurso: boolean;
+  onToggleConcurso: () => void;
   onEdit: () => void;
   onConfirmDelete: () => void | Promise<void>;
+  /** Índice na listagem — define cor alternada da faixa superior */
+  index?: number;
 };
 
-function topStripClass(inPlano: boolean, kind: string) {
-  if (!inPlano) return "bg-[#F59E0B]";
-  if (kind === "sem_topicos") return "bg-[#E5E7EB] dark:bg-[#2D2540]";
-  if (kind === "concluida") return "bg-[#6C3FC5]";
-  if (kind === "iniciando") return "bg-[#E5E7EB] dark:bg-[#2D2540]";
-  return "bg-[#22C55E]";
+/** Paleta cíclica da faixa superior (3px) — identidade visual por posição na lista */
+const TOP_STRIP_COLORS = [
+  "bg-[#6C3FC5]", // roxo marca
+  "bg-[#22C55E]", // verde
+  "bg-[#3B82F6]", // azul
+  "bg-[#F59E0B]", // âmbar
+  "bg-[#EC4899]", // rosa
+  "bg-[#14B8A6]", // teal
+] as const;
+
+function topStripClass(index: number) {
+  return TOP_STRIP_COLORS[index % TOP_STRIP_COLORS.length];
 }
 
-function headerIconBox(inPlano: boolean, kind: string) {
-  if (!inPlano) return { box: "bg-[#FFFBEB] dark:bg-[#2D1F0A]", emoji: "📂" as const };
+function headerIconBox(inConcurso: boolean, kind: string) {
+  if (!inConcurso) return { box: "bg-[#FFFBEB] dark:bg-[#2D1F0A]", emoji: "📂" as const };
   if (kind === "sem_topicos") return { box: "bg-[#F3F0FF] dark:bg-[var(--ap-brand-light)]", emoji: "📋" as const };
   if (kind === "concluida") return { box: "bg-[#F0FDF4] dark:bg-[#052E16]", emoji: "✅" as const };
   if (kind === "iniciando") return { box: "bg-[#F3F0FF] dark:bg-[var(--ap-brand-light)]", emoji: "📋" as const };
   return { box: "bg-[#F0FDF4] dark:bg-[#052E16]", emoji: "📖" as const };
 }
 
-function statusBadgeClass(inPlano: boolean, kind: string) {
-  if (!inPlano) return "bg-[#FEF3C7] text-[#D97706] dark:bg-[#2D1F0A] dark:text-[#F59E0B]";
+function statusBadgeClass(inConcurso: boolean, kind: string) {
+  if (!inConcurso) return "bg-[#FEF3C7] text-[#D97706] dark:bg-[#2D1F0A] dark:text-[#F59E0B]";
   if (kind === "sem_topicos") return "bg-[#F3F4F6] text-[#6B7280] dark:bg-[#1F2937] dark:text-[#6B7280]";
   if (kind === "concluida") return "bg-[#EDE9FE] text-[#6C3FC5] dark:bg-[#2D2540] dark:text-[#A78BFA]";
   if (kind === "iniciando") return "bg-[#DCFCE7] text-[#16A34A] dark:bg-[#052E16] dark:text-[#4ADE80]";
   return "bg-[#DCFCE7] text-[#16A34A] dark:bg-[#052E16] dark:text-[#4ADE80]";
 }
 
-function statusBadgeLabel(inPlano: boolean, stats: { total: number; studied: number }) {
-  if (!inPlano) return "Fora do plano";
+function statusBadgeLabel(inConcurso: boolean, stats: { total: number; studied: number }) {
+  if (!inConcurso) return "Fora do concurso";
   const { label, kind } = getDisciplinaStatusLabel(stats);
   if (kind === "iniciando") return "Em progresso";
   return label;
 }
 
-function progressFillClass(inPlano: boolean, kind: string, pct: number) {
-  if (!inPlano) return "bg-[#F59E0B]";
+function progressFillClass(inConcurso: boolean, kind: string, pct: number) {
+  if (!inConcurso) return "bg-[#F59E0B]";
   if (kind === "sem_topicos" || pct === 0) return "bg-transparent";
   if (kind === "concluida") return "bg-[#6C3FC5]";
   return "bg-[#22C55E]";
@@ -70,12 +81,13 @@ function pctColorClass(pct: number) {
 export function DisciplinaCard({
   disciplina,
   stats,
-  inPlano,
-  canTogglePlano,
-  planoAtivoId,
-  onTogglePlano,
+  inConcurso,
+  concursoCount = 0,
+  canToggleConcurso,
+  onToggleConcurso,
   onEdit,
   onConfirmDelete,
+  index = 0,
 }: DisciplinaCardProps) {
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = React.useState(false);
@@ -87,12 +99,15 @@ export function DisciplinaCard({
   const status = getDisciplinaStatusLabel(stats);
   const kind = status.kind;
   const restantes = Math.max(0, stats.total - stats.studied);
+  const totalPontos = getDisciplinaTotalPontos(disciplina);
+  const hasEditalInfo =
+    disciplina.total_questoes_prova != null && disciplina.peso != null && totalPontos != null;
 
   React.useEffect(() => {
     setBarReady(false);
     const t = requestAnimationFrame(() => setBarReady(true));
     return () => cancelAnimationFrame(t);
-  }, [stats.pct, disciplina.id, inPlano]);
+  }, [stats.pct, disciplina.id, inConcurso]);
 
   React.useEffect(() => {
     if (!menuOpen) return;
@@ -123,9 +138,9 @@ export function DisciplinaCard({
   const goPainel = React.useCallback(() => {
     if (pendingDelete) return;
     navigate(`/disciplinas/${disciplina.id}`, {
-      state: { disciplinaId: disciplina.id, nome: disciplina.nome, planoId: planoAtivoId ?? null },
+      state: { disciplinaId: disciplina.id, nome: disciplina.nome },
     });
-  }, [disciplina.id, disciplina.nome, navigate, planoAtivoId, pendingDelete]);
+  }, [disciplina.id, disciplina.nome, navigate, pendingDelete]);
 
   const armDelete = () => {
     setMenuOpen(false);
@@ -170,22 +185,22 @@ export function DisciplinaCard({
         }
       }}
     >
-      <div className={cn("h-[3px] w-full", topStripClass(inPlano, kind))} aria-hidden />
+      <div className={cn("h-[3px] w-full", topStripClass(index))} aria-hidden />
 
       <div className="px-5 pb-0 pt-[18px]">
         <div className="flex items-start gap-2">
           <div
             className={cn(
               "flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-lg leading-none",
-              headerIconBox(inPlano, kind).box,
+              headerIconBox(inConcurso, kind).box,
             )}
             aria-hidden
           >
-            {headerIconBox(inPlano, kind).emoji}
+            {headerIconBox(inConcurso, kind).emoji}
           </div>
           <h3 className="min-w-0 flex-1 truncate text-[15px] font-bold leading-tight text-[var(--text-primary)]">{disciplina.nome}</h3>
-          <span className={cn("shrink-0 rounded-full px-2.5 py-0.5 text-xs font-semibold", statusBadgeClass(inPlano, kind))}>
-            {statusBadgeLabel(inPlano, stats)}
+          <span className={cn("shrink-0 rounded-full px-2.5 py-0.5 text-xs font-semibold", statusBadgeClass(inConcurso, kind))}>
+            {statusBadgeLabel(inConcurso, stats)}
           </span>
           <div
             className="relative shrink-0"
@@ -282,12 +297,22 @@ export function DisciplinaCard({
           <div
             className={cn(
               "h-full rounded-full transition-[width] duration-500 ease-out",
-              progressFillClass(inPlano, kind, stats.pct),
+              progressFillClass(inConcurso, kind, stats.pct),
             )}
             style={{ width: barReady ? `${stats.pct}%` : "0%" }}
           />
         </div>
       </div>
+
+      {hasEditalInfo ? (
+        <div className="mx-5 mb-1 rounded-lg bg-[#FAF5FF] px-3 py-2 text-center text-[11px] text-[var(--text-secondary)] dark:bg-[#1E1A2E]">
+          <span className="font-semibold text-[#6C3FC5] dark:text-[#A78BFA]">{fmtPontos(totalPontos)} pts</span>
+          <span className="mx-1.5 text-[var(--text-muted)]">·</span>
+          {disciplina.total_questoes_prova} questões
+          <span className="mx-1.5 text-[var(--text-muted)]">·</span>
+          peso {fmtPeso(disciplina.peso)}
+        </div>
+      ) : null}
 
       <div className="grid grid-cols-3 gap-2 px-5 pb-3.5 text-center">
         <div>
@@ -310,21 +335,24 @@ export function DisciplinaCard({
       >
         <button
           type="button"
-          disabled={!canTogglePlano}
+          disabled={!canToggleConcurso}
           className={cn(
             "rounded-full px-2.5 py-1 text-xs font-semibold transition-opacity",
-            inPlano
+            inConcurso
               ? "bg-[#EDE9FE] text-[#6C3FC5] dark:bg-[#2D2540] dark:text-[#A78BFA]"
               : "bg-[#FEF3C7] text-[#D97706] dark:bg-[#2D1F0A] dark:text-[#F59E0B]",
-            !canTogglePlano && "cursor-not-allowed opacity-45",
+            !canToggleConcurso && "cursor-not-allowed opacity-45",
           )}
           onClick={(e) => {
             e.stopPropagation();
-            onTogglePlano();
+            onToggleConcurso();
           }}
         >
-          {inPlano ? "✓ No plano" : "⚠ Fora do plano"}
+          {inConcurso ? "✓ No concurso" : "⚠ Fora do concurso"}
         </button>
+        {concursoCount > 1 ? (
+          <span className="text-[11px] text-[var(--text-muted)]">{concursoCount} concursos</span>
+        ) : null}
         <button
           type="button"
           className="text-xs text-[var(--text-muted)] transition-colors hover:text-[#6C3FC5] hover:underline dark:hover:text-[#A78BFA]"

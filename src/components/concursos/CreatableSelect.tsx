@@ -90,7 +90,7 @@ export function CreatableSelect({
             "h-11 w-full rounded-[10px] border-[1.5px] bg-white px-4 py-2 pr-9 text-sm outline-none transition",
             isAprov
               ? cn(
-                  "border-[#E5E7EB] bg-white text-[#1A1A2E] placeholder:text-[#9CA3AF]",
+                  "border-[#E5E7EB] bg-[var(--bg-surface)] text-[#1A1A2E] placeholder:text-[#9CA3AF]",
                   "focus:border-[#6C3FC5] focus:shadow-[0_0_0_3px_#EDE9FE]",
                 )
               : cn(

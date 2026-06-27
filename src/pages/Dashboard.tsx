@@ -5,9 +5,8 @@ import { api } from "@/services/api";
 import { KpiCard } from "@/components/dashboard/KpiCard";
 import { HeatmapCard } from "@/components/dashboard/HeatmapCard";
 import { ProximasAtividades } from "@/components/dashboard/ProximasAtividades";
-import { BannerSemPlano } from "@/components/dashboard/BannerSemPlano";
-import { PlanoEstatisticasSection } from "@/components/dashboard/PlanoEstatisticasSection";
-import { usePlanoAtivo } from "@/stores/planoStore";
+import { BannerSemConcurso } from "@/components/dashboard/BannerSemConcurso";
+import { useConcursoAtivoId } from "@/stores/concursoStore";
 
 type DashboardResumo = {
   horas_hoje: number;
@@ -49,27 +48,16 @@ type Disciplina = {
 };
 
 export function Dashboard() {
-  const planoAtivo = usePlanoAtivo();
-  const planoIdParam = planoAtivo?.id && /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(planoAtivo.id) ? planoAtivo.id : undefined;
+  const concursoAtivoId = useConcursoAtivoId();
 
   const { data: resumo } = useQuery({
-    queryKey: ["dashboard-resumo", planoIdParam ?? null],
-    queryFn: async () =>
-      (
-        await api.get("/dashboard/resumo", {
-          params: { plano_id: planoIdParam ?? undefined },
-        })
-      ).data as DashboardResumo,
+    queryKey: ["dashboard-resumo"],
+    queryFn: async () => (await api.get("/dashboard/resumo")).data as DashboardResumo,
   });
 
   const { data: heatmap } = useQuery({
-    queryKey: ["dashboard-heatmap", planoIdParam ?? null],
-    queryFn: async () =>
-      (
-        await api.get("/dashboard/heatmap", {
-          params: { plano_id: planoIdParam ?? undefined },
-        })
-      ).data as HeatmapData[],
+    queryKey: ["dashboard-heatmap"],
+    queryFn: async () => (await api.get("/dashboard/heatmap")).data as HeatmapData[],
   });
 
   const { data: disciplinas } = useQuery({
@@ -77,15 +65,24 @@ export function Dashboard() {
     queryFn: async () => (await api.get("/disciplinas")).data as Disciplina[],
   });
 
-  const { data: blocos } = useQuery({
-    queryKey: ["cronograma-blocos", planoIdParam ?? null],
+  const { data: disciplinasDoConcurso } = useQuery({
+    queryKey: ["disciplinas-do-concurso", concursoAtivoId ?? null],
+    enabled: Boolean(concursoAtivoId),
     queryFn: async () =>
-      (
-        await api.get("/cronograma/blocos", {
-          params: { plano_id: planoIdParam ?? undefined },
-        })
-      ).data as Bloco[],
+      (await api.get("/disciplinas", { params: { concurso_id: concursoAtivoId } })).data as Disciplina[],
   });
+
+  const { data: blocosRaw } = useQuery({
+    queryKey: ["cronograma-blocos", concursoAtivoId ?? null],
+    queryFn: async () => (await api.get("/cronograma/blocos")).data as Bloco[],
+  });
+
+  const blocos = React.useMemo(() => {
+    if (!blocosRaw) return undefined;
+    if (!concursoAtivoId || !disciplinasDoConcurso) return blocosRaw;
+    const ids = new Set(disciplinasDoConcurso.map((d) => d.id));
+    return blocosRaw.filter((b) => ids.has(b.disciplina_id));
+  }, [blocosRaw, concursoAtivoId, disciplinasDoConcurso]);
 
   const atividadesHoje = React.useMemo(() => {
     if (!blocos || !disciplinas) return [];
@@ -111,11 +108,9 @@ export function Dashboard() {
 
   return (
     <div>
-      {!planoAtivo ? <BannerSemPlano /> : null}
+      {!concursoAtivoId ? <BannerSemConcurso /> : null}
       <h1 className="mb-0.5 text-lg font-medium text-neutral-800 dark:text-neutral-100">Dashboard</h1>
       <p className="mb-5 text-xs text-neutral-400">KPIs e atividade recente</p>
-
-      {planoIdParam ? <PlanoEstatisticasSection planoId={planoIdParam} /> : null}
 
       <div className="mb-5 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7">
         <KpiCard

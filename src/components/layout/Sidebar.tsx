@@ -7,7 +7,6 @@ import {
   BookOpen,
   CalendarDays,
   ChevronRight,
-  ClipboardList,
   FileQuestion,
   FolderOpen,
   Layers,
@@ -20,13 +19,13 @@ import {
 } from "lucide-react";
 
 import { AprovingoLogo } from "@/components/branding/AprovingoLogo";
-import { PlanoSwitcher } from "@/components/planos/PlanoSwitcher";
+import { ConcursoSwitcher } from "@/components/concursos/ConcursoSwitcher";
 import { resolvePublicUrl } from "@/lib/publicUrl";
 import { primeiroNome } from "@/lib/userDisplay";
 import { cn } from "@/lib/utils";
 import { isAdminUser } from "@/lib/authRoles";
+import { useTheme } from "@/hooks/useTheme";
 import { useAuthStore } from "@/stores/authStore";
-import { usePlanoStore } from "@/stores/planoStore";
 
 const navSections = [
   {
@@ -35,7 +34,6 @@ const navSections = [
       { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
       { to: "/concursos", label: "Meus Concursos", icon: Trophy, end: true },
       { to: "/disciplinas", label: "Disciplinas", icon: BookOpen },
-      { to: "/concursos/planos", label: "Planos de Estudo", icon: ClipboardList, badgeKey: "planos" as const },
       { to: "/cronograma", label: "Cronograma", icon: CalendarDays },
     ],
   },
@@ -60,7 +58,7 @@ const navSections = [
 
 type NavSection = {
   label: string;
-  items: { to: string; label: string; icon: LucideIcon; end?: boolean; badgeKey?: "planos" }[];
+  items: { to: string; label: string; icon: LucideIcon; end?: boolean }[];
 };
 
 type NavItemDef = NavSection["items"][number];
@@ -118,31 +116,14 @@ export function Sidebar({
   collapsed: boolean;
   onCollapsedChange: (collapsed: boolean) => void;
 }) {
-  const planosCount = usePlanoStore((s) => s.planos.length);
   const user = useAuthStore((s) => s.user);
   const navigate = useNavigate();
 
-  const [isDark, setIsDark] = React.useState(false);
+  const { isDark, toggle: toggleTheme } = useTheme();
   const [tooltip, setTooltip] = React.useState<{ text: string; top: number } | null>(null);
 
   const showLabels = !collapsed || Boolean(mobileOpen);
   const desktopCollapsed = collapsed && !mobileOpen;
-
-  React.useEffect(() => {
-    const el = document.documentElement;
-    const sync = () => setIsDark(el.classList.contains("dark"));
-    sync();
-    const mo = new MutationObserver(sync);
-    mo.observe(el, { attributes: true, attributeFilter: ["class"] });
-    return () => mo.disconnect();
-  }, []);
-
-  const toggleTheme = React.useCallback(() => {
-    const next = !isDark;
-    setIsDark(next);
-    document.documentElement.classList.toggle("dark", next);
-    window.localStorage.setItem("theme", next ? "dark" : "light");
-  }, [isDark]);
 
   const nomeCurto = primeiroNome(user?.name, "Concurseiro");
   const avatarSrc = resolvePublicUrl(user?.avatar_url ?? null);
@@ -207,7 +188,7 @@ export function Sidebar({
           </button>
         </div>
 
-        <PlanoSwitcher collapsed={desktopCollapsed} onAfterPick={onMobileClose} />
+        <ConcursoSwitcher collapsed={desktopCollapsed} onAfterPick={onMobileClose} />
 
         <nav
           className="sidebar-nav-scroll flex flex-1 flex-col overflow-y-auto overflow-x-hidden py-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
@@ -225,7 +206,6 @@ export function Sidebar({
                   <SidebarNavRow
                     key={item.to}
                     item={item}
-                    planosCount={planosCount}
                     collapsed={desktopCollapsed}
                     showLabels={showLabels}
                     onMobileClose={onMobileClose}
@@ -319,7 +299,6 @@ export function Sidebar({
 
 function SidebarNavRow({
   item,
-  planosCount,
   collapsed,
   showLabels,
   onMobileClose,
@@ -327,7 +306,6 @@ function SidebarNavRow({
   onLeaveTooltip,
 }: {
   item: NavItemDef;
-  planosCount: number;
   collapsed: boolean;
   showLabels: boolean;
   onMobileClose?: () => void;
@@ -338,21 +316,6 @@ function SidebarNavRow({
   const Icon = item.icon;
   const end = "end" in item ? item.end : false;
   const isActive = Boolean(matchPath({ path: item.to, end: Boolean(end) }, location.pathname));
-
-  const badge =
-    "badgeKey" in item && item.badgeKey === "planos" ? (
-      <span
-        key={planosCount}
-        className={cn(
-          "flex shrink-0 items-center justify-center rounded-full bg-[#6C3FC5] text-[11px] font-bold text-white dark:bg-[#7C3AED]",
-          "min-h-5 min-w-5 px-1.5",
-          "animate-[sidebar-badge-pulse_0.3s_ease]",
-          collapsed && "absolute right-1.5 top-1.5 !h-4 !min-h-0 !min-w-0 !w-4 !px-0 !text-[9px]",
-        )}
-      >
-        {planosCount}
-      </span>
-    ) : null;
 
   return (
     <NavLink
@@ -396,8 +359,6 @@ function SidebarNavRow({
       ) : (
         <span className="sr-only">{item.label}</span>
       )}
-      {badge && showLabels && !collapsed ? badge : null}
-      {badge && collapsed ? badge : null}
     </NavLink>
   );
 }

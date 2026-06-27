@@ -2,7 +2,7 @@ import React from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { api } from "@/services/api";
-import { usePlanoAtivo, usePlanoStore } from "@/stores/planoStore";
+import { useConcursoAtivoId } from "@/stores/concursoStore";
 
 type RankingRow = {
   topico_id: string;
@@ -25,37 +25,22 @@ type PlanTopico = {
 export function Questoes() {
   const qc = useQueryClient();
 
-  const planoAtivo = usePlanoAtivo();
-  const planoIdParam =
-    planoAtivo?.id && /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(planoAtivo.id)
-      ? planoAtivo.id
-      : undefined;
-
-  const listarPlanoDisciplinas = usePlanoStore((s) => s.listarPlanoDisciplinas);
-  const listarPlanoTopicos = usePlanoStore((s) => s.listarPlanoTopicos);
+  const concursoAtivoId = useConcursoAtivoId();
 
   const { data: ranking } = useQuery({
-    queryKey: ["questoes-ranking", planoIdParam ?? null],
-    queryFn: async () => {
-      const params = planoIdParam ? { plano_id: planoIdParam } : undefined;
-      return (await api.get("/questoes/ranking", { params })).data as RankingRow[];
-    },
-    enabled: Boolean(planoIdParam),
+    queryKey: ["questoes-ranking"],
+    queryFn: async () => (await api.get("/questoes/ranking")).data as RankingRow[],
   });
 
-  const { data: disciplinasDoPlano } = useQuery({
-    queryKey: ["questoes-disciplinas-plano", planoIdParam ?? null],
-    enabled: Boolean(planoIdParam),
+  const { data: disciplinasDoConcurso } = useQuery({
+    queryKey: ["questoes-disciplinas-concurso", concursoAtivoId ?? null],
+    enabled: Boolean(concursoAtivoId),
     queryFn: async () => {
-      const rows = await listarPlanoDisciplinas(planoIdParam!);
-      return rows.map(
-        (d) =>
-          ({
-            id: d.id,
-            disciplinaId: d.disciplinaId,
-            nome: d.nome,
-          }) satisfies PlanDisciplina,
-      );
+      const rows = (await api.get("/disciplinas", { params: { concurso_id: concursoAtivoId } })).data as Array<{
+        id: string;
+        nome: string;
+      }>;
+      return rows.map((r) => ({ id: r.id, disciplinaId: r.id, nome: r.nome })) as PlanDisciplina[];
     },
   });
 
@@ -63,32 +48,35 @@ export function Questoes() {
   const [topicoId, setTopicoId] = React.useState<string>("");
 
   React.useEffect(() => {
-    if (!planoIdParam) return;
-    if (!disciplinaId && disciplinasDoPlano && disciplinasDoPlano.length > 0) {
-      setDisciplinaId(disciplinasDoPlano[0].disciplinaId);
+    if (!concursoAtivoId) return;
+    if (!disciplinaId && disciplinasDoConcurso && disciplinasDoConcurso.length > 0) {
+      setDisciplinaId(disciplinasDoConcurso[0].disciplinaId);
     }
-  }, [disciplinasDoPlano, disciplinaId, planoIdParam]);
+  }, [disciplinasDoConcurso, disciplinaId, concursoAtivoId]);
 
-  const { data: topicosDoPlano } = useQuery({
-    queryKey: ["questoes-topicos-plano", planoIdParam ?? null, disciplinaId],
-    enabled: Boolean(planoIdParam) && Boolean(disciplinaId),
+  const { data: topicosDoConcurso } = useQuery({
+    queryKey: ["questoes-topicos", disciplinaId],
+    enabled: Boolean(disciplinaId),
     queryFn: async () => {
-      const rows = await listarPlanoTopicos(planoIdParam!, disciplinaId);
+      const rows = (await api.get(`/disciplinas/${disciplinaId}/topicos`)).data as Array<{
+        id: string;
+        descricao: string;
+      }>;
       return rows.map((t) => ({
         id: t.id,
-        topicoId: t.topicoId,
-        nome: t.nome,
-        estudado: t.estudado,
+        topicoId: t.id,
+        nome: t.descricao,
+        estudado: false,
       })) as PlanTopico[];
     },
   });
 
   React.useEffect(() => {
-    if (!planoIdParam) return;
-    if (!topicoId && topicosDoPlano && topicosDoPlano.length > 0) {
-      setTopicoId(topicosDoPlano[0].topicoId);
+    if (!concursoAtivoId) return;
+    if (!topicoId && topicosDoConcurso && topicosDoConcurso.length > 0) {
+      setTopicoId(topicosDoConcurso[0].topicoId);
     }
-  }, [planoIdParam, topicoId, topicosDoPlano]);
+  }, [concursoAtivoId, topicoId, topicosDoConcurso]);
 
   const [dataSessao, setDataSessao] = React.useState(() => new Date().toISOString().slice(0, 10));
   const [total, setTotal] = React.useState(10);
@@ -99,10 +87,9 @@ export function Questoes() {
 
   const mutation = useMutation({
     mutationFn: async () => {
-      if (!planoIdParam) throw new Error("Nenhum plano ativo");
+      if (!concursoAtivoId) throw new Error("Nenhum concurso ativo");
       if (!disciplinaId || !topicoId) throw new Error("Selecione disciplina e tópico");
       const payload = {
-        plano_id: planoIdParam,
         topico_id: topicoId,
         disciplina_id: disciplinaId,
         data_sessao: dataSessao,
@@ -119,7 +106,7 @@ export function Questoes() {
       return res.data;
     },
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["questoes-ranking", planoIdParam ?? null] });
+      qc.invalidateQueries({ queryKey: ["questoes-ranking"] });
     },
   });
 
@@ -127,12 +114,12 @@ export function Questoes() {
     <div className="space-y-4">
       <div>
         <h2 className="text-lg font-semibold">Questões</h2>
-        <p className="text-sm text-muted-foreground">Registro básico de sessões e ranking por plano.</p>
+        <p className="text-sm text-muted-foreground">Registro de sessões por concurso ativo.</p>
       </div>
 
-      {!planoIdParam ? (
-        <div className="rounded-xl border border-warning-200 bg-warning-50 p-4 text-sm text-warning-800">
-          Selecione um plano ativo para registrar sessões.
+      {!concursoAtivoId ? (
+        <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900 dark:border-amber-900/40 dark:bg-amber-950/30 dark:text-amber-200">
+          Selecione um concurso ativo na barra lateral para registrar sessões.
         </div>
       ) : null}
 
@@ -153,7 +140,7 @@ export function Questoes() {
               <option value="" disabled>
                 Selecione...
               </option>
-              {(disciplinasDoPlano ?? []).map((d) => (
+              {(disciplinasDoConcurso ?? []).map((d) => (
                 <option key={d.disciplinaId} value={d.disciplinaId}>
                   {d.nome}
                 </option>
@@ -172,7 +159,7 @@ export function Questoes() {
               <option value="" disabled>
                 Selecione...
               </option>
-              {(topicosDoPlano ?? []).map((t) => (
+              {(topicosDoConcurso ?? []).map((t) => (
                 <option key={t.topicoId} value={t.topicoId}>
                   {t.nome}
                 </option>
@@ -249,7 +236,7 @@ export function Questoes() {
         <button
           type="button"
           className="mt-4 rounded-md bg-primary-600 px-3 py-2 text-sm font-medium text-white transition-colors duration-150 hover:bg-primary-800 disabled:opacity-60"
-          disabled={mutation.isPending || !disciplinaId || !topicoId || total < 0 || !planoIdParam}
+          disabled={mutation.isPending || !disciplinaId || !topicoId || total < 0 || !concursoAtivoId}
           onClick={() => mutation.mutate()}
         >
           {mutation.isPending ? "Salvando..." : "Salvar sessão"}
@@ -259,7 +246,7 @@ export function Questoes() {
       <div className="rounded-xl border border-border/40 bg-background/70 p-4">
         <h3 className="text-sm font-semibold">Ranking (menor rendimento)</h3>
         <div className="mt-3 overflow-auto">
-          {planoIdParam ? (
+          {concursoAtivoId ? (
             ranking ? (
               <table className="w-full text-left text-sm">
                 <thead>

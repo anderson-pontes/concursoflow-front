@@ -22,7 +22,7 @@ import { cn } from "@/lib/utils";
 
 const loginSchema = z.object({
   email: z.string().email("E-mail inválido"),
-  password: z.string().min(6, "Senha muito curta"),
+  password: z.string().min(8, "Senha deve ter no mínimo 8 caracteres"),
 });
 
 type LoginForm = z.infer<typeof loginSchema>;
@@ -94,9 +94,8 @@ export function Login() {
   });
 
   const forgotMutation = useMutation({
-    mutationFn: async (_email: string) => {
-      /* Endpoint de recuperação ainda não exposto na API; delay apenas para UX */
-      await new Promise((r) => setTimeout(r, 500));
+    mutationFn: async (email: string) => {
+      await api.post("/auth/forgot-password", { email });
     },
     onSuccess: () => setForgotSent(true),
   });
@@ -175,7 +174,9 @@ export function Login() {
               <p className="text-lg" aria-hidden>
                 ✅
               </p>
-              <p className="mt-2 text-sm font-semibold text-[#166534]">Link enviado! Verifique seu e-mail.</p>
+              <p className="mt-2 text-sm font-semibold text-[#166534]">
+                Se o e-mail estiver cadastrado, você receberá instruções para redefinir a senha.
+              </p>
             </div>
           )}
         </div>
@@ -227,7 +228,7 @@ export function Login() {
             Criar Conta
           </button>
 
-          <GoogleSignInButton />
+          <GoogleSignInButton disabled />
 
           <p className="mt-7 text-center text-sm text-[#6B7280]">
             Não tem conta?{" "}

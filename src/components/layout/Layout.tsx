@@ -1,25 +1,19 @@
 import React from "react";
 import { Navigate } from "react-router-dom";
 
+import { initThemeFromStorage } from "@/hooks/useTheme";
 import { useConcursoSync } from "@/hooks/useConcursoSync";
 import { fetchCurrentUser } from "@/services/currentUser";
 import { useAuthStore } from "@/stores/authStore";
+import { useUiStore } from "@/stores/uiStore";
 
 import { Sidebar } from "./Sidebar";
 import { Header } from "./Header";
 
-const SIDEBAR_COLLAPSED_KEY = "cf-sidebar-collapsed";
-
 function AuthenticatedLayout({ children }: { children: React.ReactNode }) {
   const [mobileSidebarOpen, setMobileSidebarOpen] = React.useState(false);
-  const [sidebarCollapsed, setSidebarCollapsed] = React.useState(() => {
-    if (typeof window === "undefined") return false;
-    return window.localStorage.getItem(SIDEBAR_COLLAPSED_KEY) === "1";
-  });
-
-  React.useEffect(() => {
-    window.localStorage.setItem(SIDEBAR_COLLAPSED_KEY, sidebarCollapsed ? "1" : "0");
-  }, [sidebarCollapsed]);
+  const sidebarCollapsed = useUiStore((s) => s.sidebarCollapsed);
+  const setSidebarCollapsed = useUiStore((s) => s.setSidebarCollapsed);
   const accessToken = useAuthStore((s) => s.accessToken);
   const user = useAuthStore((s) => s.user);
   const setUser = useAuthStore((s) => s.setUser);
@@ -27,9 +21,7 @@ function AuthenticatedLayout({ children }: { children: React.ReactNode }) {
   useConcursoSync();
 
   React.useEffect(() => {
-    const stored = window.localStorage.getItem("theme");
-    const dark = stored ? stored === "dark" : document.documentElement.classList.contains("dark");
-    document.documentElement.classList.toggle("dark", dark);
+    initThemeFromStorage();
   }, []);
 
   React.useEffect(() => {

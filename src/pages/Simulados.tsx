@@ -2,27 +2,30 @@ import React from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { api } from "@/services/api";
-import { usePlanoAtivo, usePlanoStore } from "@/stores/planoStore";
+import { useConcursoAtivoId } from "@/stores/concursoStore";
 
 export function Simulados() {
   const qc = useQueryClient();
-  const planoAtivo = usePlanoAtivo();
-  const listarPlanoDisciplinas = usePlanoStore((s) => s.listarPlanoDisciplinas);
-
-  const planoId = planoAtivo?.id ?? null;
+  const concursoAtivoId = useConcursoAtivoId();
 
   const { data: simuladoRows = [] } = useQuery({
-    queryKey: ["simulados", planoId],
-    queryFn: async () => (await api.get("/simulados", { params: { plano_id: planoId ?? undefined } })).data as Array<{ id: string; nome: string }>,
+    queryKey: ["simulados", concursoAtivoId],
+    queryFn: async () =>
+      (await api.get("/simulados", { params: { concurso_id: concursoAtivoId ?? undefined } })).data as Array<{
+        id: string;
+        nome: string;
+      }>,
   });
 
   const { data: disciplinaRows = [] } = useQuery({
-    queryKey: ["simulados-plano-disciplinas", planoId],
-    enabled: Boolean(planoId),
+    queryKey: ["simulados-concurso-disciplinas", concursoAtivoId],
+    enabled: Boolean(concursoAtivoId),
     queryFn: async () => {
-      if (!planoId) return [] as Array<{ id: string; nome: string }>;
-      const rows = await listarPlanoDisciplinas(planoId);
-      return rows.map((d) => ({ id: d.disciplinaId, nome: d.nome }));
+      const rows = (await api.get("/disciplinas", { params: { concurso_id: concursoAtivoId } })).data as Array<{
+        id: string;
+        nome: string;
+      }>;
+      return rows.map((d) => ({ id: d.id, nome: d.nome }));
     },
   });
 
@@ -36,12 +39,12 @@ export function Simulados() {
         nome,
         tipo: "simulado",
         data_realizacao: new Date().toISOString().slice(0, 10),
-        plano_id: planoId ?? undefined,
+        concurso_id: concursoAtivoId ?? undefined,
       });
     },
     onSuccess: () => {
       setNome("");
-      qc.invalidateQueries({ queryKey: ["simulados", planoId] });
+      qc.invalidateQueries({ queryKey: ["simulados", concursoAtivoId] });
     },
   });
 
@@ -51,7 +54,7 @@ export function Simulados() {
         { disciplina_id: disciplinaId, total_questoes: 10, certas: 0, erradas: 0, em_branco: 0 },
       ]);
     },
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["simulados", planoId] }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["simulados", concursoAtivoId] }),
   });
 
   return (
@@ -76,7 +79,7 @@ export function Simulados() {
       </div>
       <div className="rounded-xl border border-border/40 bg-background/70 p-4">
         <select className="w-full rounded-lg border border-border/40 bg-background px-3 py-2 text-sm" value={disciplinaId} onChange={(e) => setDisciplinaId(e.target.value)}>
-          <option value="" disabled>Disciplina do plano...</option>
+          <option value="" disabled>Disciplina do concurso...</option>
           {disciplinaRows.map((d) => <option key={d.id} value={d.id}>{d.nome}</option>)}
         </select>
         <button type="button" className="mt-3 rounded-md bg-primary-600 px-3 py-2 text-sm font-medium text-white hover:bg-primary-800 disabled:opacity-60" disabled={!selected || !disciplinaId || resultadoMutation.isPending} onClick={() => resultadoMutation.mutate()}>

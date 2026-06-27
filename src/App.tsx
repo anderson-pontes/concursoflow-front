@@ -4,6 +4,7 @@ import { useAuthStore } from "./stores/authStore";
 import { Layout } from "./components/layout/Layout";
 import { Login } from "./pages/Auth/Login";
 import { Register } from "./pages/Auth/Register";
+import { ResetPassword } from "./pages/Auth/ResetPassword";
 import { Dashboard } from "./pages/Dashboard";
 import { Concursos } from "./pages/Concursos";
 import { Disciplinas } from "./pages/Disciplinas";
@@ -15,8 +16,6 @@ import { Simulados } from "./pages/Simulados";
 import { Avisos } from "./pages/Avisos";
 import { Flashcards } from "./pages/Flashcards";
 import { Materiais } from "./pages/Materiais";
-import { PlanosPage } from "./pages/Planos";
-import { PlanoDetalhePage } from "./pages/PlanoDetalhe";
 import { AdminEstudos } from "./pages/AdminEstudos";
 import { AdminRoute } from "./components/layout/AdminRoute";
 import { GestaoUsuarios } from "./pages/admin/GestaoUsuarios";
@@ -32,6 +31,7 @@ export default function App() {
       <Route path="/" element={<Navigate to={isAuthed ? "/dashboard" : "/login"} replace />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
 
       <Route
         path="/dashboard"
@@ -57,22 +57,8 @@ export default function App() {
           </Layout>
         }
       />
-      <Route
-        path="/concursos/planos"
-        element={
-          <Layout requireAuth={!isAuthed}>
-            <PlanosPage />
-          </Layout>
-        }
-      />
-      <Route
-        path="/concursos/planos/:id"
-        element={
-          <Layout requireAuth={!isAuthed}>
-            <PlanoDetalhePage />
-          </Layout>
-        }
-      />
+      <Route path="/concursos/planos" element={<Navigate to="/concursos" replace />} />
+      <Route path="/concursos/planos/:id" element={<Navigate to="/concursos" replace />} />
       <Route
         path="/disciplinas/:disciplinaId"
         element={

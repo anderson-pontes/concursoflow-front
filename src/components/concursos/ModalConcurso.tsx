@@ -10,6 +10,7 @@ export type ConcursoFormInput = {
   orgao: string;
   cargo: string | null;
   banca: string | null;
+  data_prova: string | null;
   status: string | null;
   logo_file: File | null;
   edital_file: File | null;
@@ -35,58 +36,39 @@ type ModalConcursoProps = {
   onSubmit: () => void;
   isPending: boolean;
   orgaoSuggestions: string[];
-  bancaSuggestions: string[];
 };
 
 function isEncerradoStatus(s: string | null) {
   return s === "realizado" || s === "eliminado";
 }
 
-function FloatingInput({
-  id,
-  label,
-  value,
-  onChange,
-  required,
-  optional,
-  disabled,
-}: {
-  id: string;
-  label: string;
-  value: string;
-  onChange: (v: string) => void;
+const fieldLabelClass = "mb-1.5 block text-xs font-medium text-[#6B7280]";
+
+const fieldInputClass = cn(
+  "h-11 w-full rounded-[10px] border-[1.5px] border-[#E5E7EB] bg-[var(--bg-surface)] px-4 text-sm text-[var(--text-primary)] outline-none transition",
+  "placeholder:text-[#9CA3AF] focus:border-[#6C3FC5] focus:shadow-[0_0_0_3px_#EDE9FE]",
+  "disabled:cursor-not-allowed disabled:opacity-50",
+);
+
+type FieldLabelProps = {
+  htmlFor: string;
+  children: React.ReactNode;
   required?: boolean;
   optional?: boolean;
-  disabled?: boolean;
-}) {
+};
+
+function FieldLabel({ htmlFor, children, required, optional }: FieldLabelProps) {
   return (
-    <div className="relative">
-      <input
-        id={id}
-        type="text"
-        value={value}
-        disabled={disabled}
-        placeholder=" "
-        onChange={(e) => onChange(e.target.value)}
-        className={cn(
-          "peer h-14 w-full rounded-[10px] border-[1.5px] border-[#E5E7EB] bg-white px-4 pb-2.5 pt-5 text-sm text-[#1A1A2E] outline-none transition",
-          "placeholder:text-transparent focus:border-[#6C3FC5] focus:shadow-[0_0_0_3px_#EDE9FE]",
-          "disabled:cursor-not-allowed disabled:opacity-50",
-        )}
-      />
-      <label
-        htmlFor={id}
-        className={cn(
-          "pointer-events-none absolute left-4 top-1/2 origin-left -translate-y-1/2 text-sm text-[#9CA3AF] transition-all duration-200",
-          "peer-focus:top-3 peer-focus:translate-y-0 peer-focus:text-[11px] peer-focus:font-medium peer-focus:text-[#6C3FC5]",
-          "peer-[:not(:placeholder-shown)]:top-3 peer-[:not(:placeholder-shown)]:translate-y-0 peer-[:not(:placeholder-shown)]:text-[11px] peer-[:not(:placeholder-shown)]:font-medium",
-        )}
-      >
-        {label}
-        {required ? <span className="text-[#EF4444]"> *</span> : null}
-        {optional ? <span className="font-normal text-[#9CA3AF]"> (opcional)</span> : null}
-      </label>
-    </div>
+    <label htmlFor={htmlFor} className={fieldLabelClass}>
+      {children}
+      {required ? (
+        <span className="text-[#6C3FC5]" aria-hidden>
+          {" "}
+          *
+        </span>
+      ) : null}
+      {optional ? <span className="font-normal text-[#9CA3AF]"> (opcional)</span> : null}
+    </label>
   );
 }
 
@@ -99,7 +81,6 @@ export function ModalConcurso({
   onSubmit,
   isPending,
   orgaoSuggestions,
-  bancaSuggestions,
 }: ModalConcursoProps) {
   if (!open) return null;
 
@@ -121,12 +102,12 @@ export function ModalConcurso({
     >
       <div
         className={cn(
-          "flex max-h-[92vh] w-full max-w-[680px] flex-col overflow-hidden bg-white",
+          "flex max-h-[92vh] w-full max-w-[680px] flex-col overflow-hidden bg-[var(--bg-surface)]",
           "max-sm:min-h-[100dvh] max-sm:rounded-none sm:max-h-[92vh] sm:rounded-[20px]",
         )}
         style={{ boxShadow: modalShadow }}
       >
-        <header className="relative shrink-0 border-b border-[#F3F4F6] px-6 pb-4 pt-6 pr-14">
+        <header className="relative shrink-0 border-b border-[var(--border-subtle)] px-6 pb-4 pt-6 pr-14">
           <button
             type="button"
             onClick={onClose}
@@ -140,10 +121,12 @@ export function ModalConcurso({
               🏆
             </span>
             <div>
-              <h2 id="modal-concurso-title" className="text-[20px] font-bold text-[#1A1A2E]">
+              <h2 id="modal-concurso-title" className="text-[20px] font-bold text-[var(--text-primary)]">
                 {isEdit ? "Editar concurso" : "Novo concurso"}
               </h2>
-              <p className="mt-1 text-sm text-[#6B7280]">Preencha os dados do concurso que você está preparando</p>
+              <p className="mt-1 text-sm text-[var(--text-secondary)]">
+                Plano de estudo unificado — dados, prova e disciplinas
+              </p>
             </div>
           </div>
         </header>
@@ -160,16 +143,23 @@ export function ModalConcurso({
               <section>
                 <p className="mb-4 text-[12px] font-medium uppercase tracking-[1px] text-[#9CA3AF]">📋 Identificação</p>
                 <div className="space-y-4">
-                  <FloatingInput
-                    id="concurso-nome"
-                    label="Nome do concurso"
-                    required
-                    value={input.nome}
-                    disabled={isPending}
-                    onChange={(v) => setInput((s) => ({ ...s, nome: v }))}
-                  />
+                  <div>
+                    <FieldLabel htmlFor="concurso-nome" required>
+                      Nome do concurso
+                    </FieldLabel>
+                    <input
+                      id="concurso-nome"
+                      type="text"
+                      required
+                      disabled={isPending}
+                      value={input.nome}
+                      onChange={(e) => setInput((s) => ({ ...s, nome: e.target.value }))}
+                      placeholder="Ex.: CGU — Analista"
+                      className={fieldInputClass}
+                    />
+                  </div>
 
-                  <div className="grid gap-4 sm:grid-cols-2">
+                  <div className="grid gap-4 sm:grid-cols-2 sm:items-start">
                     <CreatableSelect
                       id="concurso-orgao"
                       label="Órgão"
@@ -182,14 +172,19 @@ export function ModalConcurso({
                       disabled={isPending}
                     />
                     <div>
-                      <span className="mb-1.5 block text-xs font-medium text-[#6B7280]">Status</span>
-                      <div className="flex rounded-[10px] bg-[#F3F4F6] p-1">
+                      <FieldLabel htmlFor="concurso-status-ativo">Status</FieldLabel>
+                      <div
+                        id="concurso-status-ativo"
+                        className="flex h-11 rounded-[10px] bg-[#F3F4F6] p-1"
+                        role="group"
+                        aria-label="Status do concurso"
+                      >
                         <button
                           type="button"
                           disabled={isPending}
                           onClick={() => setInput((s) => ({ ...s, status: "ativo" }))}
                           className={cn(
-                            "flex-1 rounded-lg py-2.5 text-sm font-semibold transition-all duration-200",
+                            "flex h-full flex-1 items-center justify-center rounded-lg text-sm font-semibold transition-all duration-200",
                             !encerradoTab
                               ? "bg-white text-[#6C3FC5] shadow-[0_1px_4px_rgba(0,0,0,0.12)]"
                               : "bg-transparent text-[#6B7280]",
@@ -202,7 +197,7 @@ export function ModalConcurso({
                           disabled={isPending}
                           onClick={() => setInput((s) => ({ ...s, status: "realizado" }))}
                           className={cn(
-                            "flex-1 rounded-lg py-2.5 text-sm font-semibold transition-all duration-200",
+                            "flex h-full flex-1 items-center justify-center rounded-lg text-sm font-semibold transition-all duration-200",
                             encerradoTab
                               ? "bg-white text-[#6C3FC5] shadow-[0_1px_4px_rgba(0,0,0,0.12)]"
                               : "bg-transparent text-[#6B7280]",
@@ -214,25 +209,48 @@ export function ModalConcurso({
                     </div>
                   </div>
 
-                  <div className="grid gap-4 sm:grid-cols-2">
-                    <FloatingInput
-                      id="concurso-cargo"
-                      label="Cargo"
-                      optional
-                      value={input.cargo ?? ""}
+                  <div className="grid gap-4 sm:grid-cols-2 sm:items-start">
+                    <div>
+                      <FieldLabel htmlFor="concurso-cargo" optional>
+                        Cargo
+                      </FieldLabel>
+                      <input
+                        id="concurso-cargo"
+                        type="text"
+                        disabled={isPending}
+                        value={input.cargo ?? ""}
+                        onChange={(e) => setInput((s) => ({ ...s, cargo: e.target.value || null }))}
+                        placeholder="Ex.: Analista de controle"
+                        className={fieldInputClass}
+                      />
+                    </div>
+                    <div>
+                      <FieldLabel htmlFor="concurso-banca" optional>
+                        Banca
+                      </FieldLabel>
+                      <input
+                        id="concurso-banca"
+                        type="text"
+                        disabled={isPending}
+                        value={input.banca ?? ""}
+                        onChange={(e) => setInput((s) => ({ ...s, banca: e.target.value || null }))}
+                        placeholder="Ex.: Cespe, FGV…"
+                        className={fieldInputClass}
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <FieldLabel htmlFor="concurso-data-prova" optional>
+                      Data da prova
+                    </FieldLabel>
+                    <input
+                      id="concurso-data-prova"
+                      type="date"
                       disabled={isPending}
-                      onChange={(v) => setInput((s) => ({ ...s, cargo: v || null }))}
-                    />
-                    <CreatableSelect
-                      id="concurso-banca"
-                      label="Banca"
-                      optional
-                      appearance="aprov"
-                      value={input.banca ?? ""}
-                      onChange={(v) => setInput((s) => ({ ...s, banca: v || null }))}
-                      suggestions={bancaSuggestions}
-                      placeholder="Ex.: Cespe, FGV…"
-                      disabled={isPending}
+                      value={input.data_prova ?? ""}
+                      onChange={(e) => setInput((s) => ({ ...s, data_prova: e.target.value || null }))}
+                      className={fieldInputClass}
                     />
                   </div>
                 </div>
@@ -282,7 +300,7 @@ export function ModalConcurso({
             </div>
           </div>
 
-          <footer className="flex shrink-0 flex-wrap items-center justify-between gap-3 border-t border-[#F3F4F6] bg-white px-7 py-4">
+          <footer className="flex shrink-0 flex-wrap items-center justify-between gap-3 border-t border-[var(--border-subtle)] bg-[var(--bg-surface)] px-7 py-4">
             <p className="text-xs text-[#9CA3AF]">* Campos obrigatórios</p>
             <div className="ml-auto flex flex-wrap items-center gap-3">
               <button

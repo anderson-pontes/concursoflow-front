@@ -2,6 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Menu, Search } from "lucide-react";
 
+import { useTheme } from "@/hooks/useTheme";
 import { UserDropdown } from "@/components/layout/UserDropdown";
 import { NotificationBell } from "@/components/layout/NotificationBell";
 import { primeiroNome } from "@/lib/userDisplay";
@@ -17,6 +18,7 @@ function saudacaoPorHora(): string {
 export function Header({ onOpenSidebar }: { onOpenSidebar?: () => void }) {
   const user = useAuthStore((s) => s.user);
   const navigate = useNavigate();
+  const { toggle: toggleTheme } = useTheme();
 
   const [cmdOpen, setCmdOpen] = React.useState(false);
   const [cmdQuery, setCmdQuery] = React.useState("");
@@ -130,10 +132,7 @@ export function Header({ onOpenSidebar }: { onOpenSidebar?: () => void }) {
                 type="button"
                 className="w-full rounded-lg px-3 py-2 text-left text-sm hover:bg-muted"
                 onClick={() => {
-                  const isCurrentlyDark = document.documentElement.classList.contains("dark");
-                  const next = !isCurrentlyDark;
-                  document.documentElement.classList.toggle("dark", next);
-                  window.localStorage.setItem("theme", next ? "dark" : "light");
+                  toggleTheme();
                 }}
               >
                 Alternar tema claro/escuro

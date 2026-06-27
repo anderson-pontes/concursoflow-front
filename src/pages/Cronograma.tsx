@@ -1,285 +1,63 @@
 import React from "react";
-import { createPortal } from "react-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { BookOpen, Clock, Pencil, Plus, Trash2, X, BarChart3, Calendar } from "lucide-react";
+import { BookOpen, Clock, Pencil, Plus, Sparkles, Trash2, BarChart3, Calendar } from "lucide-react";
 import { toast } from "sonner";
 
-import { api } from "@/services/api";
-import { usePlanoAtivo, usePlanoStore } from "@/stores/planoStore";
+import { BlocoFormModal } from "@/components/cronograma/BlocoFormModal";
+import { GerarCronogramaAutoModal } from "@/components/cronograma/GerarCronogramaAutoModal";
 import { RegistroEstudoModal } from "@/components/estudos/RegistroEstudoModal";
+import { DIAS, diaAbrev, fmtHorasStats, getTipo } from "@/lib/cronograma/constants";
+import type { Bloco, DisciplinaOption, FormState, SessaoStats } from "@/lib/cronograma/types";
 import { cn } from "@/lib/utils";
-
-type DisciplinaOption = { id: string; nome: string };
-
-type Bloco = {
-  id: string;
-  user_id: string;
-  disciplina_id: string;
-  dia_semana: "seg" | "ter" | "qua" | "qui" | "sex" | "sab" | "dom";
-  hora_inicio: string;
-  hora_fim: string;
-  tipo: string;
-  ativo: boolean;
-};
-
-type SessaoStats = {
-  tempo_total_horas?: number;
-  sessoes_count?: number;
-  media_diaria_horas?: number;
-  [key: string]: unknown;
-};
-
-const DIAS: Bloco["dia_semana"][] = ["seg", "ter", "qua", "qui", "sex", "sab", "dom"];
-const diaLabels: Record<Bloco["dia_semana"], string> = {
-  seg: "Segunda",
-  ter: "Terça",
-  qua: "Quarta",
-  qui: "Quinta",
-  sex: "Sexta",
-  sab: "Sábado",
-  dom: "Domingo",
-};
-const diaAbrev: Record<Bloco["dia_semana"], string> = {
-  seg: "Seg",
-  ter: "Ter",
-  qua: "Qua",
-  qui: "Qui",
-  sex: "Sex",
-  sab: "Sáb",
-  dom: "Dom",
-};
-const diaIndex: Record<Bloco["dia_semana"], number> = {
-  dom: 0,
-  seg: 1,
-  ter: 2,
-  qua: 3,
-  qui: 4,
-  sex: 5,
-  sab: 6,
-};
-
-type TipoBadge = { label: string; cls: string };
-const tipoMap: Record<string, TipoBadge> = {
-  estudo: { label: "Estudo", cls: "bg-primary-100 text-primary-700 dark:bg-primary-900/40 dark:text-primary-300" },
-  revisao: { label: "Revisão", cls: "bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300" },
-  questoes: { label: "Questões", cls: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300" },
-  livre: { label: "Livre", cls: "bg-neutral-100 text-neutral-600 dark:bg-neutral-700 dark:text-neutral-300" },
-  pomodoro: { label: "Pomodoro", cls: "bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-300" },
-};
-function getTipo(tipo: string): TipoBadge {
-  return tipoMap[tipo.toLowerCase()] ?? { label: tipo, cls: "bg-neutral-100 text-neutral-500" };
-}
-
-function fmtHorasStats(h: number | undefined): string {
-  if (!h || h <= 0) return "—";
-  const totalMin = Math.round(h * 60);
-  if (totalMin < 60) return `${totalMin} min`;
-  const hrs = Math.floor(totalMin / 60);
-  const min = totalMin % 60;
-  return min > 0 ? `${hrs}h ${min}min` : `${hrs}h`;
-}
-
-type FormState = {
-  disciplina_id: string;
-  dia_semana: Bloco["dia_semana"];
-  hora_inicio: string;
-  hora_fim: string;
-  tipo: string;
-  ativo: boolean;
-};
-
-const defaultForm: FormState = {
-  disciplina_id: "",
-  dia_semana: "seg",
-  hora_inicio: "08:00",
-  hora_fim: "09:00",
-  tipo: "estudo",
-  ativo: true,
-};
-
-function BlocoFormModal({
-  open,
-  onClose,
-  onSave,
-  disciplinas,
-  initialValues,
-  title,
-  isSaving,
-}: {
-  open: boolean;
-  onClose: () => void;
-  onSave: (form: FormState) => void;
-  disciplinas: DisciplinaOption[];
-  initialValues?: Partial<FormState>;
-  title: string;
-  isSaving: boolean;
-}) {
-  const [form, setForm] = React.useState<FormState>({ ...defaultForm, ...initialValues });
-
-  React.useEffect(() => {
-    if (open) setForm({ ...defaultForm, ...initialValues });
-  }, [open, initialValues]);
-
-  React.useEffect(() => {
-    if (!open) return;
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => { document.body.style.overflow = prev; };
-  }, [open]);
-
-  const horaFimInvalida = form.hora_fim <= form.hora_inicio;
-
-  if (!open) return null;
-
-  return createPortal(
-    <div className="fixed inset-0 z-[10010] flex items-center justify-center bg-black/55 p-4" role="dialog" aria-modal="true">
-      <div className="w-full max-w-md overflow-hidden rounded-2xl border border-border bg-card shadow-2xl">
-        <div className="flex items-center justify-between border-b border-border px-5 py-4">
-          <h2 className="text-base font-semibold text-card-foreground">{title}</h2>
-          <button type="button" onClick={onClose} className="rounded-lg border border-border p-1.5 text-muted-foreground transition hover:bg-muted">
-            <X className="h-4 w-4" />
-          </button>
-        </div>
-
-        <div className="space-y-4 px-5 py-5">
-          <div>
-            <label className="mb-1.5 block text-sm font-medium text-card-foreground">Disciplina</label>
-            <select
-              className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-card-foreground outline-none focus:ring-2 focus:ring-primary-500"
-              value={form.disciplina_id}
-              onChange={(e) => setForm((s) => ({ ...s, disciplina_id: e.target.value }))}
-            >
-              <option value="" disabled>Selecione...</option>
-              {disciplinas.map((d) => <option key={d.id} value={d.id}>{d.nome}</option>)}
-            </select>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="mb-1.5 block text-sm font-medium text-card-foreground">Dia</label>
-              <select
-                className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-card-foreground outline-none focus:ring-2 focus:ring-primary-500"
-                value={form.dia_semana}
-                onChange={(e) => setForm((s) => ({ ...s, dia_semana: e.target.value as Bloco["dia_semana"] }))}
-              >
-                {DIAS.map((k) => <option key={k} value={k}>{diaLabels[k]}</option>)}
-              </select>
-            </div>
-            <div>
-              <label className="mb-1.5 block text-sm font-medium text-card-foreground">Tipo</label>
-              <select
-                className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-card-foreground outline-none focus:ring-2 focus:ring-primary-500"
-                value={form.tipo}
-                onChange={(e) => setForm((s) => ({ ...s, tipo: e.target.value }))}
-              >
-                {Object.entries(tipoMap).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
-              </select>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="mb-1.5 block text-sm font-medium text-card-foreground">Início</label>
-              <input
-                type="time"
-                className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-card-foreground outline-none focus:ring-2 focus:ring-primary-500"
-                value={form.hora_inicio}
-                onChange={(e) => setForm((s) => ({ ...s, hora_inicio: e.target.value }))}
-              />
-            </div>
-            <div>
-              <label className="mb-1.5 block text-sm font-medium text-card-foreground">Fim</label>
-              <input
-                type="time"
-                className={cn(
-                  "w-full rounded-lg border px-3 py-2 text-sm text-card-foreground outline-none focus:ring-2 focus:ring-primary-500 bg-background",
-                  horaFimInvalida ? "border-danger-400" : "border-border",
-                )}
-                value={form.hora_fim}
-                onChange={(e) => setForm((s) => ({ ...s, hora_fim: e.target.value }))}
-              />
-              {horaFimInvalida ? <p className="mt-1 text-xs text-danger-600">Fim deve ser após o início.</p> : null}
-            </div>
-          </div>
-        </div>
-
-        <div className="flex justify-end gap-2 border-t border-border px-5 py-4">
-          <button type="button" onClick={onClose} className="rounded-lg border border-border px-4 py-2 text-sm text-muted-foreground hover:bg-muted">
-            Cancelar
-          </button>
-          <button
-            type="button"
-            disabled={!form.disciplina_id || horaFimInvalida || isSaving}
-            onClick={() => onSave(form)}
-            className="rounded-lg bg-primary-600 px-4 py-2 text-sm font-semibold text-white hover:bg-primary-700 disabled:opacity-50"
-          >
-            {isSaving ? "Salvando…" : "Salvar"}
-          </button>
-        </div>
-      </div>
-    </div>,
-    document.body,
-  );
-}
+import { api } from "@/services/api";
+import { useConcursoAtivoId } from "@/stores/concursoStore";
 
 export function Cronograma() {
   const qc = useQueryClient();
-  const planoAtivo = usePlanoAtivo();
-  const listarPlanoDisciplinas = usePlanoStore((s) => s.listarPlanoDisciplinas);
-  const planoIdParam =
-    planoAtivo?.id && /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(planoAtivo.id)
-      ? planoAtivo.id
-      : undefined;
+  const concursoAtivoId = useConcursoAtivoId();
 
-  const hoje = DIAS[((new Date().getDay() + 6) % 7)] as Bloco["dia_semana"]; // 0=dom fix to seg-based
-
-  // Actually use JS getDay() properly: 0=Sun,1=Mon...6=Sat
   const jsDay = new Date().getDay(); // 0=Sun
   const diaHoje = (["dom", "seg", "ter", "qua", "qui", "sex", "sab"] as Bloco["dia_semana"][])[jsDay];
 
   const { data: disciplinasGlobais } = useQuery({
     queryKey: ["disciplinas-all"],
-    enabled: !planoIdParam,
+    enabled: !concursoAtivoId,
     queryFn: async () => {
       const rows = (await api.get("/disciplinas")).data as Array<{ id: string; nome: string }>;
       return rows.map((r) => ({ id: r.id, nome: r.nome })) as DisciplinaOption[];
     },
   });
 
-  const { data: disciplinasDoPlano } = useQuery({
-    queryKey: ["disciplinas-do-plano", planoIdParam ?? null],
-    enabled: Boolean(planoIdParam),
+  const { data: disciplinasDoConcurso } = useQuery({
+    queryKey: ["disciplinas-do-concurso", concursoAtivoId ?? null],
+    enabled: Boolean(concursoAtivoId),
     queryFn: async () => {
-      if (!planoIdParam) return [] as DisciplinaOption[];
-      const rows = await listarPlanoDisciplinas(planoIdParam);
-      return rows.map((r) => ({ id: r.disciplinaId, nome: r.nome })) as DisciplinaOption[];
+      const rows = (await api.get("/disciplinas", { params: { concurso_id: concursoAtivoId } })).data as Array<{
+        id: string;
+        nome: string;
+      }>;
+      return rows.map((r) => ({ id: r.id, nome: r.nome })) as DisciplinaOption[];
     },
   });
 
-  const disciplinas = (planoIdParam ? disciplinasDoPlano : disciplinasGlobais) ?? [];
+  const disciplinas = (concursoAtivoId ? disciplinasDoConcurso : disciplinasGlobais) ?? [];
   const discMap = React.useMemo(() => new Map(disciplinas.map((d) => [d.id, d.nome])), [disciplinas]);
 
   const { data: blocos, isLoading } = useQuery({
-    queryKey: ["cronograma-blocos", planoIdParam ?? null],
-    queryFn: async () => {
-      const params = planoIdParam ? { plano_id: planoIdParam } : undefined;
-      return (await api.get("/cronograma/blocos", { params })).data as Bloco[];
-    },
+    queryKey: ["cronograma-blocos", concursoAtivoId ?? null],
+    queryFn: async () => (await api.get("/cronograma/blocos")).data as Bloco[],
   });
 
   const { data: stats } = useQuery({
-    queryKey: ["sessoes-stats", planoIdParam ?? null],
-    queryFn: async () => {
-      const params = planoIdParam ? { plano_id: planoIdParam } : undefined;
-      return (await api.get("/sessoes-estudo/stats", { params })).data as SessaoStats;
-    },
+    queryKey: ["sessoes-stats", concursoAtivoId ?? null],
+    queryFn: async () => (await api.get("/sessoes-estudo/stats")).data as SessaoStats,
   });
 
   const createMutation = useMutation({
     mutationFn: async (payload: FormState) =>
-      (await api.post("/cronograma/blocos", { ...payload, plano_id: planoIdParam ?? undefined })).data as Bloco,
+      (await api.post("/cronograma/blocos", payload)).data as Bloco,
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["cronograma-blocos", planoIdParam ?? null] });
+      qc.invalidateQueries({ queryKey: ["cronograma-blocos", concursoAtivoId ?? null] });
       toast.success("Bloco criado.");
       setCreateOpen(false);
     },
@@ -290,7 +68,7 @@ export function Cronograma() {
     mutationFn: async ({ id, payload }: { id: string; payload: FormState }) =>
       (await api.put(`/cronograma/blocos/${id}`, payload)).data as Bloco,
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["cronograma-blocos", planoIdParam ?? null] });
+      qc.invalidateQueries({ queryKey: ["cronograma-blocos", concursoAtivoId ?? null] });
       toast.success("Bloco atualizado.");
       setEditBloco(null);
     },
@@ -300,13 +78,14 @@ export function Cronograma() {
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => { await api.delete(`/cronograma/blocos/${id}`); },
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["cronograma-blocos", planoIdParam ?? null] });
+      qc.invalidateQueries({ queryKey: ["cronograma-blocos", concursoAtivoId ?? null] });
       toast.success("Bloco removido.");
     },
     onError: () => toast.error("Erro ao remover bloco."),
   });
 
   const [createOpen, setCreateOpen] = React.useState(false);
+  const [autoOpen, setAutoOpen] = React.useState(false);
   const [editBloco, setEditBloco] = React.useState<Bloco | null>(null);
   const [openRegistro, setOpenRegistro] = React.useState(false);
 
@@ -321,7 +100,6 @@ export function Cronograma() {
 
   return (
     <div className="space-y-6 pb-10">
-      {/* Header */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-xl font-semibold tracking-tight text-neutral-900 dark:text-neutral-50">Cronograma</h1>
@@ -338,6 +116,20 @@ export function Cronograma() {
           </button>
           <button
             type="button"
+            onClick={() => {
+              if (disciplinas.length === 0) {
+                toast.error("Cadastre disciplinas antes de gerar o cronograma automático.");
+                return;
+              }
+              setAutoOpen(true);
+            }}
+            className="inline-flex items-center gap-2 rounded-lg border border-primary-300 bg-primary-50 px-3 py-2 text-sm font-semibold text-primary-700 shadow-sm hover:bg-primary-100 dark:border-primary-700 dark:bg-primary-950/40 dark:text-primary-300 dark:hover:bg-primary-900/40"
+          >
+            <Sparkles className="h-4 w-4" />
+            Gerar automático
+          </button>
+          <button
+            type="button"
             onClick={() => setCreateOpen(true)}
             className="inline-flex items-center gap-2 rounded-lg bg-primary-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary-700"
           >
@@ -347,7 +139,6 @@ export function Cronograma() {
         </div>
       </div>
 
-      {/* Stats */}
       {stats ? (
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
           {[
@@ -369,7 +160,6 @@ export function Cronograma() {
         </div>
       ) : null}
 
-      {/* Grid semanal */}
       {isLoading ? (
         <div className="grid gap-3 md:grid-cols-7">
           {DIAS.map((d) => (
@@ -456,7 +246,6 @@ export function Cronograma() {
         </div>
       )}
 
-      {/* Modal criar */}
       <BlocoFormModal
         open={createOpen}
         onClose={() => setCreateOpen(false)}
@@ -466,7 +255,6 @@ export function Cronograma() {
         isSaving={createMutation.isPending}
       />
 
-      {/* Modal editar */}
       {editBloco ? (
         <BlocoFormModal
           open
@@ -485,6 +273,15 @@ export function Cronograma() {
           isSaving={updateMutation.isPending}
         />
       ) : null}
+
+      <GerarCronogramaAutoModal
+        open={autoOpen}
+        onClose={() => setAutoOpen(false)}
+        disciplinas={disciplinas}
+        onSaved={() => {
+          qc.invalidateQueries({ queryKey: ["cronograma-blocos", concursoAtivoId ?? null] });
+        }}
+      />
 
       <RegistroEstudoModal
         open={openRegistro}
