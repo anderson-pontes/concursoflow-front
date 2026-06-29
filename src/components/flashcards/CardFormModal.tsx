@@ -19,7 +19,7 @@ type Flashcard = {
   imagem_verso_url: string | null;
 };
 
-type DeckOption = { id: string; nome: string };
+type DeckOption = { id: string; nome: string; full_path?: string };
 
 type Props = {
   open: boolean;
@@ -199,6 +199,7 @@ export function CardFormModal({
   if (!open) return null;
 
   const deckLabel =
+    decks.find((d) => d.id === effectiveDeckId)?.full_path?.trim() ||
     decks.find((d) => d.id === effectiveDeckId)?.nome?.trim() ||
     deckName?.trim() ||
     "Baralho";
@@ -270,7 +271,7 @@ export function CardFormModal({
                           className="w-full px-3 py-2 text-left text-sm text-[#1A1A2E] transition-colors duration-200 hover:bg-[#F3F0FF]"
                           onClick={() => selectDeck(d.id)}
                         >
-                          {d.nome}
+                          {d.full_path ?? d.nome}
                         </button>
                       </li>
                     ))}

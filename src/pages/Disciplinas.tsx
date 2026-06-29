@@ -28,15 +28,25 @@ export function Disciplinas() {
   const concursoAtivoId = useConcursoAtivoId();
   const concursoId = concursoAtivoId ?? "";
 
+  const [search, setSearch] = React.useState("");
   const [filterSeg, setFilterSeg] = React.useState<FilterSeg>("todas");
   const [modalOpen, setModalOpen] = React.useState(false);
   const [modalMode, setModalMode] = React.useState<"create" | "edit">("create");
   const [editingDisciplina, setEditingDisciplina] = React.useState<Disciplina | null>(null);
 
+  const searchTerm = search.trim();
+
   const { data: disciplinas = [], isLoading: loadingDisciplinas } = useQuery({
-    queryKey: ["disciplinas", "catalog"],
+    queryKey: ["disciplinas", "catalog", searchTerm || null],
     queryFn: async () =>
-      (await api.get("/disciplinas", { params: { include_topicos_stats: true } })).data as Disciplina[],
+      (
+        await api.get("/disciplinas", {
+          params: {
+            include_topicos_stats: true,
+            ...(searchTerm ? { search: searchTerm } : {}),
+          },
+        })
+      ).data as Disciplina[],
   });
 
   const createMutation = useMutation({
@@ -131,6 +141,8 @@ export function Disciplinas() {
     <div className="min-h-full pb-8" style={{ fontFamily: "Inter, system-ui, sans-serif" }}>
       <div className="space-y-5">
         <DisciplinasToolbar
+          search={search}
+          onSearchChange={setSearch}
           filterSeg={filterSeg}
           onFilterChange={setFilterSeg}
           onCreate={openCreate}
@@ -150,7 +162,7 @@ export function Disciplinas() {
           </div>
         ) : null}
 
-        {!loadingDisciplinas && disciplinas.length === 0 ? (
+        {!loadingDisciplinas && disciplinas.length === 0 && !searchTerm ? (
           <div className="flex flex-col items-center rounded-2xl border-[1.5px] border-[var(--border-default)] bg-[var(--bg-surface)] px-6 py-16 text-center shadow-[0_2px_12px_rgba(0,0,0,0.07)]">
             <EmptyDisciplinasIllustration />
             <h2 className="mt-6 text-lg font-bold text-[var(--text-primary)]">Nenhuma disciplina ainda</h2>
@@ -167,9 +179,17 @@ export function Disciplinas() {
           </div>
         ) : null}
 
+        {!loadingDisciplinas && disciplinas.length === 0 && searchTerm ? (
+          <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] px-6 py-12 text-center text-sm text-[var(--text-secondary)] shadow-sm">
+            Nenhuma disciplina encontrada para &ldquo;{searchTerm}&rdquo;.
+          </div>
+        ) : null}
+
         {!loadingDisciplinas && disciplinas.length > 0 && filteredDisciplinas.length === 0 ? (
           <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] px-6 py-12 text-center text-sm text-[var(--text-secondary)] shadow-sm">
-            Nenhuma disciplina neste filtro.
+            {searchTerm
+              ? `Nenhuma disciplina encontrada para "${searchTerm}" neste filtro.`
+              : "Nenhuma disciplina neste filtro."}
           </div>
         ) : null}
 

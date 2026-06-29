@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { BlocoFormModal } from "@/components/cronograma/BlocoFormModal";
 import { GerarCronogramaAutoModal } from "@/components/cronograma/GerarCronogramaAutoModal";
 import { RegistroEstudoModal } from "@/components/estudos/RegistroEstudoModal";
-import { DIAS, diaAbrev, fmtHorasStats, getTipo } from "@/lib/cronograma/constants";
+import { DIAS, diaAbrev, fmtBlocoHoras, fmtHorasStats, getTipo, aggregateBlocosPorDisciplina } from "@/lib/cronograma/constants";
 import type { Bloco, DisciplinaOption, FormState, SessaoStats } from "@/lib/cronograma/types";
 import { cn } from "@/lib/utils";
 import { api } from "@/services/api";
@@ -19,28 +19,35 @@ export function Cronograma() {
   const jsDay = new Date().getDay(); // 0=Sun
   const diaHoje = (["dom", "seg", "ter", "qua", "qui", "sex", "sab"] as Bloco["dia_semana"][])[jsDay];
 
-  const { data: disciplinasGlobais } = useQuery({
-    queryKey: ["disciplinas-all"],
-    enabled: !concursoAtivoId,
+  const { data: disciplinasCatalog = [], isLoading: loadingDisciplinas } = useQuery({
+    queryKey: ["disciplinas", "catalog", null],
     queryFn: async () => {
-      const rows = (await api.get("/disciplinas")).data as Array<{ id: string; nome: string }>;
-      return rows.map((r) => ({ id: r.id, nome: r.nome })) as DisciplinaOption[];
-    },
-  });
-
-  const { data: disciplinasDoConcurso } = useQuery({
-    queryKey: ["disciplinas-do-concurso", concursoAtivoId ?? null],
-    enabled: Boolean(concursoAtivoId),
-    queryFn: async () => {
-      const rows = (await api.get("/disciplinas", { params: { concurso_id: concursoAtivoId } })).data as Array<{
+      const rows = (await api.get("/disciplinas")).data as Array<{
         id: string;
         nome: string;
+        peso: number | null;
+        total_questoes_prova: number | null;
+        total_pontos?: number | null;
+        concurso_ids?: string[];
       }>;
-      return rows.map((r) => ({ id: r.id, nome: r.nome })) as DisciplinaOption[];
+      return rows.map((r) => ({
+        id: r.id,
+        nome: r.nome,
+        peso: r.peso,
+        total_questoes_prova: r.total_questoes_prova,
+        total_pontos: r.total_pontos,
+        concurso_ids: r.concurso_ids,
+      })) as DisciplinaOption[];
     },
   });
 
-  const disciplinas = (concursoAtivoId ? disciplinasDoConcurso : disciplinasGlobais) ?? [];
+  /** Catálogo completo; com concurso ativo, prioriza vinculadas ao concurso no topo. */
+  const disciplinas = React.useMemo(() => {
+    if (!concursoAtivoId) return disciplinasCatalog;
+    const linked = disciplinasCatalog.filter((d) => d.concurso_ids?.includes(concursoAtivoId));
+    const rest = disciplinasCatalog.filter((d) => !d.concurso_ids?.includes(concursoAtivoId));
+    return linked.length > 0 ? [...linked, ...rest] : disciplinasCatalog;
+  }, [disciplinasCatalog, concursoAtivoId]);
   const discMap = React.useMemo(() => new Map(disciplinas.map((d) => [d.id, d.nome])), [disciplinas]);
 
   const { data: blocos, isLoading } = useQuery({
@@ -84,6 +91,18 @@ export function Cronograma() {
     onError: () => toast.error("Erro ao remover bloco."),
   });
 
+  const limparMutation = useMutation({
+    mutationFn: async () =>
+      (await api.delete("/cronograma/limpar")).data as { blocos_removidos: number; itens_removidos: number },
+    onSuccess: (data) => {
+      qc.invalidateQueries({ queryKey: ["cronograma-blocos", concursoAtivoId ?? null] });
+      toast.success(
+        `Cronograma limpo — ${data.blocos_removidos} bloco(s) e ${data.itens_removidos} item(ns) removidos.`,
+      );
+    },
+    onError: () => toast.error("Não foi possível limpar o cronograma."),
+  });
+
   const [createOpen, setCreateOpen] = React.useState(false);
   const [autoOpen, setAutoOpen] = React.useState(false);
   const [editBloco, setEditBloco] = React.useState<Bloco | null>(null);
@@ -92,9 +111,14 @@ export function Cronograma() {
   const grouped = React.useMemo(() => {
     const map = Object.fromEntries(DIAS.map((d) => [d, [] as Bloco[]])) as Record<Bloco["dia_semana"], Bloco[]>;
     for (const b of blocos ?? []) map[b.dia_semana]?.push(b);
-    for (const k of DIAS) map[k].sort((a, c) => a.hora_inicio.localeCompare(c.hora_inicio));
     return map;
   }, [blocos]);
+
+  const groupedPorDisciplina = React.useMemo(() => {
+    return Object.fromEntries(
+      DIAS.map((d) => [d, aggregateBlocosPorDisciplina(grouped[d] ?? [])]),
+    ) as Record<Bloco["dia_semana"], ReturnType<typeof aggregateBlocosPorDisciplina>>;
+  }, [grouped]);
 
   const totalBlocos = (blocos ?? []).length;
 
@@ -117,8 +141,12 @@ export function Cronograma() {
           <button
             type="button"
             onClick={() => {
+              if (loadingDisciplinas) {
+                toast.info("Carregando disciplinas…");
+                return;
+              }
               if (disciplinas.length === 0) {
-                toast.error("Cadastre disciplinas antes de gerar o cronograma automático.");
+                toast.error("Nenhuma disciplina no catálogo. Cadastre em Disciplinas & Tópicos.");
                 return;
               }
               setAutoOpen(true);
@@ -127,6 +155,24 @@ export function Cronograma() {
           >
             <Sparkles className="h-4 w-4" />
             Gerar automático
+          </button>
+          <button
+            type="button"
+            disabled={limparMutation.isPending}
+            onClick={() => {
+              if (
+                !window.confirm(
+                  "Isso remove todos os blocos do cronograma semanal e os itens gerados automaticamente. Deseja continuar?",
+                )
+              ) {
+                return;
+              }
+              limparMutation.mutate();
+            }}
+            className="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-3 py-2 text-sm font-medium text-muted-foreground shadow-sm hover:bg-muted disabled:opacity-50"
+          >
+            <Trash2 className="h-4 w-4" />
+            {limparMutation.isPending ? "Limpando…" : "Limpar cronograma"}
           </button>
           <button
             type="button"
@@ -170,7 +216,7 @@ export function Cronograma() {
         <div className="grid gap-3 md:grid-cols-7">
           {DIAS.map((dia) => {
             const isHoje = dia === diaHoje;
-            const blocks = grouped[dia] ?? [];
+            const items = groupedPorDisciplina[dia] ?? [];
             return (
               <div
                 key={dia}
@@ -191,22 +237,22 @@ export function Cronograma() {
                     {diaAbrev[dia]}
                     {isHoje ? <span className="ml-1 rounded-full bg-primary-600 px-1.5 py-0.5 text-[9px] font-bold text-white">hoje</span> : null}
                   </span>
-                  <span className="text-[10px] text-muted-foreground">{blocks.length > 0 ? `${blocks.length}` : ""}</span>
+                  <span className="text-[10px] text-muted-foreground">{items.length > 0 ? `${items.length}` : ""}</span>
                 </div>
 
                 <div className="space-y-2">
-                  {blocks.map((b) => {
-                    const badge = getTipo(b.tipo);
-                    const discNome = discMap.get(b.disciplina_id) ?? "—";
+                  {items.map((item) => {
+                    const badge = getTipo(item.bloco.tipo);
+                    const discNome = discMap.get(item.disciplina_id) ?? "—";
                     return (
                       <div
-                        key={b.id}
+                        key={item.disciplina_id}
                         className="group relative overflow-hidden rounded-lg border border-border bg-white p-2.5 shadow-sm dark:bg-neutral-900"
                       >
-                        <p className="truncate text-[11px] font-semibold tabular-nums text-card-foreground">
-                          {b.hora_inicio} – {b.hora_fim}
+                        <p className="truncate text-[11px] font-semibold text-card-foreground">{discNome}</p>
+                        <p className="mt-0.5 text-[11px] font-bold tabular-nums text-primary-700 dark:text-primary-300">
+                          {fmtBlocoHoras(item.horas)}
                         </p>
-                        <p className="mt-0.5 truncate text-[11px] text-muted-foreground">{discNome}</p>
                         <span className={cn("mt-1.5 inline-flex rounded-full px-2 py-0.5 text-[10px] font-semibold", badge.cls)}>
                           {badge.label}
                         </span>
@@ -214,7 +260,7 @@ export function Cronograma() {
                           <button
                             type="button"
                             title="Editar bloco"
-                            onClick={() => setEditBloco(b)}
+                            onClick={() => setEditBloco(item.bloco)}
                             className="flex h-6 w-6 items-center justify-center rounded-md border border-border text-muted-foreground hover:bg-muted"
                           >
                             <Pencil className="h-3 w-3" />
@@ -224,8 +270,16 @@ export function Cronograma() {
                             title="Excluir bloco"
                             disabled={deleteMutation.isPending}
                             onClick={() => {
-                              if (window.confirm(`Excluir o bloco de ${b.hora_inicio} – ${b.hora_fim}?`)) {
-                                deleteMutation.mutate(b.id);
+                              if (
+                                window.confirm(
+                                  `Excluir ${discNome} (${fmtBlocoHoras(item.horas)}) de ${diaAbrev[dia]}?`,
+                                )
+                              ) {
+                                void (async () => {
+                                  for (const id of item.blocoIds) {
+                                    await deleteMutation.mutateAsync(id);
+                                  }
+                                })();
                               }
                             }}
                             className="flex h-6 w-6 items-center justify-center rounded-md border border-border text-danger-500 hover:bg-danger-50 dark:hover:bg-danger-950/30"
@@ -236,7 +290,7 @@ export function Cronograma() {
                       </div>
                     );
                   })}
-                  {blocks.length === 0 ? (
+                  {items.length === 0 ? (
                     <p className="py-4 text-center text-[11px] text-muted-foreground">Sem blocos</p>
                   ) : null}
                 </div>

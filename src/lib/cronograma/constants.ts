@@ -53,6 +53,43 @@ export function fmtHorasStats(h: number | undefined): string {
   return min > 0 ? `${hrs}h ${min}min` : `${hrs}h`;
 }
 
+/** Duração de um bloco a partir de hora_inicio / hora_fim (HH:MM). */
+export function blocoDurationHours(horaInicio: string, horaFim: string): number {
+  const [sh, sm] = horaInicio.split(":").map(Number);
+  const [eh, em] = horaFim.split(":").map(Number);
+  if ([sh, sm, eh, em].some((n) => Number.isNaN(n))) return 0;
+  return Math.max(0, (eh * 60 + em - (sh * 60 + sm)) / 60);
+}
+
+export function fmtBlocoHoras(h: number): string {
+  if (h <= 0) return "—";
+  const rounded = Math.round(h * 10) / 10;
+  return Number.isInteger(rounded) ? `${rounded}h` : `${rounded.toFixed(1)}h`;
+}
+
+export type BlocoDiaAgrupado = {
+  disciplina_id: string;
+  horas: number;
+  blocoIds: string[];
+  bloco: Bloco;
+};
+
+/** Agrupa blocos do mesmo dia por disciplina (soma duração), como na prévia do automático. */
+export function aggregateBlocosPorDisciplina(blocos: Bloco[]): BlocoDiaAgrupado[] {
+  const map = new Map<string, BlocoDiaAgrupado>();
+  for (const b of blocos) {
+    const h = blocoDurationHours(b.hora_inicio, b.hora_fim);
+    const cur = map.get(b.disciplina_id);
+    if (!cur) {
+      map.set(b.disciplina_id, { disciplina_id: b.disciplina_id, horas: h, blocoIds: [b.id], bloco: b });
+    } else {
+      cur.horas += h;
+      cur.blocoIds.push(b.id);
+    }
+  }
+  return [...map.values()].sort((a, b) => a.bloco.hora_inicio.localeCompare(b.bloco.hora_inicio));
+}
+
 export const defaultForm: FormState = {
   disciplina_id: "",
   dia_semana: "seg",

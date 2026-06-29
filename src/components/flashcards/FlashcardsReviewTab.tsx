@@ -412,9 +412,9 @@ export function FlashcardsReviewTab({
                   ? "bg-[#6C3FC5] text-white shadow-md"
                   : "border border-neutral-200 bg-white text-[#1A1A2E] hover:border-[#6C3FC5] dark:border-neutral-600 dark:bg-neutral-800 dark:text-neutral-100",
               ].join(" ")}
-              title={d.nome}
+              title={d.full_path ?? d.nome}
             >
-              {d.nome}
+              {d.full_path ?? d.nome}
             </button>
           ))}
         </div>
@@ -422,7 +422,10 @@ export function FlashcardsReviewTab({
         <ul className="space-y-3">
           {dueCards.map((c, i) => {
             const u = urgencyForDueCard(c);
-            const deckNome = decks.find((x) => x.id === c.deck_id)?.nome ?? "Baralho";
+            const deckNome =
+              decks.find((x) => x.id === c.deck_id)?.full_path ??
+              decks.find((x) => x.id === c.deck_id)?.nome ??
+              "Baralho";
             return (
               <li
                 key={c.id}

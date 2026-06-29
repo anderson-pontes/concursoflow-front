@@ -14,6 +14,8 @@ export type DisciplinasSummary = {
 };
 
 type DisciplinasToolbarProps = {
+  search: string;
+  onSearchChange: (value: string) => void;
   filterSeg: FilterSeg;
   onFilterChange: (seg: FilterSeg) => void;
   onCreate: () => void;
@@ -23,6 +25,8 @@ type DisciplinasToolbarProps = {
 };
 
 export function DisciplinasToolbar({
+  search,
+  onSearchChange,
   filterSeg,
   onFilterChange,
   onCreate,
@@ -47,6 +51,18 @@ export function DisciplinasToolbar({
           </p>
         </div>
         <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+          <div className="relative w-full sm:w-[240px]">
+            <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-base opacity-60" aria-hidden>
+              🔍
+            </span>
+            <input
+              type="search"
+              value={search}
+              onChange={(e) => onSearchChange(e.target.value)}
+              placeholder="Buscar disciplina..."
+              className="h-10 w-full rounded-[10px] border border-[var(--border-default)] bg-[var(--bg-surface)] py-2 pl-10 pr-3 text-sm text-[var(--text-primary)] outline-none transition placeholder:text-[var(--text-muted)] focus:border-[#6C3FC5] focus:shadow-[0_0_0_3px_rgba(108,63,197,0.15)]"
+            />
+          </div>
           {concursos.length > 0 ? (
             <select
               className="h-10 min-w-[200px] rounded-[10px] border border-[var(--border-default)] bg-[var(--bg-surface)] px-3 text-sm text-[var(--text-primary)] outline-none focus:border-[#6C3FC5]"

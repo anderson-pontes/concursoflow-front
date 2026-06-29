@@ -1,10 +1,14 @@
 export type Deck = {
   id: string;
   nome: string;
+  parent_id: string | null;
   disciplina_id: string | null;
+  plano_id?: string | null;
   descricao: string | null;
   cor_hex: string | null;
   total_cards: number;
+  full_path?: string;
+  children?: Deck[];
   created_at: string;
 };
 

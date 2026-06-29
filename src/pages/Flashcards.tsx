@@ -12,6 +12,8 @@ import { DeckFormModal } from "@/components/flashcards/DeckFormModal";
 
 import { CardFormModal } from "@/components/flashcards/CardFormModal";
 
+import { ImportApkgModal } from "@/components/flashcards/ImportApkgModal";
+
 import { FlashcardsPageStyles } from "@/components/flashcards/FlashcardsPageStyles";
 
 import { FlashcardsStatsHeader } from "@/components/flashcards/FlashcardsStatsHeader";
@@ -74,6 +76,8 @@ export function Flashcards() {
     card?: Flashcard | null;
   }>({ open: false });
 
+  const [importOpen, setImportOpen] = React.useState(false);
+
   /* review state */
 
   const [reviewDeckId, setReviewDeckId] = React.useState<string | null>(null);
@@ -113,10 +117,14 @@ export function Flashcards() {
 
   /* ── Queries ── */
 
-  const { data: decks = [] } = useQuery({
-    queryKey: ["flashcards-decks"],
+  const { data: deckFlat = [] } = useQuery({
+    queryKey: ["flashcards-decks-flat"],
+    queryFn: async () => (await api.get("/flashcards/decks/flat")).data as Deck[],
+  });
 
-    queryFn: async () => (await api.get("/flashcards/decks")).data as Deck[],
+  const { data: deckTree = [] } = useQuery({
+    queryKey: ["flashcards-decks-tree"],
+    queryFn: async () => (await api.get("/flashcards/decks/tree")).data as Deck[],
   });
 
   const { data: metrics } = useQuery({
@@ -152,7 +160,7 @@ export function Flashcards() {
     enabled: Boolean(selectedDeck),
 
     queryFn: async () =>
-      (await api.get(`/flashcards?deck_id=${selectedDeck!.id}`))
+      (await api.get(`/flashcards?deck_id=${selectedDeck!.id}&include_subdecks=true`))
         .data as Flashcard[],
   });
 
@@ -163,7 +171,7 @@ export function Flashcards() {
 
     queryFn: async () => {
       const url = reviewDeckId
-        ? `/flashcards/revisar?limit=100&deck_id=${reviewDeckId}`
+        ? `/flashcards/revisar?limit=100&deck_id=${reviewDeckId}&include_subdecks=true`
         : "/flashcards/revisar?limit=100";
 
       return (await api.get(url)).data as Flashcard[];
@@ -190,6 +198,8 @@ export function Flashcards() {
 
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["flashcards-decks"] });
+      qc.invalidateQueries({ queryKey: ["flashcards-decks-flat"] });
+      qc.invalidateQueries({ queryKey: ["flashcards-decks-tree"] });
 
       qc.invalidateQueries({ queryKey: ["flashcards-metrics"] });
 
@@ -197,6 +207,23 @@ export function Flashcards() {
 
       setView("decks");
       setSelectedDeck(null);
+    },
+  });
+
+  const deleteAllDecksMutation = useMutation({
+    mutationFn: async () => (await api.delete("/flashcards/decks")).data as { decks_removidos: number },
+    onSuccess: (data) => {
+      qc.invalidateQueries({ queryKey: ["flashcards-decks"] });
+      qc.invalidateQueries({ queryKey: ["flashcards-decks-flat"] });
+      qc.invalidateQueries({ queryKey: ["flashcards-decks-tree"] });
+      qc.invalidateQueries({ queryKey: ["flashcards-metrics"] });
+      setView("decks");
+      setSelectedDeck(null);
+      toast.success(
+        data.decks_removidos > 0
+          ? `${data.decks_removidos} baralho(s) removido(s).`
+          : "Nenhum baralho para remover.",
+      );
     },
   });
 
@@ -209,6 +236,8 @@ export function Flashcards() {
       });
 
       qc.invalidateQueries({ queryKey: ["flashcards-decks"] });
+      qc.invalidateQueries({ queryKey: ["flashcards-decks-flat"] });
+      qc.invalidateQueries({ queryKey: ["flashcards-decks-tree"] });
 
       qc.invalidateQueries({ queryKey: ["flashcards-metrics"] });
 
@@ -476,13 +505,17 @@ export function Flashcards() {
         {tab === "baralhos" ? (
           <FlashcardsDecksTab
             view={view}
-            decks={decks}
+            decks={deckFlat}
+            treeDecks={deckTree}
             deckMetrics={deckMetrics}
             selectedDeck={selectedDeck}
             deckCards={deckCards}
             deckStreakCount={deckStreakCount}
             onOpenDeckModal={(deck) => setDeckModal({ open: true, deck })}
+            onOpenImport={() => setImportOpen(true)}
             onDeleteDeck={(id) => deleteDeckMutation.mutate(id)}
+            onDeleteAllDecks={() => deleteAllDecksMutation.mutate()}
+            deletingAll={deleteAllDecksMutation.isPending}
             onSelectDeck={(deck) => {
               setSelectedDeck(deck);
               setView("deck-detail");
@@ -505,7 +538,7 @@ export function Flashcards() {
           <FlashcardsReviewTab
             isLoading={reviewQuery.isLoading}
             dueCards={dueCards}
-            decks={decks}
+            decks={deckFlat}
             deckMetrics={deckMetrics}
             totalCardsGlobal={totalCardsGlobal}
             dueTodayTotal={dueTodayTotal}
@@ -585,7 +618,10 @@ export function Flashcards() {
         open={deckModal.open}
         onClose={() => setDeckModal({ open: false })}
         deck={deckModal.deck}
+        flatDecks={deckFlat}
       />
+
+      <ImportApkgModal open={importOpen} onClose={() => setImportOpen(false)} />
 
       <CardFormModal
         open={cardModal.open}
@@ -593,9 +629,9 @@ export function Flashcards() {
         deckId={selectedDeck?.id ?? ""}
         deckName={selectedDeck?.nome}
         card={cardModal.card}
-        decks={decks.map((d) => ({ id: d.id, nome: d.nome }))}
+        decks={deckFlat.map((d) => ({ id: d.id, nome: d.nome, full_path: d.full_path }))}
         onDeckChange={(id) => {
-          const d = decks.find((x) => x.id === id);
+          const d = deckFlat.find((x) => x.id === id);
 
           if (d) setSelectedDeck(d);
         }}

@@ -5,12 +5,9 @@ import { X, Layers } from "lucide-react";
 import { toast } from "sonner";
 
 import { api } from "@/services/api";
+import type { Deck } from "@/lib/flashcards/types";
 
 type Disciplina = { id: string; nome: string };
-type Deck = {
-  id: string; nome: string; disciplina_id: string | null;
-  descricao: string | null; cor_hex: string | null; total_cards: number;
-};
 
 const PALETTE = [
   "#6366f1", "#8b5cf6", "#ec4899", "#ef4444", "#f97316",
@@ -21,9 +18,10 @@ type Props = {
   open: boolean;
   onClose: () => void;
   deck?: Deck | null;
+  flatDecks?: Deck[];
 };
 
-export function DeckFormModal({ open, onClose, deck }: Props) {
+export function DeckFormModal({ open, onClose, deck, flatDecks = [] }: Props) {
   const qc = useQueryClient();
   const isEdit = Boolean(deck);
 
@@ -31,6 +29,7 @@ export function DeckFormModal({ open, onClose, deck }: Props) {
   const [descricao, setDescricao] = React.useState("");
   const [cor, setCor] = React.useState(PALETTE[0]);
   const [disciplinaId, setDisciplinaId] = React.useState("");
+  const [parentId, setParentId] = React.useState("");
 
   const { data: disciplinas } = useQuery({
     queryKey: ["disciplinas-all"],
@@ -44,6 +43,7 @@ export function DeckFormModal({ open, onClose, deck }: Props) {
       setDescricao(deck?.descricao ?? "");
       setCor(deck?.cor_hex ?? PALETTE[0]);
       setDisciplinaId(deck?.disciplina_id ?? "");
+      setParentId(deck?.parent_id ?? "");
     }
   }, [open, deck]);
 
@@ -51,6 +51,7 @@ export function DeckFormModal({ open, onClose, deck }: Props) {
     mutationFn: async () => {
       const body = {
         nome,
+        parent_id: parentId || null,
         descricao: descricao || null,
         cor_hex: cor,
         disciplina_id: disciplinaId || null,
@@ -62,6 +63,8 @@ export function DeckFormModal({ open, onClose, deck }: Props) {
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["flashcards-decks"] });
+      qc.invalidateQueries({ queryKey: ["flashcards-decks-flat"] });
+      qc.invalidateQueries({ queryKey: ["flashcards-decks-tree"] });
       qc.invalidateQueries({ queryKey: ["flashcards-metrics"] });
       toast.success(isEdit ? "Baralho atualizado!" : "Baralho criado!");
       onClose();
@@ -147,6 +150,26 @@ export function DeckFormModal({ open, onClose, deck }: Props) {
               {(disciplinas ?? []).map((d) => (
                 <option key={d.id} value={d.id}>{d.nome}</option>
               ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="mb-1.5 block text-sm font-medium text-card-foreground">
+              Baralho pai (opcional)
+            </label>
+            <select
+              className="w-full rounded-xl border border-border bg-background px-3 py-2.5 text-sm text-card-foreground outline-none focus:ring-2 focus:ring-primary-500"
+              value={parentId}
+              onChange={(e) => setParentId(e.target.value)}
+            >
+              <option value="">Nenhum (raiz)</option>
+              {flatDecks
+                .filter((d) => d.id !== deck?.id)
+                .map((d) => (
+                  <option key={d.id} value={d.id}>
+                    {d.full_path ?? d.nome}
+                  </option>
+                ))}
             </select>
           </div>
 

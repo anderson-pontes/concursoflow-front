@@ -1,4 +1,11 @@
-export type DisciplinaOption = { id: string; nome: string };
+export type DisciplinaOption = {
+  id: string;
+  nome: string;
+  peso?: number | null;
+  total_questoes_prova?: number | null;
+  total_pontos?: number | null;
+  concurso_ids?: string[];
+};
 
 export type Bloco = {
   id: string;
