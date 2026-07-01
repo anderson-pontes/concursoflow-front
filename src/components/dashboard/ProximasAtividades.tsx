@@ -5,7 +5,6 @@ type ActivityType = "estudo" | "exercicio" | "revisao";
 type Activity = {
   id: string;
   disciplina: string;
-  horario: string;
   tipo: ActivityType;
 };
 
@@ -45,7 +44,6 @@ export function ProximasAtividades({ atividades }: { atividades: Activity[] }) {
               <span className={cn("h-2 w-2 shrink-0 rounded-full", style.dot)} />
               <div className="min-w-0 flex-1">
                 <div className="truncate text-xs font-medium text-neutral-800 dark:text-neutral-100">{item.disciplina}</div>
-                <div className="text-[10px] text-neutral-400">{item.horario}</div>
               </div>
               <span className={cn("rounded px-1.5 py-0.5 text-[10px] font-medium", style.tag)}>{style.label}</span>
             </div>

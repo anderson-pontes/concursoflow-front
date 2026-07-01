@@ -100,7 +100,6 @@ export function Dashboard() {
         return {
           id: b.id,
           disciplina: mapDisc.get(b.disciplina_id) ?? "Disciplina",
-          horario: `${b.hora_inicio} - ${b.hora_fim}`,
           tipo: normalizedTipo as "estudo" | "exercicio" | "revisao",
         };
       });

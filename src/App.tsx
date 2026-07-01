@@ -11,11 +11,8 @@ import { Disciplinas } from "./pages/Disciplinas";
 import { DisciplinaDashboard } from "./pages/DisciplinaDashboard";
 import { Cronograma } from "./pages/Cronograma";
 import { Pomodoro } from "./pages/Pomodoro";
-import { Questoes } from "./pages/Questoes";
-import { Simulados } from "./pages/Simulados";
 import { Avisos } from "./pages/Avisos";
 import { Flashcards } from "./pages/Flashcards";
-import { Materiais } from "./pages/Materiais";
 import { AdminEstudos } from "./pages/AdminEstudos";
 import { AdminRoute } from "./components/layout/AdminRoute";
 import { GestaoUsuarios } from "./pages/admin/GestaoUsuarios";
@@ -92,22 +89,6 @@ export default function App() {
         }
       />
       <Route
-        path="/questoes"
-        element={
-          <Layout requireAuth={!isAuthed}>
-            <Questoes />
-          </Layout>
-        }
-      />
-      <Route
-        path="/simulados"
-        element={
-          <Layout requireAuth={!isAuthed}>
-            <Simulados />
-          </Layout>
-        }
-      />
-      <Route
         path="/avisos"
         element={
           <Layout requireAuth={!isAuthed}>
@@ -120,14 +101,6 @@ export default function App() {
         element={
           <Layout requireAuth={!isAuthed}>
             <Flashcards />
-          </Layout>
-        }
-      />
-      <Route
-        path="/materiais"
-        element={
-          <Layout requireAuth={!isAuthed}>
-            <Materiais />
           </Layout>
         }
       />

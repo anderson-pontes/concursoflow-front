@@ -2,13 +2,10 @@ import React from "react";
 import { createPortal } from "react-dom";
 import { NavLink, matchPath, useLocation, useNavigate } from "react-router-dom";
 import {
-  BarChart2,
   Bell,
   BookOpen,
   CalendarDays,
   ChevronRight,
-  FileQuestion,
-  FolderOpen,
   Layers,
   LayoutDashboard,
   Settings2,
@@ -41,8 +38,6 @@ const navSections = [
     label: "ESTUDO",
     items: [
       { to: "/pomodoro", label: "Pomodoro", icon: Timer },
-      { to: "/questoes", label: "Questões", icon: FileQuestion },
-      { to: "/simulados", label: "Simulados", icon: BarChart2 },
       { to: "/flashcards", label: "Flashcards", icon: Layers },
     ],
   },
@@ -50,7 +45,6 @@ const navSections = [
     label: "OUTROS",
     items: [
       { to: "/avisos", label: "Avisos", icon: Bell },
-      { to: "/materiais", label: "Materiais", icon: FolderOpen },
       { to: "/configuracoes/estudos", label: "Config. Estudos", icon: Settings2 },
     ],
   },

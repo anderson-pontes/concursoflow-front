@@ -30,11 +30,8 @@ export function Header({ onOpenSidebar }: { onOpenSidebar?: () => void }) {
       { label: "Disciplinas", to: "/disciplinas" },
       { label: "Cronograma", to: "/cronograma" },
       { label: "Pomodoro", to: "/pomodoro" },
-      { label: "Questões", to: "/questoes" },
-      { label: "Simulados", to: "/simulados" },
       { label: "Avisos", to: "/avisos" },
       { label: "Flashcards", to: "/flashcards" },
-      { label: "Materiais", to: "/materiais" },
     ],
     [],
   );

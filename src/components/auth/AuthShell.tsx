@@ -155,7 +155,7 @@ export function AuthShell({ children }: AuthShellProps) {
               {
                 bg: "#F59E0B",
                 icon: "⏱",
-                text: "Pomodoro, cronograma e simulados",
+                text: "Pomodoro, cronograma e flashcards",
               },
               {
                 bg: "#6366F1",

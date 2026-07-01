@@ -491,7 +491,7 @@ function ProgressoTab({ concurso }: { concurso: ConcursoRow }) {
                     type="button"
                     onClick={() => {
                       if (r.disciplinaId) navigate(`/disciplinas/${r.disciplinaId}`);
-                      else navigate("/questoes");
+                      else navigate("/disciplinas");
                     }}
                     className="flex w-full min-w-0 items-center gap-3 rounded-[10px] border border-[#F3F4F6] bg-[#FAFAFA] px-4 py-3.5 text-left transition-colors hover:border-[#C4B5FD] hover:bg-[#F3F0FF]"
                   >

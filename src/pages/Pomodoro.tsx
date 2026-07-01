@@ -1,252 +1,138 @@
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Settings2, BookOpen, ChevronDown, ChevronUp } from "lucide-react";
+import { BookOpen, Timer } from "lucide-react";
 
-import { api } from "@/services/api";
-import { usePomodoroStore } from "@/stores/pomodoroStore";
+import { PomodoroConfigPanel } from "@/components/pomodoro/PomodoroConfigPanel";
 import { PomodoroTimer } from "@/components/pomodoro/PomodoroTimer";
 import { RegistroEstudoModal } from "@/components/estudos/RegistroEstudoModal";
+import { Button } from "@/components/ui/button";
+import { usePomodoroConfigSync } from "@/hooks/usePomodoroConfigSync";
+import { api } from "@/services/api";
+import { useConcursoAtivoId } from "@/stores/concursoStore";
+import { usePomodoroStore } from "@/stores/pomodoroStore";
 
-type Disciplina = { id: string; nome: string };
+type DisciplinaRow = {
+  id: string;
+  nome: string;
+  concurso_ids?: string[];
+};
 
 export function Pomodoro() {
-  const setMode = usePomodoroStore((s) => s.setMode);
-  const setDisciplinaId = usePomodoroStore((s) => s.setDisciplinaId);
-  const disciplinaId = usePomodoroStore((s) => s.disciplinaId);
+  const concursoAtivoId = useConcursoAtivoId();
+  const { saveMutation } = usePomodoroConfigSync();
+
   const mode = usePomodoroStore((s) => s.mode);
+  const focusHours = usePomodoroStore((s) => s.focusHours);
   const focusMinutes = usePomodoroStore((s) => s.focusMinutes);
   const shortBreakMinutes = usePomodoroStore((s) => s.shortBreakMinutes);
   const longBreakMinutes = usePomodoroStore((s) => s.longBreakMinutes);
   const cyclesTarget = usePomodoroStore((s) => s.cyclesTarget);
-  const setConfig = usePomodoroStore((s) => s.setConfig);
-
-  const { data: disciplinas, isLoading } = useQuery({
-    queryKey: ["disciplinas-all"],
-    queryFn: async () => (await api.get("/disciplinas")).data as Disciplina[],
-  });
+  const disciplinaId = usePomodoroStore((s) => s.disciplinaId);
+  const topicoId = usePomodoroStore((s) => s.topicoId);
 
   const [openRegistro, setOpenRegistro] = React.useState(false);
   const [timerActive, setTimerActive] = React.useState(false);
-  const [configOpen, setConfigOpen] = React.useState(false);
 
-  const isCronometro = mode === "cronometro";
-  const disciplinaNome = disciplinas?.find((d) => d.id === disciplinaId)?.nome;
+  const persistConfig = React.useCallback(() => {
+    saveMutation.mutate({
+      mode,
+      focus_hours: focusHours,
+      focus_minutes: focusMinutes,
+      short_break_minutes: shortBreakMinutes,
+      long_break_minutes: longBreakMinutes,
+      cycles_target: cyclesTarget,
+      last_disciplina_id: disciplinaId,
+      last_topico_id: topicoId,
+    });
+  }, [
+    saveMutation,
+    mode,
+    focusHours,
+    focusMinutes,
+    shortBreakMinutes,
+    longBreakMinutes,
+    cyclesTarget,
+    disciplinaId,
+    topicoId,
+  ]);
 
-  const modeLabels: Record<string, string> = {
-    pomodoro: "Pomodoro",
-    livre: "Tempo livre",
-    cronometro: "Cronômetro",
-  };
+  const { data: disciplinasCatalog = [], isLoading } = useQuery({
+    queryKey: ["disciplinas", "pomodoro"],
+    queryFn: async () => (await api.get("/disciplinas")).data as DisciplinaRow[],
+  });
+
+  const disciplinas = React.useMemo(() => {
+    if (!concursoAtivoId) return disciplinasCatalog.map(({ id, nome }) => ({ id, nome }));
+    const linked = disciplinasCatalog.filter((d) => d.concurso_ids?.includes(concursoAtivoId));
+    const rest = disciplinasCatalog.filter((d) => !d.concurso_ids?.includes(concursoAtivoId));
+    const ordered = linked.length > 0 ? [...linked, ...rest] : disciplinasCatalog;
+    return ordered.map(({ id, nome }) => ({ id, nome }));
+  }, [disciplinasCatalog, concursoAtivoId]);
+
+  const { data: topicos } = useQuery({
+    queryKey: ["pomodoro-topicos-page", disciplinaId],
+    enabled: Boolean(disciplinaId),
+    queryFn: async () => {
+      const rows = (await api.get(`/disciplinas/${disciplinaId}/topicos`)).data as Array<{
+        id: string;
+        descricao: string;
+      }>;
+      return rows.map((t) => ({ id: String(t.id), descricao: t.descricao }));
+    },
+  });
+
+  const disciplinaNome = disciplinas.find((d) => d.id === disciplinaId)?.nome;
+  const topicoNome = topicos?.find((t) => t.id === topicoId)?.descricao;
+
+  const pageTitle = mode === "cronometro" ? "Cronômetro" : "Pomodoro";
 
   return (
-    <div className="mx-auto max-w-lg space-y-5 pb-10">
-
-      {/* ── Header ── */}
-      {!timerActive ? (
-        /* Setup header */
-        <div className="flex items-center justify-between">
+    <div className="mx-auto max-w-2xl space-y-6 pb-10">
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div className="flex items-start gap-3">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#F3F0FF] text-[#6C3FC5] dark:bg-[#6C3FC5]/20 dark:text-[#A78BFA]">
+            <Timer className="h-5 w-5" strokeWidth={2} />
+          </div>
           <div>
             <h1 className="text-xl font-semibold tracking-tight text-neutral-900 dark:text-neutral-50">
-              {isCronometro ? "Cronômetro" : "Pomodoro"}
+              {timerActive ? "Sessão em andamento" : pageTitle}
             </h1>
-            <p className="text-sm text-muted-foreground">
-              {isCronometro
-                ? "Contagem progressiva com registro a qualquer momento."
-                : "Timer Pomodoro com registro automático."}
+            <p className="mt-0.5 text-sm text-muted-foreground">
+              {timerActive
+                ? "Foque no estudo — use Encerrar e salvar para registrar."
+                : "Configure horas e minutos de foco, inicie o timer e registre seu progresso."}
             </p>
           </div>
-          <button
-            type="button"
-            onClick={() => setOpenRegistro(true)}
-            className="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-3 py-2 text-sm font-medium text-card-foreground hover:bg-muted"
-          >
-            <BookOpen className="h-4 w-4" />
-            Registro manual
-          </button>
         </div>
-      ) : (
-        /* Active session header — minimal */
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-base font-semibold tracking-tight text-neutral-900 dark:text-neutral-50">
-              Sessão em andamento
-            </h1>
-            <p className="text-xs text-muted-foreground">
-              {modeLabels[mode] ?? mode}
-              {disciplinaNome ? ` · ${disciplinaNome}` : ""}
-            </p>
-          </div>
-          <button
-            type="button"
-            onClick={() => setOpenRegistro(true)}
-            className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-card px-2.5 py-1.5 text-xs font-medium text-muted-foreground hover:bg-muted"
-          >
-            <BookOpen className="h-3.5 w-3.5" />
-            Reg. manual
-          </button>
-        </div>
-      )}
+        <Button type="button" variant="outline" className="gap-2" onClick={() => setOpenRegistro(true)}>
+          <BookOpen className="h-4 w-4" />
+          Registro manual
+        </Button>
+      </div>
 
-      {/* ── Config panel — hidden when timer is active ── */}
       {!timerActive ? (
-        <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
-          <div className="px-5 pt-5">
-            <p className="mb-4 text-[11px] font-bold uppercase tracking-widest text-muted-foreground">
-              Configuração
-            </p>
-
-            <div className="grid gap-4 sm:grid-cols-2">
-              {/* Mode */}
-              <div>
-                <label className="mb-1.5 block text-sm font-medium text-card-foreground">Modo</label>
-                <select
-                  className="w-full rounded-xl border border-border bg-background px-3 py-2.5 text-sm text-card-foreground outline-none focus:ring-2 focus:ring-primary-500"
-                  value={mode}
-                  onChange={(e) => setMode(e.target.value as "pomodoro" | "livre" | "cronometro")}
-                >
-                  <option value="pomodoro">Pomodoro (ciclos)</option>
-                  <option value="livre">Tempo livre (countdown)</option>
-                  <option value="cronometro">Cronômetro (count-up)</option>
-                </select>
-              </div>
-
-              {/* Discipline */}
-              <div>
-                <label className="mb-1.5 block text-sm font-medium text-card-foreground">Disciplina</label>
-                {isLoading ? (
-                  <div className="text-sm text-muted-foreground">Carregando...</div>
-                ) : (
-                  <select
-                    className="w-full rounded-xl border border-border bg-background px-3 py-2.5 text-sm text-card-foreground outline-none focus:ring-2 focus:ring-primary-500"
-                    value={disciplinaId ?? ""}
-                    onChange={(e) => setDisciplinaId(e.target.value || null)}
-                  >
-                    <option value="" disabled>Selecione...</option>
-                    {(disciplinas ?? []).map((d) => (
-                      <option key={d.id} value={d.id}>{d.nome}</option>
-                    ))}
-                  </select>
-                )}
-              </div>
-            </div>
-
-            {/* Timer params */}
-            {!isCronometro ? (
-              <div className="mt-4 grid gap-4 sm:grid-cols-4">
-                <div>
-                  <label className="mb-1.5 block text-xs font-semibold text-muted-foreground">Foco (min)</label>
-                  <input
-                    type="number" min={1}
-                    className="w-full rounded-xl border border-border bg-background px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary-500"
-                    value={focusMinutes}
-                    onChange={(e) => setConfig({ focusMinutes: Math.max(1, Number(e.target.value)) })}
-                  />
-                </div>
-                {mode === "pomodoro" ? (
-                  <>
-                    <div>
-                      <label className="mb-1.5 block text-xs font-semibold text-muted-foreground">P. curta</label>
-                      <input
-                        type="number" min={1}
-                        className="w-full rounded-xl border border-border bg-background px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary-500"
-                        value={shortBreakMinutes}
-                        onChange={(e) => setConfig({ shortBreakMinutes: Math.max(1, Number(e.target.value)) })}
-                      />
-                    </div>
-                    <div>
-                      <label className="mb-1.5 block text-xs font-semibold text-muted-foreground">P. longa</label>
-                      <input
-                        type="number" min={1}
-                        className="w-full rounded-xl border border-border bg-background px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary-500"
-                        value={longBreakMinutes}
-                        onChange={(e) => setConfig({ longBreakMinutes: Math.max(1, Number(e.target.value)) })}
-                      />
-                    </div>
-                    <div>
-                      <label className="mb-1.5 block text-xs font-semibold text-muted-foreground">Ciclos</label>
-                      <input
-                        type="number" min={1}
-                        className="w-full rounded-xl border border-border bg-background px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary-500"
-                        value={cyclesTarget}
-                        onChange={(e) => setConfig({ cyclesTarget: Math.max(1, Number(e.target.value)) })}
-                      />
-                    </div>
-                  </>
-                ) : null}
-              </div>
-            ) : (
-              <p className="mt-3 text-xs text-muted-foreground">
-                A contagem começa do zero e você pode salvar a sessão a qualquer momento sem parar o timer.
-              </p>
-            )}
-          </div>
-
-          {/* Bottom strip */}
-          <div className="mt-5 flex items-center gap-2 border-t border-border/60 bg-muted/30 px-5 py-3">
-            <Settings2 className="h-3.5 w-3.5 text-muted-foreground" />
-            <p className="text-[11px] text-muted-foreground">
-              Estas configurações ficam ocultas durante a sessão ativa.
-            </p>
-          </div>
-        </div>
+        <PomodoroConfigPanel
+          disciplinas={disciplinas}
+          loadingDisciplinas={isLoading}
+          onPersist={persistConfig}
+        />
       ) : (
-        /* Collapsed config during active session */
-        <button
-          type="button"
-          onClick={() => setConfigOpen((o) => !o)}
-          className="flex w-full items-center justify-between rounded-xl border border-border bg-card px-4 py-2.5 text-xs font-medium text-muted-foreground hover:bg-muted"
-        >
-          <span className="flex items-center gap-2">
-            <Settings2 className="h-3.5 w-3.5" />
-            Configurações ({modeLabels[mode]}{disciplinaNome ? ` · ${disciplinaNome}` : ""})
-          </span>
-          {configOpen ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
-        </button>
+        <div className="rounded-xl border border-[#DDD6FE] bg-[#F3F0FF]/60 px-4 py-3 text-sm text-[#5B32AD] dark:border-[#6C3FC5]/30 dark:bg-[#6C3FC5]/10 dark:text-[#DDD6FE]">
+          Configurações ocultas durante a sessão. Pause ou encerre para alterar duração, modo e disciplina.
+        </div>
       )}
 
-      {/* Collapsible config during active session */}
-      {timerActive && configOpen ? (
-        <div className="overflow-hidden rounded-2xl border border-border bg-card p-5 shadow-sm">
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div>
-              <label className="mb-1.5 block text-sm font-medium text-card-foreground">Modo</label>
-              <select
-                className="w-full rounded-xl border border-border bg-background px-3 py-2.5 text-sm text-card-foreground outline-none"
-                value={mode}
-                onChange={(e) => setMode(e.target.value as "pomodoro" | "livre" | "cronometro")}
-              >
-                <option value="pomodoro">Pomodoro (ciclos)</option>
-                <option value="livre">Tempo livre (countdown)</option>
-                <option value="cronometro">Cronômetro (count-up)</option>
-              </select>
-            </div>
-            <div>
-              <label className="mb-1.5 block text-sm font-medium text-card-foreground">Disciplina</label>
-              <select
-                className="w-full rounded-xl border border-border bg-background px-3 py-2.5 text-sm text-card-foreground outline-none"
-                value={disciplinaId ?? ""}
-                onChange={(e) => setDisciplinaId(e.target.value || null)}
-              >
-                <option value="" disabled>Selecione...</option>
-                {(disciplinas ?? []).map((d) => (
-                  <option key={d.id} value={d.id}>{d.nome}</option>
-                ))}
-              </select>
-            </div>
-          </div>
-        </div>
-      ) : null}
-
-      {/* ── Timer ── */}
       <PomodoroTimer
         onActiveChange={setTimerActive}
         disciplinaNome={disciplinaNome}
+        topicoNome={topicoNome}
       />
 
       <RegistroEstudoModal
         open={openRegistro}
         onClose={() => setOpenRegistro(false)}
         defaultDisciplinaId={disciplinaId}
+        defaultTopicos={topicoId && topicoNome ? [{ id: topicoId, nome: topicoNome }] : null}
       />
     </div>
   );
