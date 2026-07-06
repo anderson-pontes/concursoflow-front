@@ -1,7 +1,8 @@
 import React from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 
+import { CriarUsuarioModal } from "@/components/admin/CriarUsuarioModal";
 import { KpiCard } from "@/components/dashboard/KpiCard";
 import { fetchUsers, fetchUsersDashboard } from "@/services/adminUsers";
 import {
@@ -10,6 +11,7 @@ import {
   USER_STATUS_OPTIONS,
   statusLabel,
   studyGoalLabel,
+  subscriptionStatusLabel,
   type UserStatus,
 } from "@/types/userManagement";
 import { cn } from "@/lib/utils";
@@ -18,7 +20,10 @@ export function GestaoUsuarios() {
   const [page, setPage] = React.useState(1);
   const [search, setSearch] = React.useState("");
   const [status, setStatus] = React.useState("");
+  const [subscriptionStatus, setSubscriptionStatus] = React.useState("");
   const [studyGoal, setStudyGoal] = React.useState("");
+  const [createOpen, setCreateOpen] = React.useState(false);
+  const qc = useQueryClient();
 
   const { data: dashboard } = useQuery({
     queryKey: ["admin-users-dashboard"],
@@ -26,13 +31,14 @@ export function GestaoUsuarios() {
   });
 
   const { data: list, isLoading } = useQuery({
-    queryKey: ["admin-users", page, search, status, studyGoal],
+    queryKey: ["admin-users", page, search, status, subscriptionStatus, studyGoal],
     queryFn: () =>
       fetchUsers({
         page,
         page_size: 15,
         search: search || undefined,
         status: status || undefined,
+        subscription_status: subscriptionStatus || undefined,
         study_goal: studyGoal || undefined,
       }),
   });
@@ -41,10 +47,28 @@ export function GestaoUsuarios() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="text-lg font-semibold">Gestão de Usuários</h2>
-        <p className="text-sm text-muted-foreground">Aprovação, bloqueio e administração de contas.</p>
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <h2 className="text-lg font-semibold">Gestão de Usuários</h2>
+          <p className="text-sm text-muted-foreground">Assinaturas, bloqueio e administração de contas.</p>
+        </div>
+        <button
+          type="button"
+          className="rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700"
+          onClick={() => setCreateOpen(true)}
+        >
+          + Criar usuário
+        </button>
       </div>
+
+      <CriarUsuarioModal
+        open={createOpen}
+        onClose={() => setCreateOpen(false)}
+        onCreated={() => {
+          qc.invalidateQueries({ queryKey: ["admin-users"] });
+          qc.invalidateQueries({ queryKey: ["admin-users-dashboard"] });
+        }}
+      />
 
       {dashboard ? (
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
@@ -85,6 +109,21 @@ export function GestaoUsuarios() {
           </select>
           <select
             className="rounded-md border border-border/40 bg-background px-3 py-2 text-sm"
+            value={subscriptionStatus}
+            onChange={(e) => {
+              setSubscriptionStatus(e.target.value);
+              setPage(1);
+            }}
+          >
+            <option value="">Toda assinatura</option>
+            <option value="active">Ativa</option>
+            <option value="past_due">Pgto. pendente</option>
+            <option value="canceled">Cancelada</option>
+            <option value="unpaid">Não paga</option>
+            <option value="incomplete">Incompleta</option>
+          </select>
+          <select
+            className="rounded-md border border-border/40 bg-background px-3 py-2 text-sm"
             value={studyGoal}
             onChange={(e) => {
               setStudyGoal(e.target.value);
@@ -109,6 +148,8 @@ export function GestaoUsuarios() {
                 <th className="py-2 pr-2">CPF</th>
                 <th className="py-2 pr-2">Objetivo</th>
                 <th className="py-2 pr-2">Status</th>
+                <th className="py-2 pr-2">Assinatura</th>
+                <th className="py-2 pr-2">Vencimento</th>
                 <th className="py-2 pr-2">Cadastro</th>
                 <th className="py-2 pr-2">Último acesso</th>
                 <th className="py-2">Ações</th>
@@ -117,7 +158,7 @@ export function GestaoUsuarios() {
             <tbody>
               {isLoading ? (
                 <tr>
-                  <td colSpan={8} className="py-8 text-center text-muted-foreground">
+                  <td colSpan={10} className="py-8 text-center text-muted-foreground">
                     Carregando...
                   </td>
                 </tr>
@@ -132,6 +173,12 @@ export function GestaoUsuarios() {
                       <span className={cn("rounded px-2 py-0.5 text-xs font-medium", STATUS_BADGE_CLASS[u.status as UserStatus])}>
                         {statusLabel(u.status)}
                       </span>
+                    </td>
+                    <td className="py-2 pr-2">{subscriptionStatusLabel(u.subscription_status)}</td>
+                    <td className="py-2 pr-2">
+                      {u.subscription_current_period_end
+                        ? new Date(u.subscription_current_period_end).toLocaleDateString("pt-BR")
+                        : "—"}
                     </td>
                     <td className="py-2 pr-2">{new Date(u.created_at).toLocaleDateString("pt-BR")}</td>
                     <td className="py-2 pr-2">

@@ -138,9 +138,16 @@ export function Register() {
         marketing_opt_in: Boolean(values.marketing_opt_in),
       };
       const res = await api.post("/auth/register", payload);
-      return res.data as { message: string };
+      return res.data as { message: string; user_id: string; checkout_url?: string | null };
     },
-    onSuccess: () => setSubmitted(true),
+    onSuccess: (data) => {
+      if (data.checkout_url) {
+        // Redireciona para o pagamento da assinatura (Stripe Checkout).
+        window.location.href = data.checkout_url;
+        return;
+      }
+      setSubmitted(true);
+    },
     onError: () => {
       setShakeForm(true);
       window.setTimeout(() => setShakeForm(false), 450);
@@ -155,16 +162,17 @@ export function Register() {
       <AuthShell>
         <div className="mx-auto max-w-md text-center">
           <div className="mb-6 text-4xl" aria-hidden>✅</div>
-          <h1 className="text-2xl font-bold text-[#1A1A2E]">Cadastro enviado!</h1>
+          <h1 className="text-2xl font-bold text-[#1A1A2E]">Cadastro concluído!</h1>
           <p className="mt-3 text-sm text-[#6B7280]">
-            Seu cadastro foi enviado para análise. Assim que aprovado você receberá um e-mail.
+            Sua conta foi criada. Para liberar o acesso, conclua o pagamento da assinatura.
+            Assim que o pagamento for confirmado, você poderá entrar com seu e-mail e senha.
           </p>
           <button
             type="button"
             className="mt-8 font-bold text-[#6C3FC5] hover:underline"
             onClick={() => navigate("/login")}
           >
-            Voltar ao login
+            Ir para o login
           </button>
         </div>
       </AuthShell>
@@ -179,7 +187,7 @@ export function Register() {
 
       <div className="mb-6">
         <h1 className="text-[28px] font-bold text-[#1A1A2E]">Criar sua conta</h1>
-        <p className="mt-1.5 text-sm text-[#6B7280]">Preencha os dados para solicitar acesso à plataforma.</p>
+        <p className="mt-1.5 text-sm text-[#6B7280]">Preencha os dados e conclua a assinatura para acessar a plataforma.</p>
       </div>
 
       <form
@@ -295,8 +303,8 @@ export function Register() {
           </label>
         </section>
 
-        <AuthPrimaryButton loading={mutation.isPending} loadingLabel="Enviando...">
-          Enviar cadastro para análise
+        <AuthPrimaryButton loading={mutation.isPending} loadingLabel="Processando...">
+          Continuar para o pagamento
         </AuthPrimaryButton>
 
         {mutation.isError ? (

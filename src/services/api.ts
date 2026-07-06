@@ -49,11 +49,29 @@ async function refreshAccessToken(): Promise<string | null> {
   }
 }
 
+function isSubscriptionBlock(error: AxiosError): boolean {
+  const detail = (error.response?.data as { detail?: unknown } | undefined)?.detail;
+  if (typeof detail !== "string") return false;
+  const d = detail.toLowerCase();
+  return d.includes("assinatura") || d.includes("pagamento da assinatura");
+}
+
 api.interceptors.response.use(
   (response) => response,
   async (error: AxiosError) => {
     const originalConfig = error.config as RetryableRequestConfig | undefined;
     const status = error.response?.status;
+
+    // 403 por assinatura vencida/pendente durante a sessão: desloga e leva ao
+    // login, onde o usuário pode renovar (paywall). Não afeta 403 de admin.
+    if (status === 403 && isSubscriptionBlock(error)) {
+      const { logout } = useAuthStore.getState();
+      logout();
+      if (typeof window !== "undefined" && window.location.pathname !== "/login") {
+        window.location.href = "/login";
+      }
+      return Promise.reject(error);
+    }
 
     if (!originalConfig || status !== 401 || originalConfig._retry) {
       return Promise.reject(error);

@@ -1,11 +1,12 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { CreditCard, MapPin, UserCircle } from "lucide-react";
+import { MapPin, UserCircle } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { isAxiosError } from "axios";
 
 import { Button } from "@/components/ui/button";
+import { MinhaAssinatura } from "@/components/perfil/MinhaAssinatura";
 import { FormSection } from "@/components/ui/FormSection";
 import { Label } from "@/components/ui/label";
 import { BR_UFS } from "@/lib/brasilUfs";
@@ -244,22 +245,7 @@ export function PerfilFormContent({ serverMe, onCancel }: PerfilFormContentProps
         </div>
       </FormSection>
 
-      <section className="rounded-xl border border-dashed border-border bg-muted/30 p-5 opacity-80 dark:border-neutral-600 dark:bg-neutral-900/30">
-        <div className="mb-2 flex flex-wrap items-center gap-2">
-          <CreditCard className="h-4 w-4 text-muted-foreground" />
-          <h2 className="text-sm font-semibold text-foreground">Forma de pagamento</h2>
-          <span className="rounded-full bg-neutral-200 px-2 py-0.5 text-[10px] font-semibold uppercase text-neutral-700 dark:bg-neutral-700 dark:text-neutral-200">
-            Em breve
-          </span>
-        </div>
-        <p className="text-sm text-muted-foreground">
-          Integração com Stripe — cartão de crédito e débito.
-        </p>
-        <Button type="button" className="mt-4" disabled>
-          Configurar pagamento
-        </Button>
-        {/* TODO: Stripe integration — ver PLANO_STRIPE.md */}
-      </section>
+      <MinhaAssinatura />
 
       <div className="flex flex-wrap justify-end gap-2 border-t border-border pt-6">
         <Button type="button" variant="outline" onClick={handleCancelClick} disabled={mutation.isPending}>

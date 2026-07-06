@@ -27,9 +27,29 @@ type DisciplinaRow = {
   pesoEdital: number;
   nivel_conhecimento: number;
   incluida: boolean;
-  /** vazio = usa o mínimo global */
-  horasMinimasSemana: string;
+  /** minutos; vazio = usa o mínimo global */
+  minSessaoMin: string;
 };
+
+/** Duração mínima por sessão: minutos, múltiplos de 5, de 0 (padrão) a 60. */
+const MIN_SESSAO_MAX = 60;
+const MIN_SESSAO_STEP = 5;
+
+function snapMinSessao(v: number): number {
+  if (!Number.isFinite(v)) return 0;
+  const snapped = Math.round(v / MIN_SESSAO_STEP) * MIN_SESSAO_STEP;
+  return Math.min(MIN_SESSAO_MAX, Math.max(0, snapped));
+}
+
+/** Formata horas do bloco de forma amigável (ex.: 0,75 → "45min", 1,5 → "1h30"). */
+function fmtHorasBloco(h: number): string {
+  const totalMin = Math.round(h * 60);
+  const hh = Math.floor(totalMin / 60);
+  const mm = totalMin % 60;
+  if (hh === 0) return `${mm}min`;
+  if (mm === 0) return `${hh}h`;
+  return `${hh}h${String(mm).padStart(2, "0")}`;
+}
 
 export type GerarCronogramaAutoModalProps = {
   open: boolean;
@@ -117,7 +137,7 @@ export function GerarCronogramaAutoModal({
   onSaved,
 }: GerarCronogramaAutoModalProps) {
   const [horasPorDia, setHorasPorDia] = React.useState(2);
-  const [horasMinimasSemana, setHorasMinimasSemana] = React.useState(0);
+  const [minSessaoMin, setMinSessaoMin] = React.useState(0);
   const [diasSemana, setDiasSemana] = React.useState<number[]>([0, 1, 2, 3, 4]);
   const [dataInicio, setDataInicio] = React.useState(todayIso);
   const [dataFim, setDataFim] = React.useState(() => addWeeksIso(todayIso(), 4));
@@ -127,7 +147,7 @@ export function GerarCronogramaAutoModal({
   React.useEffect(() => {
     if (!open) return;
     setHorasPorDia(2);
-    setHorasMinimasSemana(0);
+    setMinSessaoMin(0);
     setDiasSemana([0, 1, 2, 3, 4]);
     setDataInicio(todayIso());
     setDataFim(addWeeksIso(todayIso(), 4));
@@ -139,7 +159,7 @@ export function GerarCronogramaAutoModal({
         pesoEdital: resolvePesoEdital(d),
         nivel_conhecimento: 3,
         incluida: true,
-        horasMinimasSemana: "",
+        minSessaoMin: "",
       })),
     );
   }, [open, disciplinas]);
@@ -170,60 +190,63 @@ export function GerarCronogramaAutoModal({
 
   const updateRow = (
     id: string,
-    patch: Partial<Pick<DisciplinaRow, "nivel_conhecimento" | "horasMinimasSemana">>,
+    patch: Partial<Pick<DisciplinaRow, "nivel_conhecimento" | "minSessaoMin">>,
   ) => {
     setRows((cur) => cur.map((r) => (r.disciplina_id === id ? { ...r, ...patch } : r)));
     setPreview(null);
   };
 
-  const parseMinHoras = (raw: string): number | null => {
-    const t = raw.trim().replace(",", ".");
+  /** minutos: null quando vazio (usa global), NaN quando inválido. */
+  const parseMinSessao = (raw: string): number | null => {
+    const t = raw.trim();
     if (!t) return null;
-    const n = Number.parseFloat(t);
-    if (!Number.isFinite(n) || n < 0) return null;
-    return Math.round(n * 2) / 2;
+    const n = Number.parseInt(t, 10);
+    if (!Number.isFinite(n) || n < 0) return Number.NaN;
+    return snapMinSessao(n);
   };
+
+  const minutosPorDia = Math.round(horasPorDia * 60);
 
   const validate = (): string | null => {
     if (diasSemana.length === 0) return "Selecione pelo menos um dia da semana.";
     if (horasPorDia <= 0) return "Informe horas por dia maior que zero.";
     if (dataFim < dataInicio) return "A data de fim deve ser posterior à data de início.";
     if (includedRows.length === 0) return "Inclua ao menos uma disciplina no cronograma.";
-    const capSemanal = horasPorDia * diasSemana.length;
+    const capSemanalMin = minutosPorDia * diasSemana.length;
     let totalMin = 0;
     for (const r of includedRows) {
       if (r.nivel_conhecimento < 1 || r.nivel_conhecimento > 5) {
         return "Preencha o nível de conhecimento (1–5) para todas as disciplinas incluídas.";
       }
-      const rowMin = parseMinHoras(r.horasMinimasSemana);
-      if (r.horasMinimasSemana.trim() && rowMin == null) {
-        return `Horas mínimas inválidas em "${r.nome}". Use múltiplos de 0,5.`;
+      const rowMin = parseMinSessao(r.minSessaoMin);
+      if (rowMin != null && Number.isNaN(rowMin)) {
+        return `Duração mínima inválida em "${r.nome}". Use minutos (0–60).`;
       }
-      const minSessao = rowMin ?? horasMinimasSemana;
-      if (minSessao > horasPorDia + 1e-9) {
-        return `"${r.nome}": duração mínima (${minSessao}h) não pode ser maior que horas por dia (${horasPorDia}h).`;
+      const minSessao = rowMin ?? minSessaoMin;
+      if (minSessao > minutosPorDia) {
+        return `"${r.nome}": duração mínima (${minSessao} min) não pode ser maior que horas por dia (${minutosPorDia} min).`;
       }
       totalMin += minSessao;
     }
-    if (totalMin > capSemanal + 1e-9) {
-      return `A soma dos mínimos por sessão (${totalMin.toFixed(1)}h) excede a capacidade semanal (${capSemanal.toFixed(1)}h). Inclua menos disciplinas ou aumente horas/dia.`;
+    if (totalMin > capSemanalMin) {
+      return `A soma dos mínimos por sessão (${totalMin} min) excede a capacidade semanal (${capSemanalMin} min). Inclua menos disciplinas ou aumente horas/dia.`;
     }
     return null;
   };
 
   const buildPayload = (salvar: boolean) => ({
     horas_por_dia: horasPorDia,
-    horas_minimas_semana: horasMinimasSemana,
+    duracao_minima_sessao_min: minSessaoMin,
     dias_semana: diasSemana,
     data_inicio: dataInicio,
     data_fim: dataFim,
     disciplinas: includedRows.map((r) => {
-      const rowMin = parseMinHoras(r.horasMinimasSemana);
-      const minResolvida = rowMin ?? horasMinimasSemana;
+      const rowMin = parseMinSessao(r.minSessaoMin);
+      const minResolvida = rowMin != null && !Number.isNaN(rowMin) ? rowMin : minSessaoMin;
       return {
         disciplina_id: r.disciplina_id,
         nivel_conhecimento: r.nivel_conhecimento,
-        horas_minimas_semana: minResolvida,
+        duracao_minima_sessao_min: minResolvida,
       };
     }),
     salvar,
@@ -235,7 +258,7 @@ export function GerarCronogramaAutoModal({
     onSuccess: (data, salvar) => {
       setPreview(data);
       if (salvar) {
-        toast.success(`Cronograma salvo — ${data.total_blocos} blocos, ${data.horas_totais.toFixed(1)}h no período.`);
+        toast.success(`Cronograma salvo — ${data.total_blocos} blocos, ${fmtHorasBloco(data.horas_totais)} no período.`);
         onSaved?.();
         onClose();
       } else {
@@ -344,22 +367,25 @@ export function GerarCronogramaAutoModal({
               </div>
               <div>
                 <label className="mb-1.5 block text-sm font-medium text-card-foreground">
-                  Duração mínima por sessão (h)
+                  Duração mínima por sessão (min)
                 </label>
                 <input
                   type="number"
+                  inputMode="numeric"
                   min={0}
-                  max={12}
-                  step={0.5}
-                  value={horasMinimasSemana}
+                  max={MIN_SESSAO_MAX}
+                  step={MIN_SESSAO_STEP}
+                  value={minSessaoMin}
                   onChange={(e) => {
-                    setHorasMinimasSemana(Number(e.target.value));
+                    const raw = Number(e.target.value);
+                    setMinSessaoMin(Number.isFinite(raw) ? Math.min(MIN_SESSAO_MAX, Math.max(0, raw)) : 0);
                     setPreview(null);
                   }}
+                  onBlur={(e) => setMinSessaoMin(snapMinSessao(Number(e.target.value)))}
                   className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm tabular-nums outline-none focus:ring-2 focus:ring-primary-500"
                 />
                 <p className="mt-1 text-xs text-muted-foreground">
-                  Cada bloco no cronograma terá pelo menos esse tempo · 0 = 30 min · máx. horas/dia
+                  Cada bloco terá pelo menos esse tempo · 0 = 30 min · passos de 5 · máx. 60 min
                 </p>
               </div>
             </div>
@@ -477,16 +503,21 @@ export function GerarCronogramaAutoModal({
                       />
                       <div className="min-w-[120px] flex-1">
                         <label className="mb-1 block text-[11px] font-medium text-[var(--text-secondary)]">
-                          Mín. por sessão (h)
+                          Mín. por sessão (min)
                         </label>
                         <input
                           type="number"
+                          inputMode="numeric"
                           min={0}
-                          max={12}
-                          step={0.5}
-                          placeholder={horasMinimasSemana > 0 ? String(horasMinimasSemana) : "Padrão"}
-                          value={r.horasMinimasSemana}
-                          onChange={(e) => updateRow(r.disciplina_id, { horasMinimasSemana: e.target.value })}
+                          max={MIN_SESSAO_MAX}
+                          step={MIN_SESSAO_STEP}
+                          placeholder={minSessaoMin > 0 ? String(minSessaoMin) : "Padrão"}
+                          value={r.minSessaoMin}
+                          onChange={(e) => updateRow(r.disciplina_id, { minSessaoMin: e.target.value })}
+                          onBlur={(e) => {
+                            const t = e.target.value.trim();
+                            if (t) updateRow(r.disciplina_id, { minSessaoMin: String(snapMinSessao(Number(t))) });
+                          }}
                           className="h-9 w-full rounded-lg border border-border bg-background px-2.5 text-sm tabular-nums outline-none focus:ring-2 focus:ring-primary-500"
                         />
                         <p className="mt-0.5 text-[10px] text-[var(--text-muted)]">Vazio = usa o padrão global</p>
@@ -511,7 +542,7 @@ export function GerarCronogramaAutoModal({
             <section className="space-y-3 rounded-xl border border-primary-200 bg-primary-50/50 p-4 dark:border-primary-800 dark:bg-primary-950/20">
               <h3 className="text-sm font-semibold text-card-foreground">Prévia do padrão semanal</h3>
               <p className="text-xs text-muted-foreground">
-                {preview.total_blocos} blocos no período · {preview.horas_totais.toFixed(1)}h totais
+                {preview.total_blocos} blocos no período · {fmtHorasBloco(preview.horas_totais)} totais
               </p>
               <div className="grid gap-2 sm:grid-cols-2">
                 {DIAS_SEMANA.filter((d) => previewSemanal.has(String(d.value))).map((d) => (
@@ -521,7 +552,7 @@ export function GerarCronogramaAutoModal({
                       {(previewSemanal.get(String(d.value)) ?? []).map((item) => (
                         <li key={item.nome} className="flex justify-between gap-2">
                           <span className="truncate">{item.nome}</span>
-                          <span className="shrink-0 tabular-nums">{item.horas.toFixed(1)}h</span>
+                          <span className="shrink-0 tabular-nums">{fmtHorasBloco(item.horas)}</span>
                         </li>
                       ))}
                     </ul>

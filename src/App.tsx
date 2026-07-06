@@ -5,6 +5,8 @@ import { Layout } from "./components/layout/Layout";
 import { Login } from "./pages/Auth/Login";
 import { Register } from "./pages/Auth/Register";
 import { ResetPassword } from "./pages/Auth/ResetPassword";
+import { CheckoutSucesso } from "./pages/Assinatura/CheckoutSucesso";
+import { CheckoutCancelado } from "./pages/Assinatura/CheckoutCancelado";
 import { Dashboard } from "./pages/Dashboard";
 import { Concursos } from "./pages/Concursos";
 import { Disciplinas } from "./pages/Disciplinas";
@@ -29,6 +31,8 @@ export default function App() {
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/reset-password" element={<ResetPassword />} />
+      <Route path="/assinatura/sucesso" element={<CheckoutSucesso />} />
+      <Route path="/assinatura/cancelado" element={<CheckoutCancelado />} />
 
       <Route
         path="/dashboard"

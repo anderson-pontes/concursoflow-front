@@ -14,7 +14,13 @@ import {
   resetUserPassword,
   unblockUser,
 } from "@/services/adminUsers";
-import { STATUS_BADGE_CLASS, statusLabel, studyGoalLabel, type UserStatus } from "@/types/userManagement";
+import {
+  STATUS_BADGE_CLASS,
+  statusLabel,
+  studyGoalLabel,
+  subscriptionStatusLabel,
+  type UserStatus,
+} from "@/types/userManagement";
 import { cn } from "@/lib/utils";
 
 export function UsuarioDetalhe() {
@@ -141,6 +147,30 @@ export function UsuarioDetalhe() {
             <div><dt className="text-muted-foreground">Último login</dt><dd>{user.last_login_at ? new Date(user.last_login_at).toLocaleString("pt-BR") : "—"}</dd></div>
             <div><dt className="text-muted-foreground">IP último acesso</dt><dd>{user.last_login_ip ?? "—"}</dd></div>
             <div><dt className="text-muted-foreground">Observações</dt><dd>{user.admin_notes ?? "—"}</dd></div>
+          </dl>
+        </section>
+
+        <section className="rounded-xl border border-border/40 bg-background/70 p-4">
+          <h3 className="text-sm font-semibold">Assinatura</h3>
+          <dl className="mt-3 space-y-2 text-sm">
+            <div>
+              <dt className="text-muted-foreground">Status</dt>
+              <dd>{subscriptionStatusLabel(user.subscription_status)}</dd>
+            </div>
+            <div>
+              <dt className="text-muted-foreground">
+                {user.subscription_cancel_at_period_end ? "Acesso até" : "Vencimento"}
+              </dt>
+              <dd>
+                {user.subscription_current_period_end
+                  ? new Date(user.subscription_current_period_end).toLocaleDateString("pt-BR")
+                  : "—"}
+              </dd>
+            </div>
+            <div>
+              <dt className="text-muted-foreground">Renovação automática</dt>
+              <dd>{user.subscription_cancel_at_period_end ? "Cancelada" : "Ativa"}</dd>
+            </div>
           </dl>
         </section>
 

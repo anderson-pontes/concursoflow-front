@@ -16,6 +16,7 @@ import {
 import { AuthShell } from "@/components/auth/AuthShell";
 import { AprovingoLogo } from "@/components/branding/AprovingoLogo";
 import { api } from "@/services/api";
+import { startCheckout } from "@/services/billing";
 import { fetchCurrentUser } from "@/services/currentUser";
 import { useAuthStore } from "@/stores/authStore";
 import { cn } from "@/lib/utils";
@@ -50,6 +51,8 @@ export function Login() {
   const [authMode, setAuthMode] = React.useState<"login" | "forgot">("login");
   const [shakeLogin, setShakeLogin] = React.useState(false);
   const [forgotSent, setForgotSent] = React.useState(false);
+  // Paywall: exibido quando o login retorna 403 por assinatura pendente/vencida.
+  const [paywall, setPaywall] = React.useState<{ message: string } | null>(null);
 
   const form = useForm<LoginForm>({
     resolver: zodResolver(loginSchema),
@@ -87,9 +90,25 @@ export function Login() {
       }
       navigate("/dashboard");
     },
-    onError: () => {
+    onError: (err) => {
       setShakeLogin(true);
       window.setTimeout(() => setShakeLogin(false), 450);
+      // 403 = conta não ativa (pagamento pendente/assinatura vencida): oferece checkout.
+      if (axios.isAxiosError(err) && err.response?.status === 403) {
+        setPaywall({ message: loginErrorMessage(err) });
+      } else {
+        setPaywall(null);
+      }
+    },
+  });
+
+  const checkoutMutation = useMutation({
+    mutationFn: async () => {
+      const { email, password } = form.getValues();
+      return startCheckout(email, password);
+    },
+    onSuccess: (url) => {
+      window.location.href = url;
     },
   });
 
@@ -211,9 +230,31 @@ export function Login() {
               </AuthPrimaryButton>
             </div>
 
-            {mutation.isError ? (
+            {mutation.isError && !paywall ? (
               <div className="text-sm text-[#EF4444]" role="alert">
                 {loginErrorMessage(mutation.error)}
+              </div>
+            ) : null}
+
+            {paywall ? (
+              <div className="rounded-xl border border-[#FDE68A] bg-[#FFFBEB] p-4" role="alert">
+                <p className="text-sm font-semibold text-[#92400E]">{paywall.message}</p>
+                <p className="mt-1 text-xs text-[#B45309]">
+                  Conclua o pagamento da assinatura para liberar seu acesso.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => checkoutMutation.mutate()}
+                  disabled={checkoutMutation.isPending}
+                  className="mt-3 flex h-[44px] w-full items-center justify-center rounded-xl bg-[#6C3FC5] text-sm font-semibold text-white transition-colors hover:bg-[#5B32A8] disabled:opacity-60"
+                >
+                  {checkoutMutation.isPending ? "Redirecionando..." : "Assinar / renovar agora"}
+                </button>
+                {checkoutMutation.isError ? (
+                  <p className="mt-2 text-xs text-[#EF4444]">
+                    {loginErrorMessage(checkoutMutation.error)}
+                  </p>
+                ) : null}
               </div>
             ) : null}
           </form>
