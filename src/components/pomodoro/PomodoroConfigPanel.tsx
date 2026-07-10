@@ -59,9 +59,9 @@ export function PomodoroConfigPanel({
   });
 
   React.useEffect(() => {
-    if (!topicoId || !topicos) return;
+    if (!topicoId || loadingTopicos || !topicos || topicos.length === 0) return;
     if (!topicos.some((t) => t.id === topicoId)) setTopicoId(null);
-  }, [topicoId, topicos, setTopicoId]);
+  }, [topicoId, topicos, loadingTopicos, setTopicoId]);
 
   const fieldClass =
     "w-full rounded-xl border border-border bg-background px-3 py-2.5 text-sm text-foreground outline-none transition-shadow focus:ring-2 focus:ring-[#6C3FC5]/40 disabled:cursor-not-allowed disabled:opacity-60";

@@ -23,6 +23,11 @@ export type DisciplinaDashboardTopicoRow = {
   aproveitamento_pct: number;
   tempo_estudo_minutos: number;
   paginas_lidas: number;
+  peso: number;
+  dominio: number;
+  prioridade: number;
+  ultima_revisao_em: string | null;
+  intervalo_idx: number;
 };
 
 export type DisciplinaDashboardResponse = {

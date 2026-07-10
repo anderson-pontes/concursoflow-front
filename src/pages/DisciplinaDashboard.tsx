@@ -1,6 +1,6 @@
 import React from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useSearchParams } from "react-router-dom";
 import {
   ArrowLeft,
   BookOpen,
@@ -22,8 +22,20 @@ import type { DisciplinaDashboardResponse } from "@/types/disciplinaDashboard";
 
 export function DisciplinaDashboard() {
   const { disciplinaId } = useParams<{ disciplinaId: string }>();
+  const [searchParams, setSearchParams] = useSearchParams();
   const qc = useQueryClient();
   const isDemoMode = useDisciplinaDashboardDemoMode();
+
+  const topicoFromUrl = searchParams.get("topico");
+  const [highlightTopicoId, setHighlightTopicoId] = React.useState<string | null>(null);
+  const topicoScrollRef = React.useRef(false);
+
+  React.useEffect(() => {
+    if (!topicoFromUrl) return;
+    setHighlightTopicoId(topicoFromUrl);
+    const t = window.setTimeout(() => setHighlightTopicoId(null), 2000);
+    return () => window.clearTimeout(t);
+  }, [topicoFromUrl]);
 
   const demoToast = React.useCallback(() => {
     toast.info("Modo demonstração", {
@@ -60,6 +72,15 @@ export function DisciplinaDashboard() {
     },
   });
 
+  React.useEffect(() => {
+    if (!data?.topicos || !topicoFromUrl || topicoScrollRef.current) return;
+    const el = document.querySelector(`[data-topico-id="${topicoFromUrl}"]`);
+    if (!el) return;
+    topicoScrollRef.current = true;
+    el.scrollIntoView({ behavior: "smooth", block: "center" });
+    setSearchParams({}, { replace: true });
+  }, [data?.topicos, topicoFromUrl, setSearchParams]);
+
   const toggleConcluido = useMutation({
     mutationFn: async (payload: { topicoId: string; concluido: boolean }) => {
       if (isDemoMode) {
@@ -88,7 +109,6 @@ export function DisciplinaDashboard() {
         await api.post(`/disciplinas/${disciplinaId}/topicos`, {
           descricao,
           status: "nao_iniciado",
-          numero_ordem: 0,
         });
       }
     },
@@ -105,7 +125,7 @@ export function DisciplinaDashboard() {
     },
   });
 
-  const atualizarTopico = useMutation({
+  const renomearTopico = useMutation({
     mutationFn: async (payload: { topicoId: string; descricao: string }) => {
       if (isDemoMode) {
         throw new Error("DEMO_MODE");
@@ -121,6 +141,44 @@ export function DisciplinaDashboard() {
     },
     onError: (err) => {
       if (err instanceof Error && err.message === "DEMO_MODE") demoToast();
+    },
+  });
+
+  const atualizarTopico = useMutation({
+    mutationFn: async (payload: { topicoId: string; patch: { peso?: number; dominio?: number } }) => {
+      if (isDemoMode) {
+        throw new Error("DEMO_MODE");
+      }
+      await api.put(`/disciplinas/${disciplinaId}/topicos/${payload.topicoId}`, payload.patch);
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["disciplina-dashboard", disciplinaId] });
+      qc.invalidateQueries({ queryKey: ["topicos", disciplinaId] });
+      qc.invalidateQueries({ queryKey: ["disciplinas"] });
+    },
+    onError: (err) => {
+      if (err instanceof Error && err.message === "DEMO_MODE") demoToast();
+    },
+  });
+
+  const reordenarTopicos = useMutation({
+    mutationFn: async (ordem: string[]) => {
+      if (isDemoMode) {
+        throw new Error("DEMO_MODE");
+      }
+      await api.patch(`/disciplinas/${disciplinaId}/topicos/reordenar`, { ordem });
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["disciplina-dashboard", disciplinaId] });
+      qc.invalidateQueries({ queryKey: ["topicos", disciplinaId] });
+    },
+    onError: (err) => {
+      if (err instanceof Error && err.message === "DEMO_MODE") {
+        demoToast();
+        return;
+      }
+      qc.invalidateQueries({ queryKey: ["disciplina-dashboard", disciplinaId] });
+      toast.error("Não foi possível salvar a ordem dos tópicos.");
     },
   });
 
@@ -273,6 +331,8 @@ export function DisciplinaDashboard() {
         toggleConcluido={toggleConcluido}
         criarTopicos={criarTopicos}
         excluirTopico={excluirTopico}
+        reordenarTopicos={reordenarTopicos}
+        atualizarTopico={atualizarTopico}
         onDemoToast={demoToast}
         onDetalhesTopico={setDetalhesTopico}
         onRegistroTopico={(prefill) => {
@@ -280,6 +340,7 @@ export function DisciplinaDashboard() {
           setOpenRegistro(true);
         }}
         onEditTopico={setEditing}
+        highlightedTopicoId={highlightTopicoId}
       />
 
       {editing ? (
@@ -302,9 +363,9 @@ export function DisciplinaDashboard() {
               <button
                 type="button"
                 className="rounded-lg bg-primary-600 px-3 py-2 text-sm font-medium text-white disabled:opacity-50"
-                disabled={!editing.descricao.trim() || atualizarTopico.isPending}
+                disabled={!editing.descricao.trim() || renomearTopico.isPending}
                 onClick={() =>
-                  atualizarTopico.mutate({ topicoId: editing.id, descricao: editing.descricao.trim() })
+                  renomearTopico.mutate({ topicoId: editing.id, descricao: editing.descricao.trim() })
                 }
               >
                 Salvar

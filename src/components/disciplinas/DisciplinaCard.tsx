@@ -10,7 +10,6 @@ export type DisciplinaCardModel = {
   nome: string;
   sigla: string | null;
   peso: number | null;
-  total_questoes_prova: number | null;
   total_pontos?: number | null;
   ordem: number;
 };
@@ -100,8 +99,7 @@ export function DisciplinaCard({
   const kind = status.kind;
   const restantes = Math.max(0, stats.total - stats.studied);
   const totalPontos = getDisciplinaTotalPontos(disciplina);
-  const hasEditalInfo =
-    disciplina.total_questoes_prova != null && disciplina.peso != null && totalPontos != null;
+  const hasEditalInfo = disciplina.peso != null && totalPontos != null && totalPontos > 0;
 
   React.useEffect(() => {
     setBarReady(false);
@@ -308,9 +306,7 @@ export function DisciplinaCard({
         <div className="mx-5 mb-1 rounded-lg bg-[#FAF5FF] px-3 py-2 text-center text-[11px] text-[var(--text-secondary)] dark:bg-[#1E1A2E]">
           <span className="font-semibold text-[#6C3FC5] dark:text-[#A78BFA]">{fmtPontos(totalPontos)} pts</span>
           <span className="mx-1.5 text-[var(--text-muted)]">·</span>
-          {disciplina.total_questoes_prova} questões
-          <span className="mx-1.5 text-[var(--text-muted)]">·</span>
-          peso {fmtPeso(disciplina.peso)}
+          peso {fmtPeso(disciplina.peso)} no edital
         </div>
       ) : null}
 

@@ -1,12 +1,13 @@
 import React from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { BookOpen, Clock, Pencil, Plus, Sparkles, Trash2, BarChart3, Calendar } from "lucide-react";
+import { BookOpen, Clock, Plus, Sparkles, Trash2, BarChart3, Calendar } from "lucide-react";
 import { toast } from "sonner";
 
 import { BlocoFormModal } from "@/components/cronograma/BlocoFormModal";
+import { CronogramaBlocoCard } from "@/components/cronograma/CronogramaBlocoCard";
 import { GerarCronogramaAutoModal } from "@/components/cronograma/GerarCronogramaAutoModal";
 import { RegistroEstudoModal } from "@/components/estudos/RegistroEstudoModal";
-import { DIAS, diaAbrev, fmtBlocoHoras, fmtHorasStats, getTipo, aggregateBlocosPorDisciplina } from "@/lib/cronograma/constants";
+import { DIAS, diaAbrev, fmtHorasStats } from "@/lib/cronograma/constants";
 import type { Bloco, DisciplinaOption, FormState, SessaoStats } from "@/lib/cronograma/types";
 import { cn } from "@/lib/utils";
 import { api } from "@/services/api";
@@ -116,8 +117,11 @@ export function Cronograma() {
 
   const groupedPorDisciplina = React.useMemo(() => {
     return Object.fromEntries(
-      DIAS.map((d) => [d, aggregateBlocosPorDisciplina(grouped[d] ?? [])]),
-    ) as Record<Bloco["dia_semana"], ReturnType<typeof aggregateBlocosPorDisciplina>>;
+      DIAS.map((d) => [
+        d,
+        [...(grouped[d] ?? [])].sort((a, b) => a.hora_inicio.localeCompare(b.hora_inicio)),
+      ]),
+    ) as Record<Bloco["dia_semana"], Bloco[]>;
   }, [grouped]);
 
   const totalBlocos = (blocos ?? []).length;
@@ -241,55 +245,17 @@ export function Cronograma() {
                 </div>
 
                 <div className="space-y-2">
-                  {items.map((item) => {
-                    const badge = getTipo(item.bloco.tipo);
-                    const discNome = discMap.get(item.disciplina_id) ?? "—";
-                    return (
-                      <div
-                        key={item.disciplina_id}
-                        className="group relative overflow-hidden rounded-lg border border-border bg-white p-2.5 shadow-sm dark:bg-neutral-900"
-                      >
-                        <p className="truncate text-[11px] font-semibold text-card-foreground">{discNome}</p>
-                        <p className="mt-0.5 text-[11px] font-bold tabular-nums text-primary-700 dark:text-primary-300">
-                          {fmtBlocoHoras(item.horas)}
-                        </p>
-                        <span className={cn("mt-1.5 inline-flex rounded-full px-2 py-0.5 text-[10px] font-semibold", badge.cls)}>
-                          {badge.label}
-                        </span>
-                        <div className="mt-2 flex gap-1 opacity-0 transition-opacity group-hover:opacity-100">
-                          <button
-                            type="button"
-                            title="Editar bloco"
-                            onClick={() => setEditBloco(item.bloco)}
-                            className="flex h-6 w-6 items-center justify-center rounded-md border border-border text-muted-foreground hover:bg-muted"
-                          >
-                            <Pencil className="h-3 w-3" />
-                          </button>
-                          <button
-                            type="button"
-                            title="Excluir bloco"
-                            disabled={deleteMutation.isPending}
-                            onClick={() => {
-                              if (
-                                window.confirm(
-                                  `Excluir ${discNome} (${fmtBlocoHoras(item.horas)}) de ${diaAbrev[dia]}?`,
-                                )
-                              ) {
-                                void (async () => {
-                                  for (const id of item.blocoIds) {
-                                    await deleteMutation.mutateAsync(id);
-                                  }
-                                })();
-                              }
-                            }}
-                            className="flex h-6 w-6 items-center justify-center rounded-md border border-border text-danger-500 hover:bg-danger-50 dark:hover:bg-danger-950/30"
-                          >
-                            <Trash2 className="h-3 w-3" />
-                          </button>
-                        </div>
-                      </div>
-                    );
-                  })}
+                  {items.map((bloco) => (
+                    <CronogramaBlocoCard
+                      key={bloco.id}
+                      bloco={bloco}
+                      disciplinaNome={discMap.get(bloco.disciplina_id) ?? "—"}
+                      diaLabel={diaAbrev[dia]}
+                      onEdit={() => setEditBloco(bloco)}
+                      onDelete={() => deleteMutation.mutate(bloco.id)}
+                      deletePending={deleteMutation.isPending}
+                    />
+                  ))}
                   {items.length === 0 ? (
                     <p className="py-4 text-center text-[11px] text-muted-foreground">Sem blocos</p>
                   ) : null}

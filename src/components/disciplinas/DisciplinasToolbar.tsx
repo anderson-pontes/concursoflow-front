@@ -22,6 +22,8 @@ type DisciplinasToolbarProps = {
   summary: DisciplinasSummary;
   concursoId: string;
   isCreating: boolean;
+  viewMode: "cards" | "table";
+  onViewModeChange: (mode: "cards" | "table") => void;
 };
 
 export function DisciplinasToolbar({
@@ -33,6 +35,8 @@ export function DisciplinasToolbar({
   summary,
   concursoId,
   isCreating,
+  viewMode,
+  onViewModeChange,
 }: DisciplinasToolbarProps) {
   const setConcursoAtivoId = useConcursoStore((s) => s.setConcursoAtivoId);
   const { data: concursos = [] } = useQuery({
@@ -102,6 +106,28 @@ export function DisciplinasToolbar({
               ))}
             </div>
           ) : null}
+          <div className="inline-flex rounded-full bg-[#F3F4F6] p-1 dark:bg-[var(--bg-surface-2)]">
+            {(
+              [
+                { id: "cards" as const, label: "Cards" },
+                { id: "table" as const, label: "Tabela" },
+              ] as const
+            ).map((seg) => (
+              <button
+                key={seg.id}
+                type="button"
+                onClick={() => onViewModeChange(seg.id)}
+                className={cn(
+                  "rounded-full px-3 py-2 text-sm font-semibold transition-all",
+                  viewMode === seg.id
+                    ? "bg-[#6C3FC5] text-white shadow-sm"
+                    : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]",
+                )}
+              >
+                {seg.label}
+              </button>
+            ))}
+          </div>
           <button
             type="button"
             disabled={isCreating}

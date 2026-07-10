@@ -7,7 +7,8 @@ import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 import type { DisciplinaOption } from "@/lib/cronograma/types";
-import { getDisciplinaTotalPontos, fmtPontos, fmtPeso } from "@/lib/disciplinas/pontos";
+import { fmtPontos } from "@/lib/disciplinas/pontos";
+import { fmtBlocoMinutos } from "@/lib/cronograma/constants";
 import { cn } from "@/lib/utils";
 import { api } from "@/services/api";
 
@@ -21,35 +22,32 @@ const DIAS_SEMANA = [
   { value: 6, label: "Dom", full: "Domingo" },
 ] as const;
 
+const DURACOES_PRESET = [25, 50, 90] as const;
+
 type DisciplinaRow = {
   disciplina_id: string;
   nome: string;
   pesoEdital: number;
-  nivel_conhecimento: number;
   incluida: boolean;
-  /** minutos; vazio = usa o mínimo global */
-  minSessaoMin: string;
 };
 
-/** Duração mínima por sessão: minutos, múltiplos de 5, de 0 (padrão) a 60. */
-const MIN_SESSAO_MAX = 60;
-const MIN_SESSAO_STEP = 5;
+type BlocoGerado = {
+  disciplina_id: string;
+  disciplina_nome: string;
+  topico_id: string;
+  topico_nome: string;
+  dia_semana: number;
+  duracao_minutos: number;
+  data: string;
+  modo: string;
+};
 
-function snapMinSessao(v: number): number {
-  if (!Number.isFinite(v)) return 0;
-  const snapped = Math.round(v / MIN_SESSAO_STEP) * MIN_SESSAO_STEP;
-  return Math.min(MIN_SESSAO_MAX, Math.max(0, snapped));
-}
-
-/** Formata horas do bloco de forma amigável (ex.: 0,75 → "45min", 1,5 → "1h30"). */
-function fmtHorasBloco(h: number): string {
-  const totalMin = Math.round(h * 60);
-  const hh = Math.floor(totalMin / 60);
-  const mm = totalMin % 60;
-  if (hh === 0) return `${mm}min`;
-  if (mm === 0) return `${hh}h`;
-  return `${hh}h${String(mm).padStart(2, "0")}`;
-}
+type GerarResponse = {
+  blocos: BlocoGerado[];
+  total_blocos: number;
+  minutos_totais: number;
+  salvo: boolean;
+};
 
 export type GerarCronogramaAutoModalProps = {
   open: boolean;
@@ -57,34 +55,6 @@ export type GerarCronogramaAutoModalProps = {
   disciplinas: DisciplinaOption[];
   onSaved?: () => void;
 };
-
-type BlocoGerado = {
-  disciplina_id: string;
-  disciplina_nome: string;
-  dia_semana: number;
-  horas: number;
-  data: string;
-};
-
-type GerarResponse = {
-  blocos: BlocoGerado[];
-  total_blocos: number;
-  horas_totais: number;
-  salvo: boolean;
-};
-
-function resolvePesoEdital(d: DisciplinaOption): number {
-  const total = getDisciplinaTotalPontos({
-    peso: d.peso ?? null,
-    total_questoes_prova: d.total_questoes_prova ?? null,
-    total_pontos: d.total_pontos ?? null,
-  });
-  return total ?? 1;
-}
-
-function priorityScore(pesoEdital: number, nivel: number) {
-  return pesoEdital * (6 - nivel);
-}
 
 function todayIso() {
   return new Date().toISOString().slice(0, 10);
@@ -96,49 +66,23 @@ function addWeeksIso(iso: string, weeks: number) {
   return d.toISOString().slice(0, 10);
 }
 
-function ScaleField({
-  label,
-  hint,
-  value,
-  onChange,
-}: {
-  label: string;
-  hint: string;
-  value: number;
-  onChange: (v: number) => void;
-}) {
-  return (
-    <div className="min-w-[120px] flex-1">
-      <div className="mb-1 flex items-center justify-between gap-2">
-        <span className="text-[11px] font-medium text-[var(--text-secondary)]">{label}</span>
-        <span className="rounded-md bg-[var(--bg-surface-hover)] px-1.5 py-0.5 text-[11px] font-bold tabular-nums text-[var(--text-primary)]">
-          {value}
-        </span>
-      </div>
-      <input
-        type="range"
-        min={1}
-        max={5}
-        step={1}
-        value={value}
-        onChange={(e) => onChange(Number(e.target.value))}
-        className="h-1.5 w-full cursor-pointer accent-[#6C3FC5]"
-        aria-label={label}
-      />
-      <p className="mt-0.5 text-[10px] text-[var(--text-muted)]">{hint}</p>
-    </div>
-  );
-}
-
 export function GerarCronogramaAutoModal({
   open,
   onClose,
   disciplinas,
   onSaved,
 }: GerarCronogramaAutoModalProps) {
-  const [horasPorDia, setHorasPorDia] = React.useState(2);
-  const [minSessaoMin, setMinSessaoMin] = React.useState(0);
-  const [diasSemana, setDiasSemana] = React.useState<number[]>([0, 1, 2, 3, 4]);
+  const [sessoesPorDia, setSessoesPorDia] = React.useState<Record<number, number>>({
+    0: 2,
+    1: 2,
+    2: 2,
+    3: 2,
+    4: 2,
+    5: 0,
+    6: 0,
+  });
+  const [duracaoSessao, setDuracaoSessao] = React.useState(50);
+  const [duracaoCustom, setDuracaoCustom] = React.useState("");
   const [dataInicio, setDataInicio] = React.useState(todayIso);
   const [dataFim, setDataFim] = React.useState(() => addWeeksIso(todayIso(), 4));
   const [rows, setRows] = React.useState<DisciplinaRow[]>([]);
@@ -146,9 +90,9 @@ export function GerarCronogramaAutoModal({
 
   React.useEffect(() => {
     if (!open) return;
-    setHorasPorDia(2);
-    setMinSessaoMin(0);
-    setDiasSemana([0, 1, 2, 3, 4]);
+    setSessoesPorDia({ 0: 2, 1: 2, 2: 2, 3: 2, 4: 2, 5: 0, 6: 0 });
+    setDuracaoSessao(50);
+    setDuracaoCustom("");
     setDataInicio(todayIso());
     setDataFim(addWeeksIso(todayIso(), 4));
     setPreview(null);
@@ -156,10 +100,8 @@ export function GerarCronogramaAutoModal({
       disciplinas.map((d) => ({
         disciplina_id: d.id,
         nome: d.nome,
-        pesoEdital: resolvePesoEdital(d),
-        nivel_conhecimento: 3,
+        pesoEdital: d.total_pontos ?? d.peso ?? 1,
         incluida: true,
-        minSessaoMin: "",
       })),
     );
   }, [open, disciplinas]);
@@ -173,13 +115,13 @@ export function GerarCronogramaAutoModal({
     };
   }, [open]);
 
-  const toggleDia = (v: number) => {
-    setDiasSemana((cur) => {
-      const next = cur.includes(v) ? cur.filter((x) => x !== v) : [...cur, v];
-      return [...next].sort((a, b) => a - b);
-    });
-    setPreview(null);
-  };
+  const duracaoResolvida = React.useMemo(() => {
+    if (duracaoCustom.trim()) {
+      const n = parseInt(duracaoCustom, 10);
+      if (Number.isFinite(n) && n >= 5 && n <= 240) return n;
+    }
+    return duracaoSessao;
+  }, [duracaoCustom, duracaoSessao]);
 
   const includedRows = React.useMemo(() => rows.filter((r) => r.incluida), [rows]);
 
@@ -188,67 +130,30 @@ export function GerarCronogramaAutoModal({
     setPreview(null);
   };
 
-  const updateRow = (
-    id: string,
-    patch: Partial<Pick<DisciplinaRow, "nivel_conhecimento" | "minSessaoMin">>,
-  ) => {
-    setRows((cur) => cur.map((r) => (r.disciplina_id === id ? { ...r, ...patch } : r)));
+  const setSessoesDia = (dia: number, n: number) => {
+    setSessoesPorDia((cur) => ({ ...cur, [dia]: Math.max(0, Math.min(12, n)) }));
     setPreview(null);
   };
 
-  /** minutos: null quando vazio (usa global), NaN quando inválido. */
-  const parseMinSessao = (raw: string): number | null => {
-    const t = raw.trim();
-    if (!t) return null;
-    const n = Number.parseInt(t, 10);
-    if (!Number.isFinite(n) || n < 0) return Number.NaN;
-    return snapMinSessao(n);
-  };
-
-  const minutosPorDia = Math.round(horasPorDia * 60);
-
   const validate = (): string | null => {
-    if (diasSemana.length === 0) return "Selecione pelo menos um dia da semana.";
-    if (horasPorDia <= 0) return "Informe horas por dia maior que zero.";
+    const diasAtivos = Object.entries(sessoesPorDia).filter(([, n]) => n > 0);
+    if (diasAtivos.length === 0) return "Informe ao menos um dia com sessões.";
+    if (duracaoResolvida < 5) return "Duração da sessão deve ser de pelo menos 5 minutos.";
     if (dataFim < dataInicio) return "A data de fim deve ser posterior à data de início.";
     if (includedRows.length === 0) return "Inclua ao menos uma disciplina no cronograma.";
-    const capSemanalMin = minutosPorDia * diasSemana.length;
-    let totalMin = 0;
-    for (const r of includedRows) {
-      if (r.nivel_conhecimento < 1 || r.nivel_conhecimento > 5) {
-        return "Preencha o nível de conhecimento (1–5) para todas as disciplinas incluídas.";
-      }
-      const rowMin = parseMinSessao(r.minSessaoMin);
-      if (rowMin != null && Number.isNaN(rowMin)) {
-        return `Duração mínima inválida em "${r.nome}". Use minutos (0–60).`;
-      }
-      const minSessao = rowMin ?? minSessaoMin;
-      if (minSessao > minutosPorDia) {
-        return `"${r.nome}": duração mínima (${minSessao} min) não pode ser maior que horas por dia (${minutosPorDia} min).`;
-      }
-      totalMin += minSessao;
-    }
-    if (totalMin > capSemanalMin) {
-      return `A soma dos mínimos por sessão (${totalMin} min) excede a capacidade semanal (${capSemanalMin} min). Inclua menos disciplinas ou aumente horas/dia.`;
-    }
     return null;
   };
 
   const buildPayload = (salvar: boolean) => ({
-    horas_por_dia: horasPorDia,
-    duracao_minima_sessao_min: minSessaoMin,
-    dias_semana: diasSemana,
+    sessoes_por_dia: Object.fromEntries(
+      Object.entries(sessoesPorDia)
+        .map(([k, v]) => [Number(k), v])
+        .filter(([, v]) => v > 0),
+    ),
+    duracao_sessao_min: duracaoResolvida,
     data_inicio: dataInicio,
     data_fim: dataFim,
-    disciplinas: includedRows.map((r) => {
-      const rowMin = parseMinSessao(r.minSessaoMin);
-      const minResolvida = rowMin != null && !Number.isNaN(rowMin) ? rowMin : minSessaoMin;
-      return {
-        disciplina_id: r.disciplina_id,
-        nivel_conhecimento: r.nivel_conhecimento,
-        duracao_minima_sessao_min: minResolvida,
-      };
-    }),
+    disciplina_ids: includedRows.map((r) => r.disciplina_id),
     salvar,
   });
 
@@ -258,7 +163,9 @@ export function GerarCronogramaAutoModal({
     onSuccess: (data, salvar) => {
       setPreview(data);
       if (salvar) {
-        toast.success(`Cronograma salvo — ${data.total_blocos} blocos, ${fmtHorasBloco(data.horas_totais)} no período.`);
+        toast.success(
+          `Cronograma salvo — ${data.total_blocos} sessões, ${fmtBlocoMinutos(data.minutos_totais)} no período.`,
+        );
         onSaved?.();
         onClose();
       } else {
@@ -295,14 +202,11 @@ export function GerarCronogramaAutoModal({
 
   const previewSemanal = React.useMemo(() => {
     if (!preview?.blocos.length) return null;
-    const map = new Map<string, { nome: string; horas: number }[]>();
+    const map = new Map<number, BlocoGerado[]>();
     for (const b of preview.blocos) {
-      const key = String(b.dia_semana);
-      const list = map.get(key) ?? [];
-      const existing = list.find((x) => x.nome === b.disciplina_nome);
-      if (existing) existing.horas += b.horas;
-      else list.push({ nome: b.disciplina_nome, horas: b.horas });
-      map.set(key, list);
+      const list = map.get(b.dia_semana) ?? [];
+      list.push(b);
+      map.set(b.dia_semana, list);
     }
     return map;
   }, [preview]);
@@ -339,7 +243,7 @@ export function GerarCronogramaAutoModal({
             <div>
               <h2 className="text-lg font-bold text-card-foreground">Gerar cronograma automático</h2>
               <p className="mt-0.5 text-sm text-muted-foreground">
-                Distribui horas conforme o peso do edital e seu nível de conhecimento em cada matéria.
+                Distribui sessões por assunto conforme peso e domínio cadastrados nos tópicos.
               </p>
             </div>
           </div>
@@ -348,69 +252,63 @@ export function GerarCronogramaAutoModal({
         <div className="min-h-0 flex-1 space-y-6 overflow-y-auto px-5 py-5">
           <section className="space-y-4 rounded-xl border border-border bg-muted/30 p-4">
             <h3 className="text-sm font-semibold text-card-foreground">Disponibilidade</h3>
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div>
-                <label className="mb-1.5 block text-sm font-medium text-card-foreground">Horas por dia</label>
-                <input
-                  type="number"
-                  min={0.5}
-                  max={12}
-                  step={0.5}
-                  value={horasPorDia}
-                  onChange={(e) => {
-                    setHorasPorDia(Number(e.target.value));
-                    setPreview(null);
-                  }}
-                  className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm tabular-nums outline-none focus:ring-2 focus:ring-primary-500"
-                />
-                <p className="mt-1 text-xs text-muted-foreground">Mín. 0,5h — máx. 12h</p>
-              </div>
-              <div>
-                <label className="mb-1.5 block text-sm font-medium text-card-foreground">
-                  Duração mínima por sessão (min)
-                </label>
-                <input
-                  type="number"
-                  inputMode="numeric"
-                  min={0}
-                  max={MIN_SESSAO_MAX}
-                  step={MIN_SESSAO_STEP}
-                  value={minSessaoMin}
-                  onChange={(e) => {
-                    const raw = Number(e.target.value);
-                    setMinSessaoMin(Number.isFinite(raw) ? Math.min(MIN_SESSAO_MAX, Math.max(0, raw)) : 0);
-                    setPreview(null);
-                  }}
-                  onBlur={(e) => setMinSessaoMin(snapMinSessao(Number(e.target.value)))}
-                  className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm tabular-nums outline-none focus:ring-2 focus:ring-primary-500"
-                />
-                <p className="mt-1 text-xs text-muted-foreground">
-                  Cada bloco terá pelo menos esse tempo · 0 = 30 min · passos de 5 · máx. 60 min
-                </p>
+            <div>
+              <p className="mb-2 text-sm font-medium text-card-foreground">Sessões por dia</p>
+              <div className="grid grid-cols-7 gap-1.5">
+                {DIAS_SEMANA.map((d) => (
+                  <div key={d.value} className="text-center">
+                    <span className="mb-1 block text-[10px] font-semibold text-muted-foreground">{d.label}</span>
+                    <input
+                      type="number"
+                      min={0}
+                      max={12}
+                      value={sessoesPorDia[d.value] ?? 0}
+                      onChange={(e) => setSessoesDia(d.value, parseInt(e.target.value, 10) || 0)}
+                      className="w-full rounded-lg border border-border bg-background px-1 py-1.5 text-center text-xs tabular-nums outline-none focus:ring-2 focus:ring-primary-500"
+                    />
+                  </div>
+                ))}
               </div>
             </div>
             <div>
-              <p className="mb-2 text-sm font-medium text-card-foreground">Dias disponíveis</p>
+              <p className="mb-2 text-sm font-medium text-card-foreground">Duração da sessão</p>
               <div className="flex flex-wrap gap-2">
-                {DIAS_SEMANA.map((d) => {
-                  const on = diasSemana.includes(d.value);
-                  return (
-                    <button
-                      key={d.value}
-                      type="button"
-                      onClick={() => toggleDia(d.value)}
-                      className={cn(
-                        "rounded-lg border px-2.5 py-1.5 text-xs font-semibold transition",
-                        on
-                          ? "border-primary-500 bg-primary-50 text-primary-700 dark:bg-primary-900/30 dark:text-primary-300"
-                          : "border-border bg-background text-muted-foreground hover:bg-muted",
-                      )}
-                    >
-                      {d.label}
-                    </button>
-                  );
-                })}
+                {DURACOES_PRESET.map((m) => (
+                  <button
+                    key={m}
+                    type="button"
+                    onClick={() => {
+                      setDuracaoSessao(m);
+                      setDuracaoCustom("");
+                      setPreview(null);
+                    }}
+                    className={cn(
+                      "rounded-lg border px-3 py-1.5 text-xs font-semibold transition",
+                      duracaoSessao === m && !duracaoCustom
+                        ? "border-primary-500 bg-primary-50 text-primary-700 dark:bg-primary-900/30 dark:text-primary-300"
+                        : "border-border bg-background text-muted-foreground hover:bg-muted",
+                    )}
+                  >
+                    {m} min
+                  </button>
+                ))}
+                <input
+                  type="number"
+                  min={5}
+                  max={240}
+                  placeholder="Custom"
+                  value={duracaoCustom}
+                  onChange={(e) => {
+                    setDuracaoCustom(e.target.value);
+                    setPreview(null);
+                  }}
+                  className="w-20 rounded-lg border border-border bg-background px-2 py-1.5 text-xs tabular-nums outline-none focus:ring-2 focus:ring-primary-500"
+                />
               </div>
+              <p className="mt-1 text-xs text-muted-foreground">
+                Capacidade semanal:{" "}
+                {Object.values(sessoesPorDia).reduce((s, n) => s + n, 0) * duracaoResolvida} min
+              </p>
             </div>
           </section>
 
@@ -451,89 +349,38 @@ export function GerarCronogramaAutoModal({
           <section className="space-y-3">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <h3 className="text-sm font-semibold text-card-foreground">Disciplinas</h3>
-              {rows.length > 0 ? (
-                <span className="text-xs text-muted-foreground">
-                  {includedRows.length} de {rows.length} incluídas
-                </span>
-              ) : null}
+              <span className="text-xs text-muted-foreground">
+                Peso e domínio vêm dos tópicos cadastrados
+              </span>
             </div>
             {rows.length === 0 ? (
               <p className="rounded-lg border border-dashed border-border px-4 py-6 text-center text-sm text-muted-foreground">
                 Nenhuma disciplina no catálogo. Cadastre em <strong>Disciplinas &amp; Tópicos</strong>.
               </p>
             ) : (
-              <ul className="space-y-3">
-                {rows.map((r) => {
-                  const disc = disciplinas.find((d) => d.id === r.disciplina_id);
-                  const score = priorityScore(r.pesoEdital, r.nivel_conhecimento);
-                  return (
+              <ul className="space-y-2">
+                {rows.map((r) => (
                   <li
                     key={r.disciplina_id}
                     className={cn(
-                      "rounded-xl border bg-card p-3 shadow-sm transition-opacity",
+                      "flex items-center justify-between rounded-xl border bg-card px-3 py-2.5 shadow-sm transition-opacity",
                       r.incluida ? "border-border" : "border-dashed border-border/70 opacity-55",
                     )}
                   >
-                    <div className="mb-3 flex flex-wrap items-start justify-between gap-2">
-                      <label className="flex min-w-0 flex-1 cursor-pointer items-start gap-2.5">
-                        <input
-                          type="checkbox"
-                          className="mt-0.5 h-4 w-4 shrink-0 rounded border-border text-primary-600"
-                          checked={r.incluida}
-                          onChange={() => toggleIncluida(r.disciplina_id)}
-                        />
-                        <span className="min-w-0 truncate text-sm font-semibold text-card-foreground">{r.nome}</span>
-                      </label>
-                      <span className="shrink-0 rounded-md bg-muted px-2 py-0.5 text-[11px] tabular-nums text-muted-foreground">
-                        {fmtPontos(r.pesoEdital)} pts edital
-                        {disc?.peso != null && disc.total_questoes_prova != null ? (
-                          <span className="ml-1">
-                            ({fmtPeso(disc.peso)} × {disc.total_questoes_prova} q)
-                          </span>
-                        ) : null}
-                      </span>
-                    </div>
-                    {r.incluida ? (
-                    <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
-                      <ScaleField
-                        label="Nível de conhecimento"
-                        hint="1 = nunca vi · 5 = domínio total (quanto menor, mais tempo)"
-                        value={r.nivel_conhecimento}
-                        onChange={(v) => updateRow(r.disciplina_id, { nivel_conhecimento: v })}
+                    <label className="flex min-w-0 flex-1 cursor-pointer items-center gap-2.5">
+                      <input
+                        type="checkbox"
+                        className="h-4 w-4 shrink-0 rounded border-border text-primary-600"
+                        checked={r.incluida}
+                        onChange={() => toggleIncluida(r.disciplina_id)}
                       />
-                      <div className="min-w-[120px] flex-1">
-                        <label className="mb-1 block text-[11px] font-medium text-[var(--text-secondary)]">
-                          Mín. por sessão (min)
-                        </label>
-                        <input
-                          type="number"
-                          inputMode="numeric"
-                          min={0}
-                          max={MIN_SESSAO_MAX}
-                          step={MIN_SESSAO_STEP}
-                          placeholder={minSessaoMin > 0 ? String(minSessaoMin) : "Padrão"}
-                          value={r.minSessaoMin}
-                          onChange={(e) => updateRow(r.disciplina_id, { minSessaoMin: e.target.value })}
-                          onBlur={(e) => {
-                            const t = e.target.value.trim();
-                            if (t) updateRow(r.disciplina_id, { minSessaoMin: String(snapMinSessao(Number(t))) });
-                          }}
-                          className="h-9 w-full rounded-lg border border-border bg-background px-2.5 text-sm tabular-nums outline-none focus:ring-2 focus:ring-primary-500"
-                        />
-                        <p className="mt-0.5 text-[10px] text-[var(--text-muted)]">Vazio = usa o padrão global</p>
-                      </div>
-                      <div className="rounded-lg border border-border/60 bg-muted/40 px-3 py-2 text-[11px] text-muted-foreground sm:min-w-[120px]">
-                        <span className="font-medium text-card-foreground">Prioridade</span>
-                        <p className="mt-0.5 tabular-nums">{score.toFixed(1)}</p>
-                        <p className="text-[10px]">peso edital × (6 − nível)</p>
-                      </div>
-                    </div>
-                    ) : (
-                      <p className="text-xs text-muted-foreground">Excluída do cronograma automático</p>
-                    )}
+                      <span className="min-w-0 truncate text-sm font-semibold text-card-foreground">{r.nome}</span>
+                    </label>
+                    <span className="shrink-0 rounded-md bg-muted px-2 py-0.5 text-[11px] tabular-nums text-muted-foreground">
+                      {fmtPontos(r.pesoEdital)} pts
+                    </span>
                   </li>
-                  );
-                })}
+                ))}
               </ul>
             )}
           </section>
@@ -542,17 +389,30 @@ export function GerarCronogramaAutoModal({
             <section className="space-y-3 rounded-xl border border-primary-200 bg-primary-50/50 p-4 dark:border-primary-800 dark:bg-primary-950/20">
               <h3 className="text-sm font-semibold text-card-foreground">Prévia do padrão semanal</h3>
               <p className="text-xs text-muted-foreground">
-                {preview.total_blocos} blocos no período · {fmtHorasBloco(preview.horas_totais)} totais
+                {preview.total_blocos} sessões no período · {fmtBlocoMinutos(preview.minutos_totais)} totais
               </p>
               <div className="grid gap-2 sm:grid-cols-2">
-                {DIAS_SEMANA.filter((d) => previewSemanal.has(String(d.value))).map((d) => (
+                {DIAS_SEMANA.filter((d) => previewSemanal.has(d.value)).map((d) => (
                   <div key={d.value} className="rounded-lg border border-border/60 bg-background/80 p-2.5 text-xs">
                     <p className="mb-1 font-semibold text-card-foreground">{d.full}</p>
-                    <ul className="space-y-0.5 text-muted-foreground">
-                      {(previewSemanal.get(String(d.value)) ?? []).map((item) => (
-                        <li key={item.nome} className="flex justify-between gap-2">
-                          <span className="truncate">{item.nome}</span>
-                          <span className="shrink-0 tabular-nums">{fmtHorasBloco(item.horas)}</span>
+                    <ul className="space-y-1 text-muted-foreground">
+                      {(previewSemanal.get(d.value) ?? []).map((b, i) => (
+                        <li key={`${b.topico_id}-${i}`} className="flex flex-col gap-0.5">
+                          <span className="truncate font-medium text-card-foreground">{b.disciplina_nome}</span>
+                          <span className="truncate text-[10px]">{b.topico_nome}</span>
+                          <span className="flex items-center gap-1.5 text-[10px]">
+                            <span className="tabular-nums">{fmtBlocoMinutos(b.duracao_minutos)}</span>
+                            <span
+                              className={cn(
+                                "rounded-full px-1.5 py-0.5 font-semibold",
+                                b.modo === "revisao"
+                                  ? "bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300"
+                                  : "bg-primary-100 text-primary-700 dark:bg-primary-900/40 dark:text-primary-300",
+                              )}
+                            >
+                              {b.modo === "revisao" ? "revisão" : "aprendizado"}
+                            </span>
+                          </span>
                         </li>
                       ))}
                     </ul>
@@ -561,7 +421,7 @@ export function GerarCronogramaAutoModal({
               </div>
               {preview.blocos.length > 0 ? (
                 <p className="text-[11px] text-muted-foreground">
-                  Primeiro bloco: {preview.blocos[0].disciplina_nome} em{" "}
+                  Primeira sessão: {preview.blocos[0].topico_nome} ({preview.blocos[0].disciplina_nome}) em{" "}
                   {format(parseISO(preview.blocos[0].data), "dd/MM/yyyy", { locale: ptBR })}
                 </p>
               ) : null}

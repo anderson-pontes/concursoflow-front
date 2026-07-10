@@ -1,24 +1,24 @@
-import type { DisciplinaDashboardResponse } from "@/types/disciplinaDashboard";
+import type { DisciplinaDashboardResponse, DisciplinaDashboardTopicoRow } from "@/types/disciplinaDashboard";
+
+function enrichTopico(
+  t: Omit<DisciplinaDashboardTopicoRow, "peso" | "dominio" | "prioridade" | "ultima_revisao_em" | "intervalo_idx">,
+  idx: number,
+): DisciplinaDashboardTopicoRow {
+  const dominio = t.concluido_edital ? 5 : Math.min(4, 1 + (idx % 4));
+  const peso = 1 + (idx % 3);
+  return {
+    ...t,
+    peso,
+    dominio,
+    prioridade: peso * (6 - dominio),
+    ultima_revisao_em: dominio >= 5 ? "2026-06-01" : null,
+    intervalo_idx: dominio >= 5 ? idx % 5 : 0,
+  };
+}
 
 /** Dados fictícios para preview de layout (modo demo). */
 export function getMockDisciplinaDashboard(disciplinaId: string): DisciplinaDashboardResponse {
-  return {
-    disciplina_id: disciplinaId,
-    nome: "Direito Tributário",
-    kpis: {
-      tempo_estudo_horas: 42.5,
-      desempenho_geral_pct: 84.2,
-      questoes_certas_total: 312,
-      questoes_erradas_total: 48,
-      questoes_branco_total: 11,
-      questoes_resolvidas_total: 371,
-      progresso_edital_pct: 54,
-      topicos_concluidos: 7,
-      topicos_pendentes: 6,
-      topicos_total: 13,
-      paginas_lidas_total: 1284,
-    },
-    topicos: [
+  const rawTopicos = [
       {
         id: "a1000000-0000-4000-8000-000000000001",
         descricao: "Impostos Municipais (ISS, IPTU, ITBI)",
@@ -175,6 +175,26 @@ export function getMockDisciplinaDashboard(disciplinaId: string): DisciplinaDash
         tempo_estudo_minutos: 45,
         paginas_lidas: 22,
       },
-    ],
+    ];
+
+  const topicos = rawTopicos.map((t, i) => enrichTopico(t, i));
+
+  return {
+    disciplina_id: disciplinaId,
+    nome: "Direito Tributário",
+    kpis: {
+      tempo_estudo_horas: 42.5,
+      desempenho_geral_pct: 84.2,
+      questoes_certas_total: 312,
+      questoes_erradas_total: 48,
+      questoes_branco_total: 11,
+      questoes_resolvidas_total: 371,
+      progresso_edital_pct: 54,
+      topicos_concluidos: 7,
+      topicos_pendentes: 6,
+      topicos_total: 13,
+      paginas_lidas_total: 1284,
+    },
+    topicos,
   };
 }

@@ -16,7 +16,6 @@ type DisciplinaGlobal = {
   id: string;
   nome: string;
   sigla: string | null;
-  total_questoes_prova: number | null;
   cor_hex: string | null;
 };
 

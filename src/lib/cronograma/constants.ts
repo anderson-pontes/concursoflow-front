@@ -61,10 +61,20 @@ export function blocoDurationHours(horaInicio: string, horaFim: string): number 
   return Math.max(0, (eh * 60 + em - (sh * 60 + sm)) / 60);
 }
 
+/** Duração de um bloco a partir de hora_inicio / hora_fim (HH:MM), em minutos. */
+export function blocoDurationMinutes(horaInicio: string, horaFim: string): number {
+  return Math.round(blocoDurationHours(horaInicio, horaFim) * 60);
+}
+
+/** Exibe duração do bloco em minutos (ex.: `50 min`), nunca em fração de horas. */
+export function fmtBlocoMinutos(min: number): string {
+  if (min <= 0) return "—";
+  return `${min} min`;
+}
+
+/** @deprecated Preferir `fmtBlocoMinutos` — mantido para chamadas legadas que passam horas. */
 export function fmtBlocoHoras(h: number): string {
-  if (h <= 0) return "—";
-  const rounded = Math.round(h * 10) / 10;
-  return Number.isInteger(rounded) ? `${rounded}h` : `${rounded.toFixed(1)}h`;
+  return fmtBlocoMinutos(Math.round(h * 60));
 }
 
 export type BlocoDiaAgrupado = {

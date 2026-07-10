@@ -1,18 +1,13 @@
 import type { Disciplina } from "@/lib/disciplinas/types";
 
-/** total_pontos = peso × total_questoes_prova (peso do edital na prova) */
-export function calcTotalPontos(
-  peso: number | null | undefined,
-  totalQuestoes: number | null | undefined,
-): number | null {
-  if (peso == null || totalQuestoes == null) return null;
-  if (Number.isNaN(peso) || Number.isNaN(totalQuestoes)) return null;
-  return peso * totalQuestoes;
-}
-
-export function getDisciplinaTotalPontos(d: Pick<Disciplina, "peso" | "total_questoes_prova" | "total_pontos">) {
+/**
+ * Peso e "pontos" da disciplina são calculados pelo backend a partir da soma
+ * do peso de cada assunto (tópico) — não há mais peso/total_questoes_prova
+ * manuais na disciplina (ver docs/business-rules.md).
+ */
+export function getDisciplinaTotalPontos(d: Pick<Disciplina, "peso" | "total_pontos">) {
   if (d.total_pontos != null) return d.total_pontos;
-  return calcTotalPontos(d.peso, d.total_questoes_prova);
+  return d.peso ?? null;
 }
 
 export function fmtPeso(peso: number | null | undefined) {
@@ -28,8 +23,6 @@ export function fmtPontos(pontos: number | null | undefined) {
 export type DisciplinaRankingRow = {
   id: string;
   nome: string;
-  peso: number;
-  total_questoes_prova: number;
   total_pontos: number;
   pct: number;
   rank: number;
@@ -44,15 +37,11 @@ export function buildDisciplinaRanking(
   const rows: RowBase[] = [];
   for (const d of disciplinas) {
     if (filter && !filter(d)) continue;
-    const peso = d.peso;
-    const q = d.total_questoes_prova;
     const total_pontos = getDisciplinaTotalPontos(d);
-    if (peso == null || q == null || total_pontos == null || total_pontos <= 0) continue;
+    if (total_pontos == null || total_pontos <= 0) continue;
     rows.push({
       id: d.id,
       nome: d.nome,
-      peso,
-      total_questoes_prova: q,
       total_pontos,
     });
   }

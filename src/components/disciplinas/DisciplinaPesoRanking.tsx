@@ -5,7 +5,6 @@ import { cn } from "@/lib/utils";
 import type { Disciplina } from "@/lib/disciplinas/types";
 import {
   buildDisciplinaRanking,
-  fmtPeso,
   fmtPontos,
   type DisciplinaRankingRow,
 } from "@/lib/disciplinas/pontos";
@@ -57,9 +56,6 @@ function RankingRow({ row, maxPct }: { row: DisciplinaRankingRow; maxPct: number
             style={{ width: `${widthPct}%` }}
           />
         </div>
-        <span className="w-[88px] shrink-0 text-right text-[11px] tabular-nums text-[var(--text-muted)]">
-          {row.total_questoes_prova} q · peso {fmtPeso(row.peso)}
-        </span>
       </div>
     </li>
   );
@@ -88,7 +84,8 @@ export function DisciplinaPesoRanking({ disciplinas, concursoId, filterSeg }: Di
         <Scale className="mx-auto h-8 w-8 text-[var(--text-muted)]" aria-hidden />
         <h2 className="mt-3 text-base font-bold text-[var(--text-primary)]">Ranking por peso no edital</h2>
         <p className="mx-auto mt-2 max-w-md text-sm text-[var(--text-secondary)]">
-          Cadastre o número de questões e o peso de cada disciplina para ver a relevância na prova.
+          Cadastre os assuntos (tópicos) de cada disciplina e defina o peso de cada um para ver a relevância na
+          prova.
           {concursoId ? " Mostramos disciplinas vinculadas ao concurso ativo." : " Selecione um concurso para filtrar."}
         </p>
       </section>
@@ -108,7 +105,7 @@ export function DisciplinaPesoRanking({ disciplinas, concursoId, filterSeg }: Di
           <div>
             <h2 className="text-base font-bold text-[var(--text-primary)]">Peso das disciplinas na prova</h2>
             <p className="mt-0.5 text-sm text-[var(--text-secondary)]">
-              Total de pontos = peso × questões · soma do edital:{" "}
+              Peso = soma do peso dos assuntos · soma do edital:{" "}
               <strong className="text-[var(--text-primary)]">{fmtPontos(totalPontos)} pts</strong>
             </p>
           </div>

@@ -5,6 +5,8 @@ type UiState = {
   sidebarCollapsed: boolean;
   setSidebarCollapsed: (collapsed: boolean) => void;
   toggleSidebarCollapsed: () => void;
+  disciplinasViewMode: "cards" | "table";
+  setDisciplinasViewMode: (mode: "cards" | "table") => void;
 };
 
 export const useUiStore = create<UiState>()(
@@ -14,6 +16,8 @@ export const useUiStore = create<UiState>()(
       setSidebarCollapsed: (sidebarCollapsed) => set({ sidebarCollapsed }),
       toggleSidebarCollapsed: () =>
         set((s) => ({ sidebarCollapsed: !s.sidebarCollapsed })),
+      disciplinasViewMode: "cards",
+      setDisciplinasViewMode: (disciplinasViewMode) => set({ disciplinasViewMode }),
     }),
     { name: "cf-ui" },
   ),

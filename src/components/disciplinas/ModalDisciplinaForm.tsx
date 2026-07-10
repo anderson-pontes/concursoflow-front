@@ -3,24 +3,30 @@ import { BookOpen } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 
 import { cn } from "@/lib/utils";
-import { calcTotalPontos, fmtPontos, fmtPeso } from "@/lib/disciplinas/pontos";
+import { fmtPontos } from "@/lib/disciplinas/pontos";
 import type { DisciplinaInput } from "@/lib/disciplinas/types";
 import { api } from "@/services/api";
 
 export type DisciplinaFormValues = {
   nome: string;
   sigla: string;
-  totalQuestoes: string;
-  peso: string;
   concursoIds: string[];
 };
 
 type ConcursoOption = { id: string; orgao: string; cargo: string | null; nome: string };
 
+type ComputedTotals = {
+  peso: number | null;
+  totalPontos: number | null;
+  topicosTotal: number | null;
+};
+
 type ModalDisciplinaFormProps = {
   open: boolean;
   mode: "create" | "edit";
   initialValues?: Partial<DisciplinaFormValues>;
+  /** Peso/pontos calculados a partir dos assuntos — só existem no modo edição. */
+  computedTotals?: ComputedTotals;
   onClose: () => void;
   onSubmit: (values: DisciplinaFormValues) => Promise<void>;
   isPending?: boolean;
@@ -30,29 +36,14 @@ type ModalDisciplinaFormProps = {
 const emptyValues: DisciplinaFormValues = {
   nome: "",
   sigla: "",
-  totalQuestoes: "",
-  peso: "",
   concursoIds: [],
 };
-
-function parseOptionalInt(raw: string): number | null {
-  const t = raw.trim();
-  if (!t) return null;
-  const n = Number.parseInt(t, 10);
-  return Number.isFinite(n) && n >= 0 ? n : null;
-}
-
-function parseOptionalFloat(raw: string): number | null {
-  const t = raw.trim().replace(",", ".");
-  if (!t) return null;
-  const n = Number.parseFloat(t);
-  return Number.isFinite(n) && n >= 0 ? n : null;
-}
 
 export function ModalDisciplinaForm({
   open,
   mode,
   initialValues,
+  computedTotals,
   onClose,
   onSubmit,
   isPending = false,
@@ -76,8 +67,6 @@ export function ModalDisciplinaForm({
   }, [open, mode, initialValues, defaultConcursoId]);
 
   if (!open) return null;
-
-  const previewPontos = calcTotalPontos(parseOptionalFloat(values.peso), parseOptionalInt(values.totalQuestoes));
 
   const toggleConcurso = (id: string) => {
     setValues((s) => ({
@@ -169,58 +158,32 @@ export function ModalDisciplinaForm({
               />
             </div>
 
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <div>
-                <label htmlFor="disc-questoes" className="mb-1.5 block text-sm font-medium text-[var(--text-secondary)]">
-                  Questões na prova
-                </label>
-                <input
-                  id="disc-questoes"
-                  type="number"
-                  min={0}
-                  step={1}
-                  disabled={isPending}
-                  value={values.totalQuestoes}
-                  onChange={(e) => setValues((s) => ({ ...s, totalQuestoes: e.target.value }))}
-                  placeholder="Ex.: 10"
-                  className="h-11 w-full rounded-[10px] border border-[var(--border-default)] bg-[var(--bg-surface)] px-3 text-sm text-[var(--text-primary)] outline-none focus:border-[#6C3FC5] focus:shadow-[0_0_0_3px_rgba(108,63,197,0.15)]"
-                />
-              </div>
-              <div>
-                <label htmlFor="disc-peso" className="mb-1.5 block text-sm font-medium text-[var(--text-secondary)]">
-                  Peso no edital
-                </label>
-                <input
-                  id="disc-peso"
-                  type="number"
-                  min={0}
-                  step={0.1}
-                  disabled={isPending}
-                  value={values.peso}
-                  onChange={(e) => setValues((s) => ({ ...s, peso: e.target.value }))}
-                  placeholder="Ex.: 2"
-                  className="h-11 w-full rounded-[10px] border border-[var(--border-default)] bg-[var(--bg-surface)] px-3 text-sm text-[var(--text-primary)] outline-none focus:border-[#6C3FC5] focus:shadow-[0_0_0_3px_rgba(108,63,197,0.15)]"
-                />
-              </div>
-            </div>
-
-            <div className="rounded-[10px] border border-[#E9D5FF] bg-[#FAF5FF] px-4 py-3 dark:border-[#3D3060] dark:bg-[#1E1A2E]">
-              <p className="text-xs font-medium uppercase tracking-wide text-[var(--text-muted)]">Total de pontos</p>
-              <p className="mt-1 text-sm text-[var(--text-secondary)]">
-                {previewPontos != null ? (
-                  <>
+            {mode === "edit" ? (
+              <div className="rounded-[10px] border border-[#E9D5FF] bg-[#FAF5FF] px-4 py-3 dark:border-[#3D3060] dark:bg-[#1E1A2E]">
+                <p className="text-xs font-medium uppercase tracking-wide text-[var(--text-muted)]">
+                  Peso e pontos (calculados pelos assuntos)
+                </p>
+                {computedTotals?.topicosTotal ? (
+                  <p className="mt-1 text-sm text-[var(--text-secondary)]">
                     <span className="text-lg font-bold tabular-nums text-[#6C3FC5] dark:text-[#A78BFA]">
-                      {fmtPontos(previewPontos)} pts
+                      {fmtPontos(computedTotals.totalPontos)} pts
                     </span>
                     <span className="ml-2">
-                      ({fmtPeso(parseOptionalFloat(values.peso))} × {parseOptionalInt(values.totalQuestoes) ?? "—"} questões)
+                      soma do peso de {computedTotals.topicosTotal} assunto(s) cadastrado(s)
                     </span>
-                  </>
+                  </p>
                 ) : (
-                  "Informe questões e peso para calcular o total na prova."
+                  <p className="mt-1 text-sm text-[var(--text-secondary)]">
+                    Sem assuntos cadastrados ainda. Peso e domínio são definidos por assunto na tela da disciplina.
+                  </p>
                 )}
+              </div>
+            ) : (
+              <p className="rounded-[10px] border border-dashed border-[var(--border-default)] px-4 py-3 text-xs text-[var(--text-muted)]">
+                Após criar, cadastre os assuntos (tópicos) da disciplina — peso e domínio de cada um definem a
+                prioridade dela automaticamente.
               </p>
-            </div>
+            )}
 
             <div>
               <p className="mb-2 text-sm font-medium text-[var(--text-secondary)]">Vincular a concursos</p>
@@ -289,8 +252,6 @@ export function toDisciplinaInput(values: DisciplinaFormValues): DisciplinaInput
   return {
     nome: values.nome,
     sigla: values.sigla || null,
-    total_questoes_prova: parseOptionalInt(values.totalQuestoes),
-    peso: parseOptionalFloat(values.peso),
     concurso_ids: values.concursoIds,
     ordem: 0,
   };

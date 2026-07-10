@@ -2,7 +2,6 @@ export type DisciplinaOption = {
   id: string;
   nome: string;
   peso?: number | null;
-  total_questoes_prova?: number | null;
   total_pontos?: number | null;
   concurso_ids?: string[];
 };
@@ -11,6 +10,8 @@ export type Bloco = {
   id: string;
   user_id: string;
   disciplina_id: string;
+  topico_id?: string | null;
+  topico_nome?: string | null;
   dia_semana: "seg" | "ter" | "qua" | "qui" | "sex" | "sab" | "dom";
   hora_inicio: string;
   hora_fim: string;

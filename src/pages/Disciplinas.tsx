@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 import { DisciplinaCard } from "@/components/disciplinas/DisciplinaCard";
+import { DisciplinasDataTable } from "@/components/disciplinas/DisciplinasDataTable";
 import { DisciplinaPesoRanking } from "@/components/disciplinas/DisciplinaPesoRanking";
 import {
   DisciplinaCardSkeleton,
@@ -18,6 +19,7 @@ import { getDisciplinaStatusLabel, getTopicosProgressFromCounts } from "@/compon
 import type { Disciplina, FilterSeg } from "@/lib/disciplinas/types";
 import { api } from "@/services/api";
 import { useConcursoAtivoId } from "@/stores/concursoStore";
+import { useUiStore } from "@/stores/uiStore";
 
 function isLinkedToConcurso(d: Disciplina, concursoId: string) {
   return d.concurso_ids.includes(concursoId);
@@ -27,6 +29,8 @@ export function Disciplinas() {
   const qc = useQueryClient();
   const concursoAtivoId = useConcursoAtivoId();
   const concursoId = concursoAtivoId ?? "";
+  const viewMode = useUiStore((s) => s.disciplinasViewMode);
+  const setViewMode = useUiStore((s) => s.setDisciplinasViewMode);
 
   const [search, setSearch] = React.useState("");
   const [filterSeg, setFilterSeg] = React.useState<FilterSeg>("todas");
@@ -149,6 +153,8 @@ export function Disciplinas() {
           summary={summary}
           concursoId={concursoId}
           isCreating={createMutation.isPending}
+          viewMode={viewMode}
+          onViewModeChange={setViewMode}
         />
 
         {!loadingDisciplinas && disciplinas.length > 0 ? (
@@ -193,7 +199,20 @@ export function Disciplinas() {
           </div>
         ) : null}
 
-        {!loadingDisciplinas && filteredDisciplinas.length > 0 ? (
+        {!loadingDisciplinas && filteredDisciplinas.length > 0 && viewMode === "table" ? (
+          <DisciplinasDataTable
+            disciplinas={filteredDisciplinas}
+            concursoId={concursoId}
+            onEdit={openEdit}
+            onToggleConcurso={(d) => toggleConcursoMutation.mutate(d)}
+            onConfirmDelete={async (d) => {
+              await deleteDisciplinaMutation.mutateAsync(d.id);
+              toast.success("Disciplina removida.");
+            }}
+          />
+        ) : null}
+
+        {!loadingDisciplinas && filteredDisciplinas.length > 0 && viewMode === "cards" ? (
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
             {filteredDisciplinas.map((disciplina, index) => {
               const total = disciplina.topicos_total ?? 0;
@@ -231,12 +250,16 @@ export function Disciplinas() {
             ? {
                 nome: editingDisciplina.nome,
                 sigla: editingDisciplina.sigla ?? "",
-                totalQuestoes:
-                  editingDisciplina.total_questoes_prova != null
-                    ? String(editingDisciplina.total_questoes_prova)
-                    : "",
-                peso: editingDisciplina.peso != null ? String(editingDisciplina.peso) : "",
                 concursoIds: editingDisciplina.concurso_ids,
+              }
+            : undefined
+        }
+        computedTotals={
+          editingDisciplina
+            ? {
+                peso: editingDisciplina.peso ?? null,
+                totalPontos: editingDisciplina.total_pontos ?? null,
+                topicosTotal: editingDisciplina.topicos_total ?? null,
               }
             : undefined
         }

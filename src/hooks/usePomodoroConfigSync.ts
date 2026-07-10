@@ -17,7 +17,8 @@ export type PomodoroConfigApi = {
   focus_total_seconds: number;
 };
 
-export function usePomodoroConfigSync() {
+export function usePomodoroConfigSync(options?: { skipInitialHydration?: boolean }) {
+  const skipInitialHydration = options?.skipInitialHydration ?? false;
   const qc = useQueryClient();
   const setConfig = usePomodoroStore((s) => s.setConfig);
   const setMode = usePomodoroStore((s) => s.setMode);
@@ -32,6 +33,11 @@ export function usePomodoroConfigSync() {
   const hydratedRef = React.useRef(false);
 
   React.useEffect(() => {
+    if (skipInitialHydration) {
+      // Evita que, ao limpar a query string do launch, a hidratação sobrescreva o store.
+      hydratedRef.current = true;
+      return;
+    }
     if (!query.data || hydratedRef.current) return;
     hydratedRef.current = true;
     const cfg = query.data;
@@ -45,7 +51,7 @@ export function usePomodoroConfigSync() {
     });
     if (cfg.last_disciplina_id) setDisciplinaId(cfg.last_disciplina_id);
     if (cfg.last_topico_id) setTopicoId(cfg.last_topico_id);
-  }, [query.data, setConfig, setDisciplinaId, setMode, setTopicoId]);
+  }, [query.data, setConfig, setDisciplinaId, setMode, setTopicoId, skipInitialHydration]);
 
   const saveMutation = useMutation({
     mutationFn: async (payload: Record<string, unknown>) =>

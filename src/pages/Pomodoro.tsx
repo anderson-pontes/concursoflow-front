@@ -1,12 +1,20 @@
 import React from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { BookOpen, Timer } from "lucide-react";
+import { toast } from "sonner";
 
 import { PomodoroConfigPanel } from "@/components/pomodoro/PomodoroConfigPanel";
 import { PomodoroTimer } from "@/components/pomodoro/PomodoroTimer";
 import { RegistroEstudoModal } from "@/components/estudos/RegistroEstudoModal";
 import { Button } from "@/components/ui/button";
 import { usePomodoroConfigSync } from "@/hooks/usePomodoroConfigSync";
+import {
+  applyPomodoroLaunchToStore,
+  hasPomodoroLaunchParams,
+  parsePomodoroLaunchParams,
+  pomodoroLaunchSignature,
+} from "@/lib/pomodoro/launchFromCronograma";
 import { api } from "@/services/api";
 import { useConcursoAtivoId } from "@/stores/concursoStore";
 import { usePomodoroStore } from "@/stores/pomodoroStore";
@@ -18,8 +26,15 @@ type DisciplinaRow = {
 };
 
 export function Pomodoro() {
+  const navigate = useNavigate();
+  const qc = useQueryClient();
+  const [searchParams] = useSearchParams();
+  const launchParams = React.useMemo(() => parsePomodoroLaunchParams(searchParams), [searchParams]);
+  const launchSignature = launchParams ? pomodoroLaunchSignature(launchParams) : null;
+  const hasLaunch = hasPomodoroLaunchParams(searchParams);
+
   const concursoAtivoId = useConcursoAtivoId();
-  const { saveMutation } = usePomodoroConfigSync();
+  const { saveMutation } = usePomodoroConfigSync({ skipInitialHydration: hasLaunch });
 
   const mode = usePomodoroStore((s) => s.mode);
   const focusHours = usePomodoroStore((s) => s.focusHours);
@@ -32,6 +47,42 @@ export function Pomodoro() {
 
   const [openRegistro, setOpenRegistro] = React.useState(false);
   const [timerActive, setTimerActive] = React.useState(false);
+  const lastAppliedLaunchRef = React.useRef<string | null>(null);
+
+  React.useEffect(() => {
+    if (!launchParams || !launchSignature) return;
+    if (lastAppliedLaunchRef.current === launchSignature) return;
+    lastAppliedLaunchRef.current = launchSignature;
+
+    const { focusHours: h, focusMinutes: m } = applyPomodoroLaunchToStore(launchParams);
+
+    void qc.invalidateQueries({ queryKey: ["pomodoro-topicos"] });
+    void qc.invalidateQueries({ queryKey: ["pomodoro-topicos-page"] });
+    void qc.invalidateQueries({ queryKey: ["pomodoro-topicos-timer"] });
+
+    saveMutation.mutate({
+      mode: "livre",
+      focus_hours: h,
+      focus_minutes: m,
+      short_break_minutes: shortBreakMinutes,
+      long_break_minutes: longBreakMinutes,
+      cycles_target: cyclesTarget,
+      last_disciplina_id: launchParams.disciplinaId,
+      last_topico_id: launchParams.topicoId,
+    });
+
+    navigate("/pomodoro", { replace: true });
+    toast.success("Sessão do cronograma carregada — clique em Iniciar quando estiver pronto.");
+  }, [
+    launchParams,
+    launchSignature,
+    navigate,
+    qc,
+    saveMutation,
+    shortBreakMinutes,
+    longBreakMinutes,
+    cyclesTarget,
+  ]);
 
   const persistConfig = React.useCallback(() => {
     saveMutation.mutate({
@@ -112,6 +163,7 @@ export function Pomodoro() {
 
       {!timerActive ? (
         <PomodoroConfigPanel
+          key={`${disciplinaId ?? ""}-${topicoId ?? ""}`}
           disciplinas={disciplinas}
           loadingDisciplinas={isLoading}
           onPersist={persistConfig}
