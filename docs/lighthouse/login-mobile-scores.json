@@ -1,0 +1,10 @@
+{
+  "url": "http://localhost:4173/login",
+  "scores": {
+    "performance": 89,
+    "accessibility": 91,
+    "best-practices": 100,
+    "seo": 83
+  },
+  "fetchedAt": "2026-07-11T18:51:20.083Z"
+}

@@ -14,8 +14,6 @@ import { CardFormModal } from "@/components/flashcards/CardFormModal";
 
 import { ImportApkgModal } from "@/components/flashcards/ImportApkgModal";
 
-import { FlashcardsPageStyles } from "@/components/flashcards/FlashcardsPageStyles";
-
 import { FlashcardsStatsHeader } from "@/components/flashcards/FlashcardsStatsHeader";
 
 import { FlashcardsTabNav } from "@/components/flashcards/FlashcardsTabNav";
@@ -467,8 +465,6 @@ export function Flashcards() {
 
   return (
     <div className="-m-6 min-h-full bg-background p-4 text-foreground sm:p-6">
-      <FlashcardsPageStyles />
-
       <div
         className={
           reviewFocusMode

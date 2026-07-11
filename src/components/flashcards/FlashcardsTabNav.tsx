@@ -1,3 +1,4 @@
+import { useTablistNavigation } from "@/hooks/useTablistNavigation";
 import type { FlashcardsTab } from "@/lib/flashcards/types";
 
 export type FlashcardsTabItem = {
@@ -14,15 +15,24 @@ type Props = {
 };
 
 export function FlashcardsTabNav({ tabs, activeTab, dueTodayTotal, onTabChange }: Props) {
+  const onTablistKeyDown = useTablistNavigation();
   return (
     <div className="border-b border-neutral-200 dark:border-neutral-700">
-      <div className="-mx-1 flex gap-1 overflow-x-auto pb-0 scrollbar-thin sm:mx-0">
+      <div
+        role="tablist"
+        aria-label="Seções de flashcards"
+        onKeyDown={onTablistKeyDown}
+        className="-mx-1 flex gap-1 overflow-x-auto pb-0 scrollbar-thin sm:mx-0"
+      >
         {tabs.map((t) => {
           const active = activeTab === t.id;
           return (
             <button
               key={t.id}
               type="button"
+              role="tab"
+              aria-selected={active}
+              tabIndex={active ? 0 : -1}
               onClick={() => onTabChange(t.id)}
               className={[
                 "group relative flex shrink-0 items-center gap-2 px-4 py-3 text-sm font-semibold transition-colors",

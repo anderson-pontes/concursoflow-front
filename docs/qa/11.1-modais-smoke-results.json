@@ -1,0 +1,31 @@
+{
+  "story": "11.1",
+  "fetchedAt": "2026-07-11T19:07:46.040Z",
+  "base": "http://localhost:3000",
+  "flows": {
+    "1_modal_disciplina": {
+      "ok": true,
+      "note": "open=true dialog=true escape=true"
+    },
+    "2_modal_plano": {
+      "ok": false,
+      "note": "N/T — rota /planos ausente (catch-all → dashboard)"
+    },
+    "3_drawer_disciplina": {
+      "ok": false,
+      "note": "N/T — App.tsx redireciona /concursos/planos/:id → /concursos (débito pré-existente)"
+    },
+    "4_topicos_modal": {
+      "ok": true,
+      "note": "dialog=true title=true"
+    }
+  },
+  "a11y": {
+    "disciplina_escape": true
+  },
+  "summary": {
+    "passed": 2,
+    "total": 4,
+    "allOk": false
+  }
+}

@@ -363,6 +363,7 @@ export function PomodoroTimer({ onActiveChange, disciplinaNome, topicoNome }: Po
               <button
                 type="button"
                 title="Recolher painel"
+                aria-label="Recolher painel"
                 onClick={() => setImmersive(false)}
                 className="rounded-lg p-2 text-white/40 transition-colors hover:bg-white/10 hover:text-white/80"
               >
@@ -445,6 +446,7 @@ export function PomodoroTimer({ onActiveChange, disciplinaNome, topicoNome }: Po
                 <button
                   type="button"
                   title="Pausar (espaço)"
+                  aria-label="Pausar (espaço)"
                   onClick={() => setIsRunning(false)}
                   className="flex h-14 w-14 items-center justify-center rounded-full border border-white/15 bg-white/10 text-white backdrop-blur-sm transition-transform hover:scale-105"
                 >
@@ -453,6 +455,7 @@ export function PomodoroTimer({ onActiveChange, disciplinaNome, topicoNome }: Po
                 <button
                   type="button"
                   title="Salvar parcial"
+                  aria-label="Salvar parcial"
                   onClick={() => openModalWithSnapshot(true)}
                   className={cn(
                     "flex h-12 w-12 items-center justify-center rounded-full border border-white/10 backdrop-blur-sm transition-transform hover:scale-105",
@@ -472,6 +475,7 @@ export function PomodoroTimer({ onActiveChange, disciplinaNome, topicoNome }: Po
                 <button
                   type="button"
                   title="Cancelar sessão"
+                  aria-label="Cancelar sessão"
                   onClick={confirmReset}
                   className="flex h-12 w-12 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white/50 transition-transform hover:scale-105 hover:text-white/80"
                 >
@@ -483,6 +487,7 @@ export function PomodoroTimer({ onActiveChange, disciplinaNome, topicoNome }: Po
                 <button
                   type="button"
                   title="Retomar (espaço)"
+                  aria-label="Retomar (espaço)"
                   onClick={resume}
                   className="flex h-16 w-16 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg shadow-primary/40 transition-transform hover:scale-105"
                 >
@@ -499,6 +504,7 @@ export function PomodoroTimer({ onActiveChange, disciplinaNome, topicoNome }: Po
                 <button
                   type="button"
                   title="Reiniciar"
+                  aria-label="Reiniciar"
                   onClick={confirmReset}
                   className="flex h-12 w-12 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white/50 transition-transform hover:scale-105"
                 >

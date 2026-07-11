@@ -123,8 +123,44 @@ Rotas autenticadas usam `Layout` com `requireAuth` conforme o estado do `authSto
 |--------|-----------|
 | `npm run dev` | Servidor de desenvolvimento Vite |
 | `npm run build` | Typecheck + build de produção |
-| `npm run preview` | Preview do build |
+| `npm run preview` | Preview do build (porta 3000) |
+| `npm run preview:lh` | Preview para Lighthouse (porta 4173) |
 | `npm run typecheck` | Apenas `tsc -b` |
+| `npm run check:design-tokens` | Gate de tokens/hex/Inter (bloqueante em CI) |
+| `npm run lh:login` | Lighthouse mobile em `/login` |
+| `npm run lh:dashboard` | Lighthouse mobile em `/dashboard` (requer backend + seed) |
+| `node scripts/qa-staging-smoke.mjs` | Smoke automatizado dos fluxos críticos |
+
+## Release QA (gates EPIC-10)
+
+**CI bloqueante** (GitHub Actions `Frontend CI`): em cada PR/push que altera `front/concursoflow-front/`:
+
+1. `npm run typecheck`
+2. `npm run check:design-tokens`
+3. `npm run build`
+
+**Local — antes de abrir PR:**
+
+```bash
+cd front/concursoflow-front
+npm ci
+npm run typecheck && npm run check:design-tokens && npm run build
+```
+
+**Preview + Lighthouse** (backend em `:8000` para dashboard):
+
+```bash
+npm run build && npm run preview:lh
+# outro terminal:
+LH_BASE_URL=http://localhost:4173 npm run lh:login
+LH_BASE_URL=http://localhost:4173 npm run lh:dashboard
+```
+
+Metas PO: Performance ≥ 85, Accessibility ≥ 90 (mobile 375px). LCP &lt; 3s é warning.
+
+**Smoke manual/automatizado:** `node scripts/qa-staging-smoke.mjs` (credenciais seed no script).
+
+Relatório de referência: `docs/stories/10.2-qa-staging-report.md` (repo raiz).
 
 ## Qualidade e padrões
 

@@ -1,6 +1,7 @@
 import React from "react";
 import { X } from "lucide-react";
 
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import { DISCIPLINA_PALETTES, getDisciplinaPaletteIndex } from "./disciplinaPalettes";
 
@@ -55,18 +56,6 @@ export function TopicosModal({ open, onClose, onSave, disciplinaId = "", disable
     }
   }, [previewItems.length, selectedIndex]);
 
-  React.useEffect(() => {
-    if (!open) return;
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && !saving) {
-        e.preventDefault();
-        onClose();
-      }
-    };
-    window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
-  }, [open, onClose, saving]);
-
   const handleAdicionar = async () => {
     const topicos = parseTopicosLinhas(conteudo);
     if (topicos.length === 0 || disabled || saving) return;
@@ -93,29 +82,20 @@ export function TopicosModal({ open, onClose, onSave, disciplinaId = "", disable
   const listaVazia = previewItems.length === 0;
   const adicionarDisabled = listaVazia || saving || disabled;
 
-  if (!open) return null;
-
   return (
-    <div className="fixed inset-0 z-[170] flex items-center justify-center p-4">
-      <button
-        type="button"
-        aria-label="Fechar"
-        disabled={saving}
-        className="absolute inset-0 bg-black/50 dark:bg-black/60"
-        onClick={() => {
-          if (!saving) onClose();
-        }}
-      />
-      <div
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="topicos-modal-title"
-        className="relative z-10 flex max-h-[min(90vh,640px)] w-full max-w-2xl flex-col rounded-xl border border-slate-200 bg-white shadow-xl dark:border-neutral-700 dark:bg-neutral-950"
+    <Dialog
+      open={open}
+      onOpenChange={(o) => {
+        if (!o && !saving) onClose();
+      }}
+    >
+      <DialogContent
+        hideClose
+        aria-describedby={undefined}
+        className="flex max-h-[min(90vh,640px)] w-full max-w-2xl flex-col gap-0 overflow-hidden rounded-xl border border-slate-200 bg-white p-0 shadow-xl dark:border-neutral-700 dark:bg-neutral-950"
       >
         <div className="flex items-center justify-between border-b border-slate-100 px-5 py-4 dark:border-neutral-800">
-          <h2 id="topicos-modal-title" className="text-lg font-semibold text-slate-900 dark:text-neutral-50">
-            Tópico
-          </h2>
+          <DialogTitle className="text-lg font-semibold text-slate-900 dark:text-neutral-50">Tópico</DialogTitle>
           <button
             type="button"
             className="rounded-md p-1.5 text-slate-500 hover:bg-slate-100 disabled:opacity-50 dark:hover:bg-neutral-800"
@@ -172,7 +152,7 @@ export function TopicosModal({ open, onClose, onSave, disciplinaId = "", disable
               onChange={(e) => setConteudo(e.target.value)}
               disabled={disabled || saving}
               className={cn(
-                "min-h-[200px] flex-1 resize-y rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition",
+                "min-h-[200px] flex-1 resize-y rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 focus-visible:ring-2 focus-visible:ring-ring",
                 "focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 dark:border-neutral-600 dark:bg-neutral-900 dark:text-neutral-100",
                 (disabled || saving) && "cursor-not-allowed opacity-60",
               )}
@@ -216,7 +196,7 @@ export function TopicosModal({ open, onClose, onSave, disciplinaId = "", disable
             </button>
           </div>
         </div>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }

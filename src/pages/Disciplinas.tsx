@@ -142,7 +142,7 @@ export function Disciplinas() {
   };
 
   return (
-    <div className="min-h-full pb-8" style={{ fontFamily: "Inter, system-ui, sans-serif" }}>
+    <div className="min-h-full pb-8 font-sans">
       <div className="space-y-5">
         <DisciplinasToolbar
           search={search}

@@ -3,6 +3,7 @@ import { useMutation } from "@tanstack/react-query";
 import { isAxiosError } from "axios";
 import { toast } from "sonner";
 
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { createUserAdmin } from "@/services/adminUsers";
 
 type Props = {
@@ -59,23 +60,15 @@ export function CriarUsuarioModal({ open, onClose, onCreated }: Props) {
     mutation.mutate();
   };
 
-  if (!open) return null;
-
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 p-0 sm:items-center sm:p-4"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="criar-usuario-title"
-      onMouseDown={(e) => {
-        if (e.target === e.currentTarget) onClose();
-      }}
-    >
-      <div className="flex max-h-[min(92dvh,720px)] w-full max-w-md flex-col overflow-hidden rounded-t-2xl border border-border bg-card shadow-xl sm:rounded-xl">
+    <Dialog open={open} onOpenChange={(o) => { if (!o) onClose(); }}>
+      <DialogContent
+        hideClose
+        aria-describedby={undefined}
+        className="flex max-h-[min(92dvh,720px)] w-full max-w-md flex-col gap-0 overflow-hidden rounded-t-2xl border border-border bg-card p-0 shadow-xl sm:rounded-xl"
+      >
         <div className="flex shrink-0 items-center justify-between border-b border-border px-5 py-4">
-          <h3 id="criar-usuario-title" className="text-base font-semibold text-foreground">
-            Criar usuário
-          </h3>
+          <DialogTitle className="text-base font-semibold text-foreground">Criar usuário</DialogTitle>
           <button
             type="button"
             className="flex min-h-11 min-w-11 items-center justify-center rounded-lg text-muted-foreground transition hover:bg-muted hover:text-foreground"
@@ -149,7 +142,7 @@ export function CriarUsuarioModal({ open, onClose, onCreated }: Props) {
             {mutation.isPending ? "Criando…" : "Criar"}
           </button>
         </div>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }

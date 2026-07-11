@@ -137,6 +137,7 @@ function ToolBtn({
     <button
       type="button"
       title={title}
+      aria-label={title}
       disabled={disabled}
       onMouseDown={(e) => { e.preventDefault(); onClick(); }}
       className={[
@@ -164,6 +165,9 @@ function ColorPicker({
       <button
         type="button"
         title={title}
+        aria-label={title}
+        aria-haspopup="true"
+        aria-expanded={open}
         onMouseDown={(e) => { e.preventDefault(); setOpen((o) => !o); }}
         className={`${TB} text-muted-foreground hover:bg-primary-muted hover:text-primary`}
       >
@@ -191,6 +195,7 @@ function ColorPicker({
               className="h-5 w-5 rounded border border-neutral-200/60 transition-transform hover:scale-110"
               style={{ background: c }}
               title={c}
+              aria-label={`Cor ${c}`}
             />
           ))}
         </div>

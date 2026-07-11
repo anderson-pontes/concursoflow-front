@@ -5,6 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 import { cn } from "@/lib/utils";
+import { useListboxNavigation } from "@/hooks/useListboxNavigation";
 import { api } from "@/services/api";
 import { useConcursoStore } from "@/stores/concursoStore";
 
@@ -36,6 +37,39 @@ export function ConcursoSwitcher({ collapsed = false, mobileOpen = false, onAfte
   const rootRef = React.useRef<HTMLDivElement>(null);
   const ativo = concursos.find((c) => c.id === concursoAtivoId) ?? null;
 
+  const pickConcurso = React.useCallback(
+    (c: ConcursoRow) => {
+      setConcursoAtivoId(c.id);
+      setOpen(false);
+      toast.success(`Concurso ativo: ${c.orgao}`);
+      onAfterPick?.();
+    },
+    [setConcursoAtivoId, onAfterPick],
+  );
+
+  const { activeIndex, setActiveIndex, onKeyDown: onListboxKeyDown, getOptionId, listboxId, activeId } =
+    useListboxNavigation({
+      itemCount: concursos.length,
+      isOpen: open,
+      onSelect: (index) => {
+        const c = concursos[index];
+        if (c) pickConcurso(c);
+      },
+      onClose: () => setOpen(false),
+      idPrefix: "concurso-switcher",
+    });
+
+  const onTriggerKeyDown = (e: React.KeyboardEvent) => {
+    if (!open) {
+      if (e.key === "ArrowDown" || e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        setOpen(true);
+      }
+      return;
+    }
+    onListboxKeyDown(e);
+  };
+
   React.useEffect(() => {
     if (!open) return;
     const onMouseDown = (e: MouseEvent) => {
@@ -45,15 +79,6 @@ export function ConcursoSwitcher({ collapsed = false, mobileOpen = false, onAfte
     };
     document.addEventListener("mousedown", onMouseDown);
     return () => document.removeEventListener("mousedown", onMouseDown);
-  }, [open]);
-
-  React.useEffect(() => {
-    if (!open) return;
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setOpen(false);
-    };
-    window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
   }, [open]);
 
   React.useEffect(() => {
@@ -70,9 +95,12 @@ export function ConcursoSwitcher({ collapsed = false, mobileOpen = false, onAfte
       type="button"
       aria-expanded={open}
       aria-haspopup="listbox"
+      aria-controls={open ? listboxId : undefined}
+      aria-activedescendant={activeId}
       title={displayName}
       className={cn(triggerClass, "mx-auto h-11 w-11 shrink-0 justify-center px-0")}
       onClick={() => setOpen((v) => !v)}
+      onKeyDown={onTriggerKeyDown}
     >
       <span aria-hidden>🏆</span>
     </button>
@@ -83,8 +111,11 @@ export function ConcursoSwitcher({ collapsed = false, mobileOpen = false, onAfte
       type="button"
       aria-expanded={open}
       aria-haspopup="listbox"
+      aria-controls={open ? listboxId : undefined}
+      aria-activedescendant={activeId}
       className={cn(triggerClass, "w-full px-3 py-2 text-left")}
       onClick={() => setOpen((v) => !v)}
+      onKeyDown={onTriggerKeyDown}
     >
       <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary-muted text-base">
         🏆
@@ -106,6 +137,7 @@ export function ConcursoSwitcher({ collapsed = false, mobileOpen = false, onAfte
           : "absolute left-0 right-0 mt-2 max-h-[min(16rem,50vh)] overflow-y-auto",
       )}
       role="listbox"
+      id={listboxId}
       aria-label="Selecionar concurso"
     >
       <div className="px-2 py-1 text-xs text-muted-foreground">Concurso ativo</div>
@@ -113,19 +145,19 @@ export function ConcursoSwitcher({ collapsed = false, mobileOpen = false, onAfte
         {concursos.length === 0 ? (
           <p className="px-3 py-2 text-xs text-muted-foreground">Nenhum concurso cadastrado.</p>
         ) : (
-          concursos.map((c) => (
+          concursos.map((c, index) => (
             <button
               key={c.id}
               type="button"
               role="option"
+              id={getOptionId(index)}
               aria-selected={c.id === concursoAtivoId}
-              className="flex min-h-11 w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left hover:bg-surface-hover"
-              onClick={() => {
-                setConcursoAtivoId(c.id);
-                setOpen(false);
-                toast.success(`Concurso ativo: ${c.orgao}`);
-                onAfterPick?.();
-              }}
+              className={cn(
+                "flex min-h-11 w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left hover:bg-surface-hover",
+                index === activeIndex && "bg-surface-hover ring-2 ring-inset ring-ring",
+              )}
+              onMouseEnter={() => setActiveIndex(index)}
+              onClick={() => pickConcurso(c)}
             >
               <div className="min-w-0 flex-1">
                 <div className="truncate text-sm font-medium text-foreground">

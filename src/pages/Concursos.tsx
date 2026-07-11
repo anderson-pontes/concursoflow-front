@@ -5,7 +5,6 @@ import { toast } from "sonner";
 import { ConcursoDetalheModal } from "@/components/concursos/ConcursoDetalheModal";
 import { ConcursoCardSkeleton } from "@/components/concursos/ConcursoCardSkeleton";
 import { ConcursoListCard } from "@/components/concursos/ConcursoListCard";
-import { ConcursosPageStyles } from "@/components/concursos/ConcursosPageStyles";
 import {
   ConcursosEmptyState,
   ConcursosSummaryBar,
@@ -199,9 +198,7 @@ export function Concursos() {
   const listRefreshing = isFetching && !isLoading;
 
   return (
-    <div className="min-h-full space-y-6 pb-8" style={{ fontFamily: "Inter, system-ui, sans-serif" }}>
-      <ConcursosPageStyles />
-
+    <div className="min-h-full space-y-6 pb-8 font-sans">
       <ConcursosToolbar
         search={search}
         statusFilter={statusFilter}

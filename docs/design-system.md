@@ -377,6 +377,46 @@ Meta: **zero hex em `.tsx`**. Ícones de marca (Google) em `src/assets/icons/*.s
 
 ---
 
+## 9.1 Componentes compostos — quando usar cada um (UXD-014)
+
+> Guia de convergência para evitar padrões paralelos (selects, tabelas, animações).
+> Referência: `docs/ux-debt-report.md` § UXD-014.
+
+### Selects e comboboxes
+
+| Componente | Quando usar |
+|------------|-------------|
+| `ui/select` (Radix) | Seleção de valor fixo entre opções conhecidas; precisa de teclado/a11y nativos |
+| `CreatableSelect` | Campo que **aceita valor digitado livre** + sugestões (ex.: órgão, banca). Já com navegação por setas (`useListboxNavigation`) |
+| `DominioPicker` | Escolha de nível de domínio 1–5 (widget específico); não generalizar |
+
+**Regra:** novos campos de "digitar ou escolher" usam `CreatableSelect`. Seleção estrita usa `ui/select`.
+
+### Tabelas
+
+| Componente | Quando usar |
+|------------|-------------|
+| `ui/DataTable` | Listagens com colunas, ordenação e paginação padronizadas |
+| Tabela manual (`<table>`) | Somente layouts muito específicos (ex.: `DisciplinaDashboardTopicosTable`) com célula custom; documentar o motivo |
+
+**Regra:** preferir `ui/DataTable`; tabela manual exige justificativa no PR.
+
+### Navegação por teclado (hooks reutilizáveis)
+
+| Hook | Padrão | Uso |
+|------|--------|-----|
+| `useTablistNavigation` | WAI-ARIA Tabs (roving focus, setas, Home/End) | Qualquer `role="tablist"` |
+| `useListboxNavigation` | Combobox APG (`aria-activedescendant`) | Qualquer input/trigger + `role="listbox"` |
+
+### Animações / keyframes (UXD-015)
+
+Keyframes e classes de animação vivem em `src/index.css` (`@layer utilities`).
+**Não** injetar `<style>` com `@keyframes` em componentes React (re-injeta a cada render).
+Exceção documentada: estilos escopados a conteúdo dinâmico (`.ProseMirror` no `RichTextEditor`,
+`.fc-review-card-content` no `FlashcardsReviewTab`) que dependem de props em runtime.
+
+---
+
 ## 10. Aprovação
 
 | Item | Proposta | Aprovado PO |

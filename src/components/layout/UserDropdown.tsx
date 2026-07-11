@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 import { Avatar } from "@/components/layout/Avatar";
 import { ChangePasswordModal } from "@/components/modals/ChangePasswordModal";
+import { useMenuNavigation } from "@/hooks/useMenuNavigation";
 import { useAuthStore } from "@/stores/authStore";
 
 export function UserDropdown() {
@@ -14,19 +15,14 @@ export function UserDropdown() {
   const [menuOpen, setMenuOpen] = React.useState(false);
   const [pwdOpen, setPwdOpen] = React.useState(false);
   const btnRef = React.useRef<HTMLButtonElement>(null);
+  const menuRef = React.useRef<HTMLDivElement>(null);
 
-  React.useEffect(() => {
-    if (!menuOpen) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        e.stopPropagation();
-        setMenuOpen(false);
-        btnRef.current?.focus();
-      }
-    };
-    document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
-  }, [menuOpen]);
+  const { onKeyDown: onMenuKeyDown } = useMenuNavigation({
+    isOpen: menuOpen,
+    onClose: () => setMenuOpen(false),
+    menuRef,
+    triggerRef: btnRef,
+  });
 
   if (!user) return null;
 
@@ -48,9 +44,11 @@ export function UserDropdown() {
 
         {menuOpen ? (
           <div
+            ref={menuRef}
             className="absolute right-0 z-[120] mt-2 w-64 rounded-xl border border-border bg-surface py-2 shadow-lg"
             role="menu"
             aria-label="Menu do usuário"
+            onKeyDown={onMenuKeyDown}
           >
             <div className="border-b border-border px-3 pb-3 pt-1">
               <div className="flex items-center gap-3">
@@ -66,6 +64,7 @@ export function UserDropdown() {
               <button
                 type="button"
                 role="menuitem"
+                tabIndex={-1}
                 className="flex min-h-11 w-full items-center gap-2 px-3 text-left text-sm text-foreground hover:bg-surface-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset"
                 onClick={() => {
                   setMenuOpen(false);
@@ -78,6 +77,7 @@ export function UserDropdown() {
               <button
                 type="button"
                 role="menuitem"
+                tabIndex={-1}
                 className="flex min-h-11 w-full items-center gap-2 px-3 text-left text-sm text-foreground hover:bg-surface-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset"
                 onClick={() => {
                   setMenuOpen(false);
@@ -93,7 +93,8 @@ export function UserDropdown() {
               <button
                 type="button"
                 role="menuitem"
-                className="flex min-h-11 w-full items-center gap-2 px-3 text-left text-sm text-destructive hover:bg-destructive/10"
+                tabIndex={-1}
+                className="flex min-h-11 w-full items-center gap-2 px-3 text-left text-sm text-destructive hover:bg-destructive/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset"
                 onClick={() => {
                   logout();
                   setMenuOpen(false);

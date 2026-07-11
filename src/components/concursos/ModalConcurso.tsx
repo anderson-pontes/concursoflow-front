@@ -3,6 +3,7 @@ import { FileText, ImageIcon } from "lucide-react";
 
 import { CreatableSelect } from "@/components/concursos/CreatableSelect";
 import { FileDropZone } from "@/components/concursos/FileDropZone";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 
 export type ConcursoFormInput = {
@@ -46,7 +47,7 @@ const fieldLabelClass = "mb-1.5 block text-xs font-medium text-muted-foreground"
 
 const fieldInputClass = cn(
   "h-11 w-full rounded-[10px] border-[1.5px] border-border bg-[var(--bg-surface)] px-4 text-sm text-[var(--text-primary)] outline-none transition",
-  "placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20",
+  "placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20 focus-visible:ring-2 focus-visible:ring-ring",
   "disabled:cursor-not-allowed disabled:opacity-50",
 );
 
@@ -82,26 +83,17 @@ export function ModalConcurso({
   isPending,
   orgaoSuggestions,
 }: ModalConcursoProps) {
-  if (!open) return null;
-
   const isEdit = Boolean(editing);
   const encerradoTab = isEncerradoStatus(input.status);
 
   return (
-    <div
-      className="fixed inset-0 z-[140] flex items-end justify-center bg-black/45 p-0 backdrop-blur-[4px] sm:items-center sm:p-4"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="modal-concurso-title"
-      onMouseDown={(e) => {
-        if (e.target === e.currentTarget) onClose();
-      }}
-      style={{ fontFamily: "Inter, system-ui, sans-serif" }}
-    >
-      <div
+    <Dialog open={open} onOpenChange={(o) => { if (!o) onClose(); }}>
+      <DialogContent
+        hideClose
+        aria-describedby={undefined}
         className={cn(
-          "flex max-h-[92vh] w-full max-w-[680px] flex-col overflow-hidden bg-[var(--bg-surface)] shadow-xl",
-          "max-sm:min-h-[100dvh] max-sm:rounded-none sm:max-h-[92vh] sm:rounded-[20px]",
+          "flex w-full max-w-[680px] flex-col gap-0 overflow-hidden border-0 bg-[var(--bg-surface)] p-0 shadow-xl",
+          "max-h-[92vh] max-sm:min-h-[100dvh] max-sm:max-h-none max-sm:rounded-none sm:rounded-[20px]",
         )}
       >
         <header className="relative shrink-0 border-b border-[var(--border-subtle)] px-6 pb-4 pt-6 pr-14">
@@ -118,9 +110,9 @@ export function ModalConcurso({
               🏆
             </span>
             <div>
-              <h2 id="modal-concurso-title" className="text-[20px] font-bold text-[var(--text-primary)]">
+              <DialogTitle className="text-[20px] font-bold text-[var(--text-primary)]">
                 {isEdit ? "Editar concurso" : "Novo concurso"}
-              </h2>
+              </DialogTitle>
               <p className="mt-1 text-sm text-[var(--text-secondary)]">
                 Plano de estudo unificado — dados, prova e disciplinas
               </p>
@@ -325,7 +317,7 @@ export function ModalConcurso({
             </div>
           </footer>
         </form>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }

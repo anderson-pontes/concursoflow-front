@@ -1,5 +1,4 @@
 ﻿import React from "react";
-import { createPortal } from "react-dom";
 import { Calendar, FileText, Landmark, User } from "lucide-react";
 import { format, parseISO } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -16,6 +15,8 @@ import {
 } from "@/lib/concursoProgressStorage";
 import { cn } from "@/lib/utils";
 import { isImageUrl, isPdfUrl, resolvePublicUrl } from "@/lib/publicUrl";
+import { useTablistNavigation } from "@/hooks/useTablistNavigation";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { api } from "@/services/api";
 import type { DisciplinaDashboardKpis, DisciplinaDashboardResponse } from "@/types/disciplinaDashboard";
 
@@ -52,6 +53,7 @@ function acertoBadgeClass(pct: number) {
 const TOAST_BR = { duration: 3000, position: "bottom-right" as const };
 
 export function ConcursoDetalheModal({ concurso, onClose, onEdit }: ConcursoDetalheModalProps) {
+  const onTablistKeyDown = useTablistNavigation();
   const [tab, setTab] = React.useState<TabId>("dados");
   const [persist, setPersist] = React.useState<ConcursoProgressPersist>(loadConcursoProgress);
 
@@ -72,16 +74,9 @@ export function ConcursoDetalheModal({ concurso, onClose, onEdit }: ConcursoDeta
     }));
   }, [concurso?.id, concurso?.cargo, concurso?.nome]);
 
-  React.useEffect(() => {
-    if (!concurso) return;
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = prev;
-    };
-  }, [concurso]);
-
-  if (!concurso) return null;
+  if (!concurso) {
+    return <Dialog open={false} onOpenChange={(o) => { if (!o) onClose(); }} />;
+  }
 
   const logoSrc = resolvePublicUrl(concurso.logo_url);
   const editalSrc = resolvePublicUrl(concurso.edital_url);
@@ -127,40 +122,15 @@ export function ConcursoDetalheModal({ concurso, onClose, onEdit }: ConcursoDeta
     </div>
   );
 
-  return createPortal(
-    <>
-      <div
-        className="fixed inset-0 z-[9999] bg-black/55 backdrop-blur-sm"
-        aria-hidden
-        onMouseDown={(e) => {
-          if (e.target === e.currentTarget) onClose();
-        }}
-      />
-      <style>{`
-        @keyframes concurso-modal-dot {
-          0%, 100% { opacity: 1; transform: scale(1); }
-          50% { opacity: 0.55; transform: scale(0.88); }
-        }
-        .concurso-modal-dot-pulse {
-          animation: concurso-modal-dot 2s ease-in-out infinite;
-        }
-        @keyframes concurso-dropdown-in {
-          from { opacity: 0; transform: translateY(-6px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        .concurso-dropdown-panel {
-          animation: concurso-dropdown-in 200ms ease-out;
-        }
-      `}</style>
-
-      <div
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="detalhe-concurso-title"
+  return (
+    <Dialog open onOpenChange={(o) => { if (!o) onClose(); }}>
+      <DialogContent
+        hideClose
+        aria-describedby={undefined}
         className={cn(
-          "fixed left-1/2 top-1/2 z-[10000] flex max-h-[min(92dvh,900px)] w-[820px] max-w-[calc(100vw-16px)] -translate-x-1/2 -translate-y-1/2 flex-col overflow-hidden rounded-[20px] bg-surface shadow-xl max-sm:inset-0 max-sm:left-0 max-sm:top-0 max-sm:h-[100dvh] max-sm:max-h-none max-sm:w-full max-sm:max-w-none max-sm:translate-x-0 max-sm:translate-y-0 max-sm:rounded-none",
+          "flex max-h-[min(92dvh,900px)] w-[820px] max-w-[calc(100vw-16px)] flex-col gap-0 overflow-hidden rounded-[20px] border-0 bg-surface p-0 shadow-xl",
+          "max-sm:inset-x-0 max-sm:top-0 max-sm:h-[100dvh] max-sm:max-h-none max-sm:w-full max-sm:max-w-none max-sm:translate-x-0 max-sm:translate-y-0 max-sm:rounded-none",
         )}
-        onMouseDown={(e) => e.stopPropagation()}
       >
         {/* HEADER 88px */}
         <header className="flex h-[88px] shrink-0 items-center gap-4 border-b border-border px-7">
@@ -174,9 +144,9 @@ export function ConcursoDetalheModal({ concurso, onClose, onEdit }: ConcursoDeta
             )}
           </div>
           <div className="min-w-0 flex-1">
-            <h2 id="detalhe-concurso-title" className="line-clamp-1 text-[22px] font-bold text-foreground">
+            <DialogTitle className="line-clamp-1 text-[22px] font-bold text-foreground">
               {cargoTitle}
-            </h2>
+            </DialogTitle>
             <p className="mt-0.5 text-sm text-muted-foreground">{concurso.orgao}</p>
             <div className="mt-1.5">
               {encerrado ? (
@@ -207,13 +177,21 @@ export function ConcursoDetalheModal({ concurso, onClose, onEdit }: ConcursoDeta
 
         {/* TABS 48px */}
         <div className="shrink-0 border-b border-border px-7">
-          <nav className="flex gap-6 overflow-x-auto" aria-label="Seções do concurso">
+          <nav
+            role="tablist"
+            aria-label="Seções do concurso"
+            onKeyDown={onTablistKeyDown}
+            className="flex gap-6 overflow-x-auto"
+          >
             {tabs.map((t) => {
               const active = tab === t.id;
               return (
                 <button
                   key={t.id}
                   type="button"
+                  role="tab"
+                  aria-selected={active}
+                  tabIndex={active ? 0 : -1}
                   onClick={() => setTab(t.id)}
                   className={cn(
                     "relative h-12 shrink-0 px-1 text-sm transition-colors duration-200",
@@ -332,9 +310,8 @@ export function ConcursoDetalheModal({ concurso, onClose, onEdit }: ConcursoDeta
             </button>
           </div>
         </footer>
-      </div>
-    </>,
-    document.body,
+      </DialogContent>
+    </Dialog>
   );
 }
 

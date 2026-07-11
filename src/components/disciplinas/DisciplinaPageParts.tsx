@@ -1,8 +1,7 @@
 export function DisciplinaCardSkeleton() {
   return (
     <div
-      className="animate-pulse overflow-hidden rounded-2xl border-[1.5px] border-[var(--border-default)] bg-[var(--bg-surface)] shadow-card"
-      style={{ fontFamily: "Inter, system-ui, sans-serif" }}
+      className="animate-pulse overflow-hidden rounded-2xl border-[1.5px] border-[var(--border-default)] bg-[var(--bg-surface)] font-sans shadow-card"
     >
       <div className="h-[3px] bg-[var(--border-default)]" />
       <div className="flex gap-3 px-5 pt-[18px]">

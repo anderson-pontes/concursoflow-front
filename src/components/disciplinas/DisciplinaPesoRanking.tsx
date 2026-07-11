@@ -71,8 +71,7 @@ export function DisciplinaPesoRanking({ disciplinas, concursoId, filterSeg }: Di
   if (ranking.length === 0) {
     return (
       <section
-        className="rounded-2xl border border-dashed border-[var(--border-default)] bg-[var(--bg-surface)] px-5 py-8 text-center shadow-sm"
-        style={{ fontFamily: "Inter, system-ui, sans-serif" }}
+        className="rounded-2xl border border-dashed border-[var(--border-default)] bg-[var(--bg-surface)] px-5 py-8 text-center font-sans shadow-sm"
       >
         <Scale className="mx-auto h-8 w-8 text-[var(--text-muted)]" aria-hidden />
         <h2 className="mt-3 text-base font-bold text-[var(--text-primary)]">Ranking por peso no edital</h2>
@@ -87,8 +86,7 @@ export function DisciplinaPesoRanking({ disciplinas, concursoId, filterSeg }: Di
 
   return (
     <section
-      className="overflow-hidden rounded-2xl border border-[var(--border-default)] bg-[var(--bg-surface)] shadow-card"
-      style={{ fontFamily: "Inter, system-ui, sans-serif" }}
+      className="overflow-hidden rounded-2xl border border-[var(--border-default)] bg-[var(--bg-surface)] font-sans shadow-card"
     >
       <header className="flex flex-wrap items-start justify-between gap-4 border-b border-[var(--border-subtle)] px-5 py-4">
         <div className="flex items-start gap-3">

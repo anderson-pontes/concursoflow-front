@@ -1,8 +1,8 @@
 import React from "react";
-import { createPortal } from "react-dom";
 import { BookOpen, Check, Circle, Clock, Pencil, Target, X } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { api } from "@/services/api";
 
 export type VideoaulaBlocoResumo = { titulo: string; inicio: string; fim: string };
@@ -145,30 +145,21 @@ export function TopicoDetalhesModal({ open, disciplinaId, topicoId, topicoNome, 
 
   const consolidado = useConsolidado(sessoes);
 
-  React.useEffect(() => {
-    if (!open) return;
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = prev;
-    };
-  }, [open]);
-
-  if (!open) return null;
-
-  const modal = (
-    <div className="fixed inset-0 z-[10001] flex items-center justify-center bg-black/55 p-4" role="dialog" aria-modal="true">
-      <div className="flex max-h-[90vh] w-full max-w-2xl flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-2xl">
+  return (
+    <Dialog open={open} onOpenChange={(o) => { if (!o) onClose(); }}>
+      <DialogContent
+        hideClose
+        aria-describedby={undefined}
+        className="flex max-h-[90vh] w-full max-w-2xl flex-col gap-0 overflow-hidden rounded-2xl border border-border bg-card p-0 shadow-2xl"
+      >
         <div className="shrink-0 border-b border-border px-5 py-4">
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0 flex-1">
-              <h2 className="font-dm text-xs font-semibold uppercase tracking-wider text-muted-foreground">Detalhes do tópico</h2>
-              <p className="mt-2 flex items-start gap-2.5">
+              <p className="font-dm text-xs font-semibold uppercase tracking-wider text-muted-foreground">Detalhes do tópico</p>
+              <DialogTitle className="mt-2 flex items-start gap-2.5 font-display text-xl font-normal leading-snug tracking-tight text-card-foreground sm:text-2xl">
                 <BookOpen className="mt-0.5 h-5 w-5 shrink-0 text-primary-600 dark:text-primary-400" aria-hidden />
-                <span className="font-display text-xl font-normal leading-snug tracking-tight text-card-foreground sm:text-2xl">
-                  {topicoNome}
-                </span>
-              </p>
+                <span>{topicoNome}</span>
+              </DialogTitle>
             </div>
             <button
               type="button"
@@ -377,9 +368,7 @@ export function TopicoDetalhesModal({ open, disciplinaId, topicoId, topicoNome, 
             ) : null}
           </div>
         ) : null}
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
-
-  return createPortal(modal, document.body);
 }

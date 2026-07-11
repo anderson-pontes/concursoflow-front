@@ -1,27 +1,50 @@
-import React from "react";
+import React, { Suspense } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import { useAuthStore } from "./stores/authStore";
 import { Layout } from "./components/layout/Layout";
 import { Login } from "./pages/Auth/Login";
-import { Register } from "./pages/Auth/Register";
-import { ResetPassword } from "./pages/Auth/ResetPassword";
-import { CheckoutSucesso } from "./pages/Assinatura/CheckoutSucesso";
-import { CheckoutCancelado } from "./pages/Assinatura/CheckoutCancelado";
 import { Dashboard } from "./pages/Dashboard";
 import { Concursos } from "./pages/Concursos";
 import { Disciplinas } from "./pages/Disciplinas";
-import { DisciplinaDashboard } from "./pages/DisciplinaDashboard";
-import { Cronograma } from "./pages/Cronograma";
-import { CalendarioEstudos } from "./pages/CalendarioEstudos";
-import { HistoricoEstudos } from "./pages/HistoricoEstudos";
-import { Pomodoro } from "./pages/Pomodoro";
-import { Avisos } from "./pages/Avisos";
-import { Flashcards } from "./pages/Flashcards";
-import { AdminEstudos } from "./pages/AdminEstudos";
 import { AdminRoute } from "./components/layout/AdminRoute";
-import { GestaoUsuarios } from "./pages/admin/GestaoUsuarios";
-import { UsuarioDetalhe } from "./pages/admin/UsuarioDetalhe";
-import { Perfil } from "./pages/Perfil";
+
+function PageLoader() {
+  return (
+    <div className="flex min-h-[50vh] items-center justify-center p-8" role="status" aria-live="polite">
+      <span className="text-sm text-muted-foreground">Carregando…</span>
+    </div>
+  );
+}
+
+function lazyNamed<T extends Record<string, React.ComponentType<object>>>(
+  loader: () => Promise<T>,
+  exportName: keyof T,
+) {
+  return React.lazy(() => loader().then((m) => ({ default: m[exportName] as React.ComponentType<object> })));
+}
+
+const DisciplinaDashboard = lazyNamed(() => import("./pages/DisciplinaDashboard"), "DisciplinaDashboard");
+const Register = lazyNamed(() => import("./pages/Auth/Register"), "Register");
+const ResetPassword = lazyNamed(() => import("./pages/Auth/ResetPassword"), "ResetPassword");
+const CheckoutSucesso = lazyNamed(() => import("./pages/Assinatura/CheckoutSucesso"), "CheckoutSucesso");
+const CheckoutCancelado = lazyNamed(
+  () => import("./pages/Assinatura/CheckoutCancelado"),
+  "CheckoutCancelado",
+);
+const Cronograma = lazyNamed(() => import("./pages/Cronograma"), "Cronograma");
+const CalendarioEstudos = lazyNamed(() => import("./pages/CalendarioEstudos"), "CalendarioEstudos");
+const HistoricoEstudos = lazyNamed(() => import("./pages/HistoricoEstudos"), "HistoricoEstudos");
+const Pomodoro = lazyNamed(() => import("./pages/Pomodoro"), "Pomodoro");
+const Avisos = lazyNamed(() => import("./pages/Avisos"), "Avisos");
+const Flashcards = lazyNamed(() => import("./pages/Flashcards"), "Flashcards");
+const AdminEstudos = lazyNamed(() => import("./pages/AdminEstudos"), "AdminEstudos");
+const GestaoUsuarios = lazyNamed(() => import("./pages/admin/GestaoUsuarios"), "GestaoUsuarios");
+const UsuarioDetalhe = lazyNamed(() => import("./pages/admin/UsuarioDetalhe"), "UsuarioDetalhe");
+const Perfil = lazyNamed(() => import("./pages/Perfil"), "Perfil");
+
+function LazyPage({ children }: { children: React.ReactNode }) {
+  return <Suspense fallback={<PageLoader />}>{children}</Suspense>;
+}
 
 export default function App() {
   const accessToken = useAuthStore((s) => s.accessToken);
@@ -31,10 +54,38 @@ export default function App() {
     <Routes>
       <Route path="/" element={<Navigate to={isAuthed ? "/dashboard" : "/login"} replace />} />
       <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
-      <Route path="/reset-password" element={<ResetPassword />} />
-      <Route path="/assinatura/sucesso" element={<CheckoutSucesso />} />
-      <Route path="/assinatura/cancelado" element={<CheckoutCancelado />} />
+      <Route
+        path="/register"
+        element={
+          <LazyPage>
+            <Register />
+          </LazyPage>
+        }
+      />
+      <Route
+        path="/reset-password"
+        element={
+          <LazyPage>
+            <ResetPassword />
+          </LazyPage>
+        }
+      />
+      <Route
+        path="/assinatura/sucesso"
+        element={
+          <LazyPage>
+            <CheckoutSucesso />
+          </LazyPage>
+        }
+      />
+      <Route
+        path="/assinatura/cancelado"
+        element={
+          <LazyPage>
+            <CheckoutCancelado />
+          </LazyPage>
+        }
+      />
 
       <Route
         path="/dashboard"
@@ -48,7 +99,9 @@ export default function App() {
         path="/perfil"
         element={
           <Layout requireAuth={!isAuthed}>
-            <Perfil />
+            <LazyPage>
+              <Perfil />
+            </LazyPage>
           </Layout>
         }
       />
@@ -66,7 +119,9 @@ export default function App() {
         path="/disciplinas/:disciplinaId"
         element={
           <Layout requireAuth={!isAuthed}>
-            <DisciplinaDashboard />
+            <LazyPage>
+              <DisciplinaDashboard />
+            </LazyPage>
           </Layout>
         }
       />
@@ -82,7 +137,9 @@ export default function App() {
         path="/cronograma"
         element={
           <Layout requireAuth={!isAuthed}>
-            <Cronograma />
+            <LazyPage>
+              <Cronograma />
+            </LazyPage>
           </Layout>
         }
       />
@@ -90,7 +147,9 @@ export default function App() {
         path="/estudos/calendario"
         element={
           <Layout requireAuth={!isAuthed}>
-            <CalendarioEstudos />
+            <LazyPage>
+              <CalendarioEstudos />
+            </LazyPage>
           </Layout>
         }
       />
@@ -98,7 +157,9 @@ export default function App() {
         path="/estudos/historico"
         element={
           <Layout requireAuth={!isAuthed}>
-            <HistoricoEstudos />
+            <LazyPage>
+              <HistoricoEstudos />
+            </LazyPage>
           </Layout>
         }
       />
@@ -106,7 +167,9 @@ export default function App() {
         path="/pomodoro"
         element={
           <Layout requireAuth={!isAuthed}>
-            <Pomodoro />
+            <LazyPage>
+              <Pomodoro />
+            </LazyPage>
           </Layout>
         }
       />
@@ -114,7 +177,9 @@ export default function App() {
         path="/avisos"
         element={
           <Layout requireAuth={!isAuthed}>
-            <Avisos />
+            <LazyPage>
+              <Avisos />
+            </LazyPage>
           </Layout>
         }
       />
@@ -122,7 +187,9 @@ export default function App() {
         path="/flashcards"
         element={
           <Layout requireAuth={!isAuthed}>
-            <Flashcards />
+            <LazyPage>
+              <Flashcards />
+            </LazyPage>
           </Layout>
         }
       />
@@ -130,7 +197,9 @@ export default function App() {
         path="/configuracoes/estudos"
         element={
           <Layout requireAuth={!isAuthed}>
-            <AdminEstudos />
+            <LazyPage>
+              <AdminEstudos />
+            </LazyPage>
           </Layout>
         }
       />
@@ -140,7 +209,9 @@ export default function App() {
         element={
           <Layout requireAuth={!isAuthed}>
             <AdminRoute>
-              <GestaoUsuarios />
+              <LazyPage>
+                <GestaoUsuarios />
+              </LazyPage>
             </AdminRoute>
           </Layout>
         }
@@ -150,7 +221,9 @@ export default function App() {
         element={
           <Layout requireAuth={!isAuthed}>
             <AdminRoute>
-              <UsuarioDetalhe />
+              <LazyPage>
+                <UsuarioDetalhe />
+              </LazyPage>
             </AdminRoute>
           </Layout>
         }
@@ -159,4 +232,3 @@ export default function App() {
     </Routes>
   );
 }
-

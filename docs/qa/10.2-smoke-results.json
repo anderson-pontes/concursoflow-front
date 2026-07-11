@@ -1,0 +1,71 @@
+{
+  "fetchedAt": "2026-07-11T18:50:24.619Z",
+  "base": "http://localhost:4173",
+  "flows": {
+    "1_login": {
+      "ok": true,
+      "note": "Login OK"
+    },
+    "2_dashboard": {
+      "ok": true,
+      "note": "KPIs/heatmap visíveis"
+    },
+    "3_concursos": {
+      "ok": true,
+      "note": "Modal Novo concurso Radix + Escape"
+    },
+    "4_disciplinas": {
+      "ok": true,
+      "note": "Página carregou"
+    },
+    "5_cronograma": {
+      "ok": true,
+      "note": "BlocoFormModal Radix"
+    },
+    "6_flashcards": {
+      "ok": true,
+      "note": "Página flashcards OK"
+    },
+    "7_pomodoro": {
+      "ok": true,
+      "note": "Iniciar + Pausar OK"
+    },
+    "8_registro": {
+      "ok": true,
+      "note": "RegistroEstudoModal Radix via Pomodoro"
+    },
+    "9_admin": {
+      "ok": true,
+      "note": "N/A — seed@example.com não é admin (redirect dashboard)"
+    },
+    "10_dark_mode": {
+      "ok": true,
+      "note": "toggle=true persist=true"
+    },
+    "1_logout": {
+      "ok": true,
+      "note": "Logout via menu usuário"
+    }
+  },
+  "responsive": {
+    "375px": {
+      "ok": true,
+      "note": "login+dashboard+modal"
+    },
+    "1024px": {
+      "ok": true,
+      "note": "sidebar + conteúdo"
+    }
+  },
+  "a11y": {
+    "tab_login": true,
+    "skip_link": true,
+    "modal_escape": true
+  },
+  "notes": [],
+  "summary": {
+    "flowsPassed": 10,
+    "flowsTotal": 10,
+    "allFlowsOk": true
+  }
+}

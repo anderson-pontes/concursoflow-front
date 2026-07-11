@@ -1,6 +1,15 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
-@import "@fontsource-variable/geist";
+/* Apenas latina — suficiente para pt-BR; reduz ~30 KB vs. pacote completo */
+@font-face {
+  font-family: "Geist Variable";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url("@fontsource-variable/geist/files/geist-latin-wght-normal.woff2") format("woff2-variations");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304,
+    U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -285,6 +294,103 @@
   }
 }
 
+/* === Flashcards (migrado de FlashcardsPageStyles.tsx — UXD-015) === */
+@keyframes fc-badge-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--warning) 50%, transparent);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 0 8px transparent;
+    transform: scale(1.05);
+  }
+}
+
+@keyframes fc-check-bounce {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.08);
+    opacity: 0.92;
+  }
+}
+
+@keyframes fc-session-check-in {
+  0% {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* === Concursos (migrado de ConcursosPageStyles.tsx / ConcursoDetalheModal.tsx — UXD-015) === */
+@keyframes concurso-dot-pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(0.92);
+  }
+}
+
+@keyframes concurso-modal-dot {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.55;
+    transform: scale(0.88);
+  }
+}
+
+@keyframes concurso-dropdown-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* === Disciplinas (migrado de DisciplinaCard.tsx — UXD-015) === */
+@keyframes discMenuIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* === Planos (migrado de Planos.tsx — UXD-015) === */
+@keyframes plano-card-dot-pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.55;
+    transform: scale(0.88);
+  }
+}
+
 @layer utilities {
   .auth-hero-gradient {
     background: linear-gradient(145deg, #4c1d95 0%, #7c3aed 45%, #5b21b6 100%);
@@ -305,5 +411,68 @@
 
   .auth-form-col-scroll::-webkit-scrollbar {
     display: none;
+  }
+
+  /* === Flashcards (UXD-015) === */
+  .fc-badge-pulse {
+    animation: fc-badge-pulse 2.2s ease-in-out infinite;
+  }
+
+  .fc-check-bounce {
+    animation: fc-check-bounce 2s ease-in-out infinite;
+  }
+
+  .fc-deck-card {
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .fc-deck-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .fc-review-btn {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .fc-review-btn::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle, rgb(255 255 255 / 0.45) 10%, transparent 10.01%);
+    transform: scale(12);
+    opacity: 0;
+    transition: transform 0.45s, opacity 0.45s;
+    pointer-events: none;
+  }
+
+  .fc-review-btn:active::after {
+    transform: scale(0);
+    opacity: 1;
+    transition: 0s;
+  }
+
+  .fc-session-check-in {
+    animation: fc-session-check-in 400ms ease forwards;
+  }
+
+  /* === Concursos (UXD-015) === */
+  .concurso-dot-pulse {
+    animation: concurso-dot-pulse 1.6s ease-in-out infinite;
+  }
+
+  .concurso-modal-dot-pulse {
+    animation: concurso-modal-dot 2s ease-in-out infinite;
+  }
+
+  .concurso-dropdown-panel {
+    animation: concurso-dropdown-in 200ms ease-out;
+  }
+
+  /* === Planos (UXD-015) === */
+  .plano-card-dot-pulse {
+    animation: plano-card-dot-pulse 2s ease-in-out infinite;
   }
 }

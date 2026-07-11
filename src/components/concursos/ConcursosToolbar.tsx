@@ -1,5 +1,4 @@
 import type { ConcursoStatusFilter } from "@/lib/concursos/types";
-import { CONCURSO_CARD_SHADOW } from "@/lib/concursos/utils";
 import { cn } from "@/lib/utils";
 
 import { ConcursosEmptyIllustration } from "./ConcursosEmptyIllustration";
@@ -105,8 +104,7 @@ export function ConcursosSummaryBar({
 export function ConcursosEmptyState({ onCreate }: { onCreate: () => void }) {
   return (
     <div
-      className="flex flex-col items-center justify-center rounded-2xl border-[1.5px] border-[var(--border-default)] bg-[var(--bg-surface)] px-8 py-16 text-center"
-      style={{ boxShadow: CONCURSO_CARD_SHADOW }}
+      className="flex flex-col items-center justify-center rounded-2xl border-[1.5px] border-[var(--border-default)] bg-[var(--bg-surface)] px-8 py-16 text-center shadow-card"
     >
       <ConcursosEmptyIllustration />
       <h2 className="mt-6 text-lg font-bold text-[var(--text-primary)]">Nenhum concurso cadastrado ainda</h2>

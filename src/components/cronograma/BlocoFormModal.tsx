@@ -1,7 +1,7 @@
 import React from "react";
-import { createPortal } from "react-dom";
 import { X } from "lucide-react";
 
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { DIAS, defaultForm, diaLabels, tipoMap } from "@/lib/cronograma/constants";
 import type { Bloco, DisciplinaOption, FormState } from "@/lib/cronograma/types";
 import { cn } from "@/lib/utils";
@@ -31,23 +31,23 @@ export function BlocoFormModal({
     if (open) setForm({ ...defaultForm, ...initialValues });
   }, [open, initialValues]);
 
-  React.useEffect(() => {
-    if (!open) return;
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => { document.body.style.overflow = prev; };
-  }, [open]);
-
   const horaFimInvalida = form.hora_fim <= form.hora_inicio;
 
-  if (!open) return null;
-
-  return createPortal(
-    <div className="fixed inset-0 z-[10010] flex items-center justify-center bg-black/55 p-4" role="dialog" aria-modal="true">
-      <div className="w-full max-w-md overflow-hidden rounded-2xl border border-border bg-card shadow-2xl">
+  return (
+    <Dialog open={open} onOpenChange={(o) => { if (!o) onClose(); }}>
+      <DialogContent
+        hideClose
+        aria-describedby={undefined}
+        className="block w-full max-w-md gap-0 overflow-hidden rounded-2xl border border-border bg-card p-0 shadow-2xl"
+      >
         <div className="flex items-center justify-between border-b border-border px-5 py-4">
-          <h2 className="text-base font-semibold text-card-foreground">{title}</h2>
-          <button type="button" onClick={onClose} className="rounded-lg border border-border p-1.5 text-muted-foreground transition hover:bg-muted">
+          <DialogTitle className="text-base font-semibold text-card-foreground">{title}</DialogTitle>
+          <button
+            type="button"
+            onClick={onClose}
+            className="flex min-h-11 min-w-11 items-center justify-center rounded-lg border border-border text-muted-foreground transition hover:bg-muted"
+            aria-label="Fechar"
+          >
             <X className="h-4 w-4" />
           </button>
         </div>
@@ -127,8 +127,7 @@ export function BlocoFormModal({
             {isSaving ? "Salvando…" : "Salvar"}
           </button>
         </div>
-      </div>
-    </div>,
-    document.body,
+      </DialogContent>
+    </Dialog>
   );
 }

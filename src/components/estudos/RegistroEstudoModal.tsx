@@ -1,10 +1,10 @@
 import React from "react";
-import { createPortal } from "react-dom";
 import { Calendar, Check, Info, Minus, Plus, Search, X } from "lucide-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 import { Checkbox } from "@/components/ui/checkbox";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { invalidateEstudosQueries } from "@/lib/estudos/invalidateQueries";
@@ -215,15 +215,6 @@ export function RegistroEstudoModal({
     defaultBranco,
     defaultDataReferencia,
   ]);
-
-  React.useEffect(() => {
-    if (!open) return;
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = prev;
-    };
-  }, [open]);
 
   const { data: categorias } = useQuery({
     queryKey: ["categorias"],
@@ -510,16 +501,18 @@ export function RegistroEstudoModal({
     setNovoDiaRevisao("");
   };
 
-  if (!open) return null;
-
-  const modal = (
-    <div className="fixed inset-0 z-[10002] flex items-center justify-center bg-black/55 p-4" role="dialog" aria-modal="true" aria-labelledby="registro-estudo-titulo">
-      <div className="max-h-[94vh] w-full max-w-4xl overflow-y-auto rounded-2xl border-[0.5px] border-slate-200/90 bg-white shadow-2xl dark:border-neutral-700 dark:bg-neutral-950">
+  return (
+    <Dialog open={open} onOpenChange={(o) => { if (!o) onClose(); }}>
+      <DialogContent
+        hideClose
+        aria-describedby={undefined}
+        className="block max-h-[94vh] w-full max-w-4xl gap-0 overflow-y-auto rounded-2xl border-[0.5px] border-slate-200/90 bg-white p-0 shadow-2xl dark:border-neutral-700 dark:bg-neutral-950"
+      >
         <div className="border-b border-[0.5px] border-slate-200/90 px-6 py-5 dark:border-neutral-800">
           <div className="flex items-center justify-between">
-            <h2 id="registro-estudo-titulo" className="text-2xl font-semibold text-slate-900 dark:text-neutral-100">
+            <DialogTitle className="text-2xl font-semibold text-slate-900 dark:text-neutral-100">
               {sessaoId ? "Editar registro de estudo" : "Registro de estudo"}
-            </h2>
+            </DialogTitle>
             <button
               type="button"
               onClick={onClose}
@@ -898,10 +891,8 @@ export function RegistroEstudoModal({
             {sessaoId ? "Salvar alterações" : "Salvar registro"}
           </button>
         </div>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
-
-  return createPortal(modal, document.body);
 }
 

@@ -4,6 +4,7 @@ import { Bell } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 import { cn } from "@/lib/utils";
+import { useMenuNavigation } from "@/hooks/useMenuNavigation";
 import { isAdminUser } from "@/lib/authRoles";
 import {
   fetchNotifications,
@@ -22,6 +23,14 @@ export function NotificationBell() {
   const qc = useQueryClient();
   const [open, setOpen] = React.useState(false);
   const btnRef = React.useRef<HTMLButtonElement>(null);
+  const menuRef = React.useRef<HTMLDivElement>(null);
+
+  const { onKeyDown: onMenuKeyDown } = useMenuNavigation({
+    isOpen: open,
+    onClose: () => setOpen(false),
+    menuRef,
+    triggerRef: btnRef,
+  });
 
   const isAdmin = isAdminUser(user);
 
@@ -54,19 +63,6 @@ export function NotificationBell() {
     },
   });
 
-  React.useEffect(() => {
-    if (!open) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        e.stopPropagation();
-        setOpen(false);
-        btnRef.current?.focus();
-      }
-    };
-    document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
-  }, [open]);
-
   if (!isAdmin) return null;
 
   return (
@@ -93,14 +89,18 @@ export function NotificationBell() {
         <>
           <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} aria-hidden />
           <div
+            ref={menuRef}
             className="absolute right-0 z-50 mt-2 w-[min(100vw-2rem,360px)] rounded-xl border border-border bg-card shadow-lg"
             role="menu"
             aria-label="Notificações"
+            onKeyDown={onMenuKeyDown}
           >
             <div className="flex items-center justify-between border-b border-border px-4 py-3">
               <span className="text-sm font-semibold">Notificações</span>
               <button
                 type="button"
+                role="menuitem"
+                tabIndex={-1}
                 className="min-h-11 rounded-lg px-2 text-xs text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 onClick={() => markAllMutation.mutate()}
               >
@@ -116,6 +116,7 @@ export function NotificationBell() {
                     key={n.id}
                     type="button"
                     role="menuitem"
+                    tabIndex={-1}
                     className={cn(
                       "min-h-11 w-full border-b border-border/50 px-4 py-3 text-left text-sm hover:bg-muted/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset",
                       !n.read_at && "bg-primary-muted/50",

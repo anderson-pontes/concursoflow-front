@@ -1,6 +1,7 @@
 import React from "react";
 
-import aprovinhoUrl from "@/assets/aprovinho.svg";
+import aprovinhoUrl from "@/assets/brand/aprovinho.webp";
+import logoPreload from "@/assets/brand/logo2.webp";
 import { AprovingoLogo } from "@/components/branding/AprovingoLogo";
 import { cn } from "@/lib/utils";
 
@@ -25,6 +26,15 @@ export function AuthShell({ children }: AuthShellProps) {
     return () => {
       document.body.style.overflow = prev;
     };
+  }, []);
+
+  React.useEffect(() => {
+    const preload = document.createElement("link");
+    preload.rel = "preload";
+    preload.as = "image";
+    preload.href = logoPreload;
+    document.head.appendChild(preload);
+    return () => preload.remove();
   }, []);
 
   return (

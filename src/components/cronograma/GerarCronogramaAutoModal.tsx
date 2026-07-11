@@ -1,5 +1,4 @@
 import React from "react";
-import { createPortal } from "react-dom";
 import { CalendarClock, Sparkles, X } from "lucide-react";
 import { format, parseISO } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -10,6 +9,7 @@ import type { DisciplinaOption } from "@/lib/cronograma/types";
 import { fmtPontos } from "@/lib/disciplinas/pontos";
 import { fmtBlocoMinutos } from "@/lib/cronograma/constants";
 import { cn } from "@/lib/utils";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { api } from "@/services/api";
 
 const DIAS_SEMANA = [
@@ -105,15 +105,6 @@ export function GerarCronogramaAutoModal({
       })),
     );
   }, [open, disciplinas]);
-
-  React.useEffect(() => {
-    if (!open) return;
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = prev;
-    };
-  }, [open]);
 
   const duracaoResolvida = React.useMemo(() => {
     if (duracaoCustom.trim()) {
@@ -211,20 +202,17 @@ export function GerarCronogramaAutoModal({
     return map;
   }, [preview]);
 
-  if (!open) return null;
-
-  return createPortal(
-    <div
-      className="fixed inset-0 z-[10020] flex items-end justify-center bg-black/50 p-0 backdrop-blur-[3px] sm:items-center sm:p-4"
-      role="dialog"
-      aria-modal="true"
-      onMouseDown={(e) => {
-        if (e.target === e.currentTarget && !gerarMutation.isPending) onClose();
+  return (
+    <Dialog
+      open={open}
+      onOpenChange={(o) => {
+        if (!o && !gerarMutation.isPending) onClose();
       }}
     >
-      <div
-        className="flex max-h-[94vh] w-full max-w-[640px] flex-col overflow-hidden rounded-t-[20px] border border-border bg-card shadow-2xl sm:rounded-2xl"
-        style={{ fontFamily: "Inter, system-ui, sans-serif" }}
+      <DialogContent
+        hideClose
+        aria-describedby={undefined}
+        className="flex max-h-[94vh] w-full max-w-[640px] flex-col gap-0 overflow-hidden rounded-t-[20px] border border-border bg-card p-0 font-sans shadow-2xl sm:rounded-2xl"
       >
         <header className="relative shrink-0 border-b border-border px-5 pb-4 pt-5 pr-12">
           <button
@@ -241,7 +229,7 @@ export function GerarCronogramaAutoModal({
               <Sparkles className="h-5 w-5" />
             </span>
             <div>
-              <h2 className="text-lg font-bold text-card-foreground">Gerar cronograma automático</h2>
+              <DialogTitle className="text-lg font-bold text-card-foreground">Gerar cronograma automático</DialogTitle>
               <p className="mt-0.5 text-sm text-muted-foreground">
                 Distribui sessões por assunto conforme peso e domínio cadastrados nos tópicos.
               </p>
@@ -457,8 +445,7 @@ export function GerarCronogramaAutoModal({
             </button>
           </div>
         </footer>
-      </div>
-    </div>,
-    document.body,
+      </DialogContent>
+    </Dialog>
   );
 }

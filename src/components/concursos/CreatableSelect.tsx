@@ -2,6 +2,7 @@ import React from "react";
 import { ChevronDown } from "lucide-react";
 
 import { cn } from "@/lib/utils";
+import { useListboxNavigation } from "@/hooks/useListboxNavigation";
 
 type CreatableSelectProps = {
   id: string;
@@ -49,6 +50,19 @@ export function CreatableSelect({
     return () => document.removeEventListener("mousedown", onDoc);
   }, [open]);
 
+  const listboxOpen = open && filtered.length > 0;
+  const { activeIndex, setActiveIndex, onKeyDown, getOptionId, listboxId, activeId } =
+    useListboxNavigation({
+      itemCount: filtered.length,
+      isOpen: listboxOpen,
+      onSelect: (index) => {
+        onChange(filtered[index]);
+        setOpen(false);
+      },
+      onClose: () => setOpen(false),
+      idPrefix: id,
+    });
+
   const isAprov = appearance === "aprov";
 
   return (
@@ -78,6 +92,11 @@ export function CreatableSelect({
           id={id}
           type="text"
           autoComplete="off"
+          role="combobox"
+          aria-expanded={listboxOpen}
+          aria-controls={listboxId}
+          aria-autocomplete="list"
+          aria-activedescendant={activeId}
           disabled={disabled}
           placeholder={placeholder}
           value={value}
@@ -86,6 +105,7 @@ export function CreatableSelect({
             setOpen(true);
           }}
           onFocus={() => setOpen(true)}
+          onKeyDown={onKeyDown}
           className={cn(
             "h-11 w-full rounded-[10px] border-[1.5px] bg-white px-4 py-2 pr-9 text-sm outline-none transition",
             isAprov
@@ -109,24 +129,33 @@ export function CreatableSelect({
           aria-hidden
         />
       </div>
-      {open && filtered.length > 0 ? (
+      {listboxOpen ? (
         <ul
           role="listbox"
+          id={listboxId}
           className={cn(
             "absolute z-50 mt-1 max-h-48 w-full overflow-auto rounded-[10px] border py-1 shadow-lg",
             isAprov ? "border-border bg-white" : "rounded-lg border-slate-200 bg-white dark:border-neutral-600 dark:bg-neutral-900",
           )}
         >
-          {filtered.map((s) => (
-            <li key={s} role="option">
+          {filtered.map((s, index) => (
+            <li
+              key={s}
+              role="option"
+              id={getOptionId(index)}
+              aria-selected={activeIndex === index}
+            >
               <button
                 type="button"
+                tabIndex={-1}
                 className={cn(
                   "w-full px-3 py-2 text-left text-sm",
                   isAprov
                     ? "text-foreground hover:bg-primary-muted"
                     : "text-slate-800 hover:bg-slate-50 dark:text-neutral-100 dark:hover:bg-neutral-800",
+                  activeIndex === index && (isAprov ? "bg-primary-muted" : "bg-slate-100 dark:bg-neutral-800"),
                 )}
+                onMouseEnter={() => setActiveIndex(index)}
                 onMouseDown={(e) => {
                   e.preventDefault();
                   onChange(s);

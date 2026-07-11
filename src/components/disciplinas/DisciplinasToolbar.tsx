@@ -71,7 +71,7 @@ export function DisciplinasToolbar({
           {concursos.length > 0 ? (
             <select
               aria-label="Concurso ativo"
-              className="h-10 min-w-[200px] rounded-[10px] border border-[var(--border-default)] bg-[var(--bg-surface)] px-3 text-sm text-[var(--text-primary)] outline-none focus:border-primary"
+              className="h-10 min-w-[200px] rounded-[10px] border border-[var(--border-default)] bg-[var(--bg-surface)] px-3 text-sm text-[var(--text-primary)] outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 focus-visible:ring-2 focus-visible:ring-ring"
               value={concursoId}
               onChange={(e) => setConcursoAtivoId(e.target.value || null)}
             >

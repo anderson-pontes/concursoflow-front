@@ -1,11 +1,24 @@
 ﻿import React from "react";
-import ReactDOM from "react-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { X } from "lucide-react";
 import { toast } from "sonner";
 
 import { api } from "@/services/api";
-import { RichTextEditor } from "@/components/flashcards/RichTextEditor";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { useTablistNavigation } from "@/hooks/useTablistNavigation";
+import { useListboxNavigation } from "@/hooks/useListboxNavigation";
+
+const RichTextEditor = React.lazy(() =>
+  import("@/components/flashcards/RichTextEditor").then((m) => ({ default: m.RichTextEditor })),
+);
+
+function EditorSkeleton() {
+  return (
+    <div
+      className="min-h-[220px] animate-pulse rounded-[10px] border border-border bg-muted"
+      aria-hidden
+    />
+  );
+}
 
 
 type Flashcard = {
@@ -57,6 +70,7 @@ export function CardFormModal({
 }: Props) {
   const qc = useQueryClient();
   const isEdit = Boolean(card);
+  const onTablistKeyDown = useTablistNavigation();
 
   const [effectiveDeckId, setEffectiveDeckId] = React.useState(deckId);
   const [frente, setFrente] = React.useState("<p></p>");
@@ -195,7 +209,22 @@ export function CardFormModal({
     onDeckChange?.(id);
   };
 
-  if (!open) return null;
+  const tagListOpen = tagFocused && filteredSuggestions.length > 0;
+  const tagNav = useListboxNavigation({
+    itemCount: filteredSuggestions.length,
+    isOpen: tagListOpen,
+    onSelect: (i) => addTag(filteredSuggestions[i]),
+    onClose: () => setTagFocused(false),
+    idPrefix: "card-tags",
+  });
+
+  const deckNav = useListboxNavigation({
+    itemCount: decks.length,
+    isOpen: deckMenuOpen,
+    onSelect: (i) => selectDeck(decks[i].id),
+    onClose: () => setDeckMenuOpen(false),
+    idPrefix: "card-deck",
+  });
 
   const deckLabel =
     decks.find((d) => d.id === effectiveDeckId)?.full_path?.trim() ||
@@ -207,19 +236,12 @@ export function CardFormModal({
   const versoPreview =
     activeTab === "frente" && !isEmpty(verso) ? truncateText(stripHtml(verso), 72) : "";
 
-  return ReactDOM.createPortal(
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/45 p-4 backdrop-blur-sm"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="card-form-title"
-      onClick={(e) => {
-        if (e.target === e.currentTarget) onClose();
-      }}
-    >
-      <div
-        className="flex max-h-[92vh] w-full max-w-[720px] flex-col overflow-hidden rounded-2xl bg-card shadow-lg"
-        onClick={(e) => e.stopPropagation()}
+  return (
+    <Dialog open={open} onOpenChange={(o) => { if (!o) onClose(); }}>
+      <DialogContent
+        hideClose
+        aria-describedby={undefined}
+        className="flex max-h-[92vh] w-full max-w-[720px] flex-col gap-0 overflow-hidden rounded-2xl border-0 bg-card p-0 shadow-lg"
       >
         {/* HEADER fixo */}
         <header className="grid shrink-0 grid-cols-[1fr_auto_1fr] items-center gap-2 border-b border-border px-4 py-3">
@@ -227,9 +249,9 @@ export function CardFormModal({
             <span className="shrink-0 text-xl leading-none" aria-hidden>
               💳
             </span>
-            <h2 id="card-form-title" className="min-w-0 truncate text-[18px] font-bold text-foreground">
+            <DialogTitle className="min-w-0 truncate text-[18px] font-bold text-foreground">
               {isEdit ? "Editar cartão" : "Novo cartão"}
-            </h2>
+            </DialogTitle>
           </div>
 
           <div className="flex justify-center" ref={deckMenuRef}>
@@ -238,9 +260,21 @@ export function CardFormModal({
                 <button
                   type="button"
                   onClick={() => setDeckMenuOpen((o) => !o)}
+                  onKeyDown={(e) => {
+                    if (!deckMenuOpen) {
+                      if (e.key === "ArrowDown") {
+                        e.preventDefault();
+                        setDeckMenuOpen(true);
+                      }
+                      return;
+                    }
+                    deckNav.onKeyDown(e);
+                  }}
                   className="inline-flex max-w-[200px] items-center gap-1.5 truncate rounded-full bg-primary-muted px-3 py-1.5 text-sm font-semibold text-primary transition-colors duration-200 hover:opacity-90"
                   aria-haspopup="listbox"
                   aria-expanded={deckMenuOpen}
+                  aria-controls={deckNav.listboxId}
+                  aria-activedescendant={deckNav.activeId}
                 >
                   <span aria-hidden>📚</span>
                   <span className="truncate">{deckLabel}</span>
@@ -250,16 +284,23 @@ export function CardFormModal({
                 </button>
                 {deckMenuOpen ? (
                   <ul
+                    id={deckNav.listboxId}
                     className="absolute left-1/2 top-full z-20 mt-2 max-h-48 min-w-[200px] -translate-x-1/2 overflow-auto rounded-[10px] border border-border bg-white py-1 shadow-lg"
                     role="listbox"
                   >
-                    {decks.map((d) => (
+                    {decks.map((d, index) => (
                       <li key={d.id}>
                         <button
                           type="button"
                           role="option"
+                          id={deckNav.getOptionId(index)}
                           aria-selected={d.id === effectiveDeckId}
-                          className="w-full px-3 py-2 text-left text-sm text-foreground transition-colors duration-200 hover:bg-primary-muted"
+                          tabIndex={-1}
+                          className={[
+                            "w-full px-3 py-2 text-left text-sm text-foreground transition-colors duration-200 hover:bg-primary-muted",
+                            deckNav.activeIndex === index ? "bg-primary-muted" : "",
+                          ].join(" ")}
+                          onMouseEnter={() => deckNav.setActiveIndex(index)}
                           onClick={() => selectDeck(d.id)}
                         >
                           {d.full_path ?? d.nome}
@@ -284,7 +325,6 @@ export function CardFormModal({
               type="button"
               onClick={onClose}
               className="shrink-0 p-1 text-[24px] leading-none text-muted-foreground transition-colors duration-200 ease-out hover:text-foreground"
-              style={{ fontFamily: "Inter, system-ui, sans-serif" }}
               aria-label="Fechar"
             >
               ×
@@ -297,11 +337,19 @@ export function CardFormModal({
           <div className="min-h-0 flex-1 overflow-y-auto px-4 py-4">
             {/* Tabs pill — sempre (sem split) */}
             <div className="flex justify-center">
-              <div className="inline-flex rounded-[10px] bg-muted p-1">
+              <div
+                role="tablist"
+                aria-label="Lado do cartão"
+                onKeyDown={onTablistKeyDown}
+                className="inline-flex rounded-[10px] bg-muted p-1"
+              >
                 {(["frente", "verso"] as const).map((tab) => (
                   <button
                     key={tab}
                     type="button"
+                    role="tab"
+                    aria-selected={activeTab === tab}
+                    tabIndex={activeTab === tab ? 0 : -1}
                     onClick={() => setActiveTab(tab)}
                     className={[
                       "rounded-lg px-4 py-2 text-sm transition-all duration-200 ease-out",
@@ -326,21 +374,25 @@ export function CardFormModal({
 
             <div className="mt-3 min-w-0">
               {activeTab === "frente" ? (
-                <RichTextEditor
-                  value={frente}
-                  onChange={setFrente}
-                  placeholder="Digite o conteúdo da frente do cartão..."
-                  minHeight={220}
-                  maxHeight={380}
-                />
+                <React.Suspense fallback={<EditorSkeleton />}>
+                  <RichTextEditor
+                    value={frente}
+                    onChange={setFrente}
+                    placeholder="Digite o conteúdo da frente do cartão..."
+                    minHeight={220}
+                    maxHeight={380}
+                  />
+                </React.Suspense>
               ) : (
-                <RichTextEditor
-                  value={verso}
-                  onChange={setVerso}
-                  placeholder="Digite o conteúdo do verso do cartão..."
-                  minHeight={220}
-                  maxHeight={380}
-                />
+                <React.Suspense fallback={<EditorSkeleton />}>
+                  <RichTextEditor
+                    value={verso}
+                    onChange={setVerso}
+                    placeholder="Digite o conteúdo do verso do cartão..."
+                    minHeight={220}
+                    maxHeight={380}
+                  />
+                </React.Suspense>
               )}
             </div>
 
@@ -373,15 +425,26 @@ export function CardFormModal({
                 <input
                   type="text"
                   value={tagInput}
+                  role="combobox"
+                  aria-expanded={tagListOpen}
+                  aria-controls={tagNav.listboxId}
+                  aria-autocomplete="list"
+                  aria-activedescendant={tagNav.activeId}
                   onChange={(e) => {
                     setTagInput(e.target.value);
                     setTagFocused(true);
                   }}
                   onFocus={() => setTagFocused(true)}
                   onKeyDown={(e) => {
+                    if (e.key === "ArrowDown" || e.key === "ArrowUp" || e.key === "Home" || e.key === "End" || e.key === "Escape") {
+                      tagNav.onKeyDown(e);
+                      return;
+                    }
                     if (e.key === "Enter") {
                       e.preventDefault();
-                      addTag();
+                      if (tagNav.activeIndex >= 0) addTag(filteredSuggestions[tagNav.activeIndex]);
+                      else addTag();
+                      return;
                     }
                     if (e.key === ",") {
                       e.preventDefault();
@@ -389,19 +452,25 @@ export function CardFormModal({
                     }
                   }}
                   placeholder="Adicionar tag..."
-                  className="min-w-0 flex-1 bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground"
+                  className="min-w-0 flex-1 bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 rounded-sm"
                 />
               </div>
-              {tagFocused && filteredSuggestions.length > 0 ? (
+              {tagListOpen ? (
                 <ul
+                  id={tagNav.listboxId}
                   className="absolute left-0 right-0 top-full z-10 mt-1 max-h-40 overflow-auto rounded-[10px] border border-border bg-white py-1 shadow-lg"
                   role="listbox"
                 >
-                  {filteredSuggestions.map((sug) => (
-                    <li key={sug}>
+                  {filteredSuggestions.map((sug, index) => (
+                    <li key={sug} role="option" id={tagNav.getOptionId(index)} aria-selected={tagNav.activeIndex === index}>
                       <button
                         type="button"
-                        className="w-full px-3 py-2 text-left text-sm text-foreground transition-colors duration-200 hover:bg-primary-muted"
+                        tabIndex={-1}
+                        className={[
+                          "w-full px-3 py-2 text-left text-sm text-foreground transition-colors duration-200 hover:bg-primary-muted",
+                          tagNav.activeIndex === index ? "bg-primary-muted" : "",
+                        ].join(" ")}
+                        onMouseEnter={() => tagNav.setActiveIndex(index)}
                         onMouseDown={(e) => e.preventDefault()}
                         onClick={() => addTag(sug)}
                       >
@@ -448,8 +517,7 @@ export function CardFormModal({
             </button>
           </footer>
         </form>
-      </div>
-    </div>,
-    document.body,
+      </DialogContent>
+    </Dialog>
   );
 }

@@ -161,12 +161,11 @@ export function DisciplinaCard({
       tabIndex={0}
       aria-label={`Abrir painel de ${disciplina.nome}`}
       className={cn(
-        "group cursor-pointer overflow-hidden rounded-2xl border-[1.5px] border-[var(--border-default)] bg-[var(--bg-surface)] shadow-card transition-all duration-200 ease-out outline-none",
+        "group cursor-pointer overflow-hidden rounded-2xl border-[1.5px] border-[var(--border-default)] bg-[var(--bg-surface)] font-sans shadow-card transition-all duration-200 ease-out outline-none",
         "hover:-translate-y-0.5 hover:border-primary-200 hover:shadow-md",
         "dark:hover:border-primary-800 dark:focus-visible:ring-offset-[var(--bg-page)]",
         "focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
       )}
-      style={{ fontFamily: "Inter, system-ui, sans-serif" }}
       onClick={goPainel}
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") {
@@ -221,6 +220,7 @@ export function DisciplinaCard({
                   type="button"
                   aria-expanded={menuOpen}
                   aria-haspopup="menu"
+                  aria-label={`Ações da disciplina ${disciplina.nome}`}
                   className="flex h-8 w-8 items-center justify-center rounded-lg text-[var(--text-muted)] transition-colors hover:bg-muted hover:text-foreground dark:hover:bg-[var(--bg-surface-2)] dark:hover:text-[var(--text-primary)]"
                   onClick={() => setMenuOpen((v) => !v)}
                 >
@@ -231,12 +231,6 @@ export function DisciplinaCard({
                     className="absolute right-0 z-[1000] mt-2 min-w-[200px] rounded-xl border border-[var(--border-default)] bg-card p-1.5 shadow-lg dark:bg-[var(--bg-surface-2)]"
                     style={{ animation: "discMenuIn 150ms ease-out" }}
                   >
-                    <style>{`
-                      @keyframes discMenuIn {
-                        from { opacity: 0; transform: translateY(-4px); }
-                        to { opacity: 1; transform: translateY(0); }
-                      }
-                    `}</style>
                     <button
                       type="button"
                       className="flex w-full flex-col items-start gap-0.5 rounded-lg px-3.5 py-2.5 text-left text-sm text-[var(--text-primary)] transition-colors hover:bg-primary-muted hover:text-primary dark:hover:bg-surface-muted dark:hover:text-primary-400"

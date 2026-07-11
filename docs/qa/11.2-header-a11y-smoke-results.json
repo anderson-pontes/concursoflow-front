@@ -1,0 +1,28 @@
+{
+  "story": "11.2",
+  "fetchedAt": "2026-07-11T19:16:21.936Z",
+  "base": "http://localhost:3000",
+  "flows": {
+    "1_concurso_switcher": {
+      "ok": true,
+      "note": "open=true activeDesc=true escape=true"
+    },
+    "2_user_dropdown": {
+      "ok": true,
+      "note": "first=true arrow=true escapeFocus=true"
+    },
+    "3_notification_bell": {
+      "ok": true,
+      "note": "N/A — seed@example.com não é admin (componente oculto)"
+    }
+  },
+  "a11y": {
+    "concurso_escape": true,
+    "user_menu_escape_focus": true
+  },
+  "summary": {
+    "passed": 3,
+    "total": 3,
+    "allOk": true
+  }
+}

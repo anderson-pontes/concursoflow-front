@@ -2,6 +2,7 @@ import React from "react";
 import { BookOpen } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import { fmtPontos } from "@/lib/disciplinas/pontos";
 import type { DisciplinaInput } from "@/lib/disciplinas/types";
@@ -66,8 +67,6 @@ export function ModalDisciplinaForm({
     setValues(base);
   }, [open, mode, initialValues, defaultConcursoId]);
 
-  if (!open) return null;
-
   const toggleConcurso = (id: string) => {
     setValues((s) => ({
       ...s,
@@ -88,17 +87,19 @@ export function ModalDisciplinaForm({
   };
 
   return (
-    <div
-      className="fixed inset-0 z-[140] flex items-end justify-center bg-black/45 p-0 backdrop-blur-[4px] sm:items-center sm:p-4"
-      role="dialog"
-      aria-modal="true"
-      onMouseDown={(e) => {
-        if (e.target === e.currentTarget && !isPending) onClose();
+    <Dialog
+      open={open}
+      onOpenChange={(o) => {
+        if (!o && !isPending) onClose();
       }}
     >
-      <div
-        className="flex max-h-[92vh] w-full max-w-[520px] flex-col overflow-hidden rounded-t-[20px] border border-[var(--border-default)] bg-[var(--bg-surface)] shadow-xl sm:rounded-[20px]"
-        style={{ fontFamily: "Inter, system-ui, sans-serif" }}
+      <DialogContent
+        hideClose
+        aria-describedby={undefined}
+        className={cn(
+          "flex w-full max-w-[520px] flex-col gap-0 overflow-hidden border border-[var(--border-default)] bg-[var(--bg-surface)] p-0 font-sans shadow-xl",
+          "max-h-[92vh] max-sm:bottom-0 max-sm:left-0 max-sm:top-auto max-sm:max-h-[92vh] max-sm:translate-x-0 max-sm:translate-y-0 max-sm:rounded-t-[20px] sm:rounded-[20px]",
+        )}
       >
         <header className="relative shrink-0 border-b border-[var(--border-subtle)] px-6 pb-4 pt-6 pr-14">
           <button
@@ -115,9 +116,9 @@ export function ModalDisciplinaForm({
               <BookOpen className="h-5 w-5" />
             </span>
             <div>
-              <h2 className="text-lg font-bold text-[var(--text-primary)]">
+              <DialogTitle className="text-lg font-bold text-[var(--text-primary)]">
                 {mode === "create" ? "Nova disciplina" : "Editar disciplina"}
-              </h2>
+              </DialogTitle>
               <p className="mt-1 text-sm text-[var(--text-secondary)]">
                 Catálogo global — vincule a um ou mais concursos (opcional)
               </p>
@@ -243,8 +244,8 @@ export function ModalDisciplinaForm({
             </button>
           </footer>
         </form>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }
 

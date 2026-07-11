@@ -1,10 +1,10 @@
 import React from "react";
-import ReactDOM from "react-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { X, UploadCloud, FileArchive, CheckCircle2, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
 
 import { api } from "@/services/api";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 
 type Disciplina = { id: string; nome: string };
 
@@ -81,25 +81,19 @@ export function ImportApkgModal({ open, onClose }: Props) {
     setResult(null);
   };
 
-  if (!open) return null;
-
-  return ReactDOM.createPortal(
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/55 p-4 backdrop-blur-sm"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="import-apkg-title"
-      onClick={(e) => {
-        if (e.target === e.currentTarget) onClose();
-      }}
-    >
-      <div className="w-full max-w-md overflow-hidden rounded-2xl border border-border bg-card shadow-2xl">
+  return (
+    <Dialog open={open} onOpenChange={(o) => { if (!o) onClose(); }}>
+      <DialogContent
+        hideClose
+        aria-describedby={undefined}
+        className="block w-full max-w-md gap-0 overflow-hidden rounded-2xl border border-border bg-card p-0 shadow-2xl"
+      >
         <div className="flex items-center justify-between border-b border-border px-6 py-4">
           <div className="flex items-center gap-2">
             <FileArchive className="h-5 w-5 text-primary" />
-            <h2 id="import-apkg-title" className="text-base font-semibold text-card-foreground">
+            <DialogTitle className="text-base font-semibold text-card-foreground">
               Importar baralho do Anki
-            </h2>
+            </DialogTitle>
           </div>
           <button
             type="button"
@@ -251,8 +245,7 @@ export function ImportApkgModal({ open, onClose }: Props) {
             </>
           )}
         </div>
-      </div>
-    </div>,
-    document.body,
+      </DialogContent>
+    </Dialog>
   );
 }

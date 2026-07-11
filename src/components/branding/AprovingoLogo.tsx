@@ -2,7 +2,8 @@ import React from "react";
 
 import { cn } from "@/lib/utils";
 
-import logoSrc from "../../assets/logo2.svg";
+/** Runtime: WebP otimizado. Fonte: `src/assets/logo2.svg` (não importado no bundle). */
+import logoSrc from "@/assets/brand/logo2.webp";
 
 type Props = {
   className?: string;
