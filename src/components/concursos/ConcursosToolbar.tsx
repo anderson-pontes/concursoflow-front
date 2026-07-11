@@ -44,11 +44,12 @@ export function ConcursosToolbar({
             value={search}
             onChange={(e) => onSearchChange(e.target.value)}
             placeholder="Buscar concurso..."
-            className="h-11 w-full rounded-[10px] border-[1.5px] border-[var(--border-default)] bg-white py-2 pl-10 pr-3 text-sm text-[var(--text-primary)] outline-none transition placeholder:text-[var(--text-muted)] focus:border-[#6C3FC5] focus:shadow-[0_0_0_3px_#EDE9FE] dark:bg-[var(--bg-surface)] dark:focus:shadow-[0_0_0_3px_rgba(167,139,250,0.2)]"
+            aria-label="Buscar concurso"
+            className="h-11 w-full rounded-[10px] border-[1.5px] border-[var(--border-default)] bg-white py-2 pl-10 pr-3 text-sm text-[var(--text-primary)] outline-none transition placeholder:text-[var(--text-muted)] focus:border-primary focus:ring-2 focus:ring-primary/20 dark:bg-[var(--bg-surface)] dark:focus:ring-2 focus:ring-primary/20"
           />
         </div>
 
-        <div className="inline-flex rounded-[10px] bg-[#F3F4F6] p-1 dark:bg-[var(--bg-surface-2)]">
+        <div className="inline-flex rounded-[10px] bg-muted p-1 dark:bg-[var(--bg-surface-2)]">
           {SEGMENTS.map((seg) => (
             <button
               key={seg.id}
@@ -57,8 +58,8 @@ export function ConcursosToolbar({
               className={cn(
                 "rounded-lg px-3 py-2 text-sm font-semibold transition-all duration-200",
                 statusFilter === seg.id
-                  ? "bg-[#6C3FC5] text-white shadow-[0_1px_4px_rgba(0,0,0,0.12)]"
-                  : "bg-transparent text-[#6B7280] dark:text-[var(--text-secondary)]",
+                  ? "bg-primary text-primary-foreground shadow-sm"
+                  : "bg-transparent text-muted-foreground dark:text-[var(--text-secondary)]",
               )}
             >
               {seg.label}
@@ -69,7 +70,7 @@ export function ConcursosToolbar({
         <button
           type="button"
           onClick={onCreate}
-          className="inline-flex h-11 items-center justify-center gap-2 rounded-[10px] bg-[#6C3FC5] px-5 text-sm font-bold text-white shadow-sm transition-all duration-200 hover:-translate-y-px hover:bg-[#5B32A8]"
+          className="inline-flex h-11 items-center justify-center gap-2 rounded-[10px] bg-primary px-5 text-sm font-bold text-white shadow-sm transition-all duration-200 hover:-translate-y-px hover:bg-primary-700"
         >
           <span className="text-lg leading-none">+</span>
           Novo concurso
@@ -115,7 +116,7 @@ export function ConcursosEmptyState({ onCreate }: { onCreate: () => void }) {
       <button
         type="button"
         onClick={onCreate}
-        className="mt-8 inline-flex items-center gap-2 rounded-[10px] bg-[#6C3FC5] px-6 py-3.5 text-sm font-bold text-white shadow-md transition-all duration-200 hover:-translate-y-px hover:bg-[#5B32A8]"
+        className="mt-8 inline-flex items-center gap-2 rounded-[10px] bg-primary px-6 py-3.5 text-sm font-bold text-white shadow-md transition-all duration-200 hover:-translate-y-px hover:bg-primary-700"
       >
         + Cadastrar meu primeiro concurso
       </button>

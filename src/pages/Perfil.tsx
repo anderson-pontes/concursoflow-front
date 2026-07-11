@@ -54,7 +54,7 @@ export function Perfil() {
         <button
           type="button"
           onClick={() => navigate(-1)}
-          className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-background text-muted-foreground transition hover:bg-muted"
+          className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg border border-border bg-background text-muted-foreground transition hover:bg-muted"
           aria-label="Voltar"
         >
           <ArrowLeft className="h-4 w-4" />

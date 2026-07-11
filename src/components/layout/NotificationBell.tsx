@@ -13,11 +13,15 @@ import {
 } from "@/services/notifications";
 import { useAuthStore } from "@/stores/authStore";
 
+const iconBtnClass =
+  "relative inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg border border-border bg-surface text-muted-foreground transition-colors hover:bg-surface-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background";
+
 export function NotificationBell() {
   const user = useAuthStore((s) => s.user);
   const navigate = useNavigate();
   const qc = useQueryClient();
   const [open, setOpen] = React.useState(false);
+  const btnRef = React.useRef<HTMLButtonElement>(null);
 
   const isAdmin = isAdminUser(user);
 
@@ -50,17 +54,36 @@ export function NotificationBell() {
     },
   });
 
-  if (!isAdmin) return null;
+  React.useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        e.stopPropagation();
+        setOpen(false);
+        btnRef.current?.focus();
+      }
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [open]);
 
-  const iconBtn =
-    "relative inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 transition-colors hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500 dark:border-neutral-600 dark:bg-neutral-900/50 dark:text-neutral-200 dark:hover:bg-neutral-900";
+  if (!isAdmin) return null;
 
   return (
     <div className="relative">
-      <button type="button" className={iconBtn} title="Notificações" aria-label="Notificações" onClick={() => setOpen((v) => !v)}>
+      <button
+        ref={btnRef}
+        type="button"
+        className={iconBtnClass}
+        title="Notificações"
+        aria-label="Notificações"
+        aria-expanded={open}
+        aria-haspopup="menu"
+        onClick={() => setOpen((v) => !v)}
+      >
         <Bell className="h-4 w-4" />
         {count > 0 ? (
-          <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-rose-500 px-1 text-[10px] font-bold text-white">
+          <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-destructive px-1 text-[10px] font-bold text-destructive-foreground">
             {count > 9 ? "9+" : count}
           </span>
         ) : null}
@@ -69,12 +92,16 @@ export function NotificationBell() {
       {open ? (
         <>
           <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} aria-hidden />
-          <div className="absolute right-0 z-50 mt-2 w-[min(100vw-2rem,360px)] rounded-xl border border-border/40 bg-background shadow-lg">
-            <div className="flex items-center justify-between border-b border-border/40 px-4 py-3">
+          <div
+            className="absolute right-0 z-50 mt-2 w-[min(100vw-2rem,360px)] rounded-xl border border-border bg-card shadow-lg"
+            role="menu"
+            aria-label="Notificações"
+          >
+            <div className="flex items-center justify-between border-b border-border px-4 py-3">
               <span className="text-sm font-semibold">Notificações</span>
               <button
                 type="button"
-                className="text-xs text-primary-600 hover:underline"
+                className="min-h-11 rounded-lg px-2 text-xs text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 onClick={() => markAllMutation.mutate()}
               >
                 Marcar todas como lidas
@@ -88,9 +115,10 @@ export function NotificationBell() {
                   <button
                     key={n.id}
                     type="button"
+                    role="menuitem"
                     className={cn(
-                      "w-full border-b border-border/20 px-4 py-3 text-left text-sm hover:bg-muted/50",
-                      !n.read_at && "bg-primary-50/40 dark:bg-primary-950/20",
+                      "min-h-11 w-full border-b border-border/50 px-4 py-3 text-left text-sm hover:bg-muted/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset",
+                      !n.read_at && "bg-primary-muted/50",
                     )}
                     onClick={() => {
                       if (!n.read_at) markReadMutation.mutate(n.id);

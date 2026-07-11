@@ -10,7 +10,7 @@ export function BannerSemConcurso() {
         </p>
         <button
           type="button"
-          className="rounded-md bg-[#6C3FC5] px-3 py-2 text-xs font-medium text-white hover:bg-[#5B32A8]"
+          className="min-h-11 rounded-lg bg-primary px-4 py-2 text-xs font-medium text-primary-foreground transition-colors hover:bg-primary-700"
           onClick={() => navigate("/concursos")}
         >
           Criar concurso

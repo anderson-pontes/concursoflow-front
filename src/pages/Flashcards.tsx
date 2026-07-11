@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
@@ -28,7 +28,6 @@ import { FlashcardsReviewTab } from "@/components/flashcards/FlashcardsReviewTab
 
 import {
   ANKI_DEFAULTS,
-  FLASH_TEXT,
   STREAK_DECK_PREFIX,
   STREAK_GLOBAL_KEY,
 } from "@/lib/flashcards/constants";
@@ -467,10 +466,7 @@ export function Flashcards() {
   ];
 
   return (
-    <div
-      className="-m-6 min-h-full bg-[#F5F4FA] p-6 dark:bg-neutral-900"
-      style={{ fontFamily: "Inter, system-ui, sans-serif", color: FLASH_TEXT }}
-    >
+    <div className="-m-6 min-h-full bg-background p-4 text-foreground sm:p-6">
       <FlashcardsPageStyles />
 
       <div

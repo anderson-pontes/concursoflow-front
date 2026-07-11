@@ -17,7 +17,7 @@ export type PomodoroTheme = {
 export function getPomodoroTheme(phase: PomodoroPhase, isCronometro: boolean): PomodoroTheme {
   if (isCronometro) {
     return {
-      shell: "bg-gradient-to-br from-[#041510] via-[#062018] to-[#031510]",
+      shell: "bg-gradient-to-br from-emerald-950 via-emerald-900 to-green-950",
       topBar: "bg-emerald-500",
       glow: "bg-[radial-gradient(ellipse_70%_55%_at_50%_35%,rgba(16,185,129,0.22),transparent_70%)]",
       arc: "stroke-emerald-400",
@@ -33,7 +33,7 @@ export function getPomodoroTheme(phase: PomodoroPhase, isCronometro: boolean): P
 
   if (phase === "pausa") {
     return {
-      shell: "bg-gradient-to-br from-[#1a0f00] via-[#241400] to-[#2d1900]",
+      shell: "bg-gradient-to-br from-amber-950 via-orange-950 to-amber-900",
       topBar: "bg-amber-500",
       glow: "bg-[radial-gradient(ellipse_70%_55%_at_50%_35%,rgba(245,158,11,0.2),transparent_70%)]",
       arc: "stroke-amber-400",
@@ -48,16 +48,16 @@ export function getPomodoroTheme(phase: PomodoroPhase, isCronometro: boolean): P
   }
 
   return {
-    shell: "bg-gradient-to-br from-[#0f0a1a] via-[#150f28] to-[#1a1233]",
-    topBar: "bg-[#6C3FC5]",
-    glow: "bg-[radial-gradient(ellipse_70%_55%_at_50%_35%,rgba(108,63,197,0.28),transparent_70%)]",
-    arc: "stroke-[#A78BFA]",
-    accent: "text-[#C4B5FD]",
-    accentSoft: "bg-[#6C3FC5]/20 text-[#DDD6FE]",
-    chip: "bg-[#6C3FC5]/20 text-[#DDD6FE]",
-    chipText: "text-[#DDD6FE]",
+    shell: "bg-gradient-to-br from-primary-950 via-violet-950 to-indigo-950",
+    topBar: "bg-primary",
+    glow: "bg-[radial-gradient(ellipse_70%_55%_at_50%_35%,color-mix(in_srgb,var(--primary)_28%,transparent),transparent_70%)]",
+    arc: "stroke-primary-400",
+    accent: "text-primary-300",
+    accentSoft: "bg-primary/20 text-primary-200",
+    chip: "bg-primary/20 text-primary-200",
+    chipText: "text-primary-200",
     modeLabel: "Foco",
     subLabel: "Mantenha a concentração",
-    ring: "border-[#6C3FC5]/25 bg-[#6C3FC5]/10",
+    ring: "border-primary/25 bg-primary/10",
   };
 }

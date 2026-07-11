@@ -12,6 +12,8 @@ import { Concursos } from "./pages/Concursos";
 import { Disciplinas } from "./pages/Disciplinas";
 import { DisciplinaDashboard } from "./pages/DisciplinaDashboard";
 import { Cronograma } from "./pages/Cronograma";
+import { CalendarioEstudos } from "./pages/CalendarioEstudos";
+import { HistoricoEstudos } from "./pages/HistoricoEstudos";
 import { Pomodoro } from "./pages/Pomodoro";
 import { Avisos } from "./pages/Avisos";
 import { Flashcards } from "./pages/Flashcards";
@@ -81,6 +83,22 @@ export default function App() {
         element={
           <Layout requireAuth={!isAuthed}>
             <Cronograma />
+          </Layout>
+        }
+      />
+      <Route
+        path="/estudos/calendario"
+        element={
+          <Layout requireAuth={!isAuthed}>
+            <CalendarioEstudos />
+          </Layout>
+        }
+      />
+      <Route
+        path="/estudos/historico"
+        element={
+          <Layout requireAuth={!isAuthed}>
+            <HistoricoEstudos />
           </Layout>
         }
       />

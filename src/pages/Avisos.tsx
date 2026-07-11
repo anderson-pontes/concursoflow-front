@@ -85,13 +85,13 @@ export function Avisos() {
         <p className="text-sm text-muted-foreground">Listagem e confirmação de prazos (simplificado).</p>
       </div>
 
-      <div className="rounded-xl border border-border/40 bg-background/70 p-4">
+      <div className="rounded-xl border border-border bg-card p-4 shadow-sm sm:p-5">
         <h3 className="text-sm font-semibold">Novo aviso</h3>
         <div className="mt-3 grid gap-3 sm:grid-cols-2">
           <label className="block">
             <span className="text-sm font-medium">Concurso (opcional)</span>
             <select
-              className="mt-1 w-full rounded-lg border border-border/40 bg-background px-3 py-2 text-sm outline-none"
+              className="mt-1.5 min-h-11 w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
               value={form.concurso_id}
               onChange={(e) => setForm((s) => ({ ...s, concurso_id: e.target.value }))}
             >
@@ -107,7 +107,7 @@ export function Avisos() {
           <label className="block">
             <span className="text-sm font-medium">Tipo</span>
             <input
-              className="mt-1 w-full rounded-lg border border-border/40 bg-background px-3 py-2 text-sm outline-none"
+              className="mt-1.5 min-h-11 w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
               value={form.tipo}
               onChange={(e) => setForm((s) => ({ ...s, tipo: e.target.value }))}
             />
@@ -116,7 +116,7 @@ export function Avisos() {
           <label className="block sm:col-span-2">
             <span className="text-sm font-medium">Título</span>
             <input
-              className="mt-1 w-full rounded-lg border border-border/40 bg-background px-3 py-2 text-sm outline-none"
+              className="mt-1.5 min-h-11 w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
               value={form.titulo}
               onChange={(e) => setForm((s) => ({ ...s, titulo: e.target.value }))}
             />
@@ -126,7 +126,7 @@ export function Avisos() {
             <span className="text-sm font-medium">Data vencimento</span>
             <input
               type="date"
-              className="mt-1 w-full rounded-lg border border-border/40 bg-background px-3 py-2 text-sm outline-none"
+              className="mt-1.5 min-h-11 w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
               value={form.data_vencimento}
               onChange={(e) => setForm((s) => ({ ...s, data_vencimento: e.target.value }))}
             />
@@ -135,7 +135,7 @@ export function Avisos() {
           <label className="block">
             <span className="text-sm font-medium">Descrição (opcional)</span>
             <input
-              className="mt-1 w-full rounded-lg border border-border/40 bg-background px-3 py-2 text-sm outline-none"
+              className="mt-1.5 min-h-11 w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
               value={form.descricao}
               onChange={(e) => setForm((s) => ({ ...s, descricao: e.target.value }))}
             />
@@ -144,7 +144,7 @@ export function Avisos() {
 
         <button
           type="button"
-          className="mt-4 rounded-md bg-primary-600 px-3 py-2 text-sm font-medium text-white transition-colors duration-150 hover:bg-primary-800 disabled:opacity-60"
+          className="mt-4 min-h-11 rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground transition hover:bg-primary-700 disabled:opacity-60"
           disabled={createMutation.isPending || !form.titulo.trim()}
           onClick={() => createMutation.mutate()}
         >
@@ -152,14 +152,14 @@ export function Avisos() {
         </button>
       </div>
 
-      <div className="rounded-xl border border-border/40 bg-background/70 p-4">
+      <div className="rounded-xl border border-border bg-card p-4 shadow-sm sm:p-5">
         <h3 className="text-sm font-semibold">Seus avisos</h3>
         {isLoading ? <div className="mt-3 text-sm text-muted-foreground">Carregando...</div> : null}
         {avisos ? (
           <div className="mt-3 space-y-2">
             {avisos.map((a) => (
-              <div key={a.id} className="rounded-lg border border-border/40 bg-background p-3">
-                <div className="flex items-start justify-between gap-3">
+              <div key={a.id} className="rounded-lg border border-border bg-background p-3">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                   <div className="min-w-0">
                     <div className="truncate text-sm font-semibold">{a.titulo}</div>
                     <div className="mt-1 text-xs text-muted-foreground">
@@ -167,12 +167,12 @@ export function Avisos() {
                     </div>
                     {a.descricao ? <div className="mt-2 text-sm text-muted-foreground">{a.descricao}</div> : null}
                   </div>
-                  <div className="flex flex-col gap-2 items-end">
+                  <div className="flex shrink-0 flex-row items-center gap-2 sm:flex-col sm:items-end">
                     <span
-                      className={`rounded-full px-2 py-1 text-xs ${
+                      className={`rounded-full px-2.5 py-1 text-xs font-medium ${
                         a.confirmado
-                          ? "border border-success-100 bg-success-50 text-success-800"
-                          : "bg-neutral-100 text-neutral-600"
+                          ? "bg-success/15 text-success"
+                          : "bg-muted text-muted-foreground"
                       }`}
                     >
                       {a.confirmado ? "Confirmado" : "Pendente"}
@@ -180,7 +180,7 @@ export function Avisos() {
                     {!a.confirmado ? (
                       <button
                         type="button"
-                        className="rounded-md bg-primary-600 px-3 py-1.5 text-xs font-medium text-white transition-colors duration-150 hover:bg-primary-800 disabled:opacity-60"
+                        className="min-h-11 rounded-lg bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground transition hover:bg-primary-700 disabled:opacity-60"
                         disabled={confirmMutation.isPending}
                         onClick={() => confirmMutation.mutate(a.id)}
                       >

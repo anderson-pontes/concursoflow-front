@@ -60,7 +60,8 @@ export function DataTable<T>({
           value={globalFilter}
           onChange={(e) => setGlobalFilter(e.target.value)}
           placeholder={searchPlaceholder}
-          className="h-9 w-full rounded-lg border border-border bg-background py-2 pl-9 pr-3 text-sm outline-none focus:ring-2 focus:ring-primary-500"
+          aria-label={searchPlaceholder}
+          className="min-h-11 w-full rounded-lg border border-border bg-background py-2 pl-9 pr-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
         />
       </div>
       <div className="overflow-x-auto rounded-xl border border-border bg-card shadow-sm">
@@ -77,7 +78,7 @@ export function DataTable<T>({
                           type="button"
                           className={cn(
                             "inline-flex items-center gap-1",
-                            header.column.getCanSort() && "cursor-pointer hover:text-foreground",
+                            header.column.getCanSort() && "cursor-pointer hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 rounded",
                           )}
                           onClick={header.column.getToggleSortingHandler()}
                         >
@@ -110,7 +111,7 @@ export function DataTable<T>({
               table.getRowModel().rows.map((row) => (
                 <tr
                   key={row.id}
-                  className="border-b border-border/60 transition hover:bg-muted/30 last:border-0"
+                  className="border-b border-border/60 transition hover:bg-surface-hover last:border-0"
                 >
                   {row.getVisibleCells().map((cell) => (
                     <td key={cell.id} className="px-4 py-3 text-card-foreground">

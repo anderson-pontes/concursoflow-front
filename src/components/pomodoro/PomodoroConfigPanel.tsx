@@ -64,12 +64,12 @@ export function PomodoroConfigPanel({
   }, [topicoId, topicos, loadingTopicos, setTopicoId]);
 
   const fieldClass =
-    "w-full rounded-xl border border-border bg-background px-3 py-2.5 text-sm text-foreground outline-none transition-shadow focus:ring-2 focus:ring-[#6C3FC5]/40 disabled:cursor-not-allowed disabled:opacity-60";
+    "min-h-11 w-full rounded-xl border border-border bg-background px-3 py-2.5 text-sm text-foreground outline-none transition-shadow focus:ring-2 focus:ring-primary/40 disabled:cursor-not-allowed disabled:opacity-60";
 
   return (
     <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
-      <div className="border-b border-border/60 bg-[#F3F0FF]/50 px-5 py-4 dark:bg-[#6C3FC5]/10">
-        <p className="text-[11px] font-bold uppercase tracking-widest text-[#6C3FC5] dark:text-[#A78BFA]">
+      <div className="border-b border-border/60 bg-primary-muted/50 px-5 py-4 dark:bg-primary/10">
+        <p className="text-[11px] font-bold uppercase tracking-widest text-primary">
           Configuração da sessão
         </p>
         <p className="mt-1 text-sm text-muted-foreground">{modeHint}</p>
@@ -93,10 +93,10 @@ export function PomodoroConfigPanel({
                     onPersist?.();
                   }}
                   className={cn(
-                    "flex flex-col items-center gap-1.5 rounded-xl border px-2 py-3 text-center transition-all",
+                    "flex min-h-11 flex-col items-center justify-center gap-1.5 rounded-xl border px-2 py-3 text-center transition-all",
                     active
-                      ? "border-[#6C3FC5] bg-[#F3F0FF] text-[#6C3FC5] shadow-sm dark:border-[#A78BFA] dark:bg-[#6C3FC5]/15 dark:text-[#DDD6FE]"
-                      : "border-border bg-background text-muted-foreground hover:border-[#C4B5FD] hover:bg-muted/50",
+                      ? "border-primary bg-primary-muted text-primary shadow-sm dark:border-primary-400 dark:bg-primary/15 dark:text-primary-200"
+                      : "border-border bg-background text-muted-foreground hover:border-primary-300 hover:bg-muted/50",
                   )}
                 >
                   <Icon className="h-4 w-4" strokeWidth={2} />

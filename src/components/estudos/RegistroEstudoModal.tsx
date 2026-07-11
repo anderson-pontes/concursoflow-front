@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { invalidateEstudosQueries } from "@/lib/estudos/invalidateQueries";
 import { api } from "@/services/api";
 import { createCategoria, listCategorias } from "@/services/categorias";
 import { getRevisoesConfig } from "@/services/revisoesConfig";
@@ -28,6 +29,8 @@ type Props = {
   defaultBranco?: number | null;
   /** Quando definido, o modal carrega a sessão e salva com PATCH. */
   sessaoId?: string | null;
+  /** Data de referência pré-selecionada (YYYY-MM-DD) para registro retroativo. */
+  defaultDataReferencia?: string | null;
   onSaved?: () => void;
 };
 
@@ -61,7 +64,6 @@ type SessaoEstudoApi = {
 const NOVA_CATEGORIA_VALUE = "__nova_categoria__";
 /** Valor sentinela para o Select de disciplina quando nada está selecionado */
 const NONE_DISCIPLINA = "__none_disciplina__";
-const PRIMARY = "#534AB7";
 
 function fmtDateValue(kind: "hoje" | "ontem" | "outro", custom: string) {
   if (kind === "outro") return custom;
@@ -133,6 +135,7 @@ export function RegistroEstudoModal({
   defaultErros,
   defaultBranco,
   sessaoId,
+  defaultDataReferencia,
   onSaved,
 }: Props) {
   const qc = useQueryClient();
@@ -194,9 +197,24 @@ export function RegistroEstudoModal({
     setPaginas([{ inicio: "", fim: "" }]);
     setSaveAndNew(false);
     setDisciplinaId(defaultDisciplinaId ?? "");
-    setDateKind("hoje");
-    setDateCustom(new Date().toISOString().slice(0, 10));
-  }, [open, sessaoId, defaultDisciplinaId, defaultTopicosSignature, defaultDuracaoSegundos, defaultAcertos, defaultErros, defaultBranco]);
+    if (defaultDataReferencia) {
+      setDateKind("outro");
+      setDateCustom(defaultDataReferencia);
+    } else {
+      setDateKind("hoje");
+      setDateCustom(new Date().toISOString().slice(0, 10));
+    }
+  }, [
+    open,
+    sessaoId,
+    defaultDisciplinaId,
+    defaultTopicosSignature,
+    defaultDuracaoSegundos,
+    defaultAcertos,
+    defaultErros,
+    defaultBranco,
+    defaultDataReferencia,
+  ]);
 
   React.useEffect(() => {
     if (!open) return;
@@ -436,6 +454,7 @@ export function RegistroEstudoModal({
         qc.invalidateQueries({ queryKey: ["topicos", disciplinaId] });
         qc.invalidateQueries({ queryKey: ["disciplina-topicos-registro", disciplinaId] });
       }
+      invalidateEstudosQueries(qc);
       onSaved?.();
       if (sessaoId) {
         onClose();
@@ -519,18 +538,17 @@ export function RegistroEstudoModal({
             </div>
           ) : null}
           <div className="flex flex-wrap items-center gap-2">
-            <Calendar className="h-4 w-4" style={{ color: PRIMARY }} aria-hidden />
+            <Calendar className="h-4 w-4 text-primary" aria-hidden />
             {(["hoje", "ontem", "outro"] as const).map((k) => (
               <button
                 key={k}
                 type="button"
                 onClick={() => setDateKind(k)}
-                className={`rounded-lg border-[0.5px] px-3 py-1.5 text-sm font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 ${
+                className={`min-h-11 rounded-lg border-[0.5px] px-3 py-1.5 text-sm font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
                   dateKind === k
-                    ? "border-transparent text-white"
-                    : "border-slate-300 text-slate-700 hover:bg-slate-50 dark:border-neutral-600 dark:text-neutral-200 dark:hover:bg-neutral-800"
+                    ? "border-transparent bg-primary text-primary-foreground"
+                    : "border-border text-foreground hover:bg-muted"
                 }`}
-                style={dateKind === k ? { backgroundColor: PRIMARY } : undefined}
               >
                 {k === "hoje" ? "Hoje" : k === "ontem" ? "Ontem" : "Outro"}
               </button>
@@ -600,7 +618,7 @@ export function RegistroEstudoModal({
               <TimeSegment label="Segundos" value={seconds} onInc={incSeconds} onDec={decSeconds} />
             </div>
             <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
-              <span className="font-mono text-sm font-semibold" style={{ color: PRIMARY }}>
+              <span className="font-mono text-sm font-semibold text-primary">
                 {tempoDisplay}
               </span>
               <span className="text-xs text-slate-500 dark:text-neutral-400">Total registrado</span>
@@ -875,8 +893,7 @@ export function RegistroEstudoModal({
               saveMutation.mutate();
             }}
             disabled={saveMutation.isPending || (Boolean(sessaoId) && loadingSessao)}
-            className="rounded-xl px-4 py-2 text-sm font-semibold text-white shadow-sm transition disabled:opacity-60"
-            style={{ backgroundColor: PRIMARY }}
+            className="min-h-11 rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-sm transition hover:bg-primary-700 disabled:opacity-60"
           >
             {sessaoId ? "Salvar alterações" : "Salvar registro"}
           </button>

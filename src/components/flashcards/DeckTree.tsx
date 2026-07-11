@@ -37,7 +37,7 @@ function DeckNode({ deck, level, selectedId, onSelect }: NodeProps) {
           "flex w-full items-center gap-1 rounded-lg px-2 py-2 text-left text-sm transition",
           isSelected
             ? "bg-violet-50 font-semibold text-violet-700 dark:bg-violet-900/30 dark:text-violet-200"
-            : "text-[#1A1A2E] hover:bg-neutral-100 dark:text-neutral-200 dark:hover:bg-neutral-700/60",
+            : "text-foreground hover:bg-neutral-100 dark:text-neutral-200 dark:hover:bg-neutral-700/60",
         ].join(" ")}
         style={{ paddingLeft: `${level * 16 + 8}px` }}
       >
@@ -56,7 +56,7 @@ function DeckNode({ deck, level, selectedId, onSelect }: NodeProps) {
                 setExpanded((v) => !v);
               }
             }}
-            className="inline-flex h-4 w-4 items-center justify-center text-xs text-[#6B7280]"
+            className="inline-flex h-4 w-4 items-center justify-center text-xs text-muted-foreground"
           >
             {expanded ? "▾" : "▸"}
           </span>
@@ -74,7 +74,7 @@ function DeckNode({ deck, level, selectedId, onSelect }: NodeProps) {
             </span>
           ) : null}
           <span
-            className="rounded-full border border-neutral-200 bg-white px-2 py-0.5 text-[11px] font-medium tabular-nums text-[#6B7280] dark:border-neutral-600 dark:bg-neutral-800 dark:text-neutral-300"
+            className="rounded-full border border-neutral-200 bg-white px-2 py-0.5 text-[11px] font-medium tabular-nums text-muted-foreground dark:border-neutral-600 dark:bg-neutral-800 dark:text-neutral-300"
             title="Cartões deste baralho"
           >
             {ownTotal}

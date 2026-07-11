@@ -63,7 +63,7 @@ export function FileDropZone({
           htmlFor={id}
           className={cn(
             "mb-1.5 block text-xs font-medium",
-            isAprov ? "text-[#6B7280]" : "text-slate-600 dark:text-neutral-400",
+            isAprov ? "text-muted-foreground" : "text-slate-600 dark:text-neutral-400",
           )}
         >
           {label}
@@ -105,9 +105,9 @@ export function FileDropZone({
           "relative flex cursor-pointer flex-col items-center justify-center gap-2 border-2 border-dashed text-center transition duration-200",
           isAprov
             ? cn(
-                "rounded-[12px] bg-[#FAFAFE] px-6 py-6",
-                "border-[#C4B5FD] hover:border-solid hover:border-[#6C3FC5] hover:bg-[#F3F0FF]",
-                dragOver && "border-solid border-[#6C3FC5] bg-[#EDE9FE]",
+                "rounded-[12px] bg-surface-muted px-6 py-6",
+                "border-primary-200 hover:border-solid hover:border-primary hover:bg-primary-muted",
+                dragOver && "border-solid border-primary bg-accent",
               )
             : cn(
                 "rounded-xl px-4 py-6",
@@ -131,18 +131,18 @@ export function FileDropZone({
           }}
         />
         {leading ? (
-          <span className="text-[32px] leading-none text-[#A78BFA]" aria-hidden>
+          <span className="text-[32px] leading-none text-primary-400" aria-hidden>
             {leading}
           </span>
         ) : (
           <div
             className={cn(
               "flex h-10 w-10 items-center justify-center rounded-lg shadow-sm",
-              isAprov ? "bg-white ring-1 ring-[#E5E7EB]" : "bg-white ring-1 ring-slate-200 dark:bg-neutral-800 dark:ring-neutral-600",
+              isAprov ? "bg-white ring-1 ring-border" : "bg-white ring-1 ring-slate-200 dark:bg-neutral-800 dark:ring-neutral-600",
             )}
           >
             <Icon
-              className={cn("h-5 w-5", isAprov ? "text-[#6C3FC5]" : "text-primary-600 dark:text-primary-400")}
+              className={cn("h-5 w-5", isAprov ? "text-primary" : "text-primary-600 dark:text-primary-400")}
               aria-hidden
             />
           </div>
@@ -151,7 +151,7 @@ export function FileDropZone({
           <p
             className={cn(
               "text-sm font-semibold",
-              isAprov ? "text-[#1A1A2E]" : "font-medium text-slate-800 dark:text-neutral-100",
+              isAprov ? "text-foreground" : "font-medium text-slate-800 dark:text-neutral-100",
             )}
           >
             {description}
@@ -160,14 +160,14 @@ export function FileDropZone({
             <p
               className={cn(
                 "mt-1 truncate text-xs",
-                isAprov ? "text-[#6C3FC5]" : "text-primary-700 dark:text-primary-300",
+                isAprov ? "text-primary" : "text-primary-700 dark:text-primary-300",
               )}
               title={file.name}
             >
               {file.name}
             </p>
           ) : hint ? (
-            <p className={cn("mt-1 text-xs", isAprov ? "text-[#9CA3AF]" : "text-slate-500 dark:text-neutral-400")}>
+            <p className={cn("mt-1 text-xs", isAprov ? "text-muted-foreground" : "text-slate-500 dark:text-neutral-400")}>
               {hint}
             </p>
           ) : (
@@ -178,7 +178,7 @@ export function FileDropZone({
           <img
             src={imagePreviewUrl}
             alt=""
-            className="mt-2 max-h-24 max-w-full rounded-lg border border-[#E5E7EB] object-contain"
+            className="mt-2 max-h-24 max-w-full rounded-lg border border-border object-contain"
           />
         ) : null}
         {file ? (
@@ -187,7 +187,7 @@ export function FileDropZone({
             className={cn(
               "absolute right-2 top-2 rounded-md p-1",
               isAprov
-                ? "text-[#6B7280] hover:bg-[#F3F0FF] hover:text-[#6C3FC5]"
+                ? "text-muted-foreground hover:bg-primary-muted hover:text-primary"
                 : "text-slate-500 hover:bg-slate-200 hover:text-slate-800 dark:hover:bg-neutral-700 dark:hover:text-neutral-100",
             )}
             aria-label="Remover arquivo"

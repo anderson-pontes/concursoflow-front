@@ -42,11 +42,11 @@ function isEncerradoStatus(s: string | null) {
   return s === "realizado" || s === "eliminado";
 }
 
-const fieldLabelClass = "mb-1.5 block text-xs font-medium text-[#6B7280]";
+const fieldLabelClass = "mb-1.5 block text-xs font-medium text-muted-foreground";
 
 const fieldInputClass = cn(
-  "h-11 w-full rounded-[10px] border-[1.5px] border-[#E5E7EB] bg-[var(--bg-surface)] px-4 text-sm text-[var(--text-primary)] outline-none transition",
-  "placeholder:text-[#9CA3AF] focus:border-[#6C3FC5] focus:shadow-[0_0_0_3px_#EDE9FE]",
+  "h-11 w-full rounded-[10px] border-[1.5px] border-border bg-[var(--bg-surface)] px-4 text-sm text-[var(--text-primary)] outline-none transition",
+  "placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20",
   "disabled:cursor-not-allowed disabled:opacity-50",
 );
 
@@ -62,12 +62,12 @@ function FieldLabel({ htmlFor, children, required, optional }: FieldLabelProps) 
     <label htmlFor={htmlFor} className={fieldLabelClass}>
       {children}
       {required ? (
-        <span className="text-[#6C3FC5]" aria-hidden>
+        <span className="text-primary" aria-hidden>
           {" "}
           *
         </span>
       ) : null}
-      {optional ? <span className="font-normal text-[#9CA3AF]"> (opcional)</span> : null}
+      {optional ? <span className="font-normal text-muted-foreground"> (opcional)</span> : null}
     </label>
   );
 }
@@ -87,8 +87,6 @@ export function ModalConcurso({
   const isEdit = Boolean(editing);
   const encerradoTab = isEncerradoStatus(input.status);
 
-  const modalShadow = "0 24px 64px rgba(0,0,0,0.18)";
-
   return (
     <div
       className="fixed inset-0 z-[140] flex items-end justify-center bg-black/45 p-0 backdrop-blur-[4px] sm:items-center sm:p-4"
@@ -102,16 +100,15 @@ export function ModalConcurso({
     >
       <div
         className={cn(
-          "flex max-h-[92vh] w-full max-w-[680px] flex-col overflow-hidden bg-[var(--bg-surface)]",
+          "flex max-h-[92vh] w-full max-w-[680px] flex-col overflow-hidden bg-[var(--bg-surface)] shadow-xl",
           "max-sm:min-h-[100dvh] max-sm:rounded-none sm:max-h-[92vh] sm:rounded-[20px]",
         )}
-        style={{ boxShadow: modalShadow }}
       >
         <header className="relative shrink-0 border-b border-[var(--border-subtle)] px-6 pb-4 pt-6 pr-14">
           <button
             type="button"
             onClick={onClose}
-            className="absolute right-3 top-3 rounded-lg p-2 text-2xl leading-none text-[#9CA3AF] transition-colors duration-200 hover:bg-[#F9FAFB] hover:text-[#1A1A2E]"
+            className="absolute right-3 top-3 rounded-lg p-2 text-2xl leading-none text-muted-foreground transition-colors duration-200 hover:bg-muted hover:text-foreground"
             aria-label="Fechar"
           >
             ×
@@ -141,7 +138,7 @@ export function ModalConcurso({
           <div className="min-h-0 flex-1 overflow-y-auto px-7 py-7">
             <div className="space-y-8">
               <section>
-                <p className="mb-4 text-[12px] font-medium uppercase tracking-[1px] text-[#9CA3AF]">📋 Identificação</p>
+                <p className="mb-4 text-[12px] font-medium uppercase tracking-[1px] text-muted-foreground">📋 Identificação</p>
                 <div className="space-y-4">
                   <div>
                     <FieldLabel htmlFor="concurso-nome" required>
@@ -175,7 +172,7 @@ export function ModalConcurso({
                       <FieldLabel htmlFor="concurso-status-ativo">Status</FieldLabel>
                       <div
                         id="concurso-status-ativo"
-                        className="flex h-11 rounded-[10px] bg-[#F3F4F6] p-1"
+                        className="flex h-11 rounded-[10px] bg-muted p-1"
                         role="group"
                         aria-label="Status do concurso"
                       >
@@ -186,8 +183,8 @@ export function ModalConcurso({
                           className={cn(
                             "flex h-full flex-1 items-center justify-center rounded-lg text-sm font-semibold transition-all duration-200",
                             !encerradoTab
-                              ? "bg-white text-[#6C3FC5] shadow-[0_1px_4px_rgba(0,0,0,0.12)]"
-                              : "bg-transparent text-[#6B7280]",
+                              ? "bg-white text-primary shadow-sm"
+                              : "bg-transparent text-muted-foreground",
                           )}
                         >
                           Ativo
@@ -199,8 +196,8 @@ export function ModalConcurso({
                           className={cn(
                             "flex h-full flex-1 items-center justify-center rounded-lg text-sm font-semibold transition-all duration-200",
                             encerradoTab
-                              ? "bg-white text-[#6C3FC5] shadow-[0_1px_4px_rgba(0,0,0,0.12)]"
-                              : "bg-transparent text-[#6B7280]",
+                              ? "bg-white text-primary shadow-sm"
+                              : "bg-transparent text-muted-foreground",
                           )}
                         >
                           Encerrado
@@ -257,7 +254,7 @@ export function ModalConcurso({
               </section>
 
               <section>
-                <p className="mb-4 text-[12px] font-medium uppercase tracking-[1px] text-[#9CA3AF]">📎 Documentos (opcional)</p>
+                <p className="mb-4 text-[12px] font-medium uppercase tracking-[1px] text-muted-foreground">📎 Documentos (opcional)</p>
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div>
                     <FileDropZone
@@ -274,7 +271,7 @@ export function ModalConcurso({
                       leading="🖼️"
                     />
                     {isEdit && editing?.logo_url && !input.logo_file ? (
-                      <p className="mt-2 text-xs text-[#9CA3AF]">Logo atual mantida. Envie um novo arquivo para substituir.</p>
+                      <p className="mt-2 text-xs text-muted-foreground">Logo atual mantida. Envie um novo arquivo para substituir.</p>
                     ) : null}
                   </div>
                   <div>
@@ -292,7 +289,7 @@ export function ModalConcurso({
                       leading="📄"
                     />
                     {isEdit && editing?.edital_url && !input.edital_file ? (
-                      <p className="mt-2 text-xs text-[#9CA3AF]">Edital atual mantido. Envie um novo arquivo para substituir.</p>
+                      <p className="mt-2 text-xs text-muted-foreground">Edital atual mantido. Envie um novo arquivo para substituir.</p>
                     ) : null}
                   </div>
                 </div>
@@ -301,19 +298,19 @@ export function ModalConcurso({
           </div>
 
           <footer className="flex shrink-0 flex-wrap items-center justify-between gap-3 border-t border-[var(--border-subtle)] bg-[var(--bg-surface)] px-7 py-4">
-            <p className="text-xs text-[#9CA3AF]">* Campos obrigatórios</p>
+            <p className="text-xs text-muted-foreground">* Campos obrigatórios</p>
             <div className="ml-auto flex flex-wrap items-center gap-3">
               <button
                 type="button"
                 onClick={onClose}
-                className="rounded-[10px] border border-[#E5E7EB] bg-white px-4 py-2.5 text-sm font-semibold text-[#6B7280] transition-colors duration-200 hover:bg-[#F9FAFB]"
+                className="rounded-[10px] border border-border bg-white px-4 py-2.5 text-sm font-semibold text-muted-foreground transition-colors duration-200 hover:bg-muted"
               >
                 Cancelar
               </button>
               <button
                 type="submit"
                 disabled={isPending || !input.nome.trim() || !input.orgao.trim()}
-                className="inline-flex items-center gap-2 rounded-[10px] bg-[#6C3FC5] px-5 py-2.5 text-sm font-bold text-white shadow-sm transition-all duration-200 hover:-translate-y-px hover:bg-[#5B32A8] disabled:pointer-events-none disabled:opacity-50"
+                className="inline-flex items-center gap-2 rounded-[10px] bg-primary px-5 py-2.5 text-sm font-bold text-white shadow-sm transition-all duration-200 hover:-translate-y-px hover:bg-primary-700 disabled:pointer-events-none disabled:opacity-50"
               >
                 {isPending ? "Salvando…" : isEdit ? (
                   <>

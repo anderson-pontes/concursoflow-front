@@ -9,10 +9,7 @@ import type { Deck } from "@/lib/flashcards/types";
 
 type Disciplina = { id: string; nome: string };
 
-const PALETTE = [
-  "#6366f1", "#8b5cf6", "#ec4899", "#ef4444", "#f97316",
-  "#eab308", "#22c55e", "#14b8a6", "#3b82f6", "#64748b",
-];
+import { DEFAULT_DECK_COLOR, DECK_COLOR_PALETTE } from "@/lib/palette/deck-colors";
 
 type Props = {
   open: boolean;
@@ -27,7 +24,7 @@ export function DeckFormModal({ open, onClose, deck, flatDecks = [] }: Props) {
 
   const [nome, setNome] = React.useState("");
   const [descricao, setDescricao] = React.useState("");
-  const [cor, setCor] = React.useState(PALETTE[0]);
+  const [cor, setCor] = React.useState<string>(DEFAULT_DECK_COLOR);
   const [disciplinaId, setDisciplinaId] = React.useState("");
   const [parentId, setParentId] = React.useState("");
 
@@ -41,7 +38,7 @@ export function DeckFormModal({ open, onClose, deck, flatDecks = [] }: Props) {
     if (open) {
       setNome(deck?.nome ?? "");
       setDescricao(deck?.descricao ?? "");
-      setCor(deck?.cor_hex ?? PALETTE[0]);
+      setCor(deck?.cor_hex ?? DEFAULT_DECK_COLOR);
       setDisciplinaId(deck?.disciplina_id ?? "");
       setParentId(deck?.parent_id ?? "");
     }
@@ -82,23 +79,26 @@ export function DeckFormModal({ open, onClose, deck, flatDecks = [] }: Props) {
 
   return ReactDOM.createPortal(
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4"
-      style={{ background: "rgba(0,0,0,0.55)", backdropFilter: "blur(4px)" }}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/55 p-4 backdrop-blur-sm"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="deck-form-title"
       onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
     >
       <div className="w-full max-w-md overflow-hidden rounded-2xl border border-border bg-card shadow-2xl">
         {/* Header */}
         <div className="flex items-center justify-between border-b border-border px-6 py-4">
           <div className="flex items-center gap-2">
-            <Layers className="h-5 w-5 text-primary-500" />
-            <h2 className="text-base font-semibold text-card-foreground">
+            <Layers className="h-5 w-5 text-primary" />
+            <h2 id="deck-form-title" className="text-base font-semibold text-card-foreground">
               {isEdit ? "Editar baralho" : "Novo baralho"}
             </h2>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg p-1.5 text-muted-foreground hover:bg-muted hover:text-card-foreground"
+            className="flex min-h-11 min-w-11 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-card-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            aria-label="Fechar"
           >
             <X className="h-4 w-4" />
           </button>
@@ -177,7 +177,7 @@ export function DeckFormModal({ open, onClose, deck, flatDecks = [] }: Props) {
           <div>
             <label className="mb-1.5 block text-sm font-medium text-card-foreground">Cor</label>
             <div className="flex flex-wrap gap-2">
-              {PALETTE.map((c) => (
+              {DECK_COLOR_PALETTE.map((c) => (
                 <button
                   key={c}
                   type="button"

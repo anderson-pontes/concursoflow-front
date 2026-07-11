@@ -16,6 +16,7 @@ import { formatHHMMSS } from "@/lib/pomodoro/format";
 import { playBeep, playCompletionSound } from "@/lib/pomodoro/sounds";
 import { getPomodoroTheme, type PomodoroPhase } from "@/lib/pomodoro/theme";
 import { cn } from "@/lib/utils";
+import { invalidateEstudosQueries } from "@/lib/estudos/invalidateQueries";
 import { api } from "@/services/api";
 import { usePomodoroStore } from "@/stores/pomodoroStore";
 import { Button } from "@/components/ui/button";
@@ -150,8 +151,7 @@ export function PomodoroTimer({ onActiveChange, disciplinaNome, topicoNome }: Po
           anotacoes: null,
         });
         qc.invalidateQueries({ queryKey: ["disciplina-dashboard", disciplinaId] });
-        qc.invalidateQueries({ queryKey: ["dashboard-resumo"] });
-        qc.invalidateQueries({ queryKey: ["sessoes-stats"] });
+        invalidateEstudosQueries(qc);
         toast.success(`Sessão registrada (${duracaoMinutos} min).`);
       } catch {
         toast.error("Erro ao registrar sessão.");
@@ -268,8 +268,7 @@ export function PomodoroTimer({ onActiveChange, disciplinaNome, topicoNome }: Po
   const handleModalSaved = React.useCallback(() => {
     setRegistroOpen(false);
     qc.invalidateQueries({ queryKey: ["disciplina-dashboard", disciplinaId] });
-    qc.invalidateQueries({ queryKey: ["dashboard-resumo"] });
-    qc.invalidateQueries({ queryKey: ["sessoes-stats"] });
+    invalidateEstudosQueries(qc);
     if (registroSnapshot?.isPartial) {
       partialSaveStartRef.current = Date.now();
       focusStartRef.current = Date.now();
@@ -329,7 +328,7 @@ export function PomodoroTimer({ onActiveChange, disciplinaNome, topicoNome }: Po
           "relative overflow-hidden rounded-3xl border transition-all duration-300",
           theme.shell,
           isActive && immersive
-            ? "min-h-[min(68dvh,600px)] border-[#6C3FC5]/30 shadow-2xl shadow-[#6C3FC5]/10"
+            ? "min-h-[min(68dvh,600px)] border-primary/30 shadow-2xl shadow-primary/10"
             : "border-border shadow-sm",
         )}
       >
@@ -348,7 +347,7 @@ export function PomodoroTimer({ onActiveChange, disciplinaNome, topicoNome }: Po
               <span
                 className={cn(
                   "h-2 w-2 rounded-full",
-                  isRunning ? "animate-pulse bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)]" : "bg-white/30",
+                  isRunning ? "animate-pulse bg-success shadow-[0_0_8px_var(--success)]" : "bg-white/30",
                 )}
               />
               <span className="text-[11px] font-semibold uppercase tracking-widest text-white/50">
@@ -435,7 +434,7 @@ export function PomodoroTimer({ onActiveChange, disciplinaNome, topicoNome }: Po
                   type="button"
                   size="lg"
                   onClick={start}
-                  className="h-12 gap-2 rounded-2xl bg-[#6C3FC5] px-8 text-base font-bold shadow-lg shadow-[#6C3FC5]/30 hover:bg-[#5B32AD]"
+                  className="h-12 gap-2 rounded-2xl bg-primary px-8 text-base font-bold text-primary-foreground shadow-lg shadow-primary/30 hover:bg-primary-700"
                 >
                   <Play className="h-5 w-5 fill-current" />
                   Iniciar sessão
@@ -485,7 +484,7 @@ export function PomodoroTimer({ onActiveChange, disciplinaNome, topicoNome }: Po
                   type="button"
                   title="Retomar (espaço)"
                   onClick={resume}
-                  className="flex h-16 w-16 items-center justify-center rounded-full bg-[#6C3FC5] text-white shadow-lg shadow-[#6C3FC5]/40 transition-transform hover:scale-105"
+                  className="flex h-16 w-16 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg shadow-primary/40 transition-transform hover:scale-105"
                 >
                   <Play className="h-7 w-7 fill-current" />
                 </button>

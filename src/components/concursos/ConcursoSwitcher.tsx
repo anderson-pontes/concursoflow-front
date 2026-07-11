@@ -18,10 +18,11 @@ type ConcursoRow = {
 
 type ConcursoSwitcherProps = {
   collapsed?: boolean;
+  mobileOpen?: boolean;
   onAfterPick?: () => void;
 };
 
-export function ConcursoSwitcher({ collapsed = false, onAfterPick }: ConcursoSwitcherProps) {
+export function ConcursoSwitcher({ collapsed = false, mobileOpen = false, onAfterPick }: ConcursoSwitcherProps) {
   const navigate = useNavigate();
   const concursoAtivoId = useConcursoStore((s) => s.concursoAtivoId);
   const setConcursoAtivoId = useConcursoStore((s) => s.setConcursoAtivoId);
@@ -46,7 +47,23 @@ export function ConcursoSwitcher({ collapsed = false, onAfterPick }: ConcursoSwi
     return () => document.removeEventListener("mousedown", onMouseDown);
   }, [open]);
 
+  React.useEffect(() => {
+    if (!open) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [open]);
+
+  React.useEffect(() => {
+    if (!mobileOpen) setOpen(false);
+  }, [mobileOpen]);
+
   const displayName = ativo ? `${ativo.orgao} — ${ativo.cargo ?? ativo.nome}` : "Selecionar concurso";
+
+  const triggerClass =
+    "flex min-h-11 items-center gap-2.5 rounded-xl border border-[var(--concurso-border)] bg-[var(--concurso-bg)] transition-colors hover:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring";
 
   const triggerCollapsed = (
     <button
@@ -54,7 +71,7 @@ export function ConcursoSwitcher({ collapsed = false, onAfterPick }: ConcursoSwi
       aria-expanded={open}
       aria-haspopup="listbox"
       title={displayName}
-      className="mx-auto flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-[var(--concurso-border)] bg-[var(--concurso-bg)] text-base transition-[border-color,background-color] duration-200 ease-out hover:border-[#6C3FC5]"
+      className={cn(triggerClass, "mx-auto h-11 w-11 shrink-0 justify-center px-0")}
       onClick={() => setOpen((v) => !v)}
     >
       <span aria-hidden>🏆</span>
@@ -66,37 +83,43 @@ export function ConcursoSwitcher({ collapsed = false, onAfterPick }: ConcursoSwi
       type="button"
       aria-expanded={open}
       aria-haspopup="listbox"
-      className="flex w-full cursor-pointer items-center gap-2.5 rounded-xl border border-[var(--concurso-border)] bg-[var(--concurso-bg)] px-3 py-2.5 text-left transition-[border-color,background-color] duration-200 ease-out hover:border-[#6C3FC5]"
+      className={cn(triggerClass, "w-full px-3 py-2 text-left")}
       onClick={() => setOpen((v) => !v)}
     >
-      <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#EDE9FE] text-base dark:bg-[#2D2540]">
+      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary-muted text-base">
         🏆
       </div>
       <div className="min-w-0 flex-1 overflow-hidden">
-        <div className="text-[10px] font-medium uppercase tracking-[0.5px] text-[#9CA3AF]">Concurso ativo</div>
-        <div className="truncate text-[13px] font-bold text-[#1A1A2E] dark:text-[#F1F0FF]">{displayName}</div>
+        <div className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground">Concurso ativo</div>
+        <div className="truncate text-sm font-semibold text-foreground">{displayName}</div>
       </div>
-      <ChevronDown className="ml-auto h-3.5 w-3.5 shrink-0 text-[#9CA3AF]" aria-hidden />
+      <ChevronDown className="ml-auto h-4 w-4 shrink-0 text-muted-foreground" aria-hidden />
     </button>
   );
 
   const panel = open ? (
     <div
       className={cn(
-        "absolute z-[130] rounded-xl border border-neutral-200 bg-white p-2 shadow-md dark:border-neutral-600 dark:bg-neutral-900",
-        collapsed ? "left-full top-0 ml-2 w-[260px]" : "left-0 right-0 mt-2",
+        "z-[130] rounded-xl border border-border bg-surface p-2 shadow-md",
+        collapsed && !mobileOpen
+          ? "absolute left-full top-0 ml-2 w-[min(260px,calc(100vw-5rem))]"
+          : "absolute left-0 right-0 mt-2 max-h-[min(16rem,50vh)] overflow-y-auto",
       )}
+      role="listbox"
+      aria-label="Selecionar concurso"
     >
-      <div className="px-2 py-1 text-xs text-neutral-500 dark:text-neutral-400">Concurso ativo</div>
+      <div className="px-2 py-1 text-xs text-muted-foreground">Concurso ativo</div>
       <div className="max-h-56 space-y-1 overflow-y-auto">
         {concursos.length === 0 ? (
-          <p className="px-3 py-2 text-xs text-neutral-500">Nenhum concurso cadastrado.</p>
+          <p className="px-3 py-2 text-xs text-muted-foreground">Nenhum concurso cadastrado.</p>
         ) : (
           concursos.map((c) => (
             <button
               key={c.id}
               type="button"
-              className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left hover:bg-neutral-50 dark:hover:bg-neutral-800"
+              role="option"
+              aria-selected={c.id === concursoAtivoId}
+              className="flex min-h-11 w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left hover:bg-surface-hover"
               onClick={() => {
                 setConcursoAtivoId(c.id);
                 setOpen(false);
@@ -105,22 +128,22 @@ export function ConcursoSwitcher({ collapsed = false, onAfterPick }: ConcursoSwi
               }}
             >
               <div className="min-w-0 flex-1">
-                <div className="truncate text-sm font-medium text-neutral-800 dark:text-neutral-100">
+                <div className="truncate text-sm font-medium text-foreground">
                   {c.orgao} — {c.cargo ?? c.nome}
                 </div>
-                <div className="truncate text-xs text-neutral-400">{c.nome}</div>
+                <div className="truncate text-xs text-muted-foreground">{c.nome}</div>
               </div>
               {c.id === concursoAtivoId ? (
-                <Check className="ml-auto h-3.5 w-3.5 shrink-0 text-[#6C3FC5]" aria-hidden />
+                <Check className="ml-auto h-4 w-4 shrink-0 text-primary" aria-hidden />
               ) : null}
             </button>
           ))
         )}
       </div>
-      <div className="my-1 border-t border-neutral-200 dark:border-neutral-700" />
+      <div className="my-1 border-t border-border" />
       <button
         type="button"
-        className="w-full rounded-lg px-3 py-2 text-left text-xs text-[#6C3FC5] hover:bg-[#F3F0FF] dark:text-[#A78BFA] dark:hover:bg-[#1E1A2E]"
+        className="flex min-h-11 w-full items-center rounded-lg px-3 text-left text-xs font-medium text-primary hover:bg-surface-hover"
         onClick={() => {
           setOpen(false);
           navigate("/concursos");
@@ -133,8 +156,11 @@ export function ConcursoSwitcher({ collapsed = false, onAfterPick }: ConcursoSwi
   ) : null;
 
   return (
-    <div className={cn("relative shrink-0", collapsed ? "flex justify-center px-0 pt-3" : "mx-3 mt-3")} ref={rootRef}>
-      {collapsed ? triggerCollapsed : triggerExpanded}
+    <div
+      className={cn("relative shrink-0", collapsed && !mobileOpen ? "flex justify-center px-0 pt-3" : "mx-3 mt-3")}
+      ref={rootRef}
+    >
+      {collapsed && !mobileOpen ? triggerCollapsed : triggerExpanded}
       {panel}
     </div>
   );

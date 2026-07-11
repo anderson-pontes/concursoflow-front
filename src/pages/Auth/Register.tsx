@@ -8,12 +8,12 @@ import axios from "axios";
 
 import {
   AuthEmailField,
+  AuthLinkButton,
   AuthPasswordField,
   AuthPrimaryButton,
   AuthTextField,
 } from "@/components/auth/AuthFields";
 import { AuthShell } from "@/components/auth/AuthShell";
-import { AprovingoLogo } from "@/components/branding/AprovingoLogo";
 import { PasswordStrength } from "@/components/ui/PasswordStrength";
 import { isValidCpf } from "@/lib/cpfValidate";
 import { maskCpf, maskPhoneBr, unmaskCpf, unmaskPhone } from "@/lib/inputMasks";
@@ -78,7 +78,7 @@ function registerErrorMessage(err: unknown): string {
 }
 
 const fieldClass =
-  "mt-1 w-full rounded-md border border-border/40 bg-background px-3 py-2 text-sm outline-none focus:border-primary-500";
+  "mt-1 w-full rounded-lg border border-input bg-surface px-3 py-2.5 text-sm text-foreground outline-none transition-colors focus:border-primary focus:ring-2 focus:ring-primary/15";
 
 export function Register() {
   const navigate = useNavigate();
@@ -142,7 +142,6 @@ export function Register() {
     },
     onSuccess: (data) => {
       if (data.checkout_url) {
-        // Redireciona para o pagamento da assinatura (Stripe Checkout).
         window.location.href = data.checkout_url;
         return;
       }
@@ -161,19 +160,17 @@ export function Register() {
     return (
       <AuthShell>
         <div className="mx-auto max-w-md text-center">
-          <div className="mb-6 text-4xl" aria-hidden>✅</div>
-          <h1 className="text-2xl font-bold text-[#1A1A2E]">Cadastro concluído!</h1>
-          <p className="mt-3 text-sm text-[#6B7280]">
-            Sua conta foi criada. Para liberar o acesso, conclua o pagamento da assinatura.
-            Assim que o pagamento for confirmado, você poderá entrar com seu e-mail e senha.
+          <div className="mb-6 text-4xl" aria-hidden>
+            ✅
+          </div>
+          <h1 className="text-2xl font-bold text-foreground">Cadastro concluído!</h1>
+          <p className="mt-3 text-sm text-muted-foreground">
+            Sua conta foi criada. Para liberar o acesso, conclua o pagamento da assinatura. Assim que o pagamento for
+            confirmado, você poderá entrar com seu e-mail e senha.
           </p>
-          <button
-            type="button"
-            className="mt-8 font-bold text-[#6C3FC5] hover:underline"
-            onClick={() => navigate("/login")}
-          >
+          <AuthLinkButton onClick={() => navigate("/login")} className="mt-8 font-bold">
             Ir para o login
-          </button>
+          </AuthLinkButton>
         </div>
       </AuthShell>
     );
@@ -181,24 +178,22 @@ export function Register() {
 
   return (
     <AuthShell>
-      <div className="mb-6 flex justify-center md:hidden">
-        <AprovingoLogo className="h-10 w-auto max-w-[200px] shrink-0" />
-      </div>
-
       <div className="mb-6">
-        <h1 className="text-[28px] font-bold text-[#1A1A2E]">Criar sua conta</h1>
-        <p className="mt-1.5 text-sm text-[#6B7280]">Preencha os dados e conclua a assinatura para acessar a plataforma.</p>
+        <h1 className="text-2xl font-bold text-foreground sm:text-[28px]">Criar sua conta</h1>
+        <p className="mt-1.5 text-sm text-muted-foreground">
+          Preencha os dados e conclua a assinatura para acessar a plataforma.
+        </p>
       </div>
 
       <form
-        className={cn("max-h-[70vh] space-y-6 overflow-y-auto pr-1", shakeForm && "auth-form-shake")}
+        className={cn("max-h-[min(70vh,640px)] space-y-6 overflow-y-auto pr-1", shakeForm && "auth-form-shake")}
         onSubmit={handleSubmit((v) => mutation.mutate(v))}
       >
         <section className="space-y-3">
-          <h2 className="text-sm font-semibold text-[#374151]">Dados pessoais</h2>
+          <h2 className="text-sm font-semibold text-foreground">Dados pessoais</h2>
           <AuthTextField id="reg-name" label="Nome completo *" icon="👤" registration={register("name")} error={errors.name?.message} />
           <label className="block text-sm">
-            <span className="font-medium">CPF</span>
+            <span className="font-medium text-foreground">CPF</span>
             <input
               className={fieldClass}
               {...register("cpf", {
@@ -207,14 +202,14 @@ export function Register() {
                 },
               })}
             />
-            {errors.cpf ? <span className="text-xs text-rose-600">{errors.cpf.message}</span> : null}
+            {errors.cpf ? <span className="text-xs text-destructive">{errors.cpf.message}</span> : null}
           </label>
           <label className="block text-sm">
-            <span className="font-medium">Data de nascimento</span>
+            <span className="font-medium text-foreground">Data de nascimento</span>
             <input type="date" className={fieldClass} {...register("birth_date")} />
           </label>
           <label className="block text-sm">
-            <span className="font-medium">Sexo</span>
+            <span className="font-medium text-foreground">Sexo</span>
             <select className={fieldClass} {...register("gender")}>
               <option value="">Selecione</option>
               <option value="feminino">Feminino</option>
@@ -224,81 +219,98 @@ export function Register() {
             </select>
           </label>
           <label className="block text-sm">
-            <span className="font-medium">Telefone celular</span>
+            <span className="font-medium text-foreground">Telefone celular</span>
             <input
               className={fieldClass}
-              {...register("phone", { onChange: (e) => { e.target.value = maskPhoneBr(e.target.value); } })}
+              {...register("phone", {
+                onChange: (e) => {
+                  e.target.value = maskPhoneBr(e.target.value);
+                },
+              })}
             />
           </label>
           <label className="block text-sm">
-            <span className="font-medium">WhatsApp</span>
+            <span className="font-medium text-foreground">WhatsApp</span>
             <input
               className={fieldClass}
-              {...register("whatsapp", { onChange: (e) => { e.target.value = maskPhoneBr(e.target.value); } })}
+              {...register("whatsapp", {
+                onChange: (e) => {
+                  e.target.value = maskPhoneBr(e.target.value);
+                },
+              })}
             />
           </label>
           <AuthEmailField id="reg-email" registration={register("email")} error={errors.email?.message} />
           <AuthEmailField id="reg-email2" registration={register("email_confirm")} error={errors.email_confirm?.message} />
           <AuthPasswordField id="reg-password" registration={register("password")} error={errors.password?.message} />
           <PasswordStrength password={password} />
-          <AuthPasswordField id="reg-confirm" label="Confirmar senha *" registration={register("password_confirm")} error={errors.password_confirm?.message} />
+          <AuthPasswordField
+            id="reg-confirm"
+            label="Confirmar senha *"
+            registration={register("password_confirm")}
+            error={errors.password_confirm?.message}
+          />
         </section>
 
         <section className="space-y-3">
-          <h2 className="text-sm font-semibold text-[#374151]">Informações do estudante</h2>
+          <h2 className="text-sm font-semibold text-foreground">Informações do estudante</h2>
           <label className="block text-sm">
-            <span className="font-medium">Objetivo principal</span>
+            <span className="font-medium text-foreground">Objetivo principal</span>
             <select className={fieldClass} {...register("study_goal")}>
               <option value="">Selecione</option>
               {STUDY_GOAL_OPTIONS.map((o) => (
-                <option key={o.value} value={o.value}>{o.label}</option>
+                <option key={o.value} value={o.value}>
+                  {o.label}
+                </option>
               ))}
             </select>
           </label>
           <label className="block text-sm">
-            <span className="font-medium">Concurso alvo</span>
+            <span className="font-medium text-foreground">Concurso alvo</span>
             <input className={fieldClass} {...register("target_contest")} />
           </label>
           <label className="block text-sm">
-            <span className="font-medium">Cargo desejado</span>
+            <span className="font-medium text-foreground">Cargo desejado</span>
             <input className={fieldClass} {...register("desired_role")} />
           </label>
           <label className="block text-sm">
-            <span className="font-medium">Nível</span>
+            <span className="font-medium text-foreground">Nível</span>
             <select className={fieldClass} {...register("study_level")}>
               <option value="">Selecione</option>
               {STUDY_LEVEL_OPTIONS.map((o) => (
-                <option key={o.value} value={o.value}>{o.label}</option>
+                <option key={o.value} value={o.value}>
+                  {o.label}
+                </option>
               ))}
             </select>
           </label>
           <label className="block text-sm">
-            <span className="font-medium">Área de estudo</span>
+            <span className="font-medium text-foreground">Área de estudo</span>
             <input className={fieldClass} {...register("study_area")} />
           </label>
           <label className="block text-sm">
-            <span className="font-medium">Tempo disponível por dia</span>
+            <span className="font-medium text-foreground">Tempo disponível por dia</span>
             <input className={fieldClass} placeholder="Ex: 2 horas" {...register("daily_study_time")} />
           </label>
           <label className="block text-sm">
-            <span className="font-medium">Como conheceu a plataforma</span>
+            <span className="font-medium text-foreground">Como conheceu a plataforma</span>
             <input className={fieldClass} {...register("referral_source")} />
           </label>
         </section>
 
-        <section className="space-y-2 text-sm">
+        <section className="space-y-2 text-sm text-foreground">
           <label className="flex items-start gap-2">
-            <input type="checkbox" className="mt-1" {...register("accept_terms")} />
+            <input type="checkbox" className="mt-1 accent-primary" {...register("accept_terms")} />
             <span>Aceito os Termos de Uso *</span>
           </label>
-          {errors.accept_terms ? <span className="text-xs text-rose-600">{errors.accept_terms.message}</span> : null}
+          {errors.accept_terms ? <span className="text-xs text-destructive">{errors.accept_terms.message}</span> : null}
           <label className="flex items-start gap-2">
-            <input type="checkbox" className="mt-1" {...register("accept_privacy")} />
+            <input type="checkbox" className="mt-1 accent-primary" {...register("accept_privacy")} />
             <span>Aceito a Política de Privacidade *</span>
           </label>
-          {errors.accept_privacy ? <span className="text-xs text-rose-600">{errors.accept_privacy.message}</span> : null}
+          {errors.accept_privacy ? <span className="text-xs text-destructive">{errors.accept_privacy.message}</span> : null}
           <label className="flex items-start gap-2">
-            <input type="checkbox" className="mt-1" {...register("marketing_opt_in")} />
+            <input type="checkbox" className="mt-1 accent-primary" {...register("marketing_opt_in")} />
             <span>Desejo receber novidades</span>
           </label>
         </section>
@@ -308,15 +320,17 @@ export function Register() {
         </AuthPrimaryButton>
 
         {mutation.isError ? (
-          <div className="text-sm text-[#EF4444]" role="alert">{registerErrorMessage(mutation.error)}</div>
+          <div className="text-sm text-destructive" role="alert">
+            {registerErrorMessage(mutation.error)}
+          </div>
         ) : null}
       </form>
 
-      <p className="mt-6 text-center text-sm text-[#6B7280]">
+      <p className="mt-6 text-center text-sm text-muted-foreground">
         Já tem conta?{" "}
-        <button type="button" onClick={() => navigate("/login")} className="font-bold text-[#6C3FC5] hover:underline">
+        <AuthLinkButton onClick={() => navigate("/login")} className="font-bold">
           Entrar
-        </button>
+        </AuthLinkButton>
       </p>
     </AuthShell>
   );

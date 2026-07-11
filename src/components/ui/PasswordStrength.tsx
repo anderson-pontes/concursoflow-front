@@ -14,7 +14,7 @@ function scorePassword(pw: string): 0 | 1 | 2 | 3 {
 }
 
 const labels = ["", "Fraca", "Média", "Forte"] as const;
-const barColors = ["bg-neutral-200 dark:bg-neutral-700", "bg-danger-400", "bg-warning-400", "bg-success-600"];
+const barColors = ["bg-muted", "bg-destructive", "bg-warning", "bg-success"];
 
 type Props = {
   password: string;
@@ -27,7 +27,7 @@ export function PasswordStrength({ password, className = "" }: Props) {
 
   return (
     <div className={`space-y-1 ${className}`}>
-      <div className="h-1.5 w-full overflow-hidden rounded-full bg-neutral-200 dark:bg-neutral-700">
+      <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
         <div
           className={`h-full rounded-full transition-all duration-200 ${barColors[score]}`}
           style={{ width: `${pct}%` }}

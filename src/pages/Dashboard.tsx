@@ -8,6 +8,7 @@ import { Link } from "react-router-dom";
 import { api } from "@/services/api";
 import { KpiCard } from "@/components/dashboard/KpiCard";
 import { HeatmapCard } from "@/components/dashboard/HeatmapCard";
+import { CalendarioMensalWidget } from "@/components/calendario/CalendarioMensalWidget";
 import { BannerSemConcurso } from "@/components/dashboard/BannerSemConcurso";
 import { RegistroEstudoModal } from "@/components/estudos/RegistroEstudoModal";
 import { DIAS, diaAbrev, blocoDurationMinutes, fmtBlocoMinutos, getTipo } from "@/lib/cronograma/constants";
@@ -26,11 +27,15 @@ type DashboardResumo = {
   avisos_proximos: number;
   flashcards_para_revisar: number;
   streak_dias?: number;
+  taxa_cumprimento_mes?: number;
+  minutos_planejados_mes?: number;
+  minutos_realizados_mes?: number;
 };
 
 type HeatmapData = {
   date: string;
   count: number;
+  minutes?: number;
 };
 
 type Aviso = {
@@ -70,8 +75,13 @@ export function Dashboard() {
   } | null>(null);
 
   const { data: resumo } = useQuery({
-    queryKey: ["dashboard-resumo"],
-    queryFn: async () => (await api.get("/dashboard/resumo")).data as DashboardResumo,
+    queryKey: ["dashboard-resumo", concursoAtivoId ?? null],
+    queryFn: async () =>
+      (
+        await api.get("/dashboard/resumo", {
+          params: concursoAtivoId ? { concurso_id: concursoAtivoId } : {},
+        })
+      ).data as DashboardResumo,
   });
 
   const { data: heatmap } = useQuery({
@@ -110,7 +120,12 @@ export function Dashboard() {
 
   const { data: blocosRaw } = useQuery({
     queryKey: ["cronograma-blocos", concursoAtivoId ?? null],
-    queryFn: async () => (await api.get("/cronograma/blocos")).data as Bloco[],
+    queryFn: async () =>
+      (
+        await api.get("/cronograma/blocos", {
+          params: concursoAtivoId ? { concurso_id: concursoAtivoId } : {},
+        })
+      ).data as Bloco[],
   });
 
   const { data: avisos = [] } = useQuery({
@@ -152,13 +167,17 @@ export function Dashboard() {
       .slice(0, 8);
   }, [disciplinas]);
 
+  const hoje = new Date();
+  const calendarioAno = hoje.getFullYear();
+  const calendarioMes = hoje.getMonth() + 1;
+
   return (
     <div className="space-y-6 pb-8">
       {!concursoAtivoId ? <BannerSemConcurso /> : null}
 
       <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h1 className="text-xl font-semibold tracking-tight text-neutral-900 dark:text-neutral-50">Painel</h1>
+          <h1 className="text-xl font-semibold tracking-tight text-foreground">Painel</h1>
           <p className="text-sm text-muted-foreground">Seu plano de estudos em um só lugar</p>
         </div>
         {diasParaProva != null ? (
@@ -195,7 +214,8 @@ export function Dashboard() {
             Ver completo
           </Link>
         </div>
-        <div className="grid grid-cols-7 gap-1.5">
+        <div className="-mx-1 overflow-x-auto pb-1" role="region" aria-label="Cronograma da semana">
+          <div className="grid min-w-[320px] grid-cols-7 gap-1.5">
           {DIAS.map((dia) => {
             const items = blocosSemana?.[dia] ?? [];
             const isHoje = dia === diaHoje;
@@ -226,6 +246,7 @@ export function Dashboard() {
               </div>
             );
           })}
+          </div>
         </div>
       </section>
 
@@ -262,11 +283,18 @@ export function Dashboard() {
           sub="Para revisar"
           badgeVariant={(resumo?.flashcards_para_revisar ?? 0) > 0 ? "amber" : "green"}
         />
+        <KpiCard
+          label="Cumprimento mês"
+          value={`${(resumo?.taxa_cumprimento_mes ?? 0).toFixed(0)}%`}
+          sub={`${fmtMinutos(resumo?.minutos_realizados_mes ?? 0)} de ${fmtMinutos(resumo?.minutos_planejados_mes ?? 0)}`}
+          badgeVariant={(resumo?.taxa_cumprimento_mes ?? 0) >= 80 ? "green" : "amber"}
+        />
       </div>
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1fr_320px]">
         <div className="space-y-4">
           <HeatmapCard data={heatmap ?? []} />
+          <CalendarioMensalWidget ano={calendarioAno} mes={calendarioMes} concursoId={concursoAtivoId} />
 
           {progressoDisciplinas.length > 0 ? (
             <section className="rounded-xl border border-border bg-card p-4 shadow-sm">
@@ -315,7 +343,7 @@ export function Dashboard() {
                         setRegistroPrefill({ disciplinaId: bloco.disciplina_id, topicoId: bloco.topico_id });
                         setRegistroOpen(true);
                       }}
-                      className="flex w-full items-start gap-2 rounded-lg border border-border bg-background p-2.5 text-left transition hover:border-primary-300 hover:bg-primary-50/30 dark:hover:bg-primary-950/20"
+                      className="flex min-h-11 w-full items-start gap-2 rounded-lg border border-border bg-background p-2.5 text-left transition hover:border-primary-300 hover:bg-primary-50/30 dark:hover:bg-primary-950/20"
                     >
                       <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 border-border" />
                       <div className="min-w-0 flex-1">

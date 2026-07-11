@@ -54,7 +54,7 @@ export function GestaoUsuarios() {
         </div>
         <button
           type="button"
-          className="rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700"
+          className="min-h-11 rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground transition hover:bg-primary-700"
           onClick={() => setCreateOpen(true)}
         >
           + Criar usuário
@@ -81,10 +81,10 @@ export function GestaoUsuarios() {
         </div>
       ) : null}
 
-      <div className="rounded-xl border border-border/40 bg-background/70 p-4">
-        <div className="grid gap-3 md:grid-cols-4">
+      <div className="rounded-xl border border-border bg-card p-4 shadow-sm sm:p-5">
+        <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
           <input
-            className="rounded-md border border-border/40 bg-background px-3 py-2 text-sm"
+            className="min-h-11 rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
             placeholder="Nome, e-mail ou CPF"
             value={search}
             onChange={(e) => {
@@ -93,7 +93,7 @@ export function GestaoUsuarios() {
             }}
           />
           <select
-            className="rounded-md border border-border/40 bg-background px-3 py-2 text-sm"
+            className="min-h-11 rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
             value={status}
             onChange={(e) => {
               setStatus(e.target.value);
@@ -108,7 +108,7 @@ export function GestaoUsuarios() {
             ))}
           </select>
           <select
-            className="rounded-md border border-border/40 bg-background px-3 py-2 text-sm"
+            className="min-h-11 rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
             value={subscriptionStatus}
             onChange={(e) => {
               setSubscriptionStatus(e.target.value);
@@ -123,7 +123,7 @@ export function GestaoUsuarios() {
             <option value="incomplete">Incompleta</option>
           </select>
           <select
-            className="rounded-md border border-border/40 bg-background px-3 py-2 text-sm"
+            className="min-h-11 rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
             value={studyGoal}
             onChange={(e) => {
               setStudyGoal(e.target.value);
@@ -142,7 +142,7 @@ export function GestaoUsuarios() {
         <div className="mt-4 overflow-x-auto">
           <table className="w-full min-w-[800px] text-left text-sm">
             <thead>
-              <tr className="border-b border-border/40 text-xs text-muted-foreground">
+              <tr className="border-b border-border text-xs text-muted-foreground">
                 <th className="py-2 pr-2">Nome</th>
                 <th className="py-2 pr-2">E-mail</th>
                 <th className="py-2 pr-2">CPF</th>
@@ -164,7 +164,7 @@ export function GestaoUsuarios() {
                 </tr>
               ) : (
                 (list?.items ?? []).map((u) => (
-                  <tr key={u.id} className="border-b border-border/20">
+                  <tr key={u.id} className="border-b border-border/50">
                     <td className="py-2 pr-2 font-medium">{u.name}</td>
                     <td className="py-2 pr-2">{u.email}</td>
                     <td className="py-2 pr-2">{u.cpf ?? "—"}</td>
@@ -185,7 +185,7 @@ export function GestaoUsuarios() {
                       {u.last_login_at ? new Date(u.last_login_at).toLocaleString("pt-BR") : "—"}
                     </td>
                     <td className="py-2">
-                      <Link to={`/admin/usuarios/${u.id}`} className="text-primary-600 hover:underline">
+                      <Link to={`/admin/usuarios/${u.id}`} className="inline-flex min-h-11 items-center text-primary hover:underline">
                         Ver
                       </Link>
                     </td>
@@ -201,18 +201,18 @@ export function GestaoUsuarios() {
           <div className="flex gap-2">
             <button
               type="button"
-              className="rounded border border-border/40 px-3 py-1 disabled:opacity-40"
+              className="min-h-11 min-w-11 rounded-lg border border-border px-3 py-2 disabled:opacity-40"
               disabled={page <= 1}
               onClick={() => setPage((p) => p - 1)}
             >
               Anterior
             </button>
-            <span>
+            <span className="flex min-h-11 items-center px-1">
               {page} / {totalPages}
             </span>
             <button
               type="button"
-              className="rounded border border-border/40 px-3 py-1 disabled:opacity-40"
+              className="min-h-11 min-w-11 rounded-lg border border-border px-3 py-2 disabled:opacity-40"
               disabled={page >= totalPages}
               onClick={() => setPage((p) => p + 1)}
             >

@@ -85,8 +85,10 @@ export function ImportApkgModal({ open, onClose }: Props) {
 
   return ReactDOM.createPortal(
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4"
-      style={{ background: "rgba(0,0,0,0.55)", backdropFilter: "blur(4px)" }}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/55 p-4 backdrop-blur-sm"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="import-apkg-title"
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
@@ -94,15 +96,16 @@ export function ImportApkgModal({ open, onClose }: Props) {
       <div className="w-full max-w-md overflow-hidden rounded-2xl border border-border bg-card shadow-2xl">
         <div className="flex items-center justify-between border-b border-border px-6 py-4">
           <div className="flex items-center gap-2">
-            <FileArchive className="h-5 w-5 text-primary-500" />
-            <h2 className="text-base font-semibold text-card-foreground">
+            <FileArchive className="h-5 w-5 text-primary" />
+            <h2 id="import-apkg-title" className="text-base font-semibold text-card-foreground">
               Importar baralho do Anki
             </h2>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg p-1.5 text-muted-foreground hover:bg-muted hover:text-card-foreground"
+            className="flex min-h-11 min-w-11 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-card-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            aria-label="Fechar"
           >
             <X className="h-4 w-4" />
           </button>

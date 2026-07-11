@@ -31,9 +31,9 @@ function formatProvaDate(s?: string): string | null {
 }
 
 function conclusaoTextClass(pct: number) {
-  if (pct >= 70) return "text-[#16A34A]";
-  if (pct >= 40) return "text-[#F59E0B]";
-  return "text-[#EF4444]";
+  if (pct >= 70) return "text-success";
+  if (pct >= 40) return "text-warning";
+  return "text-destructive";
 }
 
 export function PlanoDetalhePage() {
@@ -128,10 +128,7 @@ export function PlanoDetalhePage() {
   if (!plano) {
     if (disciplinasSelecionadas.length === 0) {
       return (
-        <div
-          className="flex min-h-[200px] items-center justify-center text-sm text-[#9CA3AF]"
-          style={{ fontFamily: "Inter, system-ui, sans-serif", backgroundColor: "#F5F4FA" }}
-        >
+        <div className="flex min-h-[200px] items-center justify-center bg-background text-sm text-muted-foreground">
           Carregando plano...
         </div>
       );
@@ -141,26 +138,21 @@ export function PlanoDetalhePage() {
   const tituloBreadcrumb = plano?.nome ?? "Plano";
 
   return (
-    <div
-      className="min-h-full space-y-6 pb-8"
-      style={{ fontFamily: "Inter, system-ui, sans-serif", backgroundColor: "#F5F4FA" }}
-    >
+    <div className="min-h-full space-y-6 bg-background pb-8 font-sans">
       <nav className="flex flex-wrap items-center gap-1 text-[13px]" aria-label="Breadcrumb">
-        <Link to="/concursos/planos" className="text-[#6B7280] transition-colors hover:text-[#6C3FC5]">
+        <Link to="/concursos/planos" className="text-muted-foreground transition-colors hover:text-primary">
           Planos de Estudo
         </Link>
-        <span className="text-[#9CA3AF]" aria-hidden>
+        <span className="text-muted-foreground" aria-hidden>
           ›
         </span>
-        <span className="font-bold text-[#1A1A2E]">{tituloBreadcrumb}</span>
+        <span className="font-bold text-foreground">{tituloBreadcrumb}</span>
       </nav>
 
-      <div
-        className="rounded-[14px] border-[1.5px] border-[#E5E7EB] bg-white p-5 shadow-[0_2px_16px_rgba(0,0,0,0.07)] sm:p-6 md:px-8"
-      >
+      <div className="rounded-[14px] border border-border bg-card p-5 shadow-card sm:p-6 md:px-8">
         <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
           <div className="flex min-w-0 flex-1 flex-col gap-4 sm:flex-row sm:items-start">
-            <div className="flex h-[52px] w-[52px] shrink-0 items-center justify-center overflow-hidden rounded-xl bg-[#F3F0FF] text-lg font-bold text-[#6C3FC5]">
+            <div className="flex h-[52px] w-[52px] shrink-0 items-center justify-center overflow-hidden rounded-xl bg-primary-muted text-lg font-bold text-primary">
               {logoSrc ? (
                 <img src={logoSrc} alt="" className="h-full w-full object-cover" />
               ) : (
@@ -168,22 +160,22 @@ export function PlanoDetalhePage() {
               )}
             </div>
             <div className="min-w-0 flex-1">
-              <h1 className="text-xl font-bold text-[#1A1A2E] sm:text-[20px]">{plano?.nome ?? "Plano de Estudo"}</h1>
-              <p className="mt-1 text-sm text-[#6B7280]">
+              <h1 className="text-xl font-bold text-foreground sm:text-[20px]">{plano?.nome ?? "Plano de Estudo"}</h1>
+              <p className="mt-1 text-sm text-muted-foreground">
                 {plano?.orgao ?? "—"} • {plano?.cargo ?? "—"}
               </p>
               <div className="mt-2 flex flex-wrap items-center gap-2">
                 {plano?.ativo ? (
-                  <span className="inline-flex items-center gap-1.5 rounded-full bg-[#D1FAE5] px-2.5 py-0.5 text-xs font-semibold text-[#16A34A]">
-                    <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[#16A34A]" aria-hidden />
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-success/15 px-2.5 py-0.5 text-xs font-semibold text-success">
+                    <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-success" aria-hidden />
                     Ativo
                   </span>
                 ) : (
-                  <span className="inline-flex items-center gap-1 rounded-full bg-[#F3F4F6] px-2.5 py-0.5 text-xs font-semibold text-[#9CA3AF]">
+                  <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2.5 py-0.5 text-xs font-semibold text-muted-foreground">
                     ○ Inativo
                   </span>
                 )}
-                <span className="inline-flex items-center gap-1 text-xs text-[#9CA3AF]">
+                <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
                   <span aria-hidden>📅</span>
                   {dataProvaFmt ? `Prova: ${dataProvaFmt}` : "Sem data da prova"}
                 </span>
@@ -192,21 +184,21 @@ export function PlanoDetalhePage() {
           </div>
 
           <div className="flex flex-col items-stretch gap-4 sm:flex-row sm:items-center lg:justify-end">
-            <p className="text-center text-sm text-[#6B7280] sm:text-left">
-              <span className="font-semibold text-[#1A1A2E]">{nDisciplinas}</span>{" "}
+            <p className="text-center text-sm text-muted-foreground sm:text-left">
+              <span className="font-semibold text-foreground">{nDisciplinas}</span>{" "}
               {nDisciplinas === 1 ? "disciplina" : "disciplinas"}
-              <span className="mx-1.5 text-[#D1D5DB]">·</span>
-              <span className="font-semibold text-[#1A1A2E]">
+              <span className="mx-1.5 text-border">·</span>
+              <span className="font-semibold text-foreground">
                 {estudadosTopicos}/{totalTopicos}
               </span>{" "}
               tópicos
-              <span className="mx-1.5 text-[#D1D5DB]">·</span>
+              <span className="mx-1.5 text-border">·</span>
               <span className={cn("font-semibold", conclusaoTextClass(pctPlano))}>{pctPlano}%</span> conclusão
             </p>
 
             <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center">
               <select
-                className="h-10 min-w-[200px] flex-1 rounded-[10px] border border-[#E5E7EB] bg-white px-3 text-sm text-[#1A1A2E] outline-none transition-colors focus:border-[#6C3FC5] focus:shadow-[0_0_0_3px_#EDE9FE] sm:flex-initial"
+                className="h-10 min-w-[200px] flex-1 rounded-[10px] border border-border bg-surface px-3 text-sm text-foreground outline-none transition-colors focus:border-primary focus:ring-2 focus:ring-primary/20 sm:flex-initial"
                 value={novaDisciplinaId}
                 onChange={(e) => setNovaDisciplinaId(e.target.value)}
               >
@@ -222,7 +214,7 @@ export function PlanoDetalhePage() {
               </select>
               <button
                 type="button"
-                className="h-10 shrink-0 rounded-[10px] bg-[#6C3FC5] px-4 text-sm font-bold text-white transition-all hover:bg-[#5B32A8] disabled:opacity-50"
+                className="h-10 shrink-0 rounded-[10px] bg-primary px-4 text-sm font-bold text-primary-foreground transition-all hover:bg-primary-700 disabled:opacity-50"
                 disabled={!novaDisciplinaId}
                 onClick={async () => {
                   if (!novaDisciplinaId) return;
@@ -248,42 +240,45 @@ export function PlanoDetalhePage() {
           return (
             <article
               key={d.id}
-              className="overflow-hidden rounded-2xl border-[1.5px] border-[#E5E7EB] bg-white shadow-[0_2px_16px_rgba(0,0,0,0.07)] transition-all duration-200 hover:border-[#C4B5FD] hover:shadow-[0_8px_32px_rgba(108,63,197,0.13)]"
+              className="overflow-hidden rounded-2xl border border-border bg-card shadow-card transition-all duration-200 hover:border-primary-300 hover:shadow-md"
             >
               <button
                 type="button"
                 onClick={() => setOpenDisciplinaId(d.disciplinaId)}
-                className="w-full text-left transition-colors hover:bg-[#FAFAFE]"
+                className="w-full text-left transition-colors hover:bg-surface-hover"
               >
-                <div className="h-1" style={{ backgroundColor: d.cor || "#6C3FC5" }} />
-                <div className="border-b border-[#F3F4F6] px-5 py-4">
-                  <div className="text-base font-bold text-[#1A1A2E]">
+                <div
+                  className="h-1"
+                  style={{ backgroundColor: d.cor || "var(--primary)" }}
+                />
+                <div className="border-b border-border-subtle px-5 py-4">
+                  <div className="text-base font-bold text-foreground">
                     {d.codigo} {d.nome}
                   </div>
-                  <div className="mt-0.5 text-[13px] text-[#6B7280]">Peso edital: {d.pesoEdital} questões</div>
+                  <div className="mt-0.5 text-[13px] text-muted-foreground">Peso edital: {d.pesoEdital} questões</div>
                 </div>
 
                 <div className="grid grid-cols-3 gap-2 px-5 py-4 text-center">
                   <div>
-                    <div className="text-lg font-bold text-[#1A1A2E]">{estudados}</div>
-                    <div className="text-[11px] font-medium uppercase tracking-wide text-[#9CA3AF]">Estudados</div>
+                    <div className="text-lg font-bold text-foreground">{estudados}</div>
+                    <div className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">Estudados</div>
                   </div>
                   <div>
-                    <div className="text-lg font-bold text-[#1A1A2E]">{total}</div>
-                    <div className="text-[11px] font-medium uppercase tracking-wide text-[#9CA3AF]">Total</div>
+                    <div className="text-lg font-bold text-foreground">{total}</div>
+                    <div className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">Total</div>
                   </div>
                   <div>
                     <div className={cn("text-lg font-bold", conclusaoTextClass(pct))}>{pct}%</div>
-                    <div className="text-[11px] font-medium uppercase tracking-wide text-[#9CA3AF]">Conclusão</div>
+                    <div className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">Conclusão</div>
                   </div>
                 </div>
               </button>
 
-              <div className="flex items-center justify-between border-t border-[#F3F4F6] px-4 py-3">
-                <span className="text-xs text-[#9CA3AF]">Gerenciar tópicos no plano</span>
+              <div className="flex items-center justify-between border-t border-border-subtle px-4 py-3">
+                <span className="text-xs text-muted-foreground">Gerenciar tópicos no plano</span>
                 <Link
                   to={`/disciplinas/${d.disciplinaId}`}
-                  className="shrink-0 rounded-[10px] border border-[#E5E7EB] bg-[#F3F0FF] px-3 py-1.5 text-xs font-semibold text-[#6C3FC5] transition-colors hover:border-[#6C3FC5] hover:bg-white"
+                  className="shrink-0 rounded-[10px] border border-border bg-primary-muted px-3 py-1.5 text-xs font-semibold text-primary transition-colors hover:border-primary hover:bg-surface"
                   onClick={(e) => e.stopPropagation()}
                 >
                   Ver disciplina →

@@ -58,14 +58,13 @@ export function ConcursoListCard({
     <article
       className={cn(
         "group flex flex-col overflow-hidden rounded-2xl border-x border-b border-[1.5px] border-[var(--border-default)] bg-[var(--bg-surface)] transition-all duration-200 ease-out",
-        encerrado ? "border-t-[3px] border-t-[#9CA3AF]" : "border-t-[3px] border-t-[#6C3FC5]",
-        "hover:-translate-y-0.5 hover:border-x-[#C4B5FD] hover:border-b-[#C4B5FD] hover:shadow-[0_8px_32px_rgba(108,63,197,0.12)]",
+        encerrado ? "border-t-[3px] border-t-muted-foreground" : "border-t-[3px] border-t-primary",
+        "shadow-card hover:-translate-y-0.5 hover:border-x-primary-200 hover:border-b-primary-200 hover:shadow-md",
       )}
-      style={{ boxShadow: "0 2px 12px rgba(0,0,0,0.06)" }}
     >
       <div className="px-5 pb-0 pt-5">
         <div className="flex items-start gap-3">
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-[10px] border border-[var(--border-default)] bg-[#F3F0FF] dark:bg-[var(--ap-brand-light)]">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-[10px] border border-[var(--border-default)] bg-primary-muted dark:bg-[var(--ap-brand-light)]">
             {logo ? (
               <img src={logo} alt="" className="h-full w-full object-cover" />
             ) : (
@@ -79,21 +78,21 @@ export function ConcursoListCard({
             <p className="mt-0.5 text-[13px] text-[var(--text-secondary)]">{orgaoBanca}</p>
             <div className="mt-1.5 flex min-w-0 flex-wrap items-center gap-2">
               {encerrado ? (
-                <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-[#F3F4F6] px-2.5 py-1 text-xs font-semibold text-[#6B7280]">
+                <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-muted px-2.5 py-1 text-xs font-semibold text-muted-foreground">
                   Encerrado
                 </span>
               ) : c.status === "suspenso" ? (
-                <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-[#FEF3C7] px-2.5 py-1 text-xs font-semibold text-[#D97706]">
+                <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-warning/15 px-2.5 py-1 text-xs font-semibold text-warning">
                   Suspenso
                 </span>
               ) : (
-                <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-[#D1FAE5] px-2.5 py-1 text-xs font-semibold text-[#16A34A]">
-                  <span className="concurso-dot-pulse h-1.5 w-1.5 shrink-0 rounded-full bg-[#16A34A]" aria-hidden />
+                <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-success/15 px-2.5 py-1 text-xs font-semibold text-success">
+                  <span className="concurso-dot-pulse h-1.5 w-1.5 shrink-0 rounded-full bg-success" aria-hidden />
                   Ativo
                 </span>
               )}
               {dataProva ? (
-                <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-[#F3F0FF] px-2.5 py-1 text-[11px] font-semibold text-[#6C3FC5] dark:bg-[var(--ap-brand-light)]">
+                <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-primary-muted px-2.5 py-1 text-[11px] font-semibold text-primary dark:bg-[var(--ap-brand-light)]">
                   📅 {dataProva}
                 </span>
               ) : null}
@@ -149,7 +148,7 @@ export function ConcursoListCard({
             href={editalHref}
             target="_blank"
             rel="noreferrer"
-            className="inline-flex shrink-0 items-center gap-1 whitespace-nowrap rounded-full bg-[#F3F0FF] px-3 py-1.5 text-[13px] font-bold text-[#6C3FC5] dark:bg-[var(--ap-brand-light)]"
+            className="inline-flex shrink-0 items-center gap-1 whitespace-nowrap rounded-full bg-primary-muted px-3 py-1.5 text-[13px] font-bold text-primary dark:bg-[var(--ap-brand-light)]"
           >
             Edital
           </a>
@@ -159,7 +158,7 @@ export function ConcursoListCard({
             <div className="flex flex-nowrap items-center gap-1.5">
               <button
                 type="button"
-                className="shrink-0 whitespace-nowrap rounded-lg bg-[#EF4444] px-2 py-1.5 text-[11px] font-bold text-white hover:bg-red-600"
+                className="shrink-0 whitespace-nowrap rounded-lg bg-destructive px-2 py-1.5 text-[11px] font-bold text-white hover:bg-red-600"
                 onClick={onConfirmDelete}
                 disabled={deletePending}
               >
@@ -176,7 +175,7 @@ export function ConcursoListCard({
           ) : (
             <button
               type="button"
-              className="flex h-9 min-w-[36px] shrink-0 items-center justify-center rounded-lg p-2 text-lg leading-none text-[var(--text-muted)] hover:bg-[#FFF5F5] hover:text-[#EF4444]"
+              className="flex h-9 min-w-[36px] shrink-0 items-center justify-center rounded-lg p-2 text-lg leading-none text-[var(--text-muted)] hover:bg-destructive/10 hover:text-destructive"
               aria-label="Excluir concurso"
               onClick={onDeletePrompt}
               disabled={deletePending}

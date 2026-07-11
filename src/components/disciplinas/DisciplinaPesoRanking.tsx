@@ -9,23 +9,16 @@ import {
   type DisciplinaRankingRow,
 } from "@/lib/disciplinas/pontos";
 
+import { chartStripClass } from "@/lib/palette/chart-strip";
+
 type DisciplinaPesoRankingProps = {
   disciplinas: Disciplina[];
   concursoId: string;
   filterSeg: "todas" | "concurso" | "fora";
 };
 
-const BAR_COLORS = [
-  "bg-[#6C3FC5]",
-  "bg-[#22C55E]",
-  "bg-[#3B82F6]",
-  "bg-[#F59E0B]",
-  "bg-[#EC4899]",
-  "bg-[#14B8A6]",
-] as const;
-
 function barColor(rank: number) {
-  return BAR_COLORS[(rank - 1) % BAR_COLORS.length];
+  return chartStripClass(rank - 1);
 }
 
 function RankingRow({ row, maxPct }: { row: DisciplinaRankingRow; maxPct: number }) {
@@ -50,7 +43,7 @@ function RankingRow({ row, maxPct }: { row: DisciplinaRankingRow; maxPct: number
         </div>
       </div>
       <div className="flex items-center gap-3 pl-8">
-        <div className="h-2 min-w-0 flex-1 overflow-hidden rounded-full bg-[#E5E7EB] dark:bg-[#1E1A2E]">
+        <div className="h-2 min-w-0 flex-1 overflow-hidden rounded-full bg-border dark:bg-surface-muted">
           <div
             className={cn("h-full rounded-full transition-[width] duration-500 ease-out", barColor(row.rank))}
             style={{ width: `${widthPct}%` }}
@@ -94,12 +87,12 @@ export function DisciplinaPesoRanking({ disciplinas, concursoId, filterSeg }: Di
 
   return (
     <section
-      className="overflow-hidden rounded-2xl border border-[var(--border-default)] bg-[var(--bg-surface)] shadow-[0_2px_12px_rgba(0,0,0,0.07)]"
+      className="overflow-hidden rounded-2xl border border-[var(--border-default)] bg-[var(--bg-surface)] shadow-card"
       style={{ fontFamily: "Inter, system-ui, sans-serif" }}
     >
       <header className="flex flex-wrap items-start justify-between gap-4 border-b border-[var(--border-subtle)] px-5 py-4">
         <div className="flex items-start gap-3">
-          <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#F3F0FF] text-[#6C3FC5] dark:bg-[var(--ap-brand-light)]">
+          <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-muted text-primary dark:bg-[var(--ap-brand-light)]">
             <Trophy className="h-5 w-5" />
           </span>
           <div>
@@ -110,8 +103,8 @@ export function DisciplinaPesoRanking({ disciplinas, concursoId, filterSeg }: Di
             </p>
           </div>
         </div>
-        <div className="rounded-lg bg-[#F3F0FF] px-3 py-2 text-center dark:bg-[#1E1A2E]">
-          <div className="text-lg font-bold tabular-nums text-[#6C3FC5] dark:text-[#A78BFA]">{ranking.length}</div>
+        <div className="rounded-lg bg-primary-muted px-3 py-2 text-center dark:bg-surface-muted">
+          <div className="text-lg font-bold tabular-nums text-primary dark:text-primary-400">{ranking.length}</div>
           <div className="text-[11px] font-medium text-[var(--text-muted)]">disciplinas</div>
         </div>
       </header>

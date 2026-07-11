@@ -5,7 +5,7 @@ import {
   FlashCfgFloatRow,
   FlashCfgIntRow,
 } from "@/components/flashcards/FlashcardConfigForms";
-import { ANKI_DEFAULTS, FLASH_CARD_SHADOW, FLASH_PRIMARY } from "@/lib/flashcards/constants";
+import { ANKI_DEFAULTS, FLASH_CARD_SHADOW } from "@/lib/flashcards/constants";
 import type { FlashcardConfig } from "@/lib/flashcards/types";
 
 type Props = {
@@ -36,7 +36,7 @@ export function FlashcardsConfigTab({
   onSave,
 }: Props) {
   if (loading) {
-    return <div className="py-16 text-center text-sm text-[#6B7280]">Carregando configurações…</div>;
+    return <div className="py-16 text-center text-sm text-muted-foreground">Carregando configurações…</div>;
   }
 
   return (
@@ -45,8 +45,8 @@ export function FlashcardsConfigTab({
         className="rounded-[12px] border border-neutral-100 bg-white p-4 dark:border-neutral-700 dark:bg-neutral-800"
         style={{ boxShadow: FLASH_CARD_SHADOW }}
       >
-        <h2 className="text-lg font-bold text-[#1A1A2E] dark:text-neutral-100">Repetição espaçada</h2>
-        <p className="mt-1 text-sm text-[#6B7280] dark:text-neutral-400">
+        <h2 className="text-lg font-bold text-foreground dark:text-neutral-100">Repetição espaçada</h2>
+        <p className="mt-1 text-sm text-muted-foreground dark:text-neutral-400">
           Ajuste limites diários e o algoritmo estilo Anki. Valores inválidos aparecem em vermelho.
         </p>
       </div>
@@ -169,7 +169,7 @@ export function FlashcardsConfigTab({
         />
       </FlashCfgAccordion>
 
-      <div className="sticky bottom-0 z-30 mt-6 flex flex-col gap-3 rounded-t-[12px] border border-neutral-200 bg-[#FFFFFF] px-4 py-4 shadow-[0_-4px_24px_rgba(0,0,0,0.08)] dark:border-neutral-700 dark:bg-neutral-900 sm:flex-row sm:items-center sm:justify-between">
+      <div className="sticky bottom-0 z-30 mt-6 flex flex-col gap-3 rounded-t-xl border border-border bg-card px-4 py-4 shadow-lg sm:flex-row sm:items-center sm:justify-between">
         <div className="text-sm">
           {configDirtyCount > 0 ? (
             <span className="font-semibold text-amber-700 dark:text-amber-400">
@@ -177,14 +177,14 @@ export function FlashcardsConfigTab({
               {configDirtyCount === 1 ? "" : "s"}
             </span>
           ) : (
-            <span className="text-[#6B7280] dark:text-neutral-400">Nenhuma alteração pendente.</span>
+            <span className="text-muted-foreground dark:text-neutral-400">Nenhuma alteração pendente.</span>
           )}
         </div>
         <div className="flex flex-wrap gap-2">
           <button
             type="button"
             onClick={onRestoreDefaults}
-            className="rounded-[10px] border-2 border-neutral-200 px-4 py-2.5 text-sm font-semibold text-[#374151] transition hover:bg-neutral-50 dark:border-neutral-600 dark:text-neutral-200 dark:hover:bg-neutral-800"
+            className="rounded-[10px] border-2 border-neutral-200 px-4 py-2.5 text-sm font-semibold text-foreground transition hover:bg-neutral-50 dark:border-neutral-600 dark:text-neutral-200 dark:hover:bg-neutral-800"
           >
             Restaurar padrões
           </button>
@@ -198,16 +198,15 @@ export function FlashcardsConfigTab({
               }
               onSave();
             }}
-            className="rounded-[10px] px-5 py-2.5 text-sm font-bold text-white shadow-md transition hover:brightness-110 disabled:opacity-50"
-            style={{ backgroundColor: FLASH_PRIMARY }}
+            className="rounded-[10px] px-5 py-2.5 text-sm font-bold text-white shadow-md transition hover:brightness-110 disabled:opacity-50 bg-primary"
           >
             {saving ? "Salvando…" : "Salvar configurações"}
           </button>
         </div>
       </div>
 
-      <div className="rounded-[12px] border border-neutral-100 bg-violet-50/50 p-4 text-xs text-[#6B7280] dark:border-violet-900/30 dark:bg-violet-950/20 dark:text-neutral-400">
-        <p className="font-semibold text-[#1A1A2E] dark:text-neutral-200">Lembretes rápidos</p>
+      <div className="rounded-[12px] border border-neutral-100 bg-violet-50/50 p-4 text-xs text-muted-foreground dark:border-violet-900/30 dark:bg-violet-950/20 dark:text-neutral-400">
+        <p className="font-semibold text-foreground dark:text-neutral-200">Lembretes rápidos</p>
         <ul className="mt-2 list-inside list-disc space-y-1">
           <li><span className="font-medium text-red-600">Errei</span> — reinicia o cartão.</li>
           <li><span className="font-medium text-orange-600">Difícil</span> — intervalo × mult. difícil.</li>

@@ -30,9 +30,9 @@ function formatProvaDate(s?: string): string | null {
 }
 
 function conclusaoTextClass(pct: number) {
-  if (pct >= 70) return "text-[#16A34A]";
-  if (pct >= 40) return "text-[#F59E0B]";
-  return "text-[#EF4444]";
+  if (pct >= 70) return "text-success";
+  if (pct >= 40) return "text-warning";
+  return "text-destructive";
 }
 
 export function PlanoCard({
@@ -72,16 +72,14 @@ export function PlanoCard({
         }
       }}
       className={cn(
-        "group cursor-pointer overflow-hidden rounded-2xl border-[1.5px] border-[var(--border-default)] bg-[var(--bg-surface)] transition-all duration-200 ease-out",
-        "shadow-[0_2px_12px_rgba(0,0,0,0.06)] hover:-translate-y-0.5 hover:border-[#C4B5FD] hover:shadow-[0_8px_32px_rgba(108,63,197,0.13)]",
-        "dark:hover:border-[#3D3060]",
+        "group cursor-pointer overflow-hidden rounded-2xl border-[1.5px] border-border bg-card transition-all duration-200 ease-out",
+        "shadow-sm hover:-translate-y-0.5 hover:border-primary-300 hover:shadow-md dark:hover:border-primary-800",
       )}
-      style={{ fontFamily: "Inter, system-ui, sans-serif" }}
     >
-      <div className={cn("h-1", plano.ativo ? "bg-[#6C3FC5]" : "bg-[#D1D5DB] dark:bg-[#2D2540]")} />
+      <div className={cn("h-1", plano.ativo ? "bg-primary" : "bg-muted")} />
 
       <div className="flex items-start gap-3 px-5 pb-0 pt-5">
-        <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-[10px] bg-[#F3F0FF] text-base font-bold text-[#6C3FC5] dark:bg-[#2D2540] dark:text-[#A78BFA]">
+        <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-primary-muted text-base font-bold text-primary">
           {logoSrc ? (
             <img src={logoSrc} alt="" className="h-full w-full object-cover" />
           ) : (
@@ -89,61 +87,61 @@ export function PlanoCard({
           )}
         </div>
         <div className="min-w-0 flex-1">
-          <h3 className="line-clamp-1 text-base font-bold text-[var(--text-primary)]">{plano.nome}</h3>
-          <p className="mt-0.5 line-clamp-1 text-[13px] text-[var(--text-secondary)]">
+          <h3 className="line-clamp-1 text-base font-bold text-foreground">{plano.nome}</h3>
+          <p className="mt-0.5 line-clamp-1 text-[13px] text-muted-foreground">
             {plano.orgao} • {plano.cargo}
           </p>
         </div>
         <div className="shrink-0">
           {plano.ativo ? (
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-[#D1FAE5] px-2.5 py-0.5 text-xs font-semibold text-[#16A34A] dark:bg-[#052E16] dark:text-[#4ADE80]">
-              <span className="plano-card-dot-pulse h-1.5 w-1.5 shrink-0 rounded-full bg-[#16A34A] dark:bg-[#4ADE80]" aria-hidden />
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-success/15 px-2.5 py-0.5 text-xs font-semibold text-success">
+              <span className="plano-card-dot-pulse h-1.5 w-1.5 shrink-0 rounded-full bg-success" aria-hidden />
               Ativo
             </span>
           ) : (
-            <span className="inline-flex items-center gap-1 rounded-full bg-[#F3F4F6] px-2.5 py-0.5 text-xs font-semibold text-[#9CA3AF] dark:bg-[#1F2937] dark:text-[#6B7280]">
+            <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2.5 py-0.5 text-xs font-semibold text-muted-foreground">
               ○ Inativo
             </span>
           )}
         </div>
       </div>
 
-      <div className="mt-4 border-t border-[var(--border-subtle)] px-5 py-4">
+      <div className="mt-4 border-t border-border-subtle px-5 py-4">
         <div className="grid grid-cols-3 gap-2 text-center">
           <div>
-            <div className="text-[22px] font-bold leading-tight text-[var(--text-primary)]">{stats.disciplinas}</div>
-            <div className="mt-0.5 text-[11px] font-medium uppercase tracking-wide text-[var(--text-muted)]">Disciplinas</div>
+            <div className="text-[22px] font-bold leading-tight text-foreground">{stats.disciplinas}</div>
+            <div className="mt-0.5 text-[11px] font-medium uppercase tracking-wide text-muted-foreground">Disciplinas</div>
           </div>
           <div>
-            <div className="text-[22px] font-bold leading-tight text-[var(--text-primary)]">
+            <div className="text-[22px] font-bold leading-tight text-foreground">
               {stats.estudados}/{stats.total}
             </div>
-            <div className="mt-0.5 text-[11px] font-medium uppercase tracking-wide text-[var(--text-muted)]">Tópicos</div>
+            <div className="mt-0.5 text-[11px] font-medium uppercase tracking-wide text-muted-foreground">Tópicos</div>
           </div>
           <div>
             <div className={cn("text-[22px] font-bold leading-tight", conclusaoTextClass(stats.pct))}>
               {stats.pct}%
             </div>
-            <div className="mt-0.5 text-[11px] font-medium uppercase tracking-wide text-[var(--text-muted)]">Conclusão</div>
+            <div className="mt-0.5 text-[11px] font-medium uppercase tracking-wide text-muted-foreground">Conclusão</div>
           </div>
         </div>
       </div>
 
       <div className="px-5 pb-4">
         <div className="mb-1.5 flex items-center justify-between text-[13px]">
-          <span className="text-[var(--text-secondary)]">Progresso geral</span>
-          <span className="font-bold tabular-nums text-[#6C3FC5] dark:text-[#A78BFA]">{stats.pct}%</span>
+          <span className="text-muted-foreground">Progresso geral</span>
+          <span className="font-bold tabular-nums text-primary">{stats.pct}%</span>
         </div>
-        <div className="h-2 overflow-hidden rounded-full bg-[#E5E7EB] dark:bg-[#1E1A2E]">
+        <div className="h-2 overflow-hidden rounded-full bg-muted">
           <div
-            className="h-full rounded-full bg-gradient-to-r from-[#6C3FC5] to-[#8B5CF6] transition-[width] duration-[600ms] ease-out"
+            className="h-full rounded-full bg-gradient-to-r from-primary to-primary-500 transition-[width] duration-[600ms] ease-out"
             style={{ width: `${barPct}%` }}
           />
         </div>
       </div>
 
       <div
-        className="flex items-center gap-2 border-t border-[var(--border-subtle)] px-5 py-3 pb-4"
+        className="flex items-center gap-2 border-t border-border-subtle px-5 py-3 pb-4"
         onClick={(e) => e.stopPropagation()}
         onKeyDown={(e) => e.stopPropagation()}
       >
@@ -151,13 +149,13 @@ export function PlanoCard({
           className={cn(
             "shrink-0 rounded-full px-2 py-0.5 text-xs font-semibold capitalize",
             plano.ativo
-              ? "bg-[#EDE9FE] text-[#6C3FC5] dark:bg-[#052E16] dark:text-[#4ADE80]"
-              : "bg-[#F3F4F6] text-[#9CA3AF] dark:bg-[#1F2937] dark:text-[#6B7280]",
+              ? "bg-primary-muted text-primary"
+              : "bg-muted text-muted-foreground",
           )}
         >
           {plano.ativo ? "ativo" : "inativo"}
         </span>
-        <span className="flex min-w-0 items-center gap-1 text-xs text-[var(--text-muted)]">
+        <span className="flex min-w-0 items-center gap-1 text-xs text-muted-foreground">
           <span aria-hidden>📅</span>
           <span className="truncate">{dataFmt ?? "Sem data definida"}</span>
         </span>
@@ -165,7 +163,7 @@ export function PlanoCard({
           {!plano.ativo ? (
             <button
               type="button"
-              className="inline-flex items-center gap-1 rounded-full border border-[#E5E7EB] bg-white px-2.5 py-1 text-xs font-semibold text-[#6C3FC5] transition-colors hover:bg-[#F3F0FF] dark:border-[#3D3060] dark:bg-[#1E1A2E] dark:text-[#A78BFA] dark:hover:bg-[#2D2540]"
+              className="inline-flex min-h-11 items-center gap-1 rounded-full border border-border bg-background px-2.5 py-1 text-xs font-semibold text-primary transition-colors hover:bg-primary-muted"
               onClick={() => onAtivar(plano.id)}
             >
               <span aria-hidden>✓</span> Ativar
@@ -173,7 +171,7 @@ export function PlanoCard({
           ) : null}
           <button
             type="button"
-            className="flex h-8 w-8 items-center justify-center rounded-lg text-base transition-colors hover:bg-[#F3F0FF] hover:text-[#6C3FC5] dark:hover:bg-[#1E1A2E] dark:hover:text-[#A78BFA]"
+            className="flex min-h-11 min-w-11 items-center justify-center rounded-lg text-base transition-colors hover:bg-primary-muted hover:text-primary"
             aria-label="Editar plano"
             onClick={() => onEditar(plano)}
           >
@@ -181,7 +179,7 @@ export function PlanoCard({
           </button>
           <button
             type="button"
-            className="flex h-8 w-8 items-center justify-center rounded-lg text-base text-[#EF4444] transition-colors hover:bg-[#FFF5F5] hover:opacity-90 dark:hover:bg-[rgba(239,68,68,0.12)]"
+            className="flex min-h-11 min-w-11 items-center justify-center rounded-lg text-base text-destructive transition-colors hover:bg-destructive/10"
             aria-label="Excluir plano"
             onClick={() => onExcluir(plano)}
           >

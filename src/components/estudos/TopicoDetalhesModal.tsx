@@ -291,7 +291,7 @@ export function TopicoDetalhesModal({ open, disciplinaId, topicoId, topicoNome, 
                       ) : null}
                     </div>
 
-                    <div className="mx-4 mb-4 space-y-3 rounded-lg border border-border/60 bg-[#FAF9F6] px-4 py-3 dark:border-neutral-700 dark:bg-neutral-900/70">
+                    <div className="mx-4 mb-4 space-y-3 rounded-lg border border-border/60 bg-surface-muted px-4 py-3 dark:bg-surface-muted/70">
                       <div>
                         <p className="font-dm text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
                           Material

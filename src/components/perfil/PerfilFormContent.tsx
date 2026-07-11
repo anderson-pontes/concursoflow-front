@@ -100,12 +100,12 @@ export function PerfilFormContent({ serverMe, onCancel }: PerfilFormContentProps
           <Label htmlFor="pf-name">Nome completo</Label>
           <input
             id="pf-name"
-            className="mt-1.5 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="mt-1.5 min-h-11 w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
             disabled={mutation.isPending}
             {...register("name")}
           />
           {formState.errors.name ? (
-            <p className="mt-1 text-xs text-danger-600">{formState.errors.name.message}</p>
+            <p className="mt-1 text-xs text-destructive">{formState.errors.name.message}</p>
           ) : null}
         </div>
         <div>
@@ -123,20 +123,20 @@ export function PerfilFormContent({ serverMe, onCancel }: PerfilFormContentProps
             <Label htmlFor="pf-cpf">CPF</Label>
             <input
               id="pf-cpf"
-              className="mt-1.5 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              className="mt-1.5 min-h-11 w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
               disabled={mutation.isPending}
               value={watch("cpf") ?? ""}
               onChange={(e) => setValue("cpf", maskCpf(e.target.value), { shouldValidate: true })}
             />
             {formState.errors.cpf ? (
-              <p className="mt-1 text-xs text-danger-600">{formState.errors.cpf.message}</p>
+              <p className="mt-1 text-xs text-destructive">{formState.errors.cpf.message}</p>
             ) : null}
           </div>
           <div>
             <Label htmlFor="pf-phone">Telefone</Label>
             <input
               id="pf-phone"
-              className="mt-1.5 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              className="mt-1.5 min-h-11 w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
               disabled={mutation.isPending}
               value={watch("phone") ?? ""}
               onChange={(e) => setValue("phone", maskPhoneBr(e.target.value), { shouldValidate: true })}
@@ -148,12 +148,12 @@ export function PerfilFormContent({ serverMe, onCancel }: PerfilFormContentProps
           <input
             id="pf-birth"
             type="date"
-            className="mt-1.5 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="mt-1.5 min-h-11 w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
             disabled={mutation.isPending}
             {...register("birth_date")}
           />
           {formState.errors.birth_date ? (
-            <p className="mt-1 text-xs text-danger-600">{formState.errors.birth_date.message}</p>
+            <p className="mt-1 text-xs text-destructive">{formState.errors.birth_date.message}</p>
           ) : null}
         </div>
       </FormSection>
@@ -164,7 +164,7 @@ export function PerfilFormContent({ serverMe, onCancel }: PerfilFormContentProps
             <Label htmlFor="pf-cep">CEP</Label>
             <input
               id="pf-cep"
-              className="mt-1.5 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              className="mt-1.5 min-h-11 w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
               disabled={mutation.isPending}
               value={watch("address_cep") ?? ""}
               onChange={(e) => setValue("address_cep", maskCep(e.target.value))}
@@ -182,7 +182,7 @@ export function PerfilFormContent({ serverMe, onCancel }: PerfilFormContentProps
           <Label htmlFor="pf-street">Logradouro</Label>
           <input
             id="pf-street"
-            className="mt-1.5 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="mt-1.5 min-h-11 w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
             disabled={mutation.isPending}
             {...register("address_street")}
           />
@@ -192,7 +192,7 @@ export function PerfilFormContent({ serverMe, onCancel }: PerfilFormContentProps
             <Label htmlFor="pf-num">Número</Label>
             <input
               id="pf-num"
-              className="mt-1.5 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              className="mt-1.5 min-h-11 w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
               disabled={mutation.isPending}
               {...register("address_number")}
             />
@@ -201,7 +201,7 @@ export function PerfilFormContent({ serverMe, onCancel }: PerfilFormContentProps
             <Label htmlFor="pf-comp">Complemento</Label>
             <input
               id="pf-comp"
-              className="mt-1.5 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              className="mt-1.5 min-h-11 w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
               disabled={mutation.isPending}
               {...register("address_complement")}
             />
@@ -211,7 +211,7 @@ export function PerfilFormContent({ serverMe, onCancel }: PerfilFormContentProps
           <Label htmlFor="pf-bairro">Bairro</Label>
           <input
             id="pf-bairro"
-            className="mt-1.5 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="mt-1.5 min-h-11 w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
             disabled={mutation.isPending}
             {...register("address_neighborhood")}
           />
@@ -221,7 +221,7 @@ export function PerfilFormContent({ serverMe, onCancel }: PerfilFormContentProps
             <Label htmlFor="pf-city">Cidade</Label>
             <input
               id="pf-city"
-              className="mt-1.5 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              className="mt-1.5 min-h-11 w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
               disabled={mutation.isPending}
               {...register("address_city")}
             />
@@ -230,7 +230,7 @@ export function PerfilFormContent({ serverMe, onCancel }: PerfilFormContentProps
             <Label htmlFor="pf-uf">Estado (UF)</Label>
             <select
               id="pf-uf"
-              className="mt-1.5 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              className="mt-1.5 min-h-11 w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
               disabled={mutation.isPending}
               {...register("address_state")}
             >

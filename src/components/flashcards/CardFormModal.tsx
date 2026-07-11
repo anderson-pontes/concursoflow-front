@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 import ReactDOM from "react-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { X } from "lucide-react";
@@ -7,7 +7,6 @@ import { toast } from "sonner";
 import { api } from "@/services/api";
 import { RichTextEditor } from "@/components/flashcards/RichTextEditor";
 
-const MODAL_SHADOW = "0 4px 24px rgba(0,0,0,0.10)";
 
 type Flashcard = {
   id: string;
@@ -210,32 +209,25 @@ export function CardFormModal({
 
   return ReactDOM.createPortal(
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4"
-      style={{
-        fontFamily: "Inter, system-ui, sans-serif",
-        background: "rgba(0,0,0,0.45)",
-        backdropFilter: "blur(4px)",
-      }}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/45 p-4 backdrop-blur-sm"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="card-form-title"
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
     >
       <div
-        className="flex w-full max-w-[720px] flex-col overflow-hidden rounded-[16px] bg-white"
-        style={{
-          maxHeight: "92vh",
-          boxSizing: "border-box",
-          boxShadow: MODAL_SHADOW,
-        }}
+        className="flex max-h-[92vh] w-full max-w-[720px] flex-col overflow-hidden rounded-2xl bg-card shadow-lg"
         onClick={(e) => e.stopPropagation()}
       >
         {/* HEADER fixo */}
-        <header className="grid shrink-0 grid-cols-[1fr_auto_1fr] items-center gap-2 border-b border-[#F3F4F6] px-4 py-3">
+        <header className="grid shrink-0 grid-cols-[1fr_auto_1fr] items-center gap-2 border-b border-border px-4 py-3">
           <div className="flex min-w-0 items-center gap-2">
             <span className="shrink-0 text-xl leading-none" aria-hidden>
               💳
             </span>
-            <h2 className="min-w-0 truncate text-[18px] font-bold text-[#1A1A2E]">
+            <h2 id="card-form-title" className="min-w-0 truncate text-[18px] font-bold text-foreground">
               {isEdit ? "Editar cartão" : "Novo cartão"}
             </h2>
           </div>
@@ -246,8 +238,7 @@ export function CardFormModal({
                 <button
                   type="button"
                   onClick={() => setDeckMenuOpen((o) => !o)}
-                  className="inline-flex max-w-[200px] items-center gap-1.5 truncate rounded-full px-3 py-1.5 text-sm font-semibold text-[#6C3FC5] transition-colors duration-200 hover:opacity-90"
-                  style={{ backgroundColor: "#F3F0FF" }}
+                  className="inline-flex max-w-[200px] items-center gap-1.5 truncate rounded-full bg-primary-muted px-3 py-1.5 text-sm font-semibold text-primary transition-colors duration-200 hover:opacity-90"
                   aria-haspopup="listbox"
                   aria-expanded={deckMenuOpen}
                 >
@@ -259,7 +250,7 @@ export function CardFormModal({
                 </button>
                 {deckMenuOpen ? (
                   <ul
-                    className="absolute left-1/2 top-full z-20 mt-2 max-h-48 min-w-[200px] -translate-x-1/2 overflow-auto rounded-[10px] border border-[#E5E7EB] bg-white py-1 shadow-lg"
+                    className="absolute left-1/2 top-full z-20 mt-2 max-h-48 min-w-[200px] -translate-x-1/2 overflow-auto rounded-[10px] border border-border bg-white py-1 shadow-lg"
                     role="listbox"
                   >
                     {decks.map((d) => (
@@ -268,7 +259,7 @@ export function CardFormModal({
                           type="button"
                           role="option"
                           aria-selected={d.id === effectiveDeckId}
-                          className="w-full px-3 py-2 text-left text-sm text-[#1A1A2E] transition-colors duration-200 hover:bg-[#F3F0FF]"
+                          className="w-full px-3 py-2 text-left text-sm text-foreground transition-colors duration-200 hover:bg-primary-muted"
                           onClick={() => selectDeck(d.id)}
                         >
                           {d.full_path ?? d.nome}
@@ -280,8 +271,7 @@ export function CardFormModal({
               </>
             ) : (
               <span
-                className="inline-flex max-w-[200px] items-center gap-1.5 truncate rounded-full px-3 py-1.5 text-sm font-semibold text-[#6C3FC5]"
-                style={{ backgroundColor: "#F3F0FF" }}
+                className="inline-flex max-w-[200px] items-center gap-1.5 truncate rounded-full bg-primary-muted px-3 py-1.5 text-sm font-semibold text-primary"
               >
                 <span aria-hidden>📚</span>
                 <span className="truncate">{deckLabel}</span>
@@ -293,7 +283,7 @@ export function CardFormModal({
             <button
               type="button"
               onClick={onClose}
-              className="shrink-0 p-1 text-[24px] leading-none text-[#9CA3AF] transition-colors duration-200 ease-out hover:text-[#1A1A2E]"
+              className="shrink-0 p-1 text-[24px] leading-none text-muted-foreground transition-colors duration-200 ease-out hover:text-foreground"
               style={{ fontFamily: "Inter, system-ui, sans-serif" }}
               aria-label="Fechar"
             >
@@ -307,10 +297,7 @@ export function CardFormModal({
           <div className="min-h-0 flex-1 overflow-y-auto px-4 py-4">
             {/* Tabs pill — sempre (sem split) */}
             <div className="flex justify-center">
-              <div
-                className="inline-flex rounded-[10px] p-1"
-                style={{ backgroundColor: "#F3F4F6" }}
-              >
+              <div className="inline-flex rounded-[10px] bg-muted p-1">
                 {(["frente", "verso"] as const).map((tab) => (
                   <button
                     key={tab}
@@ -319,8 +306,8 @@ export function CardFormModal({
                     className={[
                       "rounded-lg px-4 py-2 text-sm transition-all duration-200 ease-out",
                       activeTab === tab
-                        ? "bg-white font-semibold text-[#6C3FC5] shadow-[0_1px_4px_rgba(0,0,0,0.12)]"
-                        : "bg-transparent font-medium text-[#6B7280]",
+                        ? "bg-background font-semibold text-primary shadow-sm"
+                        : "bg-transparent font-medium text-muted-foreground",
                     ].join(" ")}
                   >
                     {tab === "frente" ? "✏️ Frente" : "👁️ Verso"}
@@ -330,7 +317,7 @@ export function CardFormModal({
             </div>
 
             {versoPreview ? (
-              <p className="mt-2 text-center text-xs text-[#9CA3AF]">
+              <p className="mt-2 text-center text-xs text-muted-foreground">
                 Verso: {versoPreview}
               </p>
             ) : (
@@ -358,19 +345,18 @@ export function CardFormModal({
             </div>
 
             <div ref={tagWrapRef} className="relative mt-6">
-              <label className="mb-2 block text-[13px] font-medium text-[#6B7280]">Tags</label>
+              <label className="mb-2 block text-[13px] font-medium text-muted-foreground">Tags</label>
               <div className="mb-2 flex flex-wrap gap-2">
                 {tags.map((t) => (
                   <span
                     key={t}
-                    className="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-sm font-medium text-[#6C3FC5]"
-                    style={{ backgroundColor: "#F3F0FF", padding: "4px 10px" }}
+                    className="inline-flex items-center gap-1 rounded-full bg-primary-muted px-2.5 py-1 text-sm font-medium text-primary"
                   >
                     {t}
                     <button
                       type="button"
                       onClick={() => removeTag(t)}
-                      className="ml-0.5 rounded-full p-0.5 text-[#6C3FC5] transition-colors duration-200 hover:bg-violet-200/60"
+                      className="ml-0.5 rounded-full p-0.5 text-primary transition-colors duration-200 hover:bg-violet-200/60"
                       aria-label={`Remover ${t}`}
                     >
                       ×
@@ -379,7 +365,7 @@ export function CardFormModal({
                 ))}
               </div>
               <div
-                className="flex items-center gap-2 rounded-full border-[1.5px] border-dashed border-[#D1D5DB] bg-white px-3 py-2 transition-colors duration-200 focus-within:border-[#6C3FC5] hover:border-[#6C3FC5]"
+                className="flex items-center gap-2 rounded-full border-[1.5px] border-dashed border-border bg-white px-3 py-2 transition-colors duration-200 focus-within:border-primary hover:border-primary"
               >
                 <span className="text-sm" aria-hidden>
                   🏷️
@@ -403,19 +389,19 @@ export function CardFormModal({
                     }
                   }}
                   placeholder="Adicionar tag..."
-                  className="min-w-0 flex-1 bg-transparent text-sm text-[#1A1A2E] outline-none placeholder:text-[#9CA3AF]"
+                  className="min-w-0 flex-1 bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground"
                 />
               </div>
               {tagFocused && filteredSuggestions.length > 0 ? (
                 <ul
-                  className="absolute left-0 right-0 top-full z-10 mt-1 max-h-40 overflow-auto rounded-[10px] border border-[#E5E7EB] bg-white py-1 shadow-lg"
+                  className="absolute left-0 right-0 top-full z-10 mt-1 max-h-40 overflow-auto rounded-[10px] border border-border bg-white py-1 shadow-lg"
                   role="listbox"
                 >
                   {filteredSuggestions.map((sug) => (
                     <li key={sug}>
                       <button
                         type="button"
-                        className="w-full px-3 py-2 text-left text-sm text-[#1A1A2E] transition-colors duration-200 hover:bg-[#F3F0FF]"
+                        className="w-full px-3 py-2 text-left text-sm text-foreground transition-colors duration-200 hover:bg-primary-muted"
                         onMouseDown={(e) => e.preventDefault()}
                         onClick={() => addTag(sug)}
                       >
@@ -429,14 +415,14 @@ export function CardFormModal({
           </div>
 
           {/* FOOTER fixo */}
-          <footer className="flex shrink-0 flex-wrap items-center gap-3 border-t border-[#F3F4F6] px-4 py-3">
+          <footer className="flex shrink-0 flex-wrap items-center gap-3 border-t border-border px-4 py-3">
             {!isEdit ? (
-              <label className="flex cursor-pointer items-center gap-2 text-[13px] text-[#6B7280]">
+              <label className="flex cursor-pointer items-center gap-2 text-[13px] text-muted-foreground">
                 <input
                   type="checkbox"
                   checked={continueAdding}
                   onChange={(e) => setContinueAdding(e.target.checked)}
-                  className="h-4 w-4 rounded border-[#E5E7EB] text-[#6C3FC5] focus:ring-[#6C3FC5]"
+                  className="h-4 w-4 rounded border-border text-primary focus:ring-primary"
                 />
                 Continuar adicionando cartões
               </label>
@@ -444,18 +430,18 @@ export function CardFormModal({
               <span className="min-w-0 flex-1 sm:flex-none" />
             )}
             <span className="hidden min-w-[1ch] flex-1 sm:block" aria-hidden />
-            <span className="text-[12px] tabular-nums text-[#9CA3AF]">{charTotal}/500</span>
+            <span className="text-[12px] tabular-nums text-muted-foreground">{charTotal}/500</span>
             <button
               type="button"
               onClick={onClose}
-              className="rounded-[10px] border border-[#E5E7EB] px-4 py-2 text-sm font-semibold text-[#6B7280] transition-colors duration-200 ease-out hover:bg-[#F9FAFB]"
+              className="rounded-[10px] border border-border px-4 py-2 text-sm font-semibold text-muted-foreground transition-colors duration-200 ease-out hover:bg-muted"
             >
               Cancelar
             </button>
             <button
               type="submit"
               disabled={saveMutation.isPending}
-              className="inline-flex items-center gap-2 rounded-[10px] bg-[#6C3FC5] px-4 py-2 text-sm font-semibold text-white transition-all duration-200 ease-out hover:bg-[#5B32A8] disabled:opacity-60"
+              className="inline-flex items-center gap-2 rounded-[10px] bg-primary px-4 py-2 text-sm font-semibold text-white transition-all duration-200 ease-out hover:bg-primary-700 disabled:opacity-60"
             >
               {saveMutation.isPending ? "Salvando…" : isEdit ? "Salvar" : "Salvar cartão"}
               {!saveMutation.isPending ? <span aria-hidden>→</span> : null}

@@ -76,7 +76,7 @@ export function ChangePasswordModal({ open, onOpenChange }: Props) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md" aria-describedby="pwd-desc">
+      <DialogContent className="max-h-[min(92dvh,640px)] overflow-y-auto sm:max-w-md" aria-describedby="pwd-desc">
         <DialogHeader>
           <DialogTitle>Alterar senha</DialogTitle>
           <DialogDescription id="pwd-desc">
@@ -91,11 +91,11 @@ export function ChangePasswordModal({ open, onOpenChange }: Props) {
               id="cp-current"
               type="password"
               autoComplete="current-password"
-              className="mt-1.5 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              className="mt-1.5 min-h-11 w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
               {...form.register("currentPassword")}
             />
             {form.formState.errors.currentPassword ? (
-              <p className="mt-1 text-xs text-danger-600">{form.formState.errors.currentPassword.message}</p>
+              <p className="mt-1 text-xs text-destructive">{form.formState.errors.currentPassword.message}</p>
             ) : null}
           </div>
 
@@ -105,12 +105,12 @@ export function ChangePasswordModal({ open, onOpenChange }: Props) {
               id="cp-new"
               type="password"
               autoComplete="new-password"
-              className="mt-1.5 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              className="mt-1.5 min-h-11 w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
               {...form.register("newPassword")}
             />
             <PasswordStrength password={newPw} className="mt-2" />
             {form.formState.errors.newPassword ? (
-              <p className="mt-1 text-xs text-danger-600">{form.formState.errors.newPassword.message}</p>
+              <p className="mt-1 text-xs text-destructive">{form.formState.errors.newPassword.message}</p>
             ) : null}
           </div>
 
@@ -120,11 +120,11 @@ export function ChangePasswordModal({ open, onOpenChange }: Props) {
               id="cp-confirm"
               type="password"
               autoComplete="new-password"
-              className="mt-1.5 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              className="mt-1.5 min-h-11 w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
               {...form.register("confirmPassword")}
             />
             {form.formState.errors.confirmPassword ? (
-              <p className="mt-1 text-xs text-danger-600">{form.formState.errors.confirmPassword.message}</p>
+              <p className="mt-1 text-xs text-destructive">{form.formState.errors.confirmPassword.message}</p>
             ) : null}
           </div>
 

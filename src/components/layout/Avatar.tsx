@@ -32,14 +32,14 @@ export function Avatar({ name, avatarUrl, className, size = "md" }: Props) {
       <img
         src={src}
         alt=""
-        className={cn("shrink-0 rounded-full object-cover ring-2 ring-white dark:ring-neutral-800", sizeClass[size], className)}
+        className={cn("shrink-0 rounded-full object-cover ring-2 ring-surface", sizeClass[size], className)}
       />
     );
   }
   return (
     <span
       className={cn(
-        "flex shrink-0 items-center justify-center rounded-full bg-primary-100 font-semibold text-primary-800 ring-2 ring-white dark:bg-primary-600/30 dark:text-primary-100 dark:ring-neutral-800",
+        "flex shrink-0 items-center justify-center rounded-full bg-primary-muted font-semibold text-primary ring-2 ring-surface",
         sizeClass[size],
         className,
       )}

@@ -1,6 +1,7 @@
 import React from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { BookOpen, Clock, Plus, Sparkles, Trash2, BarChart3, Calendar } from "lucide-react";
+import { Link } from "react-router-dom";
 import { toast } from "sonner";
 
 import { BlocoFormModal } from "@/components/cronograma/BlocoFormModal";
@@ -53,7 +54,12 @@ export function Cronograma() {
 
   const { data: blocos, isLoading } = useQuery({
     queryKey: ["cronograma-blocos", concursoAtivoId ?? null],
-    queryFn: async () => (await api.get("/cronograma/blocos")).data as Bloco[],
+    queryFn: async () =>
+      (
+        await api.get("/cronograma/blocos", {
+          params: concursoAtivoId ? { concurso_id: concursoAtivoId } : {},
+        })
+      ).data as Bloco[],
   });
 
   const { data: stats } = useQuery({
@@ -134,6 +140,13 @@ export function Cronograma() {
           <p className="text-sm text-muted-foreground">Planejamento semanal de estudos</p>
         </div>
         <div className="flex flex-wrap gap-2">
+          <Link
+            to="/estudos/calendario"
+            className="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-3 py-2 text-sm font-medium text-card-foreground shadow-sm hover:bg-muted"
+          >
+            <Calendar className="h-4 w-4" />
+            Calendário mensal
+          </Link>
           <button
             type="button"
             onClick={() => setOpenRegistro(true)}

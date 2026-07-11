@@ -2,8 +2,8 @@ export function FlashcardsPageStyles() {
   return (
     <style>{`
       @keyframes fc-badge-pulse {
-        0%, 100% { box-shadow: 0 0 0 0 rgba(234, 88, 12, 0.5); transform: scale(1); }
-        50% { box-shadow: 0 0 0 8px rgba(234, 88, 12, 0); transform: scale(1.05); }
+        0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--warning) 50%, transparent); transform: scale(1); }
+        50% { box-shadow: 0 0 0 8px transparent; transform: scale(1.05); }
       }
       .fc-badge-pulse { animation: fc-badge-pulse 2.2s ease-in-out infinite; }
       @keyframes fc-check-bounce {
@@ -12,12 +12,12 @@ export function FlashcardsPageStyles() {
       }
       .fc-check-bounce { animation: fc-check-bounce 2s ease-in-out infinite; }
       .fc-deck-card {
-        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        box-shadow: var(--shadow-sm);
         transition: transform 0.2s ease, box-shadow 0.2s ease;
       }
       .fc-deck-card:hover {
         transform: translateY(-2px);
-        box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+        box-shadow: var(--shadow-lg);
       }
       .fc-review-btn {
         position: relative;
@@ -27,7 +27,7 @@ export function FlashcardsPageStyles() {
         content: "";
         position: absolute;
         inset: 0;
-        background: radial-gradient(circle, rgba(255,255,255,0.45) 10%, transparent 10.01%);
+        background: radial-gradient(circle, rgb(255 255 255 / 0.45) 10%, transparent 10.01%);
         transform: scale(12);
         opacity: 0;
         transition: transform 0.45s, opacity 0.45s;

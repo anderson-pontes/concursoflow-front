@@ -36,10 +36,11 @@ export function UserDropdown() {
         <button
           ref={btnRef}
           type="button"
-          className="shrink-0 rounded-full ring-2 ring-white transition hover:opacity-90 dark:ring-neutral-800"
+          className="shrink-0 rounded-full ring-2 ring-surface transition hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
           onClick={() => setMenuOpen((v) => !v)}
           aria-haspopup="menu"
           aria-expanded={menuOpen}
+          aria-label="Menu do usuário"
           title="Menu do usuário"
         >
           <Avatar name={user.name} avatarUrl={user.avatar_url} size="md" className="ring-0" />
@@ -47,7 +48,7 @@ export function UserDropdown() {
 
         {menuOpen ? (
           <div
-            className="absolute right-0 z-[120] mt-2 w-64 rounded-xl border border-slate-200 bg-white py-2 shadow-lg dark:border-neutral-600 dark:bg-neutral-900 dark:shadow-xl"
+            className="absolute right-0 z-[120] mt-2 w-64 rounded-xl border border-border bg-surface py-2 shadow-lg"
             role="menu"
             aria-label="Menu do usuário"
           >
@@ -65,7 +66,7 @@ export function UserDropdown() {
               <button
                 type="button"
                 role="menuitem"
-                className="flex w-full items-center gap-2 px-3 py-2.5 text-left text-sm text-foreground hover:bg-muted"
+                className="flex min-h-11 w-full items-center gap-2 px-3 text-left text-sm text-foreground hover:bg-surface-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset"
                 onClick={() => {
                   setMenuOpen(false);
                   navigate("/perfil");
@@ -77,7 +78,7 @@ export function UserDropdown() {
               <button
                 type="button"
                 role="menuitem"
-                className="flex w-full items-center gap-2 px-3 py-2.5 text-left text-sm text-foreground hover:bg-muted"
+                className="flex min-h-11 w-full items-center gap-2 px-3 text-left text-sm text-foreground hover:bg-surface-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset"
                 onClick={() => {
                   setMenuOpen(false);
                   setPwdOpen(true);
@@ -92,7 +93,7 @@ export function UserDropdown() {
               <button
                 type="button"
                 role="menuitem"
-                className="flex w-full items-center gap-2 px-3 py-2.5 text-left text-sm text-danger-600 hover:bg-danger-50 dark:text-danger-400 dark:hover:bg-danger-950/40"
+                className="flex min-h-11 w-full items-center gap-2 px-3 text-left text-sm text-destructive hover:bg-destructive/10"
                 onClick={() => {
                   logout();
                   setMenuOpen(false);

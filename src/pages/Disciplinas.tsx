@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
@@ -169,7 +169,7 @@ export function Disciplinas() {
         ) : null}
 
         {!loadingDisciplinas && disciplinas.length === 0 && !searchTerm ? (
-          <div className="flex flex-col items-center rounded-2xl border-[1.5px] border-[var(--border-default)] bg-[var(--bg-surface)] px-6 py-16 text-center shadow-[0_2px_12px_rgba(0,0,0,0.07)]">
+          <div className="flex flex-col items-center rounded-2xl border-[1.5px] border-[var(--border-default)] bg-[var(--bg-surface)] px-6 py-16 text-center shadow-card">
             <EmptyDisciplinasIllustration />
             <h2 className="mt-6 text-lg font-bold text-[var(--text-primary)]">Nenhuma disciplina ainda</h2>
             <p className="mt-2 max-w-[360px] text-sm text-[var(--text-secondary)]">
@@ -178,7 +178,7 @@ export function Disciplinas() {
             <button
               type="button"
               onClick={openCreate}
-              className="mt-8 inline-flex items-center gap-2 rounded-[10px] bg-[#6C3FC5] px-6 py-3 text-sm font-bold text-white shadow-md transition-all hover:-translate-y-px hover:bg-[#5B32A8]"
+              className="mt-8 inline-flex items-center gap-2 rounded-[10px] bg-primary px-6 py-3 text-sm font-bold text-white shadow-md transition-all hover:-translate-y-px hover:bg-primary-700"
             >
               + Nova disciplina
             </button>

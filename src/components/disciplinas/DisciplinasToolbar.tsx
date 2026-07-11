@@ -64,12 +64,14 @@ export function DisciplinasToolbar({
               value={search}
               onChange={(e) => onSearchChange(e.target.value)}
               placeholder="Buscar disciplina..."
-              className="h-10 w-full rounded-[10px] border border-[var(--border-default)] bg-[var(--bg-surface)] py-2 pl-10 pr-3 text-sm text-[var(--text-primary)] outline-none transition placeholder:text-[var(--text-muted)] focus:border-[#6C3FC5] focus:shadow-[0_0_0_3px_rgba(108,63,197,0.15)]"
+              aria-label="Buscar disciplina"
+              className="h-10 w-full rounded-[10px] border border-[var(--border-default)] bg-[var(--bg-surface)] py-2 pl-10 pr-3 text-sm text-[var(--text-primary)] outline-none transition placeholder:text-[var(--text-muted)] focus:border-primary focus:ring-2 focus:ring-primary/20"
             />
           </div>
           {concursos.length > 0 ? (
             <select
-              className="h-10 min-w-[200px] rounded-[10px] border border-[var(--border-default)] bg-[var(--bg-surface)] px-3 text-sm text-[var(--text-primary)] outline-none focus:border-[#6C3FC5]"
+              aria-label="Concurso ativo"
+              className="h-10 min-w-[200px] rounded-[10px] border border-[var(--border-default)] bg-[var(--bg-surface)] px-3 text-sm text-[var(--text-primary)] outline-none focus:border-primary"
               value={concursoId}
               onChange={(e) => setConcursoAtivoId(e.target.value || null)}
             >
@@ -82,7 +84,7 @@ export function DisciplinasToolbar({
             </select>
           ) : null}
           {concursoId ? (
-            <div className="inline-flex rounded-full bg-[#F3F4F6] p-1 dark:bg-[var(--bg-surface-2)]">
+            <div className="inline-flex rounded-full bg-muted p-1 dark:bg-[var(--bg-surface-2)]">
               {(
                 [
                   { id: "todas" as const, label: "Todas" },
@@ -97,7 +99,7 @@ export function DisciplinasToolbar({
                   className={cn(
                     "rounded-full px-3 py-2 text-sm font-semibold transition-all",
                     filterSeg === seg.id
-                      ? "bg-[#6C3FC5] text-white shadow-sm"
+                      ? "bg-primary text-white shadow-sm"
                       : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]",
                   )}
                 >
@@ -106,7 +108,7 @@ export function DisciplinasToolbar({
               ))}
             </div>
           ) : null}
-          <div className="inline-flex rounded-full bg-[#F3F4F6] p-1 dark:bg-[var(--bg-surface-2)]">
+          <div className="inline-flex rounded-full bg-muted p-1 dark:bg-[var(--bg-surface-2)]">
             {(
               [
                 { id: "cards" as const, label: "Cards" },
@@ -120,7 +122,7 @@ export function DisciplinasToolbar({
                 className={cn(
                   "rounded-full px-3 py-2 text-sm font-semibold transition-all",
                   viewMode === seg.id
-                    ? "bg-[#6C3FC5] text-white shadow-sm"
+                    ? "bg-primary text-white shadow-sm"
                     : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]",
                 )}
               >
@@ -132,7 +134,7 @@ export function DisciplinasToolbar({
             type="button"
             disabled={isCreating}
             onClick={onCreate}
-            className="inline-flex items-center justify-center gap-2 rounded-[10px] bg-[#6C3FC5] px-5 py-2.5 text-sm font-bold text-white shadow-sm transition-all hover:-translate-y-px hover:bg-[#5B32A8] disabled:opacity-50"
+            className="inline-flex items-center justify-center gap-2 rounded-[10px] bg-primary px-5 py-2.5 text-sm font-bold text-white shadow-sm transition-all hover:-translate-y-px hover:bg-primary-700 disabled:opacity-50"
           >
             + Nova disciplina
           </button>
@@ -157,7 +159,7 @@ export function DisciplinasToolbar({
       </div>
 
       {!concursoId && concursos.length === 0 ? (
-        <div className="rounded-xl border border-amber-200 bg-[#FFFBEB] px-4 py-3 text-sm text-amber-900 dark:border-amber-900/40 dark:bg-amber-950/30 dark:text-amber-200">
+        <div className="rounded-xl border border-amber-200 bg-warning/10 px-4 py-3 text-sm text-amber-900 dark:border-amber-900/40 dark:bg-amber-950/30 dark:text-amber-200">
           Cadastre um concurso em <strong>Meus Concursos</strong> para vincular disciplinas e definir a data da prova.
         </div>
       ) : null}

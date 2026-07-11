@@ -109,7 +109,7 @@ export function UsuarioDetalhe() {
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-center gap-3">
-        <Link to="/admin/usuarios" className="text-sm text-primary-600 hover:underline">
+        <Link to="/admin/usuarios" className="inline-flex min-h-11 items-center text-sm text-primary hover:underline">
           ← Voltar
         </Link>
         <h2 className="text-lg font-semibold">{user.name}</h2>
@@ -119,7 +119,7 @@ export function UsuarioDetalhe() {
       </div>
 
       <div className="grid gap-4 lg:grid-cols-2">
-        <section className="rounded-xl border border-border/40 bg-background/70 p-4">
+        <section className="rounded-xl border border-border bg-card p-4 shadow-sm sm:p-5">
           <h3 className="text-sm font-semibold">Dados pessoais</h3>
           <dl className="mt-3 space-y-2 text-sm">
             <div><dt className="text-muted-foreground">E-mail</dt><dd>{user.email}</dd></div>
@@ -130,7 +130,7 @@ export function UsuarioDetalhe() {
           </dl>
         </section>
 
-        <section className="rounded-xl border border-border/40 bg-background/70 p-4">
+        <section className="rounded-xl border border-border bg-card p-4 shadow-sm sm:p-5">
           <h3 className="text-sm font-semibold">Dados de estudo</h3>
           <dl className="mt-3 space-y-2 text-sm">
             <div><dt className="text-muted-foreground">Objetivo</dt><dd>{studyGoalLabel(user.study_goal)}</dd></div>
@@ -140,7 +140,7 @@ export function UsuarioDetalhe() {
           </dl>
         </section>
 
-        <section className="rounded-xl border border-border/40 bg-background/70 p-4">
+        <section className="rounded-xl border border-border bg-card p-4 shadow-sm sm:p-5">
           <h3 className="text-sm font-semibold">Acesso</h3>
           <dl className="mt-3 space-y-2 text-sm">
             <div><dt className="text-muted-foreground">Cadastro</dt><dd>{new Date(user.created_at).toLocaleString("pt-BR")}</dd></div>
@@ -150,7 +150,7 @@ export function UsuarioDetalhe() {
           </dl>
         </section>
 
-        <section className="rounded-xl border border-border/40 bg-background/70 p-4">
+        <section className="rounded-xl border border-border bg-card p-4 shadow-sm sm:p-5">
           <h3 className="text-sm font-semibold">Assinatura</h3>
           <dl className="mt-3 space-y-2 text-sm">
             <div>
@@ -174,10 +174,10 @@ export function UsuarioDetalhe() {
           </dl>
         </section>
 
-        <section className="rounded-xl border border-border/40 bg-background/70 p-4">
+        <section className="rounded-xl border border-border bg-card p-4 shadow-sm sm:p-5">
           <h3 className="text-sm font-semibold">Ações</h3>
           <textarea
-            className="mt-2 w-full rounded-md border border-border/40 bg-background px-3 py-2 text-sm"
+            className="mt-2 min-h-11 w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
             placeholder="Motivo (reprovação/bloqueio)"
             value={reason}
             onChange={(e) => setReason(e.target.value)}
@@ -185,54 +185,54 @@ export function UsuarioDetalhe() {
           />
           <div className="mt-3 flex flex-wrap gap-2">
             {user.status === "pendente" ? (
-              <button type="button" className="rounded-md bg-emerald-600 px-3 py-2 text-sm text-white" onClick={() => approveMut.mutate()}>
+              <button type="button" className="min-h-11 rounded-lg bg-success px-4 py-2.5 text-sm font-semibold text-white transition hover:opacity-90" onClick={() => approveMut.mutate()}>
                 Aprovar
               </button>
             ) : null}
             {user.status === "pendente" ? (
-              <button type="button" className="rounded-md bg-neutral-600 px-3 py-2 text-sm text-white" onClick={() => rejectMut.mutate()}>
+              <button type="button" className="min-h-11 rounded-lg bg-muted px-4 py-2.5 text-sm font-semibold text-muted-foreground transition hover:bg-muted/80" onClick={() => rejectMut.mutate()}>
                 Reprovar
               </button>
             ) : null}
             {user.status !== "bloqueado" ? (
-              <button type="button" className="rounded-md bg-rose-600 px-3 py-2 text-sm text-white" onClick={() => blockMut.mutate()}>
+              <button type="button" className="min-h-11 rounded-lg bg-destructive px-4 py-2.5 text-sm font-semibold text-destructive-foreground transition hover:opacity-90" onClick={() => blockMut.mutate()}>
                 Bloquear
               </button>
             ) : (
-              <button type="button" className="rounded-md bg-teal-600 px-3 py-2 text-sm text-white" onClick={() => unblockMut.mutate()}>
+              <button type="button" className="min-h-11 rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground transition hover:bg-primary-700" onClick={() => unblockMut.mutate()}>
                 Desbloquear
               </button>
             )}
-            <button type="button" className="rounded-md border border-border/40 px-3 py-2 text-sm" onClick={() => resendMut.mutate()}>
+            <button type="button" className="min-h-11 rounded-lg border border-border px-4 py-2.5 text-sm font-medium transition hover:bg-muted" onClick={() => resendMut.mutate()}>
               Reenviar e-mail
             </button>
-            <button type="button" className="rounded-md border border-rose-300 px-3 py-2 text-sm text-rose-600" onClick={() => deleteMut.mutate()}>
+            <button type="button" className="min-h-11 rounded-lg border border-destructive/30 px-4 py-2.5 text-sm font-medium text-destructive transition hover:bg-destructive/10" onClick={() => deleteMut.mutate()}>
               Excluir
             </button>
           </div>
-          <div className="mt-4 flex gap-2">
+          <div className="mt-4 flex flex-col gap-2 sm:flex-row">
             <input
               type="password"
-              className="flex-1 rounded-md border border-border/40 px-3 py-2 text-sm"
+              className="min-h-11 flex-1 rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
               placeholder="Nova senha forte"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
             />
-            <button type="button" className="rounded-md bg-primary-600 px-3 py-2 text-sm text-white" onClick={() => resetMut.mutate()}>
+            <button type="button" className="min-h-11 shrink-0 rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground transition hover:bg-primary-700" onClick={() => resetMut.mutate()}>
               Resetar senha
             </button>
           </div>
         </section>
       </div>
 
-      <section className="rounded-xl border border-border/40 bg-background/70 p-4">
+      <section className="rounded-xl border border-border bg-card p-4 shadow-sm sm:p-5">
         <h3 className="text-sm font-semibold">Histórico de auditoria</h3>
         <div className="mt-3 space-y-2">
           {audit.length === 0 ? (
             <p className="text-sm text-muted-foreground">Sem registros.</p>
           ) : (
             audit.map((a) => (
-              <div key={a.id} className="rounded-lg border border-border/30 px-3 py-2 text-sm">
+              <div key={a.id} className="rounded-lg border border-border px-3 py-2 text-sm">
                 <div className="font-medium">{a.action}</div>
                 <div className="text-xs text-muted-foreground">
                   {new Date(a.created_at).toLocaleString("pt-BR")}

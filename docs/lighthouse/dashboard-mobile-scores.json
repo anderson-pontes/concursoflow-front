@@ -1,0 +1,10 @@
+{
+  "url": "http://localhost:4173/dashboard",
+  "scores": {
+    "performance": 58,
+    "accessibility": 96,
+    "best-practices": 100,
+    "seo": 83
+  },
+  "fetchedAt": "2026-07-11T02:08:27.324Z"
+}

@@ -1,12 +1,7 @@
 import type { FlashcardConfig } from "./types";
 
-export const FLASH_PRIMARY = "#6C3FC5";
-export const FLASH_PAGE_BG = "#F5F4FA";
-export const FLASH_TEXT = "#1A1A2E";
-export const FLASH_MUTED = "#6B7280";
-export const FLASH_SUCCESS = "#22C55E";
-export const FLASH_DUE_BADGE = "#EA580C";
-export const FLASH_CARD_SHADOW = "0 2px 12px rgba(0,0,0,0.07)";
+/** @deprecated Use Tailwind `shadow-md` or `var(--shadow-md)` */
+export const FLASH_CARD_SHADOW = "var(--shadow-md)";
 
 export const ANKI_DEFAULTS: FlashcardConfig = {
   novos_por_dia: 20,

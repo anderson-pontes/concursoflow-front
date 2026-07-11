@@ -6,7 +6,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import axios from "axios";
 
-import { AuthPasswordField, AuthPrimaryButton } from "@/components/auth/AuthFields";
+import { AuthLinkButton, AuthPasswordField, AuthPrimaryButton } from "@/components/auth/AuthFields";
 import { AuthShell } from "@/components/auth/AuthShell";
 import { api } from "@/services/api";
 
@@ -48,10 +48,10 @@ export function ResetPassword() {
   if (!token) {
     return (
       <AuthShell>
-        <p className="text-sm text-rose-600">Link inválido. Solicite uma nova recuperação de senha.</p>
-        <button type="button" className="mt-4 text-[#6C3FC5] font-bold" onClick={() => navigate("/login")}>
+        <p className="text-sm text-destructive">Link inválido. Solicite uma nova recuperação de senha.</p>
+        <AuthLinkButton onClick={() => navigate("/login")} className="mt-4 font-bold">
           Voltar ao login
-        </button>
+        </AuthLinkButton>
       </AuthShell>
     );
   }
@@ -59,18 +59,19 @@ export function ResetPassword() {
   if (done) {
     return (
       <AuthShell>
-        <h1 className="text-2xl font-bold">Senha redefinida</h1>
+        <h1 className="text-2xl font-bold text-foreground">Senha redefinida</h1>
         <p className="mt-2 text-sm text-muted-foreground">Você já pode entrar com a nova senha.</p>
-        <button type="button" className="mt-6 text-[#6C3FC5] font-bold" onClick={() => navigate("/login")}>
+        <AuthLinkButton onClick={() => navigate("/login")} className="mt-6 font-bold">
           Ir para o login
-        </button>
+        </AuthLinkButton>
       </AuthShell>
     );
   }
 
   return (
     <AuthShell>
-      <h1 className="text-2xl font-bold text-[#1A1A2E]">Nova senha</h1>
+      <h1 className="text-2xl font-bold text-foreground">Nova senha</h1>
+      <p className="mt-1 text-sm text-muted-foreground">Escolha uma senha forte para sua conta.</p>
       <form className="mt-6 space-y-4" onSubmit={form.handleSubmit((v) => mutation.mutate(v))}>
         <AuthPasswordField
           id="new-password"
@@ -86,7 +87,9 @@ export function ResetPassword() {
         />
         <AuthPrimaryButton loading={mutation.isPending}>Salvar nova senha</AuthPrimaryButton>
         {mutation.isError && axios.isAxiosError(mutation.error) ? (
-          <p className="text-sm text-rose-600">{(mutation.error.response?.data as { detail?: string })?.detail ?? "Erro"}</p>
+          <p className="text-sm text-destructive">
+            {(mutation.error.response?.data as { detail?: string })?.detail ?? "Erro"}
+          </p>
         ) : null}
       </form>
     </AuthShell>

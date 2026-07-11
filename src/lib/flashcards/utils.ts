@@ -1,4 +1,4 @@
-import type { DeckMetricRow, Flashcard, FlashcardConfig } from "./types";
+﻿import type { DeckMetricRow, Flashcard, FlashcardConfig } from "./types";
 
 export function todayYmd() {
   return new Date().toISOString().slice(0, 10);
@@ -55,7 +55,7 @@ export function urgencyForDueCard(card: Flashcard): { text: string; className: s
     };
   }
   if (card.repeticoes === 0) return { text: "🆕 Novo cartão", className: "text-blue-600 dark:text-blue-400" };
-  return { text: "📅 Para hoje", className: "text-[#6C3FC5]" };
+  return { text: "📅 Para hoje", className: "text-primary" };
 }
 
 export function earliestFutureReview(deckRows: DeckMetricRow[]): string | null {

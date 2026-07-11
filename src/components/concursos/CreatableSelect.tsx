@@ -57,20 +57,20 @@ export function CreatableSelect({
         htmlFor={id}
         className={cn(
           "mb-1.5 block text-xs font-medium",
-          isAprov ? "text-[#6B7280]" : "text-slate-600 dark:text-neutral-400",
+          isAprov ? "text-muted-foreground" : "text-slate-600 dark:text-neutral-400",
         )}
       >
         {label}
         {required ? (
           <span
-            className={cn("ml-0.5", isAprov ? "text-[#6C3FC5]" : "text-primary-600 dark:text-primary-400")}
+            className={cn("ml-0.5", isAprov ? "text-primary" : "text-primary-600 dark:text-primary-400")}
             aria-hidden
           >
             *
           </span>
         ) : null}
         {optional ? (
-          <span className={cn("font-normal", isAprov ? "text-[#9CA3AF]" : "text-slate-400")}> (opcional)</span>
+          <span className={cn("font-normal", isAprov ? "text-muted-foreground" : "text-slate-400")}> (opcional)</span>
         ) : null}
       </label>
       <div className="relative">
@@ -90,8 +90,8 @@ export function CreatableSelect({
             "h-11 w-full rounded-[10px] border-[1.5px] bg-white px-4 py-2 pr-9 text-sm outline-none transition",
             isAprov
               ? cn(
-                  "border-[#E5E7EB] bg-[var(--bg-surface)] text-[#1A1A2E] placeholder:text-[#9CA3AF]",
-                  "focus:border-[#6C3FC5] focus:shadow-[0_0_0_3px_#EDE9FE]",
+                  "border-border bg-[var(--bg-surface)] text-foreground placeholder:text-muted-foreground",
+                  "focus:border-primary focus:ring-2 focus:ring-primary/20",
                 )
               : cn(
                   "border border-slate-200 bg-white text-slate-900 shadow-sm",
@@ -104,7 +104,7 @@ export function CreatableSelect({
         <ChevronDown
           className={cn(
             "pointer-events-none absolute right-2.5 top-1/2 h-4 w-4 -translate-y-1/2",
-            isAprov ? "text-[#9CA3AF]" : "text-slate-400 dark:text-neutral-500",
+            isAprov ? "text-muted-foreground" : "text-slate-400 dark:text-neutral-500",
           )}
           aria-hidden
         />
@@ -114,7 +114,7 @@ export function CreatableSelect({
           role="listbox"
           className={cn(
             "absolute z-50 mt-1 max-h-48 w-full overflow-auto rounded-[10px] border py-1 shadow-lg",
-            isAprov ? "border-[#E5E7EB] bg-white" : "rounded-lg border-slate-200 bg-white dark:border-neutral-600 dark:bg-neutral-900",
+            isAprov ? "border-border bg-white" : "rounded-lg border-slate-200 bg-white dark:border-neutral-600 dark:bg-neutral-900",
           )}
         >
           {filtered.map((s) => (
@@ -124,7 +124,7 @@ export function CreatableSelect({
                 className={cn(
                   "w-full px-3 py-2 text-left text-sm",
                   isAprov
-                    ? "text-[#1A1A2E] hover:bg-[#F3F0FF]"
+                    ? "text-foreground hover:bg-primary-muted"
                     : "text-slate-800 hover:bg-slate-50 dark:text-neutral-100 dark:hover:bg-neutral-800",
                 )}
                 onMouseDown={(e) => {

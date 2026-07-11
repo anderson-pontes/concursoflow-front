@@ -141,11 +141,11 @@ export function Pomodoro() {
     <div className="mx-auto max-w-2xl space-y-6 pb-10">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div className="flex items-start gap-3">
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#F3F0FF] text-[#6C3FC5] dark:bg-[#6C3FC5]/20 dark:text-[#A78BFA]">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-primary-muted text-primary">
             <Timer className="h-5 w-5" strokeWidth={2} />
           </div>
           <div>
-            <h1 className="text-xl font-semibold tracking-tight text-neutral-900 dark:text-neutral-50">
+            <h1 className="text-xl font-semibold tracking-tight text-foreground">
               {timerActive ? "Sessão em andamento" : pageTitle}
             </h1>
             <p className="mt-0.5 text-sm text-muted-foreground">
@@ -169,7 +169,7 @@ export function Pomodoro() {
           onPersist={persistConfig}
         />
       ) : (
-        <div className="rounded-xl border border-[#DDD6FE] bg-[#F3F0FF]/60 px-4 py-3 text-sm text-[#5B32AD] dark:border-[#6C3FC5]/30 dark:bg-[#6C3FC5]/10 dark:text-[#DDD6FE]">
+        <div className="rounded-xl border border-primary-200 bg-primary-muted/60 px-4 py-3 text-sm text-accent-foreground dark:border-primary/30 dark:bg-primary/10 dark:text-primary-200">
           Configurações ocultas durante a sessão. Pause ou encerre para alterar duração, modo e disciplina.
         </div>
       )}

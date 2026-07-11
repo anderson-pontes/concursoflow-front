@@ -1,0 +1,35 @@
+{
+  "environment": "local production preview (vite preview :4173), mobile 375px, Lighthouse 12.8.2",
+  "fetchedAt": "2026-07-11T02:12:00.000Z",
+  "optimization": "logo2.svg + aprovinho.svg → WebP via scripts/optimize-brand-assets.mjs",
+  "before": {
+    "login": { "performance": 61, "accessibility": 90, "lcp": "22.6 s" },
+    "dashboard": { "performance": 55, "accessibility": 96, "lcp": "17.9 s" }
+  },
+  "after": {
+    "login": {
+      "scores": { "performance": 67, "accessibility": 91 },
+      "metrics": { "fcp": "5.3 s", "lcp": "5.3 s" }
+    },
+    "dashboard": {
+      "scores": { "performance": 58, "accessibility": 96 },
+      "metrics": { "fcp": "5.4 s", "lcp": "6.2 s", "tbt": "280 ms", "cls": "0" }
+    }
+  },
+  "assetSizes": {
+    "before": { "logo2.svg": "3.24 MB", "aprovinho.svg": "1.30 MB" },
+    "after": { "logo2.webp": "2 KB", "aprovinho.webp": "4.2 KB" }
+  },
+  "epicTargets": {
+    "performanceMin": 85,
+    "accessibilityMin": 90,
+    "dashboardPerformanceMet": false,
+    "dashboardAccessibilityMet": true,
+    "loginAccessibilityMet": true,
+    "lcpImprovementDashboard": "17.9s → 6.2s",
+    "lcpImprovementLogin": "22.6s → 5.3s"
+  },
+  "nextSteps": [
+    "Code-splitting do bundle JS (~1.8 MB) para FCP/TBT e Performance ≥ 85"
+  ]
+}

@@ -12,8 +12,9 @@ import {
   List, ListOrdered, Undo, Redo,
 } from "lucide-react";
 
-import { toast } from "sonner";
+import { RICH_TEXT_COLORS, RICH_TEXT_HIGHLIGHT_COLORS } from "@/lib/palette/rich-text-colors";
 import { api } from "@/services/api";
+import { toast } from "sonner";
 
 /* ─── ResizableImage node view ────────────────────────────────────────────── */
 function ResizableImageView({
@@ -40,7 +41,7 @@ function ResizableImageView({
             width: "100%",
             maxWidth: "100%",
             borderRadius: 8,
-            outline: selected ? "3px solid #6C3FC5" : showControls ? "2px solid #c4b5fd" : "none",
+            outline: selected ? "3px solid var(--primary)" : showControls ? "2px solid var(--primary-muted)" : "none",
             transition: "outline 0.15s",
           }}
         />
@@ -53,12 +54,12 @@ function ResizableImageView({
             style={{
               position: "absolute", top: 6, right: 6,
               width: 24, height: 24,
-              background: "#ef4444", color: "#fff",
+              background: "var(--destructive)", color: "var(--destructive-foreground)",
               border: "none", borderRadius: "50%",
               cursor: "pointer", display: "flex",
               alignItems: "center", justifyContent: "center",
               fontSize: 13, fontWeight: 700, lineHeight: 1,
-              boxShadow: "0 2px 8px rgba(0,0,0,0.3)",
+              boxShadow: "var(--shadow-md)",
               zIndex: 10,
             }}
           >
@@ -72,7 +73,7 @@ function ResizableImageView({
               position: "absolute", bottom: 6, left: "50%",
               transform: "translateX(-50%)",
               display: "flex", gap: 4,
-              background: "rgba(0,0,0,0.72)",
+              background: "color-mix(in srgb, var(--foreground) 72%, transparent)",
               borderRadius: 8, padding: "4px 8px",
               zIndex: 10,
             }}
@@ -84,8 +85,8 @@ function ResizableImageView({
                 type="button"
                 onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); updateAttributes({ widthPct: p }); }}
                 style={{
-                  background: widthPct === p ? "#6C3FC5" : "rgba(255,255,255,0.15)",
-                  color: "#fff", border: "none", borderRadius: 5,
+                  background: widthPct === p ? "var(--primary)" : "color-mix(in srgb, var(--surface) 15%, transparent)",
+                  color: "var(--primary-foreground)", border: "none", borderRadius: 5,
                   padding: "2px 7px", fontSize: 11, cursor: "pointer", fontWeight: 600,
                 }}
               >
@@ -141,8 +142,8 @@ function ToolBtn({
       className={[
         TB,
         active
-          ? "bg-[#F3F0FF] text-[#6C3FC5]"
-          : "text-[#6B7280] hover:bg-[#F3F0FF] hover:text-[#6C3FC5]",
+          ? "bg-primary-muted text-primary"
+          : "text-muted-foreground hover:bg-primary-muted hover:text-primary",
         disabled ? "opacity-40" : "",
       ].join(" ")}
     >
@@ -151,14 +152,8 @@ function ToolBtn({
   );
 }
 
-const TEXT_COLORS = [
-  "#000000", "#374151", "#dc2626", "#ea580c", "#ca8a04",
-  "#16a34a", "#2563eb", "#7c3aed", "#db2777", "#ffffff",
-];
-const HIGHLIGHT_COLORS = [
-  "#fef08a", "#bbf7d0", "#bfdbfe", "#e9d5ff", "#fecaca",
-  "#fed7aa", "#ccfbf1", "#fce7f3",
-];
+const TEXT_COLORS = [...RICH_TEXT_COLORS];
+const HIGHLIGHT_COLORS = [...RICH_TEXT_HIGHLIGHT_COLORS];
 
 function ColorPicker({
   colors, onSelect, title, variant = "text",
@@ -170,7 +165,7 @@ function ColorPicker({
         type="button"
         title={title}
         onMouseDown={(e) => { e.preventDefault(); setOpen((o) => !o); }}
-        className={`${TB} text-[#6B7280] hover:bg-[#F3F0FF] hover:text-[#6C3FC5]`}
+        className={`${TB} text-muted-foreground hover:bg-primary-muted hover:text-primary`}
       >
         {variant === "highlight" ? (
           <span className="text-xs font-bold leading-none">
@@ -184,7 +179,7 @@ function ColorPicker({
       </button>
       {open ? (
         <div
-          className="absolute left-0 top-9 z-50 flex flex-wrap gap-1 rounded-lg border border-[#E5E7EB] bg-white p-2 shadow-lg"
+          className="absolute left-0 top-9 z-50 flex flex-wrap gap-1 rounded-lg border border-border bg-white p-2 shadow-lg"
           style={{ width: 140 }}
           onMouseLeave={() => setOpen(false)}
         >
@@ -268,11 +263,11 @@ export function RichTextEditor({
 
   return (
     <div
-      className="overflow-hidden rounded-[10px] border-[1.5px] border-[#E5E7EB] bg-white transition-[border-color,box-shadow] duration-200 ease-out focus-within:border-[#6C3FC5] focus-within:shadow-[0_0_0_3px_#EDE9FE]"
+      className="overflow-hidden rounded-[10px] border-[1.5px] border-border bg-white transition-[border-color,box-shadow] duration-200 ease-out focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20"
       style={{ boxSizing: "border-box" }}
     >
       <div
-        className="flex flex-nowrap items-center gap-0.5 overflow-x-auto border-b border-[#E5E7EB] bg-[#FAFAFA] px-1.5 py-1.5"
+        className="flex flex-nowrap items-center gap-0.5 overflow-x-auto border-b border-border bg-surface-muted px-1.5 py-1.5"
         style={{ scrollbarWidth: "thin" }}
       >
           <ToolBtn onClick={() => editor.chain().focus().undo().run()} title="Desfazer · Ctrl+Z" disabled={!editor.can().undo()}>
@@ -282,7 +277,7 @@ export function RichTextEditor({
             <Redo className="h-4 w-4" />
           </ToolBtn>
 
-          <div className="mx-1 h-6 w-px shrink-0 bg-[#E5E7EB]" aria-hidden />
+          <div className="mx-1 h-6 w-px shrink-0 bg-border" aria-hidden />
 
           <ToolBtn onClick={() => editor.chain().focus().toggleBold().run()} active={editor.isActive("bold")} title="Negrito · Ctrl+B">
             <Bold className="h-4 w-4" />
@@ -306,7 +301,7 @@ export function RichTextEditor({
             variant="highlight"
           />
 
-          <div className="mx-1 h-6 w-px shrink-0 bg-[#E5E7EB]" aria-hidden />
+          <div className="mx-1 h-6 w-px shrink-0 bg-border" aria-hidden />
 
           <ToolBtn onClick={() => editor.chain().focus().toggleBulletList().run()} active={editor.isActive("bulletList")} title="Lista com marcadores">
             <List className="h-4 w-4" />
@@ -345,12 +340,12 @@ export function RichTextEditor({
           onClick={() => editor.commands.focus()}
         >
           <div
-            className="flashcard-rtc-content prose prose-sm relative max-w-none text-[15px] leading-[1.7] text-[#1A1A2E]"
+            className="flashcard-rtc-content prose prose-sm relative max-w-none text-[15px] leading-[1.7] text-foreground"
             style={{ position: "relative" }}
           >
             {editor.isEmpty ? (
               <p
-                className="pointer-events-none select-none text-[15px] text-[#9CA3AF]"
+                className="pointer-events-none select-none text-[15px] text-muted-foreground"
                 style={{ position: "absolute", left: 0, top: 0, right: 0 }}
               >
                 {placeholder}

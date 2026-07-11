@@ -1,7 +1,7 @@
 export function DisciplinaCardSkeleton() {
   return (
     <div
-      className="animate-pulse overflow-hidden rounded-2xl border-[1.5px] border-[var(--border-default)] bg-[var(--bg-surface)] shadow-[0_2px_10px_rgba(0,0,0,0.06)]"
+      className="animate-pulse overflow-hidden rounded-2xl border-[1.5px] border-[var(--border-default)] bg-[var(--bg-surface)] shadow-card"
       style={{ fontFamily: "Inter, system-ui, sans-serif" }}
     >
       <div className="h-[3px] bg-[var(--border-default)]" />
@@ -33,7 +33,7 @@ export function DisciplinaCardSkeleton() {
 
 export function EmptyDisciplinasIllustration() {
   return (
-    <svg width="120" height="100" viewBox="0 0 120 100" fill="none" aria-hidden className="text-[#6C3FC5]">
+    <svg width="120" height="100" viewBox="0 0 120 100" fill="none" aria-hidden className="text-primary">
       <rect x="24" y="58" width="72" height="28" rx="4" fill="currentColor" fillOpacity="0.12" />
       <rect x="32" y="42" width="56" height="22" rx="4" fill="currentColor" fillOpacity="0.18" />
       <rect x="40" y="26" width="40" height="22" rx="4" fill="currentColor" fillOpacity="0.28" />

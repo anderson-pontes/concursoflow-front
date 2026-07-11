@@ -2,6 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 
 import { cn } from "@/lib/utils";
+import { chartStripClass } from "@/lib/palette/chart-strip";
 import { fmtPeso, fmtPontos, getDisciplinaTotalPontos } from "@/lib/disciplinas/pontos";
 import { getDisciplinaStatusLabel } from "./disciplinaProgress";
 
@@ -28,33 +29,24 @@ type DisciplinaCardProps = {
 };
 
 /** Paleta cíclica da faixa superior (3px) — identidade visual por posição na lista */
-const TOP_STRIP_COLORS = [
-  "bg-[#6C3FC5]", // roxo marca
-  "bg-[#22C55E]", // verde
-  "bg-[#3B82F6]", // azul
-  "bg-[#F59E0B]", // âmbar
-  "bg-[#EC4899]", // rosa
-  "bg-[#14B8A6]", // teal
-] as const;
-
 function topStripClass(index: number) {
-  return TOP_STRIP_COLORS[index % TOP_STRIP_COLORS.length];
+  return chartStripClass(index);
 }
 
 function headerIconBox(inConcurso: boolean, kind: string) {
-  if (!inConcurso) return { box: "bg-[#FFFBEB] dark:bg-[#2D1F0A]", emoji: "📂" as const };
-  if (kind === "sem_topicos") return { box: "bg-[#F3F0FF] dark:bg-[var(--ap-brand-light)]", emoji: "📋" as const };
-  if (kind === "concluida") return { box: "bg-[#F0FDF4] dark:bg-[#052E16]", emoji: "✅" as const };
-  if (kind === "iniciando") return { box: "bg-[#F3F0FF] dark:bg-[var(--ap-brand-light)]", emoji: "📋" as const };
-  return { box: "bg-[#F0FDF4] dark:bg-[#052E16]", emoji: "📖" as const };
+  if (!inConcurso) return { box: "bg-warning/10 dark:bg-warning/10", emoji: "📂" as const };
+  if (kind === "sem_topicos") return { box: "bg-primary-muted dark:bg-[var(--ap-brand-light)]", emoji: "📋" as const };
+  if (kind === "concluida") return { box: "bg-success/10 dark:bg-success/10", emoji: "✅" as const };
+  if (kind === "iniciando") return { box: "bg-primary-muted dark:bg-[var(--ap-brand-light)]", emoji: "📋" as const };
+  return { box: "bg-success/10 dark:bg-success/10", emoji: "📖" as const };
 }
 
 function statusBadgeClass(inConcurso: boolean, kind: string) {
-  if (!inConcurso) return "bg-[#FEF3C7] text-[#D97706] dark:bg-[#2D1F0A] dark:text-[#F59E0B]";
-  if (kind === "sem_topicos") return "bg-[#F3F4F6] text-[#6B7280] dark:bg-[#1F2937] dark:text-[#6B7280]";
-  if (kind === "concluida") return "bg-[#EDE9FE] text-[#6C3FC5] dark:bg-[#2D2540] dark:text-[#A78BFA]";
-  if (kind === "iniciando") return "bg-[#DCFCE7] text-[#16A34A] dark:bg-[#052E16] dark:text-[#4ADE80]";
-  return "bg-[#DCFCE7] text-[#16A34A] dark:bg-[#052E16] dark:text-[#4ADE80]";
+  if (!inConcurso) return "bg-warning/15 text-warning dark:bg-warning/10 dark:text-warning";
+  if (kind === "sem_topicos") return "bg-muted text-muted-foreground dark:bg-muted dark:text-muted-foreground";
+  if (kind === "concluida") return "bg-accent text-primary dark:bg-accent dark:text-primary-400";
+  if (kind === "iniciando") return "bg-success/15 text-success dark:bg-success/10 dark:text-success-400";
+  return "bg-success/15 text-success dark:bg-success/10 dark:text-success-400";
 }
 
 function statusBadgeLabel(inConcurso: boolean, stats: { total: number; studied: number }) {
@@ -65,16 +57,16 @@ function statusBadgeLabel(inConcurso: boolean, stats: { total: number; studied: 
 }
 
 function progressFillClass(inConcurso: boolean, kind: string, pct: number) {
-  if (!inConcurso) return "bg-[#F59E0B]";
+  if (!inConcurso) return "bg-warning";
   if (kind === "sem_topicos" || pct === 0) return "bg-transparent";
-  if (kind === "concluida") return "bg-[#6C3FC5]";
-  return "bg-[#22C55E]";
+  if (kind === "concluida") return "bg-primary";
+  return "bg-success";
 }
 
 function pctColorClass(pct: number) {
-  if (pct >= 70) return "text-[#16A34A]";
-  if (pct >= 40) return "text-[#D97706]";
-  return "text-[#EF4444]";
+  if (pct >= 70) return "text-success";
+  if (pct >= 40) return "text-warning";
+  return "text-destructive";
 }
 
 export function DisciplinaCard({
@@ -169,10 +161,10 @@ export function DisciplinaCard({
       tabIndex={0}
       aria-label={`Abrir painel de ${disciplina.nome}`}
       className={cn(
-        "group cursor-pointer overflow-hidden rounded-2xl border-[1.5px] border-[var(--border-default)] bg-[var(--bg-surface)] shadow-[0_2px_10px_rgba(0,0,0,0.06)] transition-all duration-200 ease-out outline-none",
-        "hover:-translate-y-0.5 hover:border-[#C4B5FD] hover:shadow-[0_8px_28px_rgba(108,63,197,0.12)]",
-        "dark:hover:border-[#3D3060] dark:focus-visible:ring-offset-[var(--bg-page)]",
-        "focus-visible:ring-2 focus-visible:ring-[#6C3FC5] focus-visible:ring-offset-2",
+        "group cursor-pointer overflow-hidden rounded-2xl border-[1.5px] border-[var(--border-default)] bg-[var(--bg-surface)] shadow-card transition-all duration-200 ease-out outline-none",
+        "hover:-translate-y-0.5 hover:border-primary-200 hover:shadow-md",
+        "dark:hover:border-primary-800 dark:focus-visible:ring-offset-[var(--bg-page)]",
+        "focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
       )}
       style={{ fontFamily: "Inter, system-ui, sans-serif" }}
       onClick={goPainel}
@@ -210,14 +202,14 @@ export function DisciplinaCard({
               <div className="flex flex-col items-end gap-1 sm:flex-row sm:items-center">
                 <button
                   type="button"
-                  className="rounded-lg bg-[#EF4444] px-2 py-1 text-[11px] font-bold text-white hover:bg-red-600"
+                  className="rounded-lg bg-destructive px-2 py-1 text-[11px] font-bold text-white hover:bg-red-600"
                   onClick={() => void confirmDelete()}
                 >
                   Confirmar exclusão ✗
                 </button>
                 <button
                   type="button"
-                  className="rounded-lg border border-[var(--border-default)] px-2 py-1 text-[11px] font-semibold text-[var(--text-secondary)] hover:bg-[#F9FAFB] dark:hover:bg-[var(--bg-surface-hover)]"
+                  className="rounded-lg border border-[var(--border-default)] px-2 py-1 text-[11px] font-semibold text-[var(--text-secondary)] hover:bg-muted dark:hover:bg-[var(--bg-surface-hover)]"
                   onClick={cancelDelete}
                 >
                   Cancelar
@@ -229,14 +221,14 @@ export function DisciplinaCard({
                   type="button"
                   aria-expanded={menuOpen}
                   aria-haspopup="menu"
-                  className="flex h-8 w-8 items-center justify-center rounded-lg text-[var(--text-muted)] transition-colors hover:bg-[#F3F4F6] hover:text-[#1A1A2E] dark:hover:bg-[var(--bg-surface-2)] dark:hover:text-[var(--text-primary)]"
+                  className="flex h-8 w-8 items-center justify-center rounded-lg text-[var(--text-muted)] transition-colors hover:bg-muted hover:text-foreground dark:hover:bg-[var(--bg-surface-2)] dark:hover:text-[var(--text-primary)]"
                   onClick={() => setMenuOpen((v) => !v)}
                 >
                   <span className="text-lg leading-none">⋯</span>
                 </button>
                 {menuOpen ? (
                   <div
-                    className="absolute right-0 z-[1000] mt-2 min-w-[200px] rounded-xl border border-[var(--border-default)] bg-white p-1.5 shadow-[0_8px_24px_rgba(0,0,0,0.12)] dark:border-[var(--border-default)] dark:bg-[var(--bg-surface-2)] dark:shadow-[0_8px_24px_rgba(0,0,0,0.4)]"
+                    className="absolute right-0 z-[1000] mt-2 min-w-[200px] rounded-xl border border-[var(--border-default)] bg-card p-1.5 shadow-lg dark:bg-[var(--bg-surface-2)]"
                     style={{ animation: "discMenuIn 150ms ease-out" }}
                   >
                     <style>{`
@@ -247,7 +239,7 @@ export function DisciplinaCard({
                     `}</style>
                     <button
                       type="button"
-                      className="flex w-full flex-col items-start gap-0.5 rounded-lg px-3.5 py-2.5 text-left text-sm text-[var(--text-primary)] transition-colors hover:bg-[#F3F0FF] hover:text-[#6C3FC5] dark:hover:bg-[#1E1A2E] dark:hover:text-[#A78BFA]"
+                      className="flex w-full flex-col items-start gap-0.5 rounded-lg px-3.5 py-2.5 text-left text-sm text-[var(--text-primary)] transition-colors hover:bg-primary-muted hover:text-primary dark:hover:bg-surface-muted dark:hover:text-primary-400"
                       onClick={() => {
                         setMenuOpen(false);
                         goPainel();
@@ -260,7 +252,7 @@ export function DisciplinaCard({
                     </button>
                     <button
                       type="button"
-                      className="mt-0.5 flex w-full items-center gap-2.5 rounded-lg px-3.5 py-2.5 text-left text-sm text-[var(--text-primary)] transition-colors hover:bg-[#F9FAFB] dark:hover:bg-[#1A1726]"
+                      className="mt-0.5 flex w-full items-center gap-2.5 rounded-lg px-3.5 py-2.5 text-left text-sm text-[var(--text-primary)] transition-colors hover:bg-muted dark:hover:bg-surface-muted"
                       onClick={() => {
                         setMenuOpen(false);
                         onEdit();
@@ -271,7 +263,7 @@ export function DisciplinaCard({
                     <div className="my-1 h-px bg-[var(--border-subtle)]" />
                     <button
                       type="button"
-                      className="flex w-full items-center gap-2.5 rounded-lg px-3.5 py-2.5 text-left text-sm font-medium text-[#EF4444] transition-colors hover:bg-[#FFF5F5] dark:hover:bg-[rgba(239,68,68,0.12)]"
+                      className="flex w-full items-center gap-2.5 rounded-lg px-3.5 py-2.5 text-left text-sm font-medium text-destructive transition-colors hover:bg-destructive/10"
                       onClick={armDelete}
                     >
                       <span aria-hidden>🗑️</span> Excluir disciplina
@@ -291,7 +283,7 @@ export function DisciplinaCard({
           </span>
           <span className={cn("font-bold tabular-nums", pctColorClass(stats.pct))}>{stats.pct}%</span>
         </div>
-        <div className="h-2 overflow-hidden rounded-full bg-[#E5E7EB] dark:bg-[#1E1A2E]">
+        <div className="h-2 overflow-hidden rounded-full bg-border dark:bg-surface-muted">
           <div
             className={cn(
               "h-full rounded-full transition-[width] duration-500 ease-out",
@@ -303,8 +295,8 @@ export function DisciplinaCard({
       </div>
 
       {hasEditalInfo ? (
-        <div className="mx-5 mb-1 rounded-lg bg-[#FAF5FF] px-3 py-2 text-center text-[11px] text-[var(--text-secondary)] dark:bg-[#1E1A2E]">
-          <span className="font-semibold text-[#6C3FC5] dark:text-[#A78BFA]">{fmtPontos(totalPontos)} pts</span>
+        <div className="mx-5 mb-1 rounded-lg bg-primary-muted px-3 py-2 text-center text-[11px] text-[var(--text-secondary)] dark:bg-surface-muted">
+          <span className="font-semibold text-primary dark:text-primary-400">{fmtPontos(totalPontos)} pts</span>
           <span className="mx-1.5 text-[var(--text-muted)]">·</span>
           peso {fmtPeso(disciplina.peso)} no edital
         </div>
@@ -335,8 +327,8 @@ export function DisciplinaCard({
           className={cn(
             "rounded-full px-2.5 py-1 text-xs font-semibold transition-opacity",
             inConcurso
-              ? "bg-[#EDE9FE] text-[#6C3FC5] dark:bg-[#2D2540] dark:text-[#A78BFA]"
-              : "bg-[#FEF3C7] text-[#D97706] dark:bg-[#2D1F0A] dark:text-[#F59E0B]",
+              ? "bg-accent text-primary dark:bg-accent dark:text-primary-400"
+              : "bg-warning/15 text-warning dark:bg-warning/10 dark:text-warning",
             !canToggleConcurso && "cursor-not-allowed opacity-45",
           )}
           onClick={(e) => {
@@ -351,7 +343,7 @@ export function DisciplinaCard({
         ) : null}
         <button
           type="button"
-          className="text-xs text-[var(--text-muted)] transition-colors hover:text-[#6C3FC5] hover:underline dark:hover:text-[#A78BFA]"
+          className="text-xs text-[var(--text-muted)] transition-colors hover:text-primary hover:underline dark:hover:text-primary-400"
           onClick={goPainel}
         >
           Ver painel →

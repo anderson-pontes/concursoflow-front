@@ -1,6 +1,7 @@
 type HeatmapData = {
   date: string;
   count: number;
+  minutes?: number;
 };
 
 function getCellColor(minutes: number) {
@@ -14,7 +15,7 @@ function getCellColor(minutes: number) {
 export function HeatmapCard({ data }: { data: HeatmapData[] }) {
   const sorted = [...data].sort((a, b) => a.date.localeCompare(b.date));
   const last112 = sorted.slice(-112);
-  const cells = Array.from({ length: 112 }, (_, i) => last112[i] ?? { date: `empty-${i}`, count: 0 });
+  const cells = Array.from({ length: 112 }, (_, i) => last112[i] ?? { date: `empty-${i}`, count: 0, minutes: 0 });
 
   return (
     <div className="rounded-xl border border-neutral-200 bg-white p-4 dark:border-neutral-700 dark:bg-neutral-800">
@@ -27,11 +28,12 @@ export function HeatmapCard({ data }: { data: HeatmapData[] }) {
             {Array.from({ length: 7 }, (_, row) => {
               const idx = col * 7 + row;
               const cell = cells[idx];
+              const mins = cell.minutes ?? cell.count;
               return (
                 <div
                   key={`${cell.date}-${idx}`}
-                  className={`h-[11px] w-[11px] rounded-[3px] ${getCellColor(cell.count)}`}
-                  title={`${cell.date}: ${cell.count} min`}
+                  className={`h-[11px] w-[11px] rounded-[3px] ${getCellColor(mins)}`}
+                  title={`${cell.date}: ${mins} min`}
                 />
               );
             })}

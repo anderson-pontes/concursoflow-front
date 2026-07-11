@@ -22,11 +22,11 @@ export function FlashCfgAccordion({
       <button
         type="button"
         onClick={onToggle}
-        className="flex w-full items-center justify-between gap-2 px-4 py-3.5 text-left text-sm font-bold text-[#1A1A2E] transition hover:bg-neutral-50 dark:text-neutral-100 dark:hover:bg-neutral-700/50"
+        className="flex w-full items-center justify-between gap-2 px-4 py-3.5 text-left text-sm font-bold text-foreground transition hover:bg-neutral-50 dark:text-neutral-100 dark:hover:bg-neutral-700/50"
       >
         <span>{title}</span>
         <ChevronRight
-          className={`h-5 w-5 shrink-0 text-[#6B7280] transition-transform ${open ? "rotate-90" : ""}`}
+          className={`h-5 w-5 shrink-0 text-muted-foreground transition-transform ${open ? "rotate-90" : ""}`}
           aria-hidden
         />
       </button>
@@ -75,19 +75,19 @@ export function FlashCfgIntRow({
       <div className="flex flex-wrap items-center gap-2 gap-y-2">
         <label
           className={`flex items-center gap-1.5 text-sm font-semibold ${
-            dirty ? "text-[#6C3FC5]" : "text-[#1A1A2E] dark:text-neutral-100"
+            dirty ? "text-primary" : "text-foreground dark:text-neutral-100"
           }`}
         >
-          {dirty ? <span className="h-2 w-2 shrink-0 rounded-full bg-[#6C3FC5]" aria-hidden /> : null}
+          {dirty ? <span className="h-2 w-2 shrink-0 rounded-full bg-primary" aria-hidden /> : null}
           {label}
         </label>
-        <span className="cursor-help text-[#9CA3AF]" title={tooltip}>
+        <span className="cursor-help text-muted-foreground" title={tooltip}>
           <Info className="h-4 w-4" aria-hidden />
         </span>
         <button
           type="button"
           onClick={onChipReset}
-          className="ml-auto rounded-full border border-violet-200 bg-violet-50 px-2.5 py-1 text-xs font-semibold text-[#6C3FC5] transition hover:bg-violet-100 dark:border-violet-800 dark:bg-violet-950/50 dark:hover:bg-violet-900/40"
+          className="ml-auto rounded-full border border-violet-200 bg-violet-50 px-2.5 py-1 text-xs font-semibold text-primary transition hover:bg-violet-100 dark:border-violet-800 dark:bg-violet-950/50 dark:hover:bg-violet-900/40"
         >
           Padrão Anki: {defaultVal}
         </button>
@@ -99,7 +99,7 @@ export function FlashCfgIntRow({
           max={sMax}
           value={sliderVal}
           onChange={(e) => onChange(clampFull(Number(e.target.value)))}
-          className="h-2 flex-1 cursor-pointer accent-[#6C3FC5]"
+          className="h-2 flex-1 cursor-pointer accent-primary"
         />
         <input
           type="number"
@@ -111,12 +111,12 @@ export function FlashCfgIntRow({
             error
               ? "border-2 border-red-500"
               : dirty
-                ? "border-2 border-[#6C3FC5]"
+                ? "border-2 border-primary"
                 : "border border-neutral-200 dark:border-neutral-600"
           }`}
         />
       </div>
-      <div className="flex justify-between text-xs tabular-nums text-[#9CA3AF]">
+      <div className="flex justify-between text-xs tabular-nums text-muted-foreground">
         <span>{min}</span>
         <span>{sMax < max ? `${sMax} (slider)` : max}</span>
       </div>
@@ -161,13 +161,13 @@ export function FlashCfgFloatRow({
       <div className="flex flex-wrap items-center gap-2">
         <label
           className={`flex items-center gap-1.5 text-sm font-semibold ${
-            dirty ? "text-[#6C3FC5]" : "text-[#1A1A2E] dark:text-neutral-100"
+            dirty ? "text-primary" : "text-foreground dark:text-neutral-100"
           }`}
         >
-          {dirty ? <span className="h-2 w-2 shrink-0 rounded-full bg-[#6C3FC5]" aria-hidden /> : null}
+          {dirty ? <span className="h-2 w-2 shrink-0 rounded-full bg-primary" aria-hidden /> : null}
           {label}
         </label>
-        <span className="cursor-help text-[#9CA3AF]" title={tooltip}>
+        <span className="cursor-help text-muted-foreground" title={tooltip}>
           <Info className="h-4 w-4" aria-hidden />
         </span>
       </div>
@@ -178,7 +178,7 @@ export function FlashCfgFloatRow({
           max={steps}
           value={Math.round((safe - min) / step)}
           onChange={(e) => onChange(clamp(min + Number(e.target.value) * step))}
-          className="h-2 flex-1 cursor-pointer accent-[#6C3FC5]"
+          className="h-2 flex-1 cursor-pointer accent-primary"
         />
         <input
           type="number"
@@ -191,12 +191,12 @@ export function FlashCfgFloatRow({
             error
               ? "border-2 border-red-500"
               : dirty
-                ? "border-2 border-[#6C3FC5]"
+                ? "border-2 border-primary"
                 : "border border-neutral-200 dark:border-neutral-600"
           }`}
         />
       </div>
-      <div className="flex justify-between text-xs tabular-nums text-[#9CA3AF]">
+      <div className="flex justify-between text-xs tabular-nums text-muted-foreground">
         <span>{min}</span>
         <span>{max}</span>
       </div>

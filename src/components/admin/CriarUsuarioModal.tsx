@@ -14,7 +14,7 @@ type Props = {
 const strongPw = /^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
 
 const fieldClass =
-  "mt-1 w-full rounded-md border border-border/40 bg-background px-3 py-2 text-sm outline-none focus:border-primary-500";
+  "mt-1.5 min-h-11 w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring";
 
 export function CriarUsuarioModal({ open, onClose, onCreated }: Props) {
   const [name, setName] = React.useState("");
@@ -62,66 +62,87 @@ export function CriarUsuarioModal({ open, onClose, onCreated }: Props) {
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-      <div className="w-full max-w-md rounded-xl border border-border/40 bg-background p-5 shadow-xl">
-        <div className="mb-4 flex items-center justify-between">
-          <h3 className="text-base font-semibold">Criar usuário</h3>
-          <button type="button" className="text-muted-foreground hover:text-foreground" onClick={onClose}>
+    <div
+      className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 p-0 sm:items-center sm:p-4"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="criar-usuario-title"
+      onMouseDown={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
+    >
+      <div className="flex max-h-[min(92dvh,720px)] w-full max-w-md flex-col overflow-hidden rounded-t-2xl border border-border bg-card shadow-xl sm:rounded-xl">
+        <div className="flex shrink-0 items-center justify-between border-b border-border px-5 py-4">
+          <h3 id="criar-usuario-title" className="text-base font-semibold text-foreground">
+            Criar usuário
+          </h3>
+          <button
+            type="button"
+            className="flex min-h-11 min-w-11 items-center justify-center rounded-lg text-muted-foreground transition hover:bg-muted hover:text-foreground"
+            onClick={onClose}
+            aria-label="Fechar"
+          >
             ✕
           </button>
         </div>
 
-        <div className="space-y-3">
-          <label className="block text-sm">
-            <span className="font-medium">Nome completo</span>
-            <input className={fieldClass} value={name} onChange={(e) => setName(e.target.value)} />
-          </label>
-          <label className="block text-sm">
-            <span className="font-medium">E-mail</span>
-            <input className={fieldClass} type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
-          </label>
-          <label className="block text-sm">
-            <span className="font-medium">Senha</span>
-            <input className={fieldClass} type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
-            <span className="text-xs text-muted-foreground">
-              Mínimo 8 caracteres, com maiúscula, número e símbolo.
-            </span>
-          </label>
-          <div className="grid grid-cols-2 gap-3">
+        <div className="min-h-0 flex-1 overflow-y-auto px-5 py-4">
+          <div className="space-y-3">
             <label className="block text-sm">
-              <span className="font-medium">Perfil</span>
-              <select className={fieldClass} value={role} onChange={(e) => setRole(e.target.value as "user" | "admin")}>
-                <option value="user">Usuário</option>
-                <option value="admin">Administrador</option>
-              </select>
+              <span className="font-medium text-foreground">Nome completo</span>
+              <input className={fieldClass} value={name} onChange={(e) => setName(e.target.value)} />
             </label>
             <label className="block text-sm">
-              <span className="font-medium">Status</span>
-              <select className={fieldClass} value={status} onChange={(e) => setStatus(e.target.value)}>
-                <option value="ativo">Ativo</option>
-                <option value="pendente">Pendente</option>
-                <option value="bloqueado">Bloqueado</option>
-                <option value="inativo">Inativo</option>
-              </select>
+              <span className="font-medium text-foreground">E-mail</span>
+              <input className={fieldClass} type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
             </label>
+            <label className="block text-sm">
+              <span className="font-medium text-foreground">Senha</span>
+              <input className={fieldClass} type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+              <span className="text-xs text-muted-foreground">
+                Mínimo 8 caracteres, com maiúscula, número e símbolo.
+              </span>
+            </label>
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <label className="block text-sm">
+                <span className="font-medium text-foreground">Perfil</span>
+                <select className={fieldClass} value={role} onChange={(e) => setRole(e.target.value as "user" | "admin")}>
+                  <option value="user">Usuário</option>
+                  <option value="admin">Administrador</option>
+                </select>
+              </label>
+              <label className="block text-sm">
+                <span className="font-medium text-foreground">Status</span>
+                <select className={fieldClass} value={status} onChange={(e) => setStatus(e.target.value)}>
+                  <option value="ativo">Ativo</option>
+                  <option value="pendente">Pendente</option>
+                  <option value="bloqueado">Bloqueado</option>
+                  <option value="inativo">Inativo</option>
+                </select>
+              </label>
+            </div>
+
+            {role === "admin" ? (
+              <p className="rounded-lg bg-primary-muted px-3 py-2 text-xs text-accent-foreground">
+                Administradores têm acesso total e não dependem de assinatura.
+              </p>
+            ) : null}
+
+            {error ? <p className="text-sm text-destructive">{error}</p> : null}
           </div>
-
-          {role === "admin" ? (
-            <p className="rounded-lg bg-primary-50 px-3 py-2 text-xs text-primary-700">
-              Administradores têm acesso total e não dependem de assinatura.
-            </p>
-          ) : null}
-
-          {error ? <p className="text-sm text-rose-600">{error}</p> : null}
         </div>
 
-        <div className="mt-5 flex justify-end gap-2">
-          <button type="button" className="rounded-md border border-border/40 px-4 py-2 text-sm" onClick={onClose}>
+        <div className="flex shrink-0 justify-end gap-2 border-t border-border px-5 py-4">
+          <button
+            type="button"
+            className="min-h-11 rounded-lg border border-border px-4 py-2.5 text-sm font-medium text-foreground transition hover:bg-muted"
+            onClick={onClose}
+          >
             Cancelar
           </button>
           <button
             type="button"
-            className="rounded-md bg-primary-600 px-4 py-2 text-sm text-white disabled:opacity-60"
+            className="min-h-11 rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground transition hover:bg-primary-700 disabled:opacity-60"
             onClick={submit}
             disabled={mutation.isPending}
           >

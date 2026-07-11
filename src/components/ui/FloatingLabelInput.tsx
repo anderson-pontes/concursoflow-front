@@ -82,7 +82,7 @@ export const FloatingLabelInput = React.forwardRef<HTMLInputElement, FloatingLab
       onChange?.(e);
     };
 
-    const labelLeft = leftSlot ? (isAuth ? "left-[44px]" : "left-11") : isAuth ? "left-4" : "left-4";
+    const labelLeft = leftSlot ? (isAuth ? "left-11" : "left-11") : "left-4";
 
     return (
       <div className={cn("relative", containerClassName)}>
@@ -92,14 +92,14 @@ export const FloatingLabelInput = React.forwardRef<HTMLInputElement, FloatingLab
               "pointer-events-none absolute z-10 flex items-center justify-center transition-colors duration-150",
               isAuth
                 ? cn(
-                    "left-[14px] top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-[15px] leading-none",
-                    error ? "text-[#EF4444]" : "text-[#9CA3AF]",
-                    focused && !error && "text-[#6C3FC5]",
+                    "left-3.5 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-[15px] leading-none",
+                    error ? "text-destructive" : "text-muted-foreground",
+                    focused && !error && "text-primary",
                   )
                 : cn(
                     "left-3.5 top-1/2 -translate-y-1/2 text-base",
-                    error ? "text-[#EF4444]" : "text-[#9CA3AF]",
-                    focused && !error && "text-[#6C3FC5]",
+                    error ? "text-destructive" : "text-muted-foreground",
+                    focused && !error && "text-primary",
                   ),
             )}
             aria-hidden
@@ -122,15 +122,15 @@ export const FloatingLabelInput = React.forwardRef<HTMLInputElement, FloatingLab
             "peer w-full outline-none transition-all duration-150 placeholder:text-transparent",
             isAuth
               ? cn(
-                  "box-border h-[56px] rounded-xl border-[1.5px] pb-2 pt-[22px] text-[15px] leading-normal text-[#1A1A2E]",
-                  "focus:border-[#6C3FC5] focus:bg-white focus:shadow-[0_0_0_3px_rgba(108,63,197,0.12)]",
-                  error ? "border-[#EF4444] bg-[#FFF5F5]" : "border-[#E5E7EB] bg-[#FAFAFA]",
-                  leftSlot ? "pl-[44px]" : "pl-4",
-                  rightSlot ? "pr-[44px]" : "pr-4",
+                  "box-border h-14 min-h-[56px] rounded-xl border-[1.5px] pb-2 pt-[22px] text-[15px] leading-normal text-foreground",
+                  "focus:border-primary focus:bg-surface focus:ring-[3px] focus:ring-primary/15",
+                  error ? "border-destructive bg-destructive/5" : "border-input bg-surface-muted",
+                  leftSlot ? "pl-11" : "pl-4",
+                  rightSlot ? "pr-11" : "pr-4",
                 )
               : cn(
-                  "h-14 rounded-[10px] border-[1.5px] border-[var(--border-default)] bg-[var(--bg-surface)] px-4 pb-2.5 pt-5 text-sm text-[var(--text-primary)]",
-                  "focus:border-[#6C3FC5] focus:shadow-[0_0_0_3px_rgba(108,63,197,0.15)]",
+                  "h-14 rounded-lg border-[1.5px] border-border bg-surface px-4 pb-2.5 pt-5 text-sm text-foreground",
+                  "focus:border-primary focus:ring-[3px] focus:ring-primary/15",
                   "disabled:cursor-not-allowed disabled:opacity-50",
                 ),
             className,
@@ -145,11 +145,11 @@ export const FloatingLabelInput = React.forwardRef<HTMLInputElement, FloatingLab
             labelLeft,
             floated
               ? isAuth
-                ? "top-2 translate-y-0 text-[11px] font-semibold text-[#6C3FC5]"
-                : "top-3 translate-y-0 text-[11px] font-medium text-[#6C3FC5]"
+                ? "top-2 translate-y-0 text-[11px] font-semibold text-primary"
+                : "top-3 translate-y-0 text-[11px] font-medium text-primary"
               : isAuth
-                ? "top-1/2 -translate-y-1/2 text-[15px] text-[#9CA3AF]"
-                : "top-1/2 -translate-y-1/2 text-sm text-[#9CA3AF]",
+                ? "top-1/2 -translate-y-1/2 text-[15px] text-muted-foreground"
+                : "top-1/2 -translate-y-1/2 text-sm text-muted-foreground",
             labelClassName,
           )}
         >

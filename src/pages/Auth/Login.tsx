@@ -8,8 +8,10 @@ import axios from "axios";
 
 import {
   AuthEmailField,
+  AuthLinkButton,
   AuthPasswordField,
   AuthPrimaryButton,
+  AuthSecondaryButton,
   AuthSeparatorOu,
   GoogleSignInButton,
 } from "@/components/auth/AuthFields";
@@ -51,7 +53,6 @@ export function Login() {
   const [authMode, setAuthMode] = React.useState<"login" | "forgot">("login");
   const [shakeLogin, setShakeLogin] = React.useState(false);
   const [forgotSent, setForgotSent] = React.useState(false);
-  // Paywall: exibido quando o login retorna 403 por assinatura pendente/vencida.
   const [paywall, setPaywall] = React.useState<{ message: string } | null>(null);
 
   const form = useForm<LoginForm>({
@@ -93,7 +94,6 @@ export function Login() {
     onError: (err) => {
       setShakeLogin(true);
       window.setTimeout(() => setShakeLogin(false), 450);
-      // 403 = conta não ativa (pagamento pendente/assinatura vencida): oferece checkout.
       if (axios.isAxiosError(err) && err.response?.status === 403) {
         setPaywall({ message: loginErrorMessage(err) });
       } else {
@@ -146,37 +146,32 @@ export function Login() {
 
   return (
     <AuthShell>
-      {/* Mobile: logo compacta no topo */}
-      <div className="mb-8 flex justify-center md:hidden">
-        <AprovingoLogo className="h-10 w-auto max-w-[200px] shrink-0" />
+      <div className="mb-6 hidden justify-center md:flex">
+        <AprovingoLogo className="h-10 w-auto max-w-[200px] shrink-0 md:hidden" />
       </div>
 
       {authMode === "forgot" ? (
-        <div className="pb-16 md:pb-8">
-          <button
-            type="button"
-            onClick={goLogin}
-            className="mb-6 text-[13px] font-medium text-[#6C3FC5] transition-colors hover:text-[#5B32A8] hover:underline"
-          >
+        <div className="pb-8">
+          <AuthLinkButton onClick={goLogin} className="mb-6">
             ← Voltar ao login
-          </button>
+          </AuthLinkButton>
 
           {!forgotSent ? (
             <>
               <div className="mb-6 flex justify-center">
-                <div className="flex h-[60px] w-[60px] items-center justify-center rounded-full bg-[#F3F0FF]">
-                  <span className="text-[28px]" aria-hidden>
+                <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary-muted">
+                  <span className="text-2xl" aria-hidden>
                     ✉️
                   </span>
                 </div>
               </div>
-              <h1 className="text-center text-2xl font-bold text-[#1A1A2E]">Recuperar senha</h1>
-              <p className="mx-auto mt-2 max-w-sm text-center text-sm text-[#6B7280]">
+              <h1 className="text-center text-2xl font-bold text-foreground">Recuperar senha</h1>
+              <p className="mx-auto mt-2 max-w-sm text-center text-sm text-muted-foreground">
                 Digite seu e-mail e enviaremos um link de redefinição.
               </p>
 
               <form
-                className="mt-8 space-y-[18px]"
+                className="mt-8 space-y-4"
                 onSubmit={submitForgot((vals) => forgotMutation.mutate(vals.email))}
               >
                 <AuthEmailField id="forgot-email" registration={regForgot("email")} error={forgotErrors.email?.message} />
@@ -187,13 +182,13 @@ export function Login() {
             </>
           ) : (
             <div
-              className="mt-4 rounded-xl border border-[#BBF7D0] bg-[#F0FDF4] p-4 text-center"
+              className="mt-4 rounded-xl border border-success/30 bg-success/10 p-4 text-center"
               role="status"
             >
               <p className="text-lg" aria-hidden>
                 ✅
               </p>
-              <p className="mt-2 text-sm font-semibold text-[#166534]">
+              <p className="mt-2 text-sm font-semibold text-success">
                 Se o e-mail estiver cadastrado, você receberá instruções para redefinir a senha.
               </p>
             </div>
@@ -201,59 +196,51 @@ export function Login() {
         </div>
       ) : (
         <>
-          <div className="mb-9">
-            <h1 className="text-[28px] font-bold text-[#1A1A2E]">Entrar na sua conta</h1>
-            <p className="mt-1.5 text-sm text-[#6B7280]">Acesse sua conta para continuar estudando.</p>
+          <div className="mb-8">
+            <h1 className="text-2xl font-bold text-foreground sm:text-[28px]">Entrar na sua conta</h1>
+            <p className="mt-1.5 text-sm text-muted-foreground">Acesse sua conta para continuar estudando.</p>
           </div>
 
           <form
-            className={cn("space-y-[18px]", shakeLogin && "auth-form-shake")}
+            className={cn("space-y-4", shakeLogin && "auth-form-shake")}
             onSubmit={handleSubmit((values) => mutation.mutate(values))}
           >
             <AuthEmailField id="login-email" registration={register("email")} error={errors.email?.message} />
             <div>
               <AuthPasswordField id="login-password" registration={register("password")} error={errors.password?.message} />
               <div className="-mt-1 flex justify-end">
-                <button
-                  type="button"
-                  onClick={goForgot}
-                  className="text-[13px] font-medium text-[#6C3FC5] transition-colors hover:text-[#5B32A8] hover:underline"
-                >
-                  Esqueci minha senha
-                </button>
+                <AuthLinkButton onClick={goForgot}>Esqueci minha senha</AuthLinkButton>
               </div>
             </div>
 
-            <div className="pt-2">
+            <div className="pt-1">
               <AuthPrimaryButton loading={mutation.isPending} loadingLabel="Entrando...">
                 Entrar
               </AuthPrimaryButton>
             </div>
 
             {mutation.isError && !paywall ? (
-              <div className="text-sm text-[#EF4444]" role="alert">
+              <div className="text-sm text-destructive" role="alert">
                 {loginErrorMessage(mutation.error)}
               </div>
             ) : null}
 
             {paywall ? (
-              <div className="rounded-xl border border-[#FDE68A] bg-[#FFFBEB] p-4" role="alert">
-                <p className="text-sm font-semibold text-[#92400E]">{paywall.message}</p>
-                <p className="mt-1 text-xs text-[#B45309]">
+              <div className="rounded-xl border border-warning/40 bg-warning/10 p-4" role="alert">
+                <p className="text-sm font-semibold text-warning-800 dark:text-warning">{paywall.message}</p>
+                <p className="mt-1 text-xs text-muted-foreground">
                   Conclua o pagamento da assinatura para liberar seu acesso.
                 </p>
                 <button
                   type="button"
                   onClick={() => checkoutMutation.mutate()}
                   disabled={checkoutMutation.isPending}
-                  className="mt-3 flex h-[44px] w-full items-center justify-center rounded-xl bg-[#6C3FC5] text-sm font-semibold text-white transition-colors hover:bg-[#5B32A8] disabled:opacity-60"
+                  className="mt-3 flex min-h-11 w-full items-center justify-center rounded-xl bg-primary text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary-700 disabled:opacity-60"
                 >
                   {checkoutMutation.isPending ? "Redirecionando..." : "Assinar / renovar agora"}
                 </button>
                 {checkoutMutation.isError ? (
-                  <p className="mt-2 text-xs text-[#EF4444]">
-                    {loginErrorMessage(checkoutMutation.error)}
-                  </p>
+                  <p className="mt-2 text-xs text-destructive">{loginErrorMessage(checkoutMutation.error)}</p>
                 ) : null}
               </div>
             ) : null}
@@ -261,25 +248,17 @@ export function Login() {
 
           <AuthSeparatorOu />
 
-          <button
-            type="button"
-            onClick={() => navigate("/register")}
-            className="flex h-[50px] w-full items-center justify-center rounded-xl border-[1.5px] border-[#6C3FC5] bg-[#F3F0FF] text-[15px] font-semibold text-[#6C3FC5] transition-all hover:bg-[#EDE9FE]"
-          >
-            Criar Conta
-          </button>
+          <AuthSecondaryButton onClick={() => navigate("/register")}>Criar Conta</AuthSecondaryButton>
 
-          <GoogleSignInButton disabled />
+          <div className="mt-4">
+            <GoogleSignInButton disabled />
+          </div>
 
-          <p className="mt-7 text-center text-sm text-[#6B7280]">
+          <p className="mt-6 text-center text-sm text-muted-foreground sm:mt-7">
             Não tem conta?{" "}
-            <button
-              type="button"
-              onClick={() => navigate("/register")}
-              className="font-bold text-[#6C3FC5] transition-colors hover:underline"
-            >
+            <AuthLinkButton onClick={() => navigate("/register")} className="font-bold">
               Criar conta grátis
-            </button>
+            </AuthLinkButton>
           </p>
         </>
       )}

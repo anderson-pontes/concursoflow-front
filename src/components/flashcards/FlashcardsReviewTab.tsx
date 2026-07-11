@@ -1,6 +1,6 @@
 import { RotateCcw, CheckCircle2, Play } from "lucide-react";
 
-import { FLASH_CARD_SHADOW, FLASH_PRIMARY } from "@/lib/flashcards/constants";
+import { FLASH_CARD_SHADOW } from "@/lib/flashcards/constants";
 import type { Deck, DeckMetricRow, Flashcard, FlashcardConfig } from "@/lib/flashcards/types";
 import {
   earliestFutureReview,
@@ -74,7 +74,7 @@ export function FlashcardsReviewTab({
   if (isLoading) {
     return (
       <div className="relative space-y-4 pb-28">
-        <div className="py-16 text-center text-sm text-[#6B7280]">Carregando pendências…</div>
+        <div className="py-16 text-center text-sm text-muted-foreground">Carregando pendências…</div>
       </div>
     );
   }
@@ -104,27 +104,27 @@ export function FlashcardsReviewTab({
           style={{ boxShadow: FLASH_CARD_SHADOW }}
         >
           <div className="relative h-28 w-36" aria-hidden>
-            <svg viewBox="0 0 140 110" className="h-full w-full text-[#6C3FC5]">
+            <svg viewBox="0 0 140 110" className="h-full w-full text-primary">
               <rect x="12" y="24" width="88" height="62" rx="10" fill="currentColor" fillOpacity="0.1" stroke="currentColor" strokeWidth="2" />
               <rect x="32" y="14" width="88" height="62" rx="10" fill="white" stroke="currentColor" strokeWidth="2" className="dark:fill-neutral-800" />
               <path d="M48 44h56M48 54h40" stroke="currentColor" strokeWidth="2" strokeLinecap="round" opacity="0.35" />
             </svg>
-            <div className="absolute bottom-2 right-4 flex h-12 w-12 items-center justify-center rounded-full bg-[#22C55E] text-white fc-check-bounce shadow-lg">
+            <div className="absolute bottom-2 right-4 flex h-12 w-12 items-center justify-center rounded-full bg-success text-white fc-check-bounce shadow-lg">
               <CheckCircle2 className="h-7 w-7" strokeWidth={2.5} />
             </div>
           </div>
           <div>
-            <h2 className="text-xl font-bold text-[#1A1A2E] dark:text-neutral-100">Tudo em dia! 🎉</h2>
-            <p className="mt-2 text-sm leading-relaxed text-[#6B7280] dark:text-neutral-400">
+            <h2 className="text-xl font-bold text-foreground dark:text-neutral-100">Tudo em dia! 🎉</h2>
+            <p className="mt-2 text-sm leading-relaxed text-muted-foreground dark:text-neutral-400">
               Você revisou todos os cartões programados para hoje.
             </p>
           </div>
           <div
-            className="w-full rounded-[10px] border border-violet-100 bg-violet-50/80 px-4 py-3 text-sm text-[#1A1A2E] dark:border-violet-900/40 dark:bg-violet-950/30 dark:text-neutral-200"
+            className="w-full rounded-[10px] border border-violet-100 bg-violet-50/80 px-4 py-3 text-sm text-foreground dark:border-violet-900/40 dark:bg-violet-950/30 dark:text-neutral-200"
           >
             <p className="font-medium">{nextLine}</p>
-            <p className="mt-1 text-xs text-[#6B7280] dark:text-neutral-400">
-              <span className="tabular-nums font-semibold text-[#6C3FC5]">{restantes}</span>
+            <p className="mt-1 text-xs text-muted-foreground dark:text-neutral-400">
+              <span className="tabular-nums font-semibold text-primary">{restantes}</span>
               {" "}cartões ativos nos seus baralhos
             </p>
           </div>
@@ -132,15 +132,14 @@ export function FlashcardsReviewTab({
             <button
               type="button"
               onClick={onGoToConfig}
-              className="rounded-[10px] border-2 border-[#E5E7EB] bg-white px-4 py-2.5 text-sm font-semibold text-[#1A1A2E] transition hover:border-[#6C3FC5] dark:border-neutral-600 dark:bg-neutral-800 dark:text-neutral-100"
+              className="rounded-[10px] border-2 border-border bg-white px-4 py-2.5 text-sm font-semibold text-foreground transition hover:border-primary dark:border-neutral-600 dark:bg-neutral-800 dark:text-neutral-100"
             >
               Revisar no avançado
             </button>
             <button
               type="button"
               onClick={onGoToBaralhos}
-              className="rounded-[10px] px-4 py-2.5 text-sm font-semibold text-white shadow-md transition hover:brightness-110"
-              style={{ backgroundColor: FLASH_PRIMARY }}
+              className="rounded-[10px] px-4 py-2.5 text-sm font-semibold text-white shadow-md transition hover:brightness-110 bg-primary"
             >
               Ver meus baralhos
             </button>
@@ -148,7 +147,7 @@ export function FlashcardsReviewTab({
           <button
             type="button"
             onClick={onRefetch}
-            className="inline-flex items-center gap-2 rounded-[10px] border-2 border-[#6C3FC5] bg-white px-5 py-2 text-sm font-semibold text-[#6C3FC5] transition hover:bg-violet-50 dark:bg-neutral-800 dark:hover:bg-violet-950/40"
+            className="inline-flex items-center gap-2 rounded-[10px] border-2 border-primary bg-white px-5 py-2 text-sm font-semibold text-primary transition hover:bg-violet-50 dark:bg-neutral-800 dark:hover:bg-violet-950/40"
           >
             <RotateCcw className="h-4 w-4" />
             Atualizar lista
@@ -169,10 +168,10 @@ export function FlashcardsReviewTab({
             ✅
           </div>
           <div>
-            <h2 className="text-[22px] font-bold text-[#1A1A2E]">Sessão concluída! 🎉</h2>
-            <p className="mt-2 text-sm text-[#6B7280]">
+            <h2 className="text-[22px] font-bold text-foreground">Sessão concluída! 🎉</h2>
+            <p className="mt-2 text-sm text-muted-foreground">
               Você revisou todos os{" "}
-              <span className="tabular-nums font-semibold text-[#1A1A2E]">{reviewDone}</span> cartões de hoje.
+              <span className="tabular-nums font-semibold text-foreground">{reviewDone}</span> cartões de hoje.
             </p>
           </div>
           <div className="flex flex-wrap items-center justify-center gap-2">
@@ -190,14 +189,14 @@ export function FlashcardsReviewTab({
             <button
               type="button"
               onClick={onCompleteSessionGoToBaralhos}
-              className="rounded-[10px] border border-[#E5E7EB] px-4 py-2.5 text-sm font-semibold text-[#6B7280] transition-colors duration-200 ease-out hover:bg-[#F9FAFB]"
+              className="rounded-[10px] border border-border px-4 py-2.5 text-sm font-semibold text-muted-foreground transition-colors duration-200 ease-out hover:bg-muted"
             >
               Ver meus baralhos
             </button>
             <button
               type="button"
               onClick={onRestartSession}
-              className="rounded-[10px] bg-[#6C3FC5] px-4 py-2.5 text-sm font-semibold text-white transition-colors duration-200 ease-out hover:bg-[#5B32A8]"
+              className="rounded-[10px] bg-primary px-4 py-2.5 text-sm font-semibold text-white transition-colors duration-200 ease-out hover:bg-primary-700"
             >
               Revisar novamente
             </button>
@@ -210,7 +209,7 @@ export function FlashcardsReviewTab({
   if (reviewSessionActive) {
     return (
       <div className="relative space-y-4 pb-28">
-        <div className="space-y-0" style={{ fontFamily: "Inter, system-ui, sans-serif" }}>
+        <div className="space-y-0">
           <style>{`
             .fc-review-card-content img { max-width: 100%; height: auto; border-radius: 8px; display: block; margin: 8px auto; }
             .fc-review-card-content p { margin: 0 0 0.5em; }
@@ -222,57 +221,56 @@ export function FlashcardsReviewTab({
             <button
               type="button"
               onClick={onExitSession}
-              className="shrink-0 border-0 bg-transparent p-0 text-left text-sm font-medium text-[#6B7280] transition-colors duration-200 ease-out hover:text-[#6C3FC5]"
+              className="shrink-0 border-0 bg-transparent p-0 text-left text-sm font-medium text-muted-foreground transition-colors duration-200 ease-out hover:text-primary"
             >
               ← Sair da sessão
             </button>
-            <div className="h-[6px] flex-1 overflow-hidden rounded-full bg-[#E5E7EB]">
+            <div className="h-[6px] flex-1 overflow-hidden rounded-full bg-border">
               <div
                 className="h-full rounded-full"
                 style={{
                   width: `${dueCards.length ? (100 * reviewDone) / dueCards.length : 0}%`,
                   transition: "width 400ms ease",
-                  background: "linear-gradient(90deg, #6C3FC5, #8B5CF6)",
+                  background: "linear-gradient(90deg, var(--primary), var(--chart-2))",
                 }}
               />
             </div>
-            <p className="shrink-0 text-[13px] font-medium tabular-nums text-[#6B7280]">
+            <p className="shrink-0 text-[13px] font-medium tabular-nums text-muted-foreground">
               {reviewDone} de {dueCards.length} cartões
             </p>
           </div>
 
           {currentCard ? (
             <div
-              className="flex flex-col justify-center rounded-[20px] bg-white px-6 py-8 sm:px-12 sm:py-10"
+              className="flex flex-col justify-center rounded-[20px] bg-surface px-4 py-6 shadow-lg shadow-primary/10 sm:px-12 sm:py-10"
               style={{
-                borderTop: "4px solid #6C3FC5",
-                boxShadow: "0 8px 40px rgba(108,63,197,0.12)",
-                minHeight: 280,
+                borderTop: "4px solid var(--primary)",
+                minHeight: "min(52vh, 420px)",
               }}
             >
-              <p className="mb-3 text-center text-[10px] font-medium uppercase tracking-[2px] text-[#9CA3AF]">
+              <p className="mb-3 text-center text-[10px] font-medium uppercase tracking-[2px] text-muted-foreground">
                 FRENTE
               </p>
               <div
-                className="fc-review-card-content mx-auto max-w-full text-center text-[18px] font-medium leading-[1.8] text-[#1A1A2E]"
+                className="fc-review-card-content mx-auto max-w-full text-center text-[18px] font-medium leading-[1.8] text-foreground"
                 style={{ overflowWrap: "break-word", fontWeight: 500 }}
                 // eslint-disable-next-line react/no-danger
                 dangerouslySetInnerHTML={{ __html: currentCard.frente }}
               />
 
-              <div className="my-6 border-t border-[#F3F4F6]" />
+              <div className="my-6 border-t border-border" />
 
               {!flipped ? (
                 <div className="flex flex-col items-center gap-2">
                   <button
                     type="button"
                     onClick={() => onSetFlipped(true)}
-                    className="flex w-full max-w-[280px] items-center justify-center gap-2 rounded-[12px] bg-[#6C3FC5] px-6 py-3.5 text-[15px] font-semibold text-white shadow-[0_4px_16px_rgba(108,63,197,0.35)] transition-all duration-200 ease-out hover:-translate-y-px hover:bg-[#5B32A8] hover:shadow-[0_8px_24px_rgba(108,63,197,0.45)]"
+                    className="flex w-full max-w-[280px] items-center justify-center gap-2 rounded-[12px] bg-primary px-6 py-3.5 text-[15px] font-semibold text-white shadow-lg shadow-primary/30 transition-all duration-200 ease-out hover:-translate-y-px hover:bg-primary-700 hover:shadow-xl hover:shadow-primary/40"
                   >
                     <span aria-hidden>👁</span>
                     Revelar resposta
                   </button>
-                  <p className="text-center text-[11px] text-[#9CA3AF]">ou pressione Espaço / Enter</p>
+                  <p className="text-center text-[11px] text-muted-foreground">ou pressione Espaço / Enter</p>
                 </div>
               ) : null}
 
@@ -282,9 +280,9 @@ export function FlashcardsReviewTab({
               >
                 {flipped ? (
                   <div className="pt-2">
-                    <p className="mb-2 text-[10px] font-medium uppercase tracking-[2px] text-[#9CA3AF]">VERSO</p>
+                    <p className="mb-2 text-[10px] font-medium uppercase tracking-[2px] text-muted-foreground">VERSO</p>
                     <div
-                      className="fc-review-card-content rounded-[12px] border-l-[3px] border-[#6C3FC5] bg-[#FAFAFA] p-5 text-base leading-[1.8] text-[#374151]"
+                      className="fc-review-card-content rounded-[12px] border-l-[3px] border-primary bg-surface-muted p-5 text-base leading-[1.8] text-foreground"
                       // eslint-disable-next-line react/no-danger
                       dangerouslySetInnerHTML={{ __html: currentCard.verso }}
                     />
@@ -299,8 +297,8 @@ export function FlashcardsReviewTab({
                           title: "Errei",
                           sub: "<1 d",
                           className:
-                            "border-2 border-[#FEE2E2] bg-[#FFF5F5] text-[#374151] hover:bg-[#FEE2E2] hover:border-[#EF4444] hover:text-[#EF4444]",
-                          subHover: "group-hover:text-[#EF4444]",
+                            "border-2 border-destructive/20 bg-destructive/5 text-foreground hover:bg-destructive/10 hover:border-destructive hover:text-destructive",
+                          subHover: "group-hover:text-destructive",
                         },
                         {
                           api: "dificil",
@@ -309,8 +307,8 @@ export function FlashcardsReviewTab({
                           title: "Difícil",
                           sub: fmtDias(prev.dificil),
                           className:
-                            "border-2 border-[#FEF3C7] bg-[#FFFBEB] text-[#374151] hover:bg-[#FEF3C7] hover:border-[#F59E0B] hover:text-[#D97706]",
-                          subHover: "group-hover:text-[#D97706]",
+                            "border-2 border-warning/30 bg-warning/10 text-foreground hover:bg-warning/15 hover:border-warning hover:text-warning",
+                          subHover: "group-hover:text-warning",
                         },
                         {
                           api: "bom",
@@ -319,8 +317,8 @@ export function FlashcardsReviewTab({
                           title: "Bom",
                           sub: fmtDias(prev.bom),
                           className:
-                            "border-2 border-[#DBEAFE] bg-[#EFF6FF] text-[#374151] hover:bg-[#DBEAFE] hover:border-[#3B82F6] hover:text-[#2563EB]",
-                          subHover: "group-hover:text-[#2563EB]",
+                            "border-2 border-blue-200 bg-blue-50 text-foreground hover:bg-blue-100 hover:border-blue-500 hover:text-blue-600",
+                          subHover: "group-hover:text-blue-600",
                         },
                         {
                           api: "facil",
@@ -329,12 +327,12 @@ export function FlashcardsReviewTab({
                           title: "Fácil",
                           sub: fmtDias(prev.facil),
                           className:
-                            "border-2 border-[#D1FAE5] bg-[#F0FDF4] text-[#374151] hover:bg-[#D1FAE5] hover:border-[#22C55E] hover:text-[#16A34A]",
-                          subHover: "group-hover:text-[#16A34A]",
+                            "border-2 border-success/30 bg-success/10 text-foreground hover:bg-success/15 hover:border-success hover:text-success",
+                          subHover: "group-hover:text-success",
                         },
                       ] as const;
                       return (
-                        <div className="mt-5 grid grid-cols-2 gap-3 md:grid-cols-4">
+                        <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
                           {btns.map((b) => (
                             <button
                               key={b.api}
@@ -348,9 +346,9 @@ export function FlashcardsReviewTab({
                                   deckId: currentCard.deck_id,
                                 })
                               }
-                              className={`group relative flex flex-col items-center gap-1.5 rounded-[12px] px-2 py-4 transition-colors duration-150 ease-out disabled:opacity-60 ${b.className}`}
+                              className={`group relative flex min-h-11 flex-col items-center justify-center gap-1.5 rounded-[12px] px-2 py-4 transition-colors duration-150 ease-out disabled:opacity-60 ${b.className}`}
                             >
-                              <span className="pointer-events-none absolute right-1.5 top-1.5 text-[10px] font-bold text-[#9CA3AF] opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+                              <span className="pointer-events-none absolute right-1.5 top-1.5 text-[10px] font-bold text-muted-foreground opacity-0 transition-opacity duration-200 group-hover:opacity-100">
                                 {b.kbd}
                               </span>
                               <span className="text-2xl leading-none" aria-hidden>
@@ -358,7 +356,7 @@ export function FlashcardsReviewTab({
                               </span>
                               <span className="text-sm font-semibold">{b.title}</span>
                               <span
-                                className={`text-[11px] text-[#6B7280] transition-colors duration-150 ${b.subHover}`}
+                                className={`text-[11px] text-muted-foreground transition-colors duration-150 ${b.subHover}`}
                               >
                                 {b.sub}
                               </span>
@@ -368,7 +366,7 @@ export function FlashcardsReviewTab({
                       );
                     })()}
 
-                    <p className="mt-4 text-center text-xs text-[#9CA3AF]">
+                    <p className="mt-4 text-center text-xs text-muted-foreground">
                       🔁 {currentCard.repeticoes} repetições &nbsp;•&nbsp; ⭐ Facilidade:{" "}
                       {Number(currentCard.facilidade).toFixed(2)} &nbsp;•&nbsp; ⏱ Intervalo: {currentCard.intervalo}d
                     </p>
@@ -385,7 +383,7 @@ export function FlashcardsReviewTab({
   return (
     <div className="relative space-y-4 pb-28">
       <div className="space-y-5">
-        <p className="text-sm text-[#6B7280] dark:text-neutral-400">
+        <p className="text-sm text-muted-foreground dark:text-neutral-400">
           Escolha o baralho ou revise tudo de uma vez. Toque em um cartão para abrir só ele, ou inicie a sessão completa.
         </p>
         <div className="flex flex-wrap gap-2">
@@ -395,8 +393,8 @@ export function FlashcardsReviewTab({
             className={[
               "rounded-full px-4 py-2 text-sm font-semibold transition",
               reviewDeckId === null
-                ? "bg-[#6C3FC5] text-white shadow-md"
-                : "border border-neutral-200 bg-white text-[#1A1A2E] hover:border-[#6C3FC5] dark:border-neutral-600 dark:bg-neutral-800 dark:text-neutral-100",
+                ? "bg-primary text-white shadow-md"
+                : "border border-neutral-200 bg-white text-foreground hover:border-primary dark:border-neutral-600 dark:bg-neutral-800 dark:text-neutral-100",
             ].join(" ")}
           >
             Todos
@@ -409,8 +407,8 @@ export function FlashcardsReviewTab({
               className={[
                 "max-w-[200px] truncate rounded-full px-4 py-2 text-sm font-semibold transition",
                 reviewDeckId === d.id
-                  ? "bg-[#6C3FC5] text-white shadow-md"
-                  : "border border-neutral-200 bg-white text-[#1A1A2E] hover:border-[#6C3FC5] dark:border-neutral-600 dark:bg-neutral-800 dark:text-neutral-100",
+                  ? "bg-primary text-white shadow-md"
+                  : "border border-neutral-200 bg-white text-foreground hover:border-primary dark:border-neutral-600 dark:bg-neutral-800 dark:text-neutral-100",
               ].join(" ")}
               title={d.full_path ?? d.nome}
             >
@@ -433,15 +431,14 @@ export function FlashcardsReviewTab({
                 style={{ boxShadow: FLASH_CARD_SHADOW }}
               >
                 <p className={`text-xs font-semibold ${u.className}`}>{u.text}</p>
-                <p className="mt-1 text-xs text-[#9CA3AF]">{deckNome}</p>
-                <p className="mt-2 text-[15px] font-bold leading-snug text-[#1A1A2E] dark:text-neutral-100">
+                <p className="mt-1 text-xs text-muted-foreground">{deckNome}</p>
+                <p className="mt-2 text-[15px] font-bold leading-snug text-foreground dark:text-neutral-100">
                   {stripHtml(c.frente) || "(sem conteúdo)"}
                 </p>
                 <button
                   type="button"
                   onClick={() => onStartSession(i)}
-                  className="mt-4 flex w-full items-center justify-center gap-2 rounded-[10px] py-2.5 text-sm font-semibold text-white transition hover:brightness-110 sm:w-auto sm:px-6"
-                  style={{ backgroundColor: FLASH_PRIMARY }}
+                  className="mt-4 flex w-full items-center justify-center gap-2 rounded-[10px] py-2.5 text-sm font-semibold text-white transition hover:brightness-110 sm:w-auto sm:px-6 bg-primary"
                 >
                   Revisar agora
                   <span aria-hidden>→</span>
@@ -454,8 +451,7 @@ export function FlashcardsReviewTab({
         <button
           type="button"
           onClick={() => onStartSession(0)}
-          className="fixed bottom-8 right-6 z-40 flex items-center gap-2 rounded-full px-5 py-3 text-sm font-bold text-white shadow-xl transition hover:brightness-110 md:right-10"
-          style={{ backgroundColor: FLASH_PRIMARY, boxShadow: "0 8px 28px rgba(108,63,197,0.45)" }}
+          className="fixed bottom-8 right-6 z-40 flex items-center gap-2 rounded-full bg-primary px-5 py-3 text-sm font-bold text-white shadow-xl shadow-primary/40 transition hover:brightness-110 md:right-10"
         >
           <Play className="h-4 w-4 fill-current" />
           Iniciar sessão completa

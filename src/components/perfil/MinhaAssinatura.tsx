@@ -7,13 +7,13 @@ import { Button } from "@/components/ui/button";
 import { getMySubscription, openBillingPortal, type SubscriptionInfo } from "@/services/billing";
 
 const STATUS_LABEL: Record<string, { label: string; className: string }> = {
-  active: { label: "Ativa", className: "bg-emerald-100 text-emerald-700" },
-  trialing: { label: "Período de teste", className: "bg-emerald-100 text-emerald-700" },
-  past_due: { label: "Pagamento pendente", className: "bg-amber-100 text-amber-700" },
-  canceled: { label: "Cancelada", className: "bg-rose-100 text-rose-700" },
-  unpaid: { label: "Não paga", className: "bg-rose-100 text-rose-700" },
-  incomplete: { label: "Incompleta", className: "bg-neutral-200 text-neutral-700" },
-  none: { label: "Sem assinatura", className: "bg-neutral-200 text-neutral-700" },
+  active: { label: "Ativa", className: "bg-success/15 text-success" },
+  trialing: { label: "Período de teste", className: "bg-success/15 text-success" },
+  past_due: { label: "Pagamento pendente", className: "bg-warning/15 text-warning" },
+  canceled: { label: "Cancelada", className: "bg-destructive/10 text-destructive" },
+  unpaid: { label: "Não paga", className: "bg-destructive/10 text-destructive" },
+  incomplete: { label: "Incompleta", className: "bg-muted text-muted-foreground" },
+  none: { label: "Sem assinatura", className: "bg-muted text-muted-foreground" },
 };
 
 function fmtDate(iso: string | null): string {
@@ -84,7 +84,7 @@ export function MinhaAssinatura() {
             <span className="font-medium text-foreground">{fmtDate(data?.current_period_end ?? null)}</span>
           </div>
           {data?.cancel_at_period_end ? (
-            <p className="rounded-lg bg-amber-50 px-3 py-2 text-xs text-amber-700">
+            <p className="rounded-lg bg-warning/10 px-3 py-2 text-xs text-warning">
               Sua assinatura está marcada para cancelamento e não será renovada automaticamente.
             </p>
           ) : null}

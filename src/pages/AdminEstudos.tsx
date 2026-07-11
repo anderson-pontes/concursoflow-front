@@ -5,6 +5,9 @@ import { toast } from "sonner";
 import { createCategoria, deleteCategoria, listCategorias, updateCategoria } from "@/services/categorias";
 import { getRevisoesConfig, putRevisoesConfig } from "@/services/revisoesConfig";
 
+const fieldClass =
+  "min-h-11 w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring";
+
 export function AdminEstudos() {
   const qc = useQueryClient();
   const [novaCategoria, setNovaCategoria] = React.useState("");
@@ -70,33 +73,57 @@ export function AdminEstudos() {
         <p className="text-sm text-muted-foreground">Suas categorias e dias padrão de revisão.</p>
       </div>
 
-      <section className="rounded-xl border border-border/40 bg-background/70 p-4">
+      <section className="rounded-xl border border-border bg-card p-4 shadow-sm sm:p-5">
         <h3 className="text-sm font-semibold">Categorias</h3>
-        <div className="mt-3 flex gap-2">
-          <input value={novaCategoria} onChange={(e) => setNovaCategoria(e.target.value)} className="w-full rounded-md border border-border/40 bg-background px-3 py-2 text-sm" placeholder="Nova categoria" />
-          <button type="button" onClick={() => createCategoriaMutation.mutate()} className="rounded-md bg-teal-500 px-3 py-2 text-sm font-semibold text-white" disabled={!novaCategoria.trim() || createCategoriaMutation.isPending}>
+        <div className="mt-3 flex flex-col gap-2 sm:flex-row">
+          <input
+            value={novaCategoria}
+            onChange={(e) => setNovaCategoria(e.target.value)}
+            className={fieldClass}
+            placeholder="Nova categoria"
+          />
+          <button
+            type="button"
+            onClick={() => createCategoriaMutation.mutate()}
+            className="min-h-11 shrink-0 rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground transition hover:bg-primary-700 disabled:opacity-60"
+            disabled={!novaCategoria.trim() || createCategoriaMutation.isPending}
+          >
             Criar
           </button>
         </div>
         <div className="mt-4 space-y-2">
           {(categorias ?? []).map((c) => (
-            <div key={c.id} className="flex items-center gap-2">
-              <input defaultValue={c.nome} onBlur={(e) => {
-                const next = e.target.value.trim();
-                if (next && next !== c.nome) updateCategoriaMutation.mutate({ id: c.id, nome: next });
-              }} className="w-full rounded-md border border-border/40 bg-background px-3 py-2 text-sm" />
-              <button type="button" onClick={() => deleteCategoriaMutation.mutate(c.id)} className="rounded-md border border-rose-300 px-3 py-2 text-sm text-rose-600">Excluir</button>
+            <div key={c.id} className="flex flex-col gap-2 sm:flex-row sm:items-center">
+              <input
+                defaultValue={c.nome}
+                onBlur={(e) => {
+                  const next = e.target.value.trim();
+                  if (next && next !== c.nome) updateCategoriaMutation.mutate({ id: c.id, nome: next });
+                }}
+                className={fieldClass}
+              />
+              <button
+                type="button"
+                onClick={() => deleteCategoriaMutation.mutate(c.id)}
+                className="min-h-11 shrink-0 rounded-lg border border-destructive/30 px-4 py-2.5 text-sm font-medium text-destructive transition hover:bg-destructive/10"
+              >
+                Excluir
+              </button>
             </div>
           ))}
         </div>
       </section>
 
-      <section className="rounded-xl border border-border/40 bg-background/70 p-4">
+      <section className="rounded-xl border border-border bg-card p-4 shadow-sm sm:p-5">
         <h3 className="text-sm font-semibold">Dias padrão de revisão</h3>
         <p className="mt-1 text-xs text-muted-foreground">Informe os dias separados por vírgula (ex.: 1,7,30,60,120).</p>
-        <div className="mt-3 flex gap-2">
-          <input value={diasInput} onChange={(e) => setDiasInput(e.target.value)} className="w-full rounded-md border border-border/40 bg-background px-3 py-2 text-sm" />
-          <button type="button" onClick={() => saveRevisoesMutation.mutate()} className="rounded-md bg-teal-500 px-3 py-2 text-sm font-semibold text-white">
+        <div className="mt-3 flex flex-col gap-2 sm:flex-row">
+          <input value={diasInput} onChange={(e) => setDiasInput(e.target.value)} className={fieldClass} />
+          <button
+            type="button"
+            onClick={() => saveRevisoesMutation.mutate()}
+            className="min-h-11 shrink-0 rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground transition hover:bg-primary-700"
+          >
             Salvar
           </button>
         </div>
