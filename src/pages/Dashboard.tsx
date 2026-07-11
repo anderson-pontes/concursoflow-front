@@ -384,15 +384,17 @@ export function Dashboard() {
                       }}
                       className="flex min-h-11 w-full items-start gap-2 rounded-lg border border-border bg-background p-2.5 text-left transition hover:border-primary-300 hover:bg-primary-50/30 dark:hover:bg-primary-950/20"
                     >
-                      <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 border-border" />
+                      <span className={cn("mt-1 h-2 w-2 shrink-0 rounded-full", getTipoDot(bloco.tipo))} />
                       <div className="min-w-0 flex-1">
                         <p className="truncate text-xs font-semibold text-card-foreground">{disciplina}</p>
                         {bloco.topico_nome ? (
-                          <p className="truncate text-[10px] text-muted-foreground">{bloco.topico_nome}</p>
+                          <p className="truncate text-[11px] text-muted-foreground">{bloco.topico_nome}</p>
                         ) : null}
-                        <div className="mt-1 flex flex-wrap gap-1">
-                          <span className="text-[10px] tabular-nums text-muted-foreground">{fmtMinutos(minutos)}</span>
-                          <span className={cn("rounded-full px-1.5 py-0.5 text-[9px] font-semibold", badge.cls)}>{badge.label}</span>
+                        <div className="mt-1 flex flex-wrap items-center gap-1.5">
+                          <span className="text-[11px] tabular-nums text-muted-foreground">
+                            {bloco.hora_inicio}–{bloco.hora_fim} · {fmtMinutos(minutos)}
+                          </span>
+                          <span className={cn("rounded-full px-1.5 py-0.5 text-[11px] font-semibold", badge.cls)}>{badge.label}</span>
                         </div>
                       </div>
                     </button>
@@ -419,7 +421,7 @@ export function Dashboard() {
                 {avisos.slice(0, 5).map((a) => (
                   <li key={a.id} className="rounded-lg bg-muted/40 px-2.5 py-2 text-xs">
                     <p className="font-medium text-card-foreground">{a.titulo}</p>
-                    <p className="text-[10px] text-muted-foreground">
+                    <p className="text-[11px] text-muted-foreground">
                       {format(parseISO(a.data_vencimento), "dd/MM/yyyy", { locale: ptBR })}
                     </p>
                   </li>

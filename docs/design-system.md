@@ -224,6 +224,8 @@ Já importada em `index.css`. Remover Inter como primary no Tailwind e AuthShell
 | caption | 0.75rem (12px) | 500 | 1.4 | Labels, hints |
 | overline | 0.6875rem (11px) | 600 | 1.3 | Group labels sidebar (uppercase tracking) |
 
+**Piso em widgets de agenda (cronograma/calendário):** ver [`guidelines-schedule-density.md`](guidelines-schedule-density.md) — mínimo `11px` em metadados, `12px` em dados principais; **proibido** `8px`/`9px` em células.
+
 **DM Serif Display / DM Sans:** remover de `tailwind.config.ts` se não usados — reduz bundle e confusão.
 
 ---
@@ -298,6 +300,21 @@ Radius: `rounded-md` (8px). Altura mínima touch: `h-10` (40px) mobile, `h-9` de
 | futuro | `--muted-foreground` |
 | estudou_sem_plano | `--info` |
 | sem_planejamento | `--border` |
+
+### 6.1 Cronograma e calendário — densidade e legibilidade
+
+> Spec completa: [`guidelines-schedule-density.md`](guidelines-schedule-density.md)
+
+Widgets de agenda (grid 7 colunas) **não podem** usar fontes abaixo de `11px` em conteúdo de célula. Piso recomendado: `text-xs` (12px) para dados principais.
+
+| Superfície | `min-w` grid | Blocos/dia visíveis | Indicador visual |
+|------------|--------------|---------------------|------------------|
+| Dashboard cronograma | `720px` | 3 + link | `getTipoDot(tipo)` |
+| Dashboard plano hoje | — (lista) | todos do dia | `getTipoDot(tipo)` |
+| `/cronograma` | fluido `md:grid-cols-7` | todos | `CronogramaBlocoCard` |
+| Calendário (widget + página) | `560px` | métricas na célula | `STATUS_DOT_CLASS` |
+
+**Regra de ouro:** scroll horizontal > reduzir fonte. Truncar com reticências > abreviar palavras.
 
 ---
 
@@ -434,3 +451,4 @@ Exceção documentada: estilos escopados a conteúdo dinâmico (`.ProseMirror` n
 ## File List
 
 - `front/concursoflow-front/docs/design-system.md` (este arquivo)
+- `front/concursoflow-front/docs/guidelines-schedule-density.md`

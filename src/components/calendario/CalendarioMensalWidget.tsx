@@ -29,8 +29,8 @@ export function CalendarioMensalWidget({ ano, mes, concursoId }: Props) {
         </Link>
       </div>
 
-      {isLoading ? (
-        <p className="text-xs text-muted-foreground">Carregando calendário…</p>
+        {isLoading ? (
+        <p className="text-sm text-muted-foreground">Carregando calendário…</p>
       ) : (
         <>
           <CalendarioResumoMes resumo={resumo} compact />

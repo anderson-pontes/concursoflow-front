@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 import type { CalendarioDia } from "@/lib/calendario/types";
-import { STATUS_CELL_CLASS, STATUS_LABEL } from "@/lib/calendario/constants";
+import { STATUS_CELL_CLASS, STATUS_DOT_CLASS, STATUS_LABEL } from "@/lib/calendario/constants";
 import { fmtMinutosEstudo } from "@/lib/calendario/format";
 
 type Props = {
@@ -26,33 +26,40 @@ export function CalendarioDiaCell({ dia, diaNumero, isCurrentMonth, isToday, onC
           : undefined
       }
       className={cn(
-        "flex min-h-[72px] flex-col rounded-lg border p-1.5 text-left transition hover:ring-2 hover:ring-primary-400/50 disabled:cursor-default disabled:opacity-40 disabled:hover:ring-0 sm:min-h-[84px]",
+        "flex min-h-[88px] flex-col rounded-lg border p-2 text-left transition hover:ring-2 hover:ring-primary-400/50 disabled:cursor-default disabled:opacity-40 disabled:hover:ring-0 sm:min-h-[104px]",
         isCurrentMonth ? STATUS_CELL_CLASS[status] : "border-transparent bg-transparent",
         isToday && "ring-2 ring-primary-500 ring-offset-1",
       )}
     >
-      <span
-        className={cn(
-          "text-xs font-semibold tabular-nums",
-          isToday ? "text-primary-700 dark:text-primary-300" : "text-foreground",
-          !isCurrentMonth && "text-muted-foreground/40",
-        )}
-      >
-        {diaNumero}
-      </span>
+      <div className="flex items-center justify-between gap-1">
+        <span
+          className={cn(
+            "text-sm font-semibold tabular-nums",
+            isToday ? "text-primary-700 dark:text-primary-300" : "text-foreground",
+            !isCurrentMonth && "text-muted-foreground/40",
+          )}
+        >
+          {diaNumero}
+        </span>
+        {dia && isCurrentMonth && status !== "futuro" && status !== "sem_planejamento" ? (
+          <span className={cn("h-2 w-2 shrink-0 rounded-full", STATUS_DOT_CLASS[status])} aria-hidden />
+        ) : null}
+      </div>
       {dia && isCurrentMonth && dia.status !== "futuro" ? (
-        <div className="mt-auto space-y-0.5">
+        <div className="mt-auto space-y-0.5 pt-1">
           {dia.minutos_planejados > 0 ? (
-            <p className="truncate text-[9px] text-muted-foreground">
+            <p className="truncate text-xs leading-tight text-muted-foreground">
               {fmtMinutosEstudo(dia.minutos_realizados)} / {fmtMinutosEstudo(dia.minutos_planejados)}
             </p>
           ) : dia.minutos_realizados > 0 ? (
-            <p className="truncate text-[9px] font-medium text-sky-700 dark:text-sky-300">
+            <p className="truncate text-xs font-medium leading-tight text-sky-700 dark:text-sky-300">
               {fmtMinutosEstudo(dia.minutos_realizados)}
             </p>
           ) : null}
           {dia.sessoes_realizadas > 0 ? (
-            <p className="text-[8px] text-muted-foreground">{dia.sessoes_realizadas} sess.</p>
+            <p className="text-xs leading-tight text-muted-foreground">{dia.sessoes_realizadas} sess.</p>
+          ) : dia.minutos_planejados === 0 && dia.minutos_realizados === 0 ? (
+            <p className="text-xs leading-tight text-muted-foreground/70">Sem estudo</p>
           ) : null}
         </div>
       ) : null}

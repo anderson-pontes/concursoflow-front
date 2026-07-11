@@ -42,15 +42,15 @@ export function CalendarioMensalGrid({ ano, mes, dias, onDiaClick }: Props) {
 
   return (
     <div className="overflow-x-auto">
-      <div className="min-w-[320px]">
-      <div className="mb-1 grid grid-cols-7 gap-1">
+      <div className="min-w-[560px]">
+      <div className="mb-1.5 grid grid-cols-7 gap-1.5">
         {DIAS_SEMANA_PT.map((label) => (
-          <div key={label} className="py-1 text-center text-[10px] font-semibold uppercase text-muted-foreground">
+          <div key={label} className="py-1.5 text-center text-xs font-semibold uppercase tracking-wide text-muted-foreground">
             {label}
           </div>
         ))}
       </div>
-      <div className="grid grid-cols-7 gap-1">
+      <div className="grid grid-cols-7 gap-1.5">
         {cells.map((cell) =>
           cell.isCurrentMonth && cell.data ? (
             <CalendarioDiaCell
@@ -62,7 +62,7 @@ export function CalendarioMensalGrid({ ano, mes, dias, onDiaClick }: Props) {
               onClick={() => onDiaClick?.(cell.data!)}
             />
           ) : (
-            <div key={cell.key} className="min-h-[72px] sm:min-h-[84px]" aria-hidden />
+            <div key={cell.key} className="min-h-[88px] sm:min-h-[104px]" aria-hidden />
           ),
         )}
       </div>

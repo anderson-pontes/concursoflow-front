@@ -215,7 +215,7 @@ export function Cronograma() {
                 <Icon className="h-4 w-4" />
               </span>
               <div className="min-w-0">
-                <p className="truncate text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">{label}</p>
+                <p className="truncate text-xs font-semibold uppercase tracking-wide text-muted-foreground">{label}</p>
                 <p className="truncate text-base font-semibold tabular-nums text-card-foreground">{value}</p>
               </div>
             </div>
@@ -252,7 +252,7 @@ export function Cronograma() {
                     )}
                   >
                     {diaAbrev[dia]}
-                    {isHoje ? <span className="ml-1 rounded-full bg-primary-600 px-1.5 py-0.5 text-[10px] font-bold text-white">hoje</span> : null}
+                    {isHoje ? <span className="ml-1 rounded-full bg-primary-600 px-1.5 py-0.5 text-[11px] font-bold text-white">hoje</span> : null}
                   </span>
                   {items.length > 0 ? (
                     <span className="rounded-full bg-muted px-1.5 text-[11px] font-medium tabular-nums text-muted-foreground">
