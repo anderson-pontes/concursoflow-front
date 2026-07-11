@@ -44,6 +44,19 @@ export function getTipo(tipo: string): TipoBadge {
   return tipoMap[tipo.toLowerCase()] ?? { label: tipo, cls: "bg-neutral-100 text-neutral-500" };
 }
 
+/** Cor sólida (bolinha/acento) por tipo de bloco — tokens Tailwind, sem hex. */
+export const tipoDotMap: Record<string, string> = {
+  estudo: "bg-primary-500",
+  revisao: "bg-amber-500",
+  questoes: "bg-emerald-500",
+  livre: "bg-neutral-400",
+  pomodoro: "bg-rose-500",
+};
+
+export function getTipoDot(tipo: string): string {
+  return tipoDotMap[tipo.toLowerCase()] ?? "bg-neutral-400";
+}
+
 export function fmtHorasStats(h: number | undefined): string {
   if (!h || h <= 0) return "—";
   const totalMin = Math.round(h * 60);

@@ -252,9 +252,13 @@ export function Cronograma() {
                     )}
                   >
                     {diaAbrev[dia]}
-                    {isHoje ? <span className="ml-1 rounded-full bg-primary-600 px-1.5 py-0.5 text-[9px] font-bold text-white">hoje</span> : null}
+                    {isHoje ? <span className="ml-1 rounded-full bg-primary-600 px-1.5 py-0.5 text-[10px] font-bold text-white">hoje</span> : null}
                   </span>
-                  <span className="text-[10px] text-muted-foreground">{items.length > 0 ? `${items.length}` : ""}</span>
+                  {items.length > 0 ? (
+                    <span className="rounded-full bg-muted px-1.5 text-[11px] font-medium tabular-nums text-muted-foreground">
+                      {items.length}
+                    </span>
+                  ) : null}
                 </div>
 
                 <div className="space-y-2">
@@ -270,7 +274,7 @@ export function Cronograma() {
                     />
                   ))}
                   {items.length === 0 ? (
-                    <p className="py-4 text-center text-[11px] text-muted-foreground">Sem blocos</p>
+                    <p className="py-4 text-center text-xs text-muted-foreground">Sem blocos</p>
                   ) : null}
                 </div>
               </div>

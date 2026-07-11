@@ -11,7 +11,7 @@ import { HeatmapCard } from "@/components/dashboard/HeatmapCard";
 import { CalendarioMensalWidget } from "@/components/calendario/CalendarioMensalWidget";
 import { BannerSemConcurso } from "@/components/dashboard/BannerSemConcurso";
 import { RegistroEstudoModal } from "@/components/estudos/RegistroEstudoModal";
-import { DIAS, diaAbrev, blocoDurationMinutes, fmtBlocoMinutos, getTipo } from "@/lib/cronograma/constants";
+import { DIAS, diaAbrev, blocoDurationMinutes, fmtBlocoMinutos, getTipo, getTipoDot } from "@/lib/cronograma/constants";
 import type { Bloco } from "@/lib/cronograma/types";
 import type { Disciplina } from "@/lib/disciplinas/types";
 import { cn } from "@/lib/utils";
@@ -215,7 +215,7 @@ export function Dashboard() {
           </Link>
         </div>
         <div className="-mx-1 overflow-x-auto pb-1" role="region" aria-label="Cronograma da semana">
-          <div className="grid min-w-[320px] grid-cols-7 gap-1.5">
+          <div className="grid min-w-[720px] grid-cols-7 gap-2 px-1">
           {DIAS.map((dia) => {
             const items = blocosSemana?.[dia] ?? [];
             const isHoje = dia === diaHoje;
@@ -223,24 +223,63 @@ export function Dashboard() {
               <div
                 key={dia}
                 className={cn(
-                  "min-h-[72px] rounded-lg border p-1.5",
-                  isHoje ? "border-primary-400 bg-primary-50/50 dark:border-primary-600 dark:bg-primary-950/20" : "border-border/60",
+                  "flex min-h-[132px] flex-col rounded-lg border p-2",
+                  isHoje
+                    ? "border-primary-400 bg-primary-50/50 dark:border-primary-600 dark:bg-primary-950/20"
+                    : "border-border/60 bg-background/40",
                 )}
               >
-                <p className={cn("mb-1 text-[9px] font-bold uppercase", isHoje ? "text-primary-700 dark:text-primary-300" : "text-muted-foreground")}>
-                  {diaAbrev[dia]}
-                </p>
-                <div className="space-y-0.5">
-                  {items.slice(0, 2).map((b) => (
-                    <div key={b.id} className="truncate rounded bg-background/80 px-1 py-0.5 text-[8px] leading-tight text-card-foreground">
-                      <span className="font-semibold">{discMap.get(b.disciplina_id)?.split(" ")[0]}</span>
-                      {b.topico_nome ? <span className="block truncate text-muted-foreground">{b.topico_nome}</span> : null}
+                <div className="mb-1.5 flex items-center justify-between">
+                  <p
+                    className={cn(
+                      "text-xs font-semibold uppercase tracking-wide",
+                      isHoje ? "text-primary-700 dark:text-primary-300" : "text-muted-foreground",
+                    )}
+                  >
+                    {diaAbrev[dia]}
+                  </p>
+                  {items.length > 0 ? (
+                    <span
+                      className={cn(
+                        "rounded-full px-1.5 text-[11px] font-medium tabular-nums",
+                        isHoje ? "bg-primary-100 text-primary-700 dark:bg-primary-900/50 dark:text-primary-300" : "bg-muted text-muted-foreground",
+                      )}
+                    >
+                      {items.length}
+                    </span>
+                  ) : null}
+                </div>
+                <div className="flex flex-1 flex-col gap-1">
+                  {items.slice(0, 3).map((b) => (
+                    <div
+                      key={b.id}
+                      className="rounded-md border border-border/50 bg-card px-1.5 py-1 shadow-sm"
+                    >
+                      <div className="flex items-center gap-1">
+                        <span className={cn("h-2 w-2 shrink-0 rounded-full", getTipoDot(b.tipo))} />
+                        <span className="truncate text-xs font-medium text-card-foreground">
+                          {discMap.get(b.disciplina_id) ?? "Disciplina"}
+                        </span>
+                      </div>
+                      {b.topico_nome ? (
+                        <span className="mt-0.5 block truncate pl-3 text-[11px] leading-tight text-muted-foreground">
+                          {b.topico_nome}
+                        </span>
+                      ) : null}
+                      <span className="mt-0.5 block pl-3 text-[11px] tabular-nums text-muted-foreground/80">
+                        {b.hora_inicio}
+                      </span>
                     </div>
                   ))}
-                  {items.length > 2 ? (
-                    <p className="text-[8px] text-muted-foreground">+{items.length - 2}</p>
+                  {items.length > 3 ? (
+                    <Link
+                      to="/cronograma"
+                      className="mt-auto text-[11px] font-medium text-primary-600 hover:underline dark:text-primary-400"
+                    >
+                      +{items.length - 3} mais
+                    </Link>
                   ) : items.length === 0 ? (
-                    <p className="text-[8px] text-muted-foreground/60">—</p>
+                    <span className="mt-auto text-xs text-muted-foreground/50">—</span>
                   ) : null}
                 </div>
               </div>
