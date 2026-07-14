@@ -75,14 +75,14 @@ export function DisciplinasDataTable({
         id: "progresso",
         accessorFn: (d) => {
           const stats = getTopicosProgressFromCounts(d.topicos_total ?? 0, d.topicos_estudados ?? 0);
-          return d.dominio_medio_pct ?? stats.pct;
+          return stats.pct;
         },
         header: "Progresso",
         cell: ({ row }) => {
           const total = row.original.topicos_total ?? 0;
           const est = row.original.topicos_estudados ?? 0;
           const stats = getTopicosProgressFromCounts(total, est);
-          const pct = row.original.dominio_medio_pct ?? stats.pct;
+          const pct = stats.pct;
           return (
             <div className="flex min-w-[100px] items-center gap-2">
               <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-muted">

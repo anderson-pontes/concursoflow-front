@@ -3,6 +3,7 @@ import { Navigate } from "react-router-dom";
 
 import { initThemeFromStorage } from "@/hooks/useTheme";
 import { useConcursoSync } from "@/hooks/useConcursoSync";
+import { usePomodoroSessionKeeper } from "@/hooks/usePomodoroSessionKeeper";
 import { fetchCurrentUser } from "@/services/currentUser";
 import { useAuthStore } from "@/stores/authStore";
 import { useUiStore } from "@/stores/uiStore";
@@ -10,6 +11,7 @@ import { cn } from "@/lib/utils";
 
 import { Sidebar } from "./Sidebar";
 import { Header } from "./Header";
+import { PomodoroSessionBadge } from "./PomodoroSessionBadge";
 
 function AuthenticatedLayout({ children }: { children: React.ReactNode }) {
   const [mobileSidebarOpen, setMobileSidebarOpen] = React.useState(false);
@@ -20,6 +22,7 @@ function AuthenticatedLayout({ children }: { children: React.ReactNode }) {
   const setUser = useAuthStore((s) => s.setUser);
 
   useConcursoSync();
+  usePomodoroSessionKeeper();
 
   React.useEffect(() => {
     initThemeFromStorage();
@@ -73,6 +76,7 @@ function AuthenticatedLayout({ children }: { children: React.ReactNode }) {
         )}
       >
         <Header mobileSidebarOpen={mobileSidebarOpen} onOpenSidebar={() => setMobileSidebarOpen(true)} />
+        <PomodoroSessionBadge />
         <main id="main-content" className="min-w-0 flex-1 overflow-x-hidden overflow-y-auto p-4 md:p-6 lg:p-8">
           {children}
         </main>

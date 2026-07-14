@@ -162,9 +162,16 @@ export function Dashboard() {
 
   const progressoDisciplinas = React.useMemo(() => {
     return (disciplinas ?? [])
-      .filter((d) => (d.dominio_medio_pct ?? 0) > 0 || (d.topicos_total ?? 0) > 0)
-      .sort((a, b) => (b.dominio_medio_pct ?? 0) - (a.dominio_medio_pct ?? 0))
-      .slice(0, 8);
+      .filter((d) => (d.topicos_total ?? 0) > 0)
+      .map((d) => {
+        const total = d.topicos_total ?? 0;
+        const estudados = d.topicos_estudados ?? 0;
+        const pct = total > 0 ? Math.round((estudados / total) * 100) : 0;
+        return { d, pct };
+      })
+      .sort((a, b) => b.pct - a.pct)
+      .slice(0, 8)
+      .map((x) => x.d);
   }, [disciplinas]);
 
   const hoje = new Date();
@@ -338,17 +345,21 @@ export function Dashboard() {
           {progressoDisciplinas.length > 0 ? (
             <section className="rounded-xl border border-border bg-card p-4 shadow-sm">
               <h2 className="mb-3 text-sm font-semibold text-card-foreground">Progresso por disciplina</h2>
-              <p className="mb-3 text-xs text-muted-foreground">Domínio médio dos assuntos (1–5)</p>
+              <p className="mb-3 text-xs text-muted-foreground">Tópicos concluídos no edital (status dominado)</p>
               <div className="space-y-3">
                 {progressoDisciplinas.map((d) => {
-                  const pct = d.dominio_medio_pct ?? 0;
+                  const total = d.topicos_total ?? 0;
+                  const estudados = d.topicos_estudados ?? 0;
+                  const pct = total > 0 ? Math.round((estudados / total) * 100) : 0;
                   return (
                     <div key={d.id}>
                       <div className="mb-1 flex items-center justify-between gap-2 text-xs">
                         <Link to={`/disciplinas/${d.id}`} className="truncate font-medium text-card-foreground hover:underline">
                           {d.nome}
                         </Link>
-                        <span className="shrink-0 tabular-nums text-muted-foreground">{pct}%</span>
+                        <span className="shrink-0 tabular-nums text-muted-foreground">
+                          {estudados}/{total} · {pct}%
+                        </span>
                       </div>
                       <div className="h-2 overflow-hidden rounded-full bg-muted">
                         <div className="h-full rounded-full bg-primary-500 transition-all" style={{ width: `${pct}%` }} />

@@ -1,7 +1,6 @@
 import React from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Play, Pause, Square, RotateCcw, Save, StopCircle, Minimize2 } from "lucide-react";
-import { toast } from "sonner";
 
 import { CircularArc } from "@/components/pomodoro/CircularArc";
 import { RegistroEstudoModal } from "@/components/estudos/RegistroEstudoModal";
@@ -13,12 +12,12 @@ import {
   getFocusTotalSeconds,
 } from "@/lib/pomodoro/duration";
 import { formatHHMMSS } from "@/lib/pomodoro/format";
-import { playBeep, playCompletionSound } from "@/lib/pomodoro/sounds";
-import { getPomodoroTheme, type PomodoroPhase } from "@/lib/pomodoro/theme";
+import { getPomodoroTheme } from "@/lib/pomodoro/theme";
 import { cn } from "@/lib/utils";
 import { invalidateEstudosQueries } from "@/lib/estudos/invalidateQueries";
 import { api } from "@/services/api";
 import { usePomodoroStore } from "@/stores/pomodoroStore";
+import { usePomodoroSessionStore } from "@/stores/pomodoroSessionStore";
 import { Button } from "@/components/ui/button";
 
 type TopicoOpt = { id: string; descricao: string };
@@ -48,26 +47,36 @@ export function PomodoroTimer({ onActiveChange, disciplinaNome, topicoNome }: Po
   } = usePomodoroStore();
 
   const focusTotalSeconds = getFocusTotalSeconds(focusHours, focusMinutes);
+  const isCronometro = mode === "cronometro";
+  const timerKind = isCronometro ? "stopwatch" : "countdown";
 
   const qc = useQueryClient();
 
-  const [isRunning, setIsRunning] = React.useState(false);
-  const [phase, setPhase] = React.useState<PomodoroPhase>("foco");
-  const [cycleIndex, setCycleIndex] = React.useState(0);
-  const [remainingSeconds, setRemainingSeconds] = React.useState(focusTotalSeconds);
-  const [elapsedSeconds, setElapsedSeconds] = React.useState(0);
+  const hasSession = usePomodoroSessionStore((s) => s.hasSession);
+  const isRunning = usePomodoroSessionStore((s) => s.isRunning);
+  const phase = usePomodoroSessionStore((s) => s.phase);
+  const cycleIndex = usePomodoroSessionStore((s) => s.cycleIndex);
+  const clockTick = usePomodoroSessionStore((s) => s.clockTick);
+  const startSession = usePomodoroSessionStore((s) => s.startSession);
+  const pause = usePomodoroSessionStore((s) => s.pause);
+  const resumeSession = usePomodoroSessionStore((s) => s.resume);
+  const resetSession = usePomodoroSessionStore((s) => s.reset);
+  const afterPartialSave = usePomodoroSessionStore((s) => s.afterPartialSave);
+  const getDisplayRemaining = usePomodoroSessionStore((s) => s.getDisplayRemaining);
+  const getDisplayElapsed = usePomodoroSessionStore((s) => s.getDisplayElapsed);
+  const getPartialSeconds = usePomodoroSessionStore((s) => s.getPartialSeconds);
+
   const [immersive, setImmersive] = React.useState(false);
-
-  const focusStartRef = React.useRef<number | null>(null);
-  const partialSaveStartRef = React.useRef<number | null>(null);
-
   const [registroOpen, setRegistroOpen] = React.useState(false);
   const [registroSnapshot, setRegistroSnapshot] = React.useState<RegistroSnapshot | null>(null);
 
   const canStart = Boolean(disciplinaId);
-  const isCronometro = mode === "cronometro";
-  const hasStarted = focusStartRef.current !== null;
-  const isActive = isRunning || hasStarted;
+  const isActive = hasSession;
+
+  // Lê wall-clock a cada tick (e nos renders)
+  void clockTick;
+  const remainingSeconds = getDisplayRemaining();
+  const elapsedSeconds = getDisplayElapsed();
 
   React.useEffect(() => {
     onActiveChange?.(isActive);
@@ -95,174 +104,48 @@ export function PomodoroTimer({ onActiveChange, disciplinaNome, topicoNome }: Po
     return [{ id: topicoId, nome: found?.descricao ?? topicoNome ?? "" }];
   }, [topicoId, topicos, topicoNome]);
 
+  // Mudança de modo invalida a sessão em andamento (duração pode mudar via config sem derrubar)
+  const prevModeRef = React.useRef(mode);
   React.useEffect(() => {
-    if (!isRunning && !isCronometro) setRemainingSeconds(focusTotalSeconds);
-    if (!isRunning && isCronometro) setElapsedSeconds(0);
-    setPhase("foco");
-    setCycleIndex(0);
-    focusStartRef.current = null;
-    partialSaveStartRef.current = null;
-  }, [mode, isCronometro, focusTotalSeconds]);
-
-  React.useEffect(() => {
-    if (!isRunning && focusStartRef.current === null && !isCronometro) {
-      setRemainingSeconds(focusTotalSeconds);
-    }
-  }, [focusTotalSeconds, isRunning, isCronometro]);
-
-  React.useEffect(() => {
-    if (!isRunning) return;
-    const tick = setInterval(() => {
-      if (isCronometro) setElapsedSeconds((s) => s + 1);
-      else setRemainingSeconds((s) => s - 1);
-    }, 1000);
-    return () => clearInterval(tick);
-  }, [isRunning, isCronometro]);
-
-  React.useEffect(() => {
-    if (!isRunning || phase !== "foco") return;
-    if (focusStartRef.current == null) {
-      focusStartRef.current = Date.now();
-      partialSaveStartRef.current = Date.now();
-    }
-  }, [isRunning, phase]);
+    const prev = prevModeRef.current;
+    prevModeRef.current = mode;
+    if (prev === mode) return;
+    if (hasSession) resetSession();
+  }, [mode, hasSession, resetSession]);
 
   const breakSeconds = React.useMemo(() => {
     if (mode !== "pomodoro") return shortBreakMinutes * 60;
     return ((cycleIndex + 1) % 4 === 0 ? longBreakMinutes : shortBreakMinutes) * 60;
   }, [cycleIndex, longBreakMinutes, shortBreakMinutes, mode]);
 
-  const autoSaveSession = React.useCallback(
-    async (opts: { startMs: number; endMs: number; pomodorosCount: number }) => {
-      if (!disciplinaId) return;
-      const duracaoMinutos = Math.max(1, Math.round((opts.endMs - opts.startMs) / 60000));
-      const segundos = Math.round((opts.endMs - opts.startMs) / 1000);
-      try {
-        await api.post("/sessoes-estudo", {
-          disciplina_id: disciplinaId,
-          topico_id: topicoId || null,
-          topico_ids: topicoId ? [topicoId] : [],
-          inicio: new Date(opts.startMs).toISOString(),
-          fim: new Date(opts.endMs).toISOString(),
-          duracao_minutos: duracaoMinutos,
-          tempo_estudo_segundos: segundos,
-          tipo: mode === "pomodoro" ? "pomodoro" : "livre",
-          pomodoros_concluidos: opts.pomodorosCount,
-          anotacoes: null,
-        });
-        qc.invalidateQueries({ queryKey: ["disciplina-dashboard", disciplinaId] });
-        invalidateEstudosQueries(qc);
-        toast.success(`Sessão registrada (${duracaoMinutos} min).`);
-      } catch {
-        toast.error("Erro ao registrar sessão.");
-      }
-    },
-    [disciplinaId, topicoId, mode, qc],
-  );
-
-  React.useEffect(() => {
-    if (isCronometro || !isRunning || remainingSeconds > 0) return;
-    const handleFinish = async () => {
-      if (phase === "foco") {
-        playCompletionSound();
-        const startMs = focusStartRef.current;
-        if (startMs) {
-          await autoSaveSession({
-            startMs,
-            endMs: Date.now(),
-            pomodorosCount: mode === "pomodoro" ? 1 : 0,
-          });
-        }
-        focusStartRef.current = null;
-        partialSaveStartRef.current = null;
-        if (mode === "livre") {
-          setIsRunning(false);
-          setPhase("foco");
-          setCycleIndex(0);
-          setRemainingSeconds(focusTotalSeconds);
-          return;
-        }
-        const next = cycleIndex + 1;
-        if (next >= cyclesTarget) {
-          setIsRunning(false);
-          setPhase("foco");
-          setCycleIndex(0);
-          setRemainingSeconds(focusTotalSeconds);
-          toast.success("Todos os ciclos concluídos!");
-          return;
-        }
-        setCycleIndex(next);
-        setPhase("pausa");
-        setRemainingSeconds(breakSeconds);
-        return;
-      }
-      playBeep();
-      setPhase("foco");
-      setRemainingSeconds(focusTotalSeconds);
-    };
-    void handleFinish();
-  }, [
-    remainingSeconds,
-    isRunning,
-    phase,
-    isCronometro,
-    autoSaveSession,
-    mode,
-    cycleIndex,
-    cyclesTarget,
-    focusTotalSeconds,
-    breakSeconds,
-  ]);
-
-  const reset = React.useCallback(() => {
-    setIsRunning(false);
-    setPhase("foco");
-    setCycleIndex(0);
-    focusStartRef.current = null;
-    partialSaveStartRef.current = null;
-    setElapsedSeconds(0);
-    setRemainingSeconds(focusTotalSeconds);
-    setImmersive(false);
-  }, [focusTotalSeconds]);
-
   const start = () => {
     if (!canStart) return;
-    setIsRunning(true);
-    setPhase("foco");
-    setCycleIndex(0);
-    focusStartRef.current = Date.now();
-    partialSaveStartRef.current = Date.now();
-    if (isCronometro) setElapsedSeconds(0);
-    else setRemainingSeconds(focusTotalSeconds);
+    startSession({ timerKind, focusTotalSeconds });
     setImmersive(true);
   };
 
   const resume = () => {
     if (!canStart || isRunning) return;
-    setIsRunning(true);
-    if (phase === "foco" && focusStartRef.current == null) {
-      focusStartRef.current = Date.now();
-      partialSaveStartRef.current = Date.now();
-    }
+    resumeSession();
   };
 
   const confirmReset = () => {
-    if (!hasStarted) return;
+    if (!hasSession) return;
     if (window.confirm("Cancelar a sessão atual? O tempo não será salvo automaticamente.")) {
-      reset();
+      resetSession();
+      setImmersive(false);
     }
   };
 
   const openModalWithSnapshot = React.useCallback(
     (isPartial: boolean) => {
-      const startMs = partialSaveStartRef.current ?? focusStartRef.current;
-      if (!startMs || !disciplinaId) return;
-      const duracaoSegundos = Math.max(1, Math.round((Date.now() - startMs) / 1000));
+      if (!disciplinaId || !hasSession || phase !== "foco") return;
+      const duracaoSegundos = getPartialSeconds();
+      pause();
       setRegistroSnapshot({ duracaoSegundos, topicoDefaultList, isPartial });
-      setIsRunning(false);
       setRegistroOpen(true);
     },
-    [disciplinaId, topicoDefaultList],
+    [disciplinaId, hasSession, phase, getPartialSeconds, pause, topicoDefaultList],
   );
 
   const handleModalSaved = React.useCallback(() => {
@@ -270,26 +153,23 @@ export function PomodoroTimer({ onActiveChange, disciplinaNome, topicoNome }: Po
     qc.invalidateQueries({ queryKey: ["disciplina-dashboard", disciplinaId] });
     invalidateEstudosQueries(qc);
     if (registroSnapshot?.isPartial) {
-      partialSaveStartRef.current = Date.now();
-      focusStartRef.current = Date.now();
-      setElapsedSeconds(0);
-      if (!isCronometro) setRemainingSeconds(focusTotalSeconds);
+      afterPartialSave({ timerKind, focusTotalSeconds });
       setRegistroSnapshot(null);
-      setIsRunning(true);
     } else {
-      reset();
+      resetSession();
+      setImmersive(false);
       setRegistroSnapshot(null);
     }
-  }, [registroSnapshot, isCronometro, focusTotalSeconds, disciplinaId, qc, reset]);
+  }, [registroSnapshot, timerKind, focusTotalSeconds, disciplinaId, qc, afterPartialSave, resetSession]);
 
   const arcProgress = React.useMemo(() => {
     if (isCronometro) {
       const cycle = Math.max(focusTotalSeconds, 60);
       return (elapsedSeconds % cycle) / cycle;
     }
-    if (phase === "foco") return 1 - remainingSeconds / focusTotalSeconds;
+    if (phase === "foco") return 1 - remainingSeconds / Math.max(focusTotalSeconds, 1);
     const breakTotal = mode === "pomodoro" ? breakSeconds : shortBreakMinutes * 60;
-    return 1 - remainingSeconds / breakTotal;
+    return 1 - remainingSeconds / Math.max(breakTotal, 1);
   }, [
     isCronometro,
     elapsedSeconds,
@@ -312,12 +192,12 @@ export function PomodoroTimer({ onActiveChange, disciplinaNome, topicoNome }: Po
         return;
       }
       e.preventDefault();
-      if (isRunning) setIsRunning(false);
+      if (isRunning) pause();
       else resume();
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [isActive, isRunning, resume]);
+  }, [isActive, isRunning, pause, resume]);
 
   const contextLabel = [disciplinaNome, topicoNome].filter(Boolean).join(" · ");
 
@@ -340,7 +220,6 @@ export function PomodoroTimer({ onActiveChange, disciplinaNome, topicoNome }: Po
           />
         </div>
 
-        {/* Top bar */}
         {isActive ? (
           <div className="relative flex items-center justify-between px-5 pt-5">
             <div className="flex items-center gap-2">
@@ -384,7 +263,6 @@ export function PomodoroTimer({ onActiveChange, disciplinaNome, topicoNome }: Po
             <p className="mb-6 max-w-sm truncate text-center text-sm font-medium text-white/50">{contextLabel}</p>
           ) : null}
 
-          {/* Timer ring */}
           <div className="relative mx-auto h-[240px] w-[240px] sm:h-[260px] sm:w-[260px]">
             <div className="absolute inset-0 flex items-center justify-center">
               <CircularArc
@@ -394,12 +272,7 @@ export function PomodoroTimer({ onActiveChange, disciplinaNome, topicoNome }: Po
                 className={theme.arc}
               />
             </div>
-            <div
-              className={cn(
-                "absolute inset-4 rounded-full border sm:inset-5",
-                theme.ring,
-              )}
-            />
+            <div className={cn("absolute inset-4 rounded-full border sm:inset-5", theme.ring)} />
             <div className="absolute inset-0 flex flex-col items-center justify-center">
               <span className="font-mono text-5xl font-black tracking-tight text-white sm:text-6xl">
                 {isActive ? displayTime : idleTime}
@@ -413,7 +286,7 @@ export function PomodoroTimer({ onActiveChange, disciplinaNome, topicoNome }: Po
                       : "Em pausa"
                   : isCronometro
                     ? "Pronto para iniciar"
-                  : formatFocusDurationLabel(focusHours, focusMinutes)}
+                    : formatFocusDurationLabel(focusHours, focusMinutes)}
               </span>
             </div>
           </div>
@@ -425,7 +298,6 @@ export function PomodoroTimer({ onActiveChange, disciplinaNome, topicoNome }: Po
             </div>
           ) : null}
 
-          {/* Controls */}
           <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
             {!isActive ? (
               !canStart ? (
@@ -447,7 +319,7 @@ export function PomodoroTimer({ onActiveChange, disciplinaNome, topicoNome }: Po
                   type="button"
                   title="Pausar (espaço)"
                   aria-label="Pausar (espaço)"
-                  onClick={() => setIsRunning(false)}
+                  onClick={() => pause()}
                   className="flex h-14 w-14 items-center justify-center rounded-full border border-white/15 bg-white/10 text-white backdrop-blur-sm transition-transform hover:scale-105"
                 >
                   <Pause className="h-6 w-6" />

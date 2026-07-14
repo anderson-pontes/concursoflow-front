@@ -88,6 +88,7 @@ export function DisciplinaDashboard() {
       }
       await api.put(`/disciplinas/${disciplinaId}/topicos/${payload.topicoId}`, {
         status: payload.concluido ? "dominado" : "nao_iniciado",
+        dominio: payload.concluido ? 5 : 1,
       });
     },
     onSuccess: () => {
