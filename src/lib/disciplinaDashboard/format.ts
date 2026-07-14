@@ -1,6 +1,11 @@
+/** Formata horas decimais da API como "Xh Ymin" (sem fração decimal). */
 export function fmtHoras(h: number) {
-  if (h < 1) return `${Math.round(h * 60)} min`;
-  return `${h.toLocaleString("pt-BR", { minimumFractionDigits: 1, maximumFractionDigits: 1 })} h`;
+  const totalMin = Math.max(0, Math.round(Number(h) * 60));
+  if (totalMin <= 0) return "0 min";
+  if (totalMin < 60) return `${totalMin} min`;
+  const hours = Math.floor(totalMin / 60);
+  const mins = totalMin % 60;
+  return mins ? `${hours}h ${mins}min` : `${hours}h`;
 }
 
 export function fmtTempoTopico(min: number) {

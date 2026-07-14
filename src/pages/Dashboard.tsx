@@ -332,7 +332,7 @@ export function Dashboard() {
         <KpiCard
           label="Cumprimento mês"
           value={`${(resumo?.taxa_cumprimento_mes ?? 0).toFixed(0)}%`}
-          sub={`${fmtMinutos(resumo?.minutos_realizados_mes ?? 0)} de ${fmtMinutos(resumo?.minutos_planejados_mes ?? 0)}`}
+          sub={`${fmtMinutos(resumo?.minutos_realizados_mes ?? 0)} estudadas de ${fmtMinutos(resumo?.minutos_planejados_mes ?? 0)} planejadas`}
           badgeVariant={(resumo?.taxa_cumprimento_mes ?? 0) >= 80 ? "green" : "amber"}
         />
       </div>
