@@ -1,10 +1,12 @@
 import React from "react";
+import { useQuery } from "@tanstack/react-query";
 import { X } from "lucide-react";
 
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { DIAS, defaultForm, diaLabels, tipoMap } from "@/lib/cronograma/constants";
 import type { Bloco, DisciplinaOption, FormState } from "@/lib/cronograma/types";
 import { cn } from "@/lib/utils";
+import { api } from "@/services/api";
 
 export type BlocoFormModalProps = {
   open: boolean;
@@ -15,6 +17,8 @@ export type BlocoFormModalProps = {
   title: string;
   isSaving: boolean;
 };
+
+type TopicoOption = { id: string; descricao: string };
 
 export function BlocoFormModal({
   open,
@@ -28,10 +32,29 @@ export function BlocoFormModal({
   const [form, setForm] = React.useState<FormState>({ ...defaultForm, ...initialValues });
 
   React.useEffect(() => {
-    if (open) setForm({ ...defaultForm, ...initialValues });
+    if (open) setForm({ ...defaultForm, ...initialValues, topico_ids: initialValues?.topico_ids ?? [] });
   }, [open, initialValues]);
 
+  const { data: topicos = [], isLoading: loadingTopicos } = useQuery({
+    queryKey: ["bloco-form-topicos", form.disciplina_id],
+    enabled: open && Boolean(form.disciplina_id),
+    queryFn: async () => {
+      const rows = (await api.get(`/disciplinas/${form.disciplina_id}/topicos`)).data as TopicoOption[];
+      return rows;
+    },
+  });
+
   const horaFimInvalida = form.hora_fim <= form.hora_inicio;
+
+  function toggleTopico(id: string) {
+    setForm((s) => {
+      const has = s.topico_ids.includes(id);
+      return {
+        ...s,
+        topico_ids: has ? s.topico_ids.filter((t) => t !== id) : [...s.topico_ids, id],
+      };
+    });
+  }
 
   return (
     <Dialog open={open} onOpenChange={(o) => { if (!o) onClose(); }}>
@@ -52,13 +75,19 @@ export function BlocoFormModal({
           </button>
         </div>
 
-        <div className="space-y-4 px-5 py-5">
+        <div className="max-h-[70dvh] space-y-4 overflow-y-auto px-5 py-5">
           <div>
             <label className="mb-1.5 block text-sm font-medium text-card-foreground">Disciplina</label>
             <select
               className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-card-foreground outline-none focus:ring-2 focus:ring-primary-500"
               value={form.disciplina_id}
-              onChange={(e) => setForm((s) => ({ ...s, disciplina_id: e.target.value }))}
+              onChange={(e) =>
+                setForm((s) => ({
+                  ...s,
+                  disciplina_id: e.target.value,
+                  topico_ids: [],
+                }))
+              }
             >
               <option value="" disabled>Selecione...</option>
               {disciplinas.map((d) => <option key={d.id} value={d.id}>{d.nome}</option>)}
@@ -111,6 +140,47 @@ export function BlocoFormModal({
               />
               {horaFimInvalida ? <p className="mt-1 text-xs text-danger-600">Fim deve ser após o início.</p> : null}
             </div>
+          </div>
+
+          <div>
+            <label className="mb-1.5 block text-sm font-medium text-card-foreground">
+              Tópicos <span className="font-normal text-muted-foreground">(opcional)</span>
+            </label>
+            {!form.disciplina_id ? (
+              <p className="text-xs text-muted-foreground">Selecione uma disciplina para listar tópicos.</p>
+            ) : loadingTopicos ? (
+              <p className="text-xs text-muted-foreground">Carregando tópicos…</p>
+            ) : topicos.length === 0 ? (
+              <p className="text-xs text-muted-foreground">Nenhum tópico cadastrado nesta disciplina.</p>
+            ) : (
+              <div
+                className="max-h-40 space-y-1 overflow-y-auto rounded-lg border border-border bg-background p-2"
+                role="group"
+                aria-label="Tópicos opcionais da disciplina"
+              >
+                {topicos.map((t) => {
+                  const checked = form.topico_ids.includes(t.id);
+                  return (
+                    <label
+                      key={t.id}
+                      className={cn(
+                        "flex min-h-11 cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-sm",
+                        checked ? "bg-primary-50 dark:bg-primary-950/40" : "hover:bg-muted",
+                      )}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={checked}
+                        onChange={() => toggleTopico(t.id)}
+                        className="h-4 w-4 rounded border-border text-primary-600 focus:ring-primary-500"
+                      />
+                      <span className="min-w-0 truncate text-card-foreground">{t.descricao}</span>
+                    </label>
+                  );
+                })}
+              </div>
+            )}
+            <p className="mt-1.5 text-xs text-muted-foreground">Nenhum selecionado = só a disciplina.</p>
           </div>
         </div>
 

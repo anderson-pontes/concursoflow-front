@@ -1,6 +1,7 @@
 import { toast } from "sonner";
 
 import type { Bloco } from "@/lib/cronograma/types";
+import { blocoTopicoIds } from "@/lib/cronograma/types";
 import { clampFocusDuration } from "@/lib/pomodoro/duration";
 import { usePomodoroStore } from "@/stores/pomodoroStore";
 
@@ -12,13 +13,25 @@ export type PomodoroLaunchParams = {
 
 const LAUNCH_FROM = "cronograma";
 
-export function buildPomodoroLaunchUrl(bloco: Pick<Bloco, "disciplina_id" | "topico_id">, minutos: number): string {
+/** AC6: N=1 → topico_id; N=0 ou N>1 → sem topico_id (disciplina + minutos). */
+export function resolvePomodoroTopicoId(
+  bloco: Pick<Bloco, "disciplina_id" | "topico_id" | "topico_ids">,
+): string | null {
+  const ids = blocoTopicoIds(bloco);
+  return ids.length === 1 ? ids[0] : null;
+}
+
+export function buildPomodoroLaunchUrl(
+  bloco: Pick<Bloco, "disciplina_id" | "topico_id" | "topico_ids">,
+  minutos: number,
+): string {
   const params = new URLSearchParams({
     from: LAUNCH_FROM,
     disciplina_id: bloco.disciplina_id,
     minutos: String(minutos),
   });
-  if (bloco.topico_id) params.set("topico_id", bloco.topico_id);
+  const topicoId = resolvePomodoroTopicoId(bloco);
+  if (topicoId) params.set("topico_id", topicoId);
   return `/pomodoro?${params.toString()}`;
 }
 
@@ -68,7 +81,7 @@ export function buildDisciplinaDashboardUrl(
 /** Valida minutos e navega; retorna false se inválido. */
 export function launchPomodoroFromBloco(
   navigate: (to: string) => void,
-  bloco: Pick<Bloco, "disciplina_id" | "topico_id">,
+  bloco: Pick<Bloco, "disciplina_id" | "topico_id" | "topico_ids">,
   minutos: number,
 ): boolean {
   if (minutos < 1) {

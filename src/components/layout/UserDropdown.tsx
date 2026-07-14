@@ -7,7 +7,7 @@ import { ChangePasswordModal } from "@/components/modals/ChangePasswordModal";
 import { useMenuNavigation } from "@/hooks/useMenuNavigation";
 import { useAuthStore } from "@/stores/authStore";
 
-export function UserDropdown() {
+export function UserDropdown({ compact = false }: { compact?: boolean }) {
   const user = useAuthStore((s) => s.user);
   const logout = useAuthStore((s) => s.logout);
   const navigate = useNavigate();
@@ -39,7 +39,12 @@ export function UserDropdown() {
           aria-label="Menu do usuário"
           title="Menu do usuário"
         >
-          <Avatar name={user.name} avatarUrl={user.avatar_url} size="md" className="ring-0" />
+          <Avatar
+            name={user.name}
+            avatarUrl={user.avatar_url}
+            size={compact ? "sm" : "md"}
+            className="ring-0"
+          />
         </button>
 
         {menuOpen ? (

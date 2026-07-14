@@ -114,6 +114,7 @@ export function aggregateBlocosPorDisciplina(blocos: Bloco[]): BlocoDiaAgrupado[
 }
 
 export const defaultForm: FormState = {
+  topico_ids: [],
   disciplina_id: "",
   dia_semana: "seg",
   hora_inicio: "08:00",

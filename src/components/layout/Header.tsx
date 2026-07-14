@@ -17,7 +17,7 @@ function saudacaoPorHora(): string {
 }
 
 const iconBtnClass =
-  "inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg border border-border bg-surface text-muted-foreground transition-colors hover:bg-surface-hover hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background";
+  "inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-border bg-surface text-muted-foreground transition-colors hover:bg-surface-hover hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background sm:h-10 sm:w-10";
 
 const cmdItemClass =
   "flex min-h-11 w-full items-center rounded-lg px-3 text-left text-sm text-foreground hover:bg-surface-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset";
@@ -78,11 +78,12 @@ export function Header({
 
   const filteredActions = actions.filter((a) => a.label.toLowerCase().includes(cmdQuery.toLowerCase()));
   const nomeSaudacao = primeiroNome(user?.name, "Concurseiro");
+  const saudacao = saudacaoPorHora();
 
   return (
     <header className="sticky top-0 z-50 shrink-0 border-b border-border bg-surface/95 backdrop-blur-sm supports-[backdrop-filter]:bg-surface/80">
-      <div className="flex min-h-14 flex-col gap-2 px-4 py-2 sm:gap-3 sm:py-3 md:h-14 md:flex-row md:items-center md:justify-between md:py-0 md:pl-6 md:pr-6">
-        <div className="flex min-w-0 items-center gap-2 sm:gap-3">
+      <div className="flex h-14 items-center gap-2 px-3 sm:gap-3 sm:px-4 md:pl-6 md:pr-6 lg:h-16">
+        <div className="flex min-w-0 flex-1 items-center gap-2 sm:gap-3">
           <button
             type="button"
             className={cn(iconBtnClass, "md:hidden")}
@@ -93,17 +94,22 @@ export function Header({
           >
             <Menu className="h-5 w-5" />
           </button>
-          <div className="min-w-0">
-            <h1 className="truncate text-sm font-semibold text-foreground sm:text-base">
-              {saudacaoPorHora()}, {nomeSaudacao}!
+          <div className="min-w-0 flex-1">
+            <h1 className="truncate text-sm font-semibold leading-tight text-foreground sm:text-base">
+              <span className="sm:hidden">
+                {saudacao}, {nomeSaudacao}
+              </span>
+              <span className="hidden sm:inline">
+                {saudacao}, {nomeSaudacao}!
+              </span>
             </h1>
-            <p className="hidden truncate text-xs text-muted-foreground sm:block">
+            <p className="mt-0.5 hidden truncate text-xs text-muted-foreground lg:block">
               Estude com foco e consistência.
             </p>
           </div>
         </div>
 
-        <div className="flex min-w-0 flex-wrap items-center gap-2 md:justify-end">
+        <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
           <button
             type="button"
             className={cn(iconBtnClass, "hidden sm:inline-flex")}
@@ -129,7 +135,8 @@ export function Header({
             <Search className="h-4 w-4" />
           </button>
 
-          <UserDropdown />
+          <UserDropdown compact />
+
         </div>
       </div>
 
@@ -151,7 +158,7 @@ export function Header({
               <div className="text-sm font-semibold text-foreground">Ir para…</div>
               <button
                 type="button"
-                className={cn(iconBtnClass, "min-h-9 min-w-9")}
+                className={cn(iconBtnClass, "h-9 w-9")}
                 onClick={() => setCmdOpen(false)}
                 aria-label="Fechar"
               >
