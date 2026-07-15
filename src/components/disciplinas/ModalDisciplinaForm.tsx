@@ -19,6 +19,7 @@ type ConcursoOption = { id: string; orgao: string; cargo: string | null; nome: s
 type ComputedTotals = {
   peso: number | null;
   totalPontos: number | null;
+  prioridadeCalculada: number | null;
   topicosTotal: number | null;
 };
 
@@ -162,17 +163,22 @@ export function ModalDisciplinaForm({
             {mode === "edit" ? (
               <div className="rounded-[10px] border border-primary-200 bg-primary-muted px-4 py-3 dark:border-primary-800 dark:bg-surface-muted">
                 <p className="text-xs font-medium uppercase tracking-wide text-[var(--text-muted)]">
-                  Peso e pontos (calculados pelos assuntos)
+                  Pontos e peso (calculados pelos assuntos)
                 </p>
                 {computedTotals?.topicosTotal ? (
-                  <p className="mt-1 text-sm text-[var(--text-secondary)]">
-                    <span className="text-lg font-bold tabular-nums text-primary dark:text-primary-400">
-                      {fmtPontos(computedTotals.totalPontos)} pts
-                    </span>
-                    <span className="ml-2">
-                      soma do peso de {computedTotals.topicosTotal} assunto(s) cadastrado(s)
-                    </span>
-                  </p>
+                  <div className="mt-1 space-y-1 text-sm text-[var(--text-secondary)]">
+                    <p>
+                      <span className="text-lg font-bold tabular-nums text-primary dark:text-primary-400">
+                        {fmtPontos(computedTotals.prioridadeCalculada)} pts
+                      </span>
+                      <span className="ml-2">
+                        prioridade = Σ peso × (6 − domínio) · {computedTotals.topicosTotal} assunto(s)
+                      </span>
+                    </p>
+                    <p className="text-xs text-[var(--text-muted)]">
+                      Peso no edital (só soma dos pesos): {fmtPontos(computedTotals.totalPontos ?? computedTotals.peso)}
+                    </p>
+                  </div>
                 ) : (
                   <p className="mt-1 text-sm text-[var(--text-secondary)]">
                     Sem assuntos cadastrados ainda. Peso e domínio são definidos por assunto na tela da disciplina.

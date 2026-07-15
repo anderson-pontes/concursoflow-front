@@ -438,6 +438,7 @@ export function RegistroEstudoModal({
       toast.success(sessaoId ? "Registro atualizado" : "Registro salvo");
       qc.invalidateQueries({ queryKey: ["disciplina-dashboard"] });
       qc.invalidateQueries({ queryKey: ["topico-sessoes"] });
+      qc.invalidateQueries({ queryKey: ["disciplinas"] });
       if (sessaoId) {
         qc.invalidateQueries({ queryKey: ["sessao-estudo", sessaoId] });
       }

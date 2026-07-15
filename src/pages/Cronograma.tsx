@@ -1,10 +1,11 @@
 import React from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { isAxiosError } from "axios";
-import { BookOpen, Clock, Pencil, Plus, Trash2, BarChart3, Calendar } from "lucide-react";
+import { BookOpen, Clock, ListChecks, Pencil, Plus, Trash2, BarChart3, Calendar } from "lucide-react";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
 
+import { CronogramaAgendaHojeDialog } from "@/components/cronograma/CronogramaAgendaHojeDialog";
 import { BlocoFormModal } from "@/components/cronograma/BlocoFormModal";
 import { CronogramaBlocoCard } from "@/components/cronograma/CronogramaBlocoCard";
 import {
@@ -227,6 +228,7 @@ export function Cronograma() {
   const [simplificadaOpen, setSimplificadaOpen] = React.useState(false);
   const [editBloco, setEditBloco] = React.useState<Bloco | null>(null);
   const [openRegistro, setOpenRegistro] = React.useState(false);
+  const [agendaHojeOpen, setAgendaHojeOpen] = React.useState(false);
 
   function openCriarCronograma() {
     setModoSelectorOpen(true);
@@ -291,7 +293,17 @@ export function Cronograma() {
           <h1 className="text-xl font-semibold tracking-tight text-neutral-900 dark:text-neutral-50">Cronograma</h1>
           <p className="text-sm text-muted-foreground">Planejamento semanal de estudos</p>
         </div>
-        <div className="flex flex-wrap gap-2 lg:max-w-[min(100%,36rem)] lg:justify-end">
+        <div className="flex flex-wrap gap-2 lg:max-w-[min(100%,42rem)] lg:justify-end">
+          <button
+            type="button"
+            onClick={() => setAgendaHojeOpen(true)}
+            title="Ver o que está agendado para estudar na semana"
+            aria-label="Ver o que está agendado para estudar na semana"
+            className="inline-flex min-h-10 items-center gap-2 rounded-lg border border-border bg-card px-2.5 py-2 text-sm font-medium text-card-foreground shadow-sm hover:bg-muted sm:px-3"
+          >
+            <ListChecks className="h-4 w-4 shrink-0" />
+            <span className="hidden sm:inline">Agendado</span>
+          </button>
           <Link
             to={calendarioMensalHref}
             title="Calendário mensal"
@@ -487,6 +499,14 @@ export function Cronograma() {
           </p>
         </div>
       )}
+
+      <CronogramaAgendaHojeDialog
+        open={agendaHojeOpen}
+        onClose={() => setAgendaHojeOpen(false)}
+        blocos={blocos ?? []}
+        disciplinaNome={(id) => discMap.get(id) ?? "Disciplina"}
+        onCriarCronograma={openCriarCronograma}
+      />
 
       <CronogramaModoSelectorModal
         open={modoSelectorOpen}

@@ -4,7 +4,6 @@ import { toast } from "sonner";
 
 import { DisciplinaCard } from "@/components/disciplinas/DisciplinaCard";
 import { DisciplinasDataTable } from "@/components/disciplinas/DisciplinasDataTable";
-import { DisciplinaPesoRanking } from "@/components/disciplinas/DisciplinaPesoRanking";
 import {
   DisciplinaCardSkeleton,
   EmptyDisciplinasIllustration,
@@ -142,104 +141,101 @@ export function Disciplinas() {
   };
 
   return (
-    <div className="min-h-full pb-8 font-sans">
-      <div className="space-y-5">
-        <DisciplinasToolbar
-          search={search}
-          onSearchChange={setSearch}
-          filterSeg={filterSeg}
-          onFilterChange={setFilterSeg}
-          onCreate={openCreate}
-          summary={summary}
+    <div className="min-h-full space-y-6 pb-10">
+      <DisciplinasToolbar
+        search={search}
+        onSearchChange={setSearch}
+        filterSeg={filterSeg}
+        onFilterChange={setFilterSeg}
+        onCreate={openCreate}
+        summary={summary}
+        concursoId={concursoId}
+        isCreating={createMutation.isPending}
+        viewMode={viewMode}
+        onViewModeChange={setViewMode}
+      />
+
+      {loadingDisciplinas ? (
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-4 xl:grid-cols-3">
+          <DisciplinaCardSkeleton />
+          <DisciplinaCardSkeleton />
+          <DisciplinaCardSkeleton />
+          <DisciplinaCardSkeleton />
+          <DisciplinaCardSkeleton />
+          <DisciplinaCardSkeleton />
+        </div>
+      ) : null}
+
+      {!loadingDisciplinas && disciplinas.length === 0 && !searchTerm ? (
+        <div className="flex flex-col items-center rounded-xl border border-dashed border-border bg-card/50 px-6 py-16 text-center">
+          <EmptyDisciplinasIllustration />
+          <h2 className="mt-6 text-base font-semibold text-card-foreground">Nenhuma disciplina ainda</h2>
+          <p className="mt-2 max-w-[360px] text-sm text-muted-foreground">
+            Crie disciplinas no catálogo e vincule aos seus concursos quando quiser.
+          </p>
+          <button
+            type="button"
+            onClick={openCreate}
+            className="mt-6 inline-flex min-h-10 items-center gap-2 rounded-lg bg-primary-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-primary-700"
+          >
+            Nova disciplina
+          </button>
+        </div>
+      ) : null}
+
+      {!loadingDisciplinas && disciplinas.length === 0 && searchTerm ? (
+        <div className="rounded-xl border border-border bg-card px-6 py-12 text-center text-sm text-muted-foreground">
+          Nenhuma disciplina encontrada para &ldquo;{searchTerm}&rdquo;.
+        </div>
+      ) : null}
+
+      {!loadingDisciplinas && disciplinas.length > 0 && filteredDisciplinas.length === 0 ? (
+        <div className="rounded-xl border border-border bg-card px-6 py-12 text-center text-sm text-muted-foreground">
+          {searchTerm
+            ? `Nenhuma disciplina encontrada para "${searchTerm}" neste filtro.`
+            : "Nenhuma disciplina neste filtro."}
+        </div>
+      ) : null}
+
+      {!loadingDisciplinas && filteredDisciplinas.length > 0 && viewMode === "table" ? (
+        <DisciplinasDataTable
+          disciplinas={filteredDisciplinas}
           concursoId={concursoId}
-          isCreating={createMutation.isPending}
-          viewMode={viewMode}
-          onViewModeChange={setViewMode}
+          onEdit={openEdit}
+          onToggleConcurso={(d) => toggleConcursoMutation.mutate(d)}
+          onConfirmDelete={async (d) => {
+            await deleteDisciplinaMutation.mutateAsync(d.id);
+            toast.success("Disciplina removida.");
+          }}
         />
+      ) : null}
 
-        {!loadingDisciplinas && disciplinas.length > 0 ? (
-          <DisciplinaPesoRanking disciplinas={disciplinas} concursoId={concursoId} filterSeg={filterSeg} />
-        ) : null}
-
-        {loadingDisciplinas ? (
-          <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-            <DisciplinaCardSkeleton />
-            <DisciplinaCardSkeleton />
-          </div>
-        ) : null}
-
-        {!loadingDisciplinas && disciplinas.length === 0 && !searchTerm ? (
-          <div className="flex flex-col items-center rounded-2xl border-[1.5px] border-[var(--border-default)] bg-[var(--bg-surface)] px-6 py-16 text-center shadow-card">
-            <EmptyDisciplinasIllustration />
-            <h2 className="mt-6 text-lg font-bold text-[var(--text-primary)]">Nenhuma disciplina ainda</h2>
-            <p className="mt-2 max-w-[360px] text-sm text-[var(--text-secondary)]">
-              Crie disciplinas no catálogo e vincule aos seus concursos quando quiser.
-            </p>
-            <button
-              type="button"
-              onClick={openCreate}
-              className="mt-8 inline-flex items-center gap-2 rounded-[10px] bg-primary px-6 py-3 text-sm font-bold text-white shadow-md transition-all hover:-translate-y-px hover:bg-primary-700"
-            >
-              + Nova disciplina
-            </button>
-          </div>
-        ) : null}
-
-        {!loadingDisciplinas && disciplinas.length === 0 && searchTerm ? (
-          <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] px-6 py-12 text-center text-sm text-[var(--text-secondary)] shadow-sm">
-            Nenhuma disciplina encontrada para &ldquo;{searchTerm}&rdquo;.
-          </div>
-        ) : null}
-
-        {!loadingDisciplinas && disciplinas.length > 0 && filteredDisciplinas.length === 0 ? (
-          <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] px-6 py-12 text-center text-sm text-[var(--text-secondary)] shadow-sm">
-            {searchTerm
-              ? `Nenhuma disciplina encontrada para "${searchTerm}" neste filtro.`
-              : "Nenhuma disciplina neste filtro."}
-          </div>
-        ) : null}
-
-        {!loadingDisciplinas && filteredDisciplinas.length > 0 && viewMode === "table" ? (
-          <DisciplinasDataTable
-            disciplinas={filteredDisciplinas}
-            concursoId={concursoId}
-            onEdit={openEdit}
-            onToggleConcurso={(d) => toggleConcursoMutation.mutate(d)}
-            onConfirmDelete={async (d) => {
-              await deleteDisciplinaMutation.mutateAsync(d.id);
-              toast.success("Disciplina removida.");
-            }}
-          />
-        ) : null}
-
-        {!loadingDisciplinas && filteredDisciplinas.length > 0 && viewMode === "cards" ? (
-          <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-            {filteredDisciplinas.map((disciplina, index) => {
-              const total = disciplina.topicos_total ?? 0;
-              const estudados = disciplina.topicos_estudados ?? 0;
-              const stats = getTopicosProgressFromCounts(total, estudados);
-              const inConcurso = concursoId ? isLinkedToConcurso(disciplina, concursoId) : false;
-              return (
-                <DisciplinaCard
-                  key={disciplina.id}
-                  index={index}
-                  disciplina={disciplina}
-                  stats={stats}
-                  inConcurso={inConcurso}
-                  concursoCount={disciplina.concurso_ids.length}
-                  canToggleConcurso={Boolean(concursoId)}
-                  onToggleConcurso={() => toggleConcursoMutation.mutate(disciplina)}
-                  onEdit={() => openEdit(disciplina)}
-                  onConfirmDelete={async () => {
-                    await deleteDisciplinaMutation.mutateAsync(disciplina.id);
-                    toast.success("Disciplina removida.");
-                  }}
-                />
-              );
-            })}
-          </div>
-        ) : null}
-      </div>
+      {!loadingDisciplinas && filteredDisciplinas.length > 0 && viewMode === "cards" ? (
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-4 xl:grid-cols-3">
+          {filteredDisciplinas.map((disciplina, index) => {
+            const total = disciplina.topicos_total ?? 0;
+            const estudados = disciplina.topicos_estudados ?? 0;
+            const stats = getTopicosProgressFromCounts(total, estudados);
+            const inConcurso = concursoId ? isLinkedToConcurso(disciplina, concursoId) : false;
+            return (
+              <DisciplinaCard
+                key={disciplina.id}
+                index={index}
+                disciplina={disciplina}
+                stats={stats}
+                inConcurso={inConcurso}
+                canToggleConcurso={Boolean(concursoId)}
+                onToggleConcurso={() => toggleConcursoMutation.mutate(disciplina)}
+                onEdit={() => openEdit(disciplina)}
+                onConfirmDelete={async () => {
+                  await deleteDisciplinaMutation.mutateAsync(disciplina.id);
+                  toast.success("Disciplina removida.");
+                }}
+              />
+            );
+          })}
+        </div>
+      ) : null}
 
       <ModalDisciplinaForm
         open={modalOpen}
@@ -259,6 +255,7 @@ export function Disciplinas() {
             ? {
                 peso: editingDisciplina.peso ?? null,
                 totalPontos: editingDisciplina.total_pontos ?? null,
+                prioridadeCalculada: editingDisciplina.prioridade_calculada ?? null,
                 topicosTotal: editingDisciplina.topicos_total ?? null,
               }
             : undefined

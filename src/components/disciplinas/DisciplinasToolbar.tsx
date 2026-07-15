@@ -1,3 +1,4 @@
+import { LayoutGrid, List, Plus, Search } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 
 import { cn } from "@/lib/utils";
@@ -45,33 +46,57 @@ export function DisciplinasToolbar({
       (await api.get("/concursos")).data as Array<{ id: string; nome: string; orgao: string; cargo: string | null }>,
   });
 
+  const metaParts = [
+    `${summary.n} ${summary.n === 1 ? "disciplina" : "disciplinas"}`,
+    `${summary.emProg} em progresso`,
+    `média ${summary.media}%`,
+  ];
+  if (concursoId) {
+    metaParts.push(`${summary.noConcurso} no concurso`);
+  }
+
   return (
-    <>
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-        <div>
-          <h1 className="text-[28px] font-bold leading-tight text-[var(--text-primary)]">Disciplinas & Tópicos</h1>
-          <p className="mt-1 text-sm text-[var(--text-secondary)]">
-            Catálogo global vinculado aos seus concursos (plano de estudo)
+    <div className="space-y-4">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div className="min-w-0">
+          <h1 className="text-xl font-semibold tracking-tight text-neutral-900 dark:text-neutral-50">
+            Disciplinas & Tópicos
+          </h1>
+          <p className="text-sm text-muted-foreground">
+            Catálogo do plano · progresso no concurso ativo
           </p>
         </div>
-        <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
-          <div className="relative w-full sm:w-[240px]">
-            <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-base opacity-60" aria-hidden>
-              🔍
-            </span>
+        <button
+          type="button"
+          disabled={isCreating}
+          onClick={onCreate}
+          className="inline-flex min-h-10 shrink-0 items-center justify-center gap-2 rounded-lg bg-primary-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary-700 disabled:opacity-50"
+        >
+          <Plus className="h-4 w-4 shrink-0" aria-hidden />
+          Nova disciplina
+        </button>
+      </div>
+
+      <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
+          <div className="relative w-full sm:max-w-xs sm:flex-1">
+            <Search
+              className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
+              aria-hidden
+            />
             <input
               type="search"
               value={search}
               onChange={(e) => onSearchChange(e.target.value)}
               placeholder="Buscar disciplina..."
               aria-label="Buscar disciplina"
-              className="h-10 w-full rounded-[10px] border border-[var(--border-default)] bg-[var(--bg-surface)] py-2 pl-10 pr-3 text-sm text-[var(--text-primary)] outline-none transition placeholder:text-[var(--text-muted)] focus:border-primary focus:ring-2 focus:ring-primary/20"
+              className="min-h-10 w-full rounded-lg border border-border bg-card py-2 pl-9 pr-3 text-sm text-foreground outline-none placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring"
             />
           </div>
           {concursos.length > 0 ? (
             <select
               aria-label="Concurso ativo"
-              className="h-10 min-w-[200px] rounded-[10px] border border-[var(--border-default)] bg-[var(--bg-surface)] px-3 text-sm text-[var(--text-primary)] outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 focus-visible:ring-2 focus-visible:ring-ring"
+              className="min-h-10 min-w-[12rem] rounded-lg border border-border bg-card px-3 text-sm text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring"
               value={concursoId}
               onChange={(e) => setConcursoAtivoId(e.target.value || null)}
             >
@@ -83,8 +108,15 @@ export function DisciplinasToolbar({
               ))}
             </select>
           ) : null}
+        </div>
+
+        <div className="flex flex-wrap items-center justify-between gap-2">
           {concursoId ? (
-            <div className="inline-flex rounded-full bg-muted p-1 dark:bg-[var(--bg-surface-2)]">
+            <div
+              className="inline-flex max-w-full overflow-x-auto rounded-lg border border-border bg-muted/40 p-0.5"
+              role="group"
+              aria-label="Filtrar por vínculo ao concurso"
+            >
               {(
                 [
                   { id: "todas" as const, label: "Todas" },
@@ -95,74 +127,67 @@ export function DisciplinasToolbar({
                 <button
                   key={seg.id}
                   type="button"
+                  aria-pressed={filterSeg === seg.id}
                   onClick={() => onFilterChange(seg.id)}
                   className={cn(
-                    "rounded-full px-3 py-2 text-sm font-semibold transition-all",
+                    "min-h-9 shrink-0 rounded-md px-3 text-sm font-medium transition-colors",
                     filterSeg === seg.id
-                      ? "bg-primary text-white shadow-sm"
-                      : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]",
+                      ? "bg-card text-foreground shadow-sm"
+                      : "text-muted-foreground hover:text-foreground",
                   )}
                 >
                   {seg.label}
                 </button>
               ))}
             </div>
-          ) : null}
-          <div className="inline-flex rounded-full bg-muted p-1 dark:bg-[var(--bg-surface-2)]">
-            {(
-              [
-                { id: "cards" as const, label: "Cards" },
-                { id: "table" as const, label: "Tabela" },
-              ] as const
-            ).map((seg) => (
-              <button
-                key={seg.id}
-                type="button"
-                onClick={() => onViewModeChange(seg.id)}
-                className={cn(
-                  "rounded-full px-3 py-2 text-sm font-semibold transition-all",
-                  viewMode === seg.id
-                    ? "bg-primary text-white shadow-sm"
-                    : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]",
-                )}
-              >
-                {seg.label}
-              </button>
-            ))}
-          </div>
-          <button
-            type="button"
-            disabled={isCreating}
-            onClick={onCreate}
-            className="inline-flex items-center justify-center gap-2 rounded-[10px] bg-primary px-5 py-2.5 text-sm font-bold text-white shadow-sm transition-all hover:-translate-y-px hover:bg-primary-700 disabled:opacity-50"
+          ) : (
+            <span className="sr-only">Sem concurso ativo — filtros de vínculo ocultos</span>
+          )}
+
+          <div
+            className="ml-auto inline-flex rounded-lg border border-border bg-muted/40 p-0.5"
+            role="group"
+            aria-label="Modo de visualização"
           >
-            + Nova disciplina
-          </button>
+            <button
+              type="button"
+              aria-label="Vista em cards"
+              aria-pressed={viewMode === "cards"}
+              onClick={() => onViewModeChange("cards")}
+              className={cn(
+                "inline-flex h-9 w-9 items-center justify-center rounded-md transition-colors",
+                viewMode === "cards"
+                  ? "bg-card text-foreground shadow-sm"
+                  : "text-muted-foreground hover:text-foreground",
+              )}
+            >
+              <LayoutGrid className="h-4 w-4" aria-hidden />
+            </button>
+            <button
+              type="button"
+              aria-label="Vista em tabela"
+              aria-pressed={viewMode === "table"}
+              onClick={() => onViewModeChange("table")}
+              className={cn(
+                "inline-flex h-9 w-9 items-center justify-center rounded-md transition-colors",
+                viewMode === "table"
+                  ? "bg-card text-foreground shadow-sm"
+                  : "text-muted-foreground hover:text-foreground",
+              )}
+            >
+              <List className="h-4 w-4" aria-hidden />
+            </button>
+          </div>
         </div>
       </div>
 
-      <div className="flex flex-wrap gap-2">
-        <span className="inline-flex items-center rounded-full border border-[var(--border-default)] bg-[var(--bg-surface)] px-3.5 py-1.5 text-[13px] text-[var(--text-secondary)]">
-          📚 {summary.n} {summary.n === 1 ? "disciplina" : "disciplinas"}
-        </span>
-        <span className="inline-flex items-center rounded-full border border-[var(--border-default)] bg-[var(--bg-surface)] px-3.5 py-1.5 text-[13px] text-[var(--text-secondary)]">
-          ✅ {summary.emProg} em progresso
-        </span>
-        {concursoId ? (
-          <span className="inline-flex items-center rounded-full border border-[var(--border-default)] bg-[var(--bg-surface)] px-3.5 py-1.5 text-[13px] text-[var(--text-secondary)]">
-            🏛 {summary.noConcurso} no concurso · {summary.fora} fora
-          </span>
-        ) : null}
-        <span className="inline-flex items-center rounded-full border border-[var(--border-default)] bg-[var(--bg-surface)] px-3.5 py-1.5 text-[13px] text-[var(--text-secondary)]">
-          📈 {summary.media}% progresso médio
-        </span>
-      </div>
+      <p className="text-sm text-muted-foreground tabular-nums">{metaParts.join(" · ")}</p>
 
       {!concursoId && concursos.length === 0 ? (
-        <div className="rounded-xl border border-amber-200 bg-warning/10 px-4 py-3 text-sm text-amber-900 dark:border-amber-900/40 dark:bg-amber-950/30 dark:text-amber-200">
+        <div className="rounded-lg border border-amber-200 bg-amber-50/80 px-4 py-3 text-sm text-amber-900 dark:border-amber-900/40 dark:bg-amber-950/30 dark:text-amber-200">
           Cadastre um concurso em <strong>Meus Concursos</strong> para vincular disciplinas e definir a data da prova.
         </div>
       ) : null}
-    </>
+    </div>
   );
 }

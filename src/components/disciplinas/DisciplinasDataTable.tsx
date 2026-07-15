@@ -40,20 +40,26 @@ export function DisciplinasDataTable({
         ),
       },
       {
-        id: "peso",
-        accessorFn: (d) => d.total_pontos ?? d.peso ?? 0,
-        header: "Peso",
+        id: "prioridade",
+        accessorFn: (d) => d.prioridade_calculada ?? 0,
+        header: "Pontos",
+        meta: { hint: "Soma peso × (6 − domínio) dos assuntos" },
         cell: ({ row }) => (
-          <span className="tabular-nums">{fmtPontos(row.original.total_pontos ?? row.original.peso)}</span>
+          <span
+            className="font-mono text-xs font-semibold tabular-nums"
+            title="Prioridade = Σ peso × (6 − domínio)"
+          >
+            {row.original.prioridade_calculada ?? "—"}
+          </span>
         ),
       },
       {
-        id: "prioridade",
-        accessorFn: (d) => d.prioridade_calculada ?? 0,
-        header: "Prioridade",
+        id: "peso",
+        accessorFn: (d) => d.total_pontos ?? d.peso ?? 0,
+        header: "Peso edital",
         cell: ({ row }) => (
-          <span className="font-mono text-xs font-semibold tabular-nums">
-            {row.original.prioridade_calculada ?? "—"}
+          <span className="tabular-nums text-muted-foreground" title="Soma do peso dos assuntos (sem domínio)">
+            {fmtPontos(row.original.total_pontos ?? row.original.peso)}
           </span>
         ),
       },

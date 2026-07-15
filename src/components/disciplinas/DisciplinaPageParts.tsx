@@ -1,30 +1,20 @@
 export function DisciplinaCardSkeleton() {
   return (
-    <div
-      className="animate-pulse overflow-hidden rounded-2xl border-[1.5px] border-[var(--border-default)] bg-[var(--bg-surface)] font-sans shadow-card"
-    >
-      <div className="h-[3px] bg-[var(--border-default)]" />
-      <div className="flex gap-3 px-5 pt-[18px]">
-        <div className="h-9 w-9 shrink-0 rounded-lg bg-[var(--bg-surface-2)]" />
-        <div className="min-w-0 flex-1 space-y-2">
-          <div className="h-4 w-2/3 rounded bg-[var(--bg-surface-2)]" />
-          <div className="h-3 w-20 rounded-full bg-[var(--bg-surface-2)]" />
+    <div className="animate-pulse overflow-hidden rounded-xl border border-border bg-card shadow-sm">
+      <div className="h-[3px] bg-muted" />
+      <div className="space-y-3 p-4">
+        <div className="flex items-start justify-between gap-2">
+          <div className="h-4 w-2/3 rounded bg-muted" />
+          <div className="h-5 w-20 rounded-full bg-muted" />
         </div>
-      </div>
-      <div className="space-y-2 px-5 py-4">
-        <div className="flex justify-between">
-          <div className="h-3 w-40 rounded bg-[var(--bg-surface-2)]" />
-          <div className="h-3 w-8 rounded bg-[var(--bg-surface-2)]" />
+        <div className="h-3 w-40 rounded bg-muted" />
+        <div className="space-y-1.5 pt-1">
+          <div className="flex justify-between">
+            <div className="h-3 w-32 rounded bg-muted" />
+            <div className="h-3 w-8 rounded bg-muted" />
+          </div>
+          <div className="h-1.5 rounded-full bg-muted" />
         </div>
-        <div className="h-2 rounded-full bg-[var(--border-default)]" />
-      </div>
-      <div className="grid grid-cols-3 gap-2 px-5 pb-3">
-        <div className="mx-auto h-8 w-10 rounded bg-[var(--bg-surface-2)]" />
-        <div className="mx-auto h-8 w-10 rounded bg-[var(--bg-surface-2)]" />
-        <div className="mx-auto h-8 w-10 rounded bg-[var(--bg-surface-2)]" />
-      </div>
-      <div className="border-t border-[var(--border-subtle)] px-5 py-3">
-        <div className="h-6 w-24 rounded-full bg-[var(--bg-surface-2)]" />
       </div>
     </div>
   );
