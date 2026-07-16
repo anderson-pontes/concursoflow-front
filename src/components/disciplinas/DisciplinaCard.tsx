@@ -163,15 +163,18 @@ export function DisciplinaCard({
     await onConfirmDelete();
   };
 
+  const menuElevated = menuOpen || pendingDelete;
+
   return (
     <article
       role="button"
       tabIndex={0}
       aria-label={`Abrir painel de ${disciplina.nome}`}
       className={cn(
-        "group cursor-pointer overflow-hidden rounded-xl border border-border bg-card shadow-sm outline-none transition-all duration-200",
+        "group relative cursor-pointer overflow-visible rounded-xl border border-border bg-card shadow-sm outline-none transition-all duration-200",
         "hover:border-primary-300 hover:shadow-md dark:hover:border-primary-800",
         "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+        menuElevated && "z-30",
       )}
       onClick={goPainel}
       onKeyDown={(e) => {
@@ -181,7 +184,9 @@ export function DisciplinaCard({
         }
       }}
     >
-      <div className={cn("h-[3px] w-full", topStripClass(index))} aria-hidden />
+      <div className="overflow-hidden rounded-t-xl">
+        <div className={cn("h-[3px] w-full", topStripClass(index))} aria-hidden />
+      </div>
 
       <div className="p-4">
         <div className="flex items-start gap-2">
@@ -234,7 +239,7 @@ export function DisciplinaCard({
               {menuOpen ? (
                 <div
                   role="menu"
-                  className="absolute right-0 z-[1000] mt-1 min-w-[13.5rem] rounded-lg border border-border bg-card p-1 shadow-lg"
+                  className="absolute right-0 top-full z-50 mt-1 min-w-[13.5rem] rounded-lg border border-border bg-card p-1 shadow-lg"
                 >
                   <button
                     type="button"
