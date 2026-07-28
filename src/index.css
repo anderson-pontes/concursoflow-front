@@ -227,7 +227,14 @@
 
   html {
     background-color: var(--background);
+    scroll-behavior: smooth;
     @apply font-sans;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
   }
 }
 
@@ -243,6 +250,37 @@
   }
   to {
     transform: scaleY(1);
+  }
+}
+
+@keyframes landing-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes landing-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .motion-safe\:animate-\[landing-fade-up_0\.55s_ease-out_both\],
+  .motion-safe\:animate-\[landing-fade-up_0\.55s_ease-out_0\.08s_both\],
+  .motion-safe\:animate-\[landing-fade-up_0\.55s_ease-out_0\.16s_both\],
+  .motion-safe\:animate-\[landing-fade-up_0\.55s_ease-out_0\.24s_both\],
+  .motion-safe\:animate-\[landing-fade-up_0\.55s_ease-out_0\.3s_both\],
+  .motion-safe\:animate-\[landing-fade-in_0\.7s_ease-out_0\.2s_both\] {
+    animation: none !important;
   }
 }
 
@@ -265,13 +303,33 @@
   }
 }
 
-@keyframes auth-float {
+@keyframes auth-hero-rise {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes auth-progress-fill {
+  from {
+    width: 0%;
+  }
+  to {
+    width: 64%;
+  }
+}
+
+@keyframes auth-chip-float {
   0%,
   100% {
     transform: translateY(0);
   }
   50% {
-    transform: translateY(-8px);
+    transform: translateY(-6px);
   }
 }
 
@@ -394,10 +452,6 @@
 @layer utilities {
   .auth-hero-gradient {
     background: linear-gradient(145deg, #4c1d95 0%, #7c3aed 45%, #5b21b6 100%);
-  }
-
-  .auth-mascot-float {
-    animation: auth-float 3s ease-in-out infinite;
   }
 
   .auth-form-shake {

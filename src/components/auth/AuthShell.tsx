@@ -1,8 +1,8 @@
 import React from "react";
 
-import aprovinhoUrl from "@/assets/brand/aprovinho.webp";
-import logoPreload from "@/assets/brand/logo2.webp";
-import { AprovingoLogo } from "@/components/branding/AprovingoLogo";
+import markPreload from "@/assets/brand/click-edital-mark.svg";
+import { AuthHeroVisual } from "@/components/auth/AuthHeroVisual";
+import { ClickEditalLogo } from "@/components/branding/ClickEditalLogo";
 import { cn } from "@/lib/utils";
 
 type AuthShellProps = {
@@ -10,13 +10,13 @@ type AuthShellProps = {
 };
 
 const HERO_FEATURES = [
-  { tone: "bg-success text-white", icon: "✓", text: "+1.200 concurseiros já usam" },
-  { tone: "bg-warning text-white", icon: "⏱", text: "Pomodoro, cronograma e flashcards" },
-  { tone: "bg-primary text-primary-foreground", icon: "📊", text: "Heatmap e métricas de evolução" },
+  { tone: "bg-success text-white", icon: "✓", text: "Cronograma e disciplinas no mesmo lugar" },
+  { tone: "bg-warning text-white", icon: "⏱", text: "Pomodoro, revisões e flashcards" },
+  { tone: "bg-white/20 text-white", icon: "◎", text: "Progresso do edital visível todo dia" },
 ] as const;
 
 /**
- * Layout auth: hero (gradiente + mascote) + coluna do formulário.
+ * Layout auth: hero Click Edital + coluna do formulário.
  * Mobile: faixa compacta com logo; desktop: split 50/50.
  */
 export function AuthShell({ children }: AuthShellProps) {
@@ -32,27 +32,31 @@ export function AuthShell({ children }: AuthShellProps) {
     const preload = document.createElement("link");
     preload.rel = "preload";
     preload.as = "image";
-    preload.href = logoPreload;
+    preload.href = markPreload;
     document.head.appendChild(preload);
     return () => preload.remove();
   }, []);
 
   return (
     <div className="fixed inset-0 z-[200] flex h-[100dvh] max-h-[100dvh] w-full flex-col overflow-hidden font-sans md:flex-row">
-      {/* Mobile — faixa hero compacta */}
-      <div className="auth-hero-gradient flex shrink-0 items-center justify-between px-4 py-3 md:hidden">
-        <AprovingoLogo className="h-8 w-auto max-w-[160px] shrink-0 brightness-0 invert" />
-        <img src={aprovinhoUrl} alt="" className="h-10 w-auto opacity-90" aria-hidden decoding="async" loading="lazy" width={72} height={72} />
+      {/* Mobile — faixa com logo em chip claro (marca legível) */}
+      <div className="auth-hero-gradient flex shrink-0 items-center px-4 py-3 md:hidden">
+        <div className="rounded-xl bg-white/95 px-3 py-2 shadow-sm">
+          <ClickEditalLogo size="sm" className="shrink-0" />
+        </div>
       </div>
 
       {/* Desktop — coluna hero */}
       <aside className="auth-hero-gradient relative hidden h-[100dvh] w-1/2 flex-col overflow-hidden md:flex">
         <div className="pointer-events-none absolute -right-20 -top-20 h-80 w-80 rounded-full bg-white/10" />
         <div className="pointer-events-none absolute -bottom-16 -left-16 h-52 w-52 rounded-full bg-white/[0.06]" />
+        <div className="pointer-events-none absolute left-1/3 top-1/2 h-64 w-64 -translate-y-1/2 rounded-full bg-primary-300/20 blur-3xl" />
 
         <div className="relative z-10 flex h-full min-h-0 flex-col">
           <div className="shrink-0 px-8 pb-0 pt-8 lg:px-10">
-            <AprovingoLogo className="h-12 w-auto max-w-[220px] brightness-0 invert sm:h-14" />
+            <div className="inline-flex rounded-2xl bg-white/95 px-4 py-2.5 shadow-md">
+              <ClickEditalLogo size="md" className="shrink-0" />
+            </div>
             <div className="h-8" aria-hidden />
           </div>
 
@@ -62,26 +66,11 @@ export function AuthShell({ children }: AuthShellProps) {
               <span className="border-b-[3px] border-white/40 pb-0.5">organização</span>.
             </h2>
             <p className="mt-2 max-w-[380px] text-sm leading-relaxed text-white/75">
-              Gerencie seus estudos, acompanhe seu progresso e alcance sua meta com mais foco.
+              Planeje o edital, acompanhe disciplinas e mantenha o ritmo até a prova — com Click Edital.
             </p>
 
-            <div className="flex min-h-0 flex-1 flex-col justify-end overflow-hidden">
-              <div className="relative my-4 h-[200px] shrink-0">
-                <div className="absolute right-0 top-2 z-10 max-w-[min(100%,260px)] rounded-xl border border-white/20 bg-white/10 px-4 py-2.5 backdrop-blur-md">
-                  <p className="font-medium italic text-white/95">Aprovinho · a ararinha estudiosa</p>
-                </div>
-                <div className="flex h-full items-end justify-start">
-                  <img
-                    src={aprovinhoUrl}
-                    alt="Aprovinho"
-                    className="auth-hero-mascot auth-mascot-float relative z-0 max-h-[180px] w-auto object-contain drop-shadow-2xl"
-                    decoding="async"
-                    loading="lazy"
-                    width={360}
-                    height={197}
-                  />
-                </div>
-              </div>
+            <div className="flex min-h-0 flex-1 flex-col justify-center overflow-hidden py-6">
+              <AuthHeroVisual />
             </div>
           </div>
 
@@ -113,7 +102,7 @@ export function AuthShell({ children }: AuthShellProps) {
           <div className="w-full max-w-[420px]">{children}</div>
         </div>
         <p className="pointer-events-none shrink-0 px-4 pb-4 pt-2 text-center text-[11px] text-muted-foreground sm:pb-6">
-          © 2025 Aprovingo · Todos os direitos reservados
+          © 2026 Click Edital · Todos os direitos reservados
         </p>
       </main>
     </div>

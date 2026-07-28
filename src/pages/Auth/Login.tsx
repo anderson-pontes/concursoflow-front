@@ -11,12 +11,8 @@ import {
   AuthLinkButton,
   AuthPasswordField,
   AuthPrimaryButton,
-  AuthSecondaryButton,
-  AuthSeparatorOu,
-  GoogleSignInButton,
 } from "@/components/auth/AuthFields";
 import { AuthShell } from "@/components/auth/AuthShell";
-import { AprovingoLogo } from "@/components/branding/AprovingoLogo";
 import { api } from "@/services/api";
 import { startCheckout } from "@/services/billing";
 import { fetchCurrentUser } from "@/services/currentUser";
@@ -146,10 +142,6 @@ export function Login() {
 
   return (
     <AuthShell>
-      <div className="mb-6 hidden justify-center md:flex">
-        <AprovingoLogo className="h-10 w-auto max-w-[200px] shrink-0 md:hidden" />
-      </div>
-
       {authMode === "forgot" ? (
         <div className="pb-8">
           <AuthLinkButton onClick={goLogin} className="mb-6">
@@ -245,21 +237,6 @@ export function Login() {
               </div>
             ) : null}
           </form>
-
-          <AuthSeparatorOu />
-
-          <AuthSecondaryButton onClick={() => navigate("/register")}>Criar Conta</AuthSecondaryButton>
-
-          <div className="mt-4">
-            <GoogleSignInButton disabled />
-          </div>
-
-          <p className="mt-6 text-center text-sm text-muted-foreground sm:mt-7">
-            Não tem conta?{" "}
-            <AuthLinkButton onClick={() => navigate("/register")} className="font-bold">
-              Criar conta grátis
-            </AuthLinkButton>
-          </p>
         </>
       )}
     </AuthShell>

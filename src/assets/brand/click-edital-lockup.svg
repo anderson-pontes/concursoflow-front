@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 56" fill="none" role="img" aria-label="Click Edital">
+  <g transform="translate(0 2) scale(0.8)">
+    <rect x="8" y="6" width="36" height="48" rx="5" fill="#7C3AED"/>
+    <path d="M32 6h12v12H32V6Z" fill="#5B21B6"/>
+    <path d="M32 6l12 12H32V6Z" fill="#C4B5FD"/>
+    <rect x="14" y="24" width="24" height="3.5" rx="1.75" fill="#EDE9FE"/>
+    <rect x="14" y="32" width="20" height="3.5" rx="1.75" fill="#EDE9FE"/>
+    <rect x="14" y="40" width="15" height="3.5" rx="1.75" fill="#EDE9FE"/>
+    <path
+      d="M36 30.5 37.4 47.2l4.6-3.5 4.2 7.3 3.6-2.1-4.3-7.2 5.6-1.2L36 30.5Z"
+      fill="#8B5CF6"
+    />
+  </g>
+  <text
+    x="56"
+    y="36"
+    font-family="Geist, ui-sans-serif, system-ui, sans-serif"
+    font-size="26"
+    font-weight="650"
+    letter-spacing="-0.04em"
+    fill="#7C3AED"
+  >Click Edital</text>
+</svg>

@@ -20,7 +20,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 
-import { AprovingoLogo } from "@/components/branding/AprovingoLogo";
+import { ClickEditalLogo } from "@/components/branding/ClickEditalLogo";
 import { ConcursoSwitcher } from "@/components/concursos/ConcursoSwitcher";
 import { resolvePublicUrl } from "@/lib/publicUrl";
 import { primeiroNome } from "@/lib/userDisplay";
@@ -202,7 +202,7 @@ export function Sidebar({
           )}
         >
           {(!desktopCollapsed || mobileOpen) && (
-            <AprovingoLogo fetchPriority="high" className="h-8 max-h-8 w-auto max-w-[min(100%,180px)] shrink-0 object-contain object-left" />
+            <ClickEditalLogo size="sm" fetchPriority="high" className="min-w-0 shrink" />
           )}
 
           <button

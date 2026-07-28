@@ -23,6 +23,7 @@ function lazyNamed<T extends Record<string, React.ComponentType<object>>>(
   return React.lazy(() => loader().then((m) => ({ default: m[exportName] as React.ComponentType<object> })));
 }
 
+const Landing = lazyNamed(() => import("./pages/Landing"), "LandingPage");
 const DisciplinaDashboard = lazyNamed(() => import("./pages/DisciplinaDashboard"), "DisciplinaDashboard");
 const Register = lazyNamed(() => import("./pages/Auth/Register"), "Register");
 const ResetPassword = lazyNamed(() => import("./pages/Auth/ResetPassword"), "ResetPassword");
@@ -52,7 +53,14 @@ export default function App() {
 
   return (
     <Routes>
-      <Route path="/" element={<Navigate to={isAuthed ? "/dashboard" : "/login"} replace />} />
+      <Route
+        path="/"
+        element={
+          <LazyPage>
+            <Landing />
+          </LazyPage>
+        }
+      />
       <Route path="/login" element={<Login />} />
       <Route
         path="/register"
@@ -228,7 +236,7 @@ export default function App() {
           </Layout>
         }
       />
-      <Route path="*" element={<Navigate to={isAuthed ? "/dashboard" : "/login"} replace />} />
+      <Route path="*" element={<Navigate to={isAuthed ? "/dashboard" : "/"} replace />} />
     </Routes>
   );
 }

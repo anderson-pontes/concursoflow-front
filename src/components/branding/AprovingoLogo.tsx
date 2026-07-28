@@ -1,30 +1,33 @@
-import React from "react";
-
-import { cn } from "@/lib/utils";
-
-/** Runtime: WebP otimizado. Fonte: `src/assets/logo2.svg` (não importado no bundle). */
-import logoSrc from "@/assets/brand/logo2.webp";
+import { ClickEditalLogo, type ClickEditalLogoSize } from "@/components/branding/ClickEditalLogo";
 
 type Props = {
   className?: string;
   "aria-hidden"?: boolean;
+  fetchPriority?: "high" | "low" | "auto";
+  size?: ClickEditalLogoSize;
+  markOnly?: boolean;
+  variant?: "default" | "inverse";
 };
 
+/**
+ * @deprecated Use `ClickEditalLogo`. Mantido como alias para imports legados.
+ */
 export function AprovingoLogo({
   className,
   "aria-hidden": ariaHidden,
   fetchPriority,
-}: Props & { fetchPriority?: "high" | "low" | "auto" }) {
+  size = "md",
+  markOnly,
+  variant = "default",
+}: Props) {
   return (
-    <img
-      src={logoSrc}
-      alt={ariaHidden ? "" : "Aprovingo"}
-      aria-hidden={ariaHidden}
-      className={cn("object-contain object-left", className)}
-      decoding="async"
+    <ClickEditalLogo
+      className={className}
+      size={size}
+      markOnly={markOnly}
+      variant={variant}
       fetchPriority={fetchPriority}
-      width={220}
-      height={52}
+      aria-hidden={ariaHidden}
     />
   );
 }
