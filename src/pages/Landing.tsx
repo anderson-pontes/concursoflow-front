@@ -1,18 +1,23 @@
 import React from "react";
 import { Navigate } from "react-router-dom";
 
+import { LandingFaq } from "@/components/landing/LandingFaq";
 import { LandingFeatures } from "@/components/landing/LandingFeatures";
 import { LandingFinalCta } from "@/components/landing/LandingFinalCta";
 import { LandingFooter } from "@/components/landing/LandingFooter";
 import { LandingHeader } from "@/components/landing/LandingHeader";
 import { LandingHero } from "@/components/landing/LandingHero";
+import { LandingMetrics } from "@/components/landing/LandingMetrics";
+import { LandingObjections } from "@/components/landing/LandingObjections";
+import { LandingOffer } from "@/components/landing/LandingOffer";
+import { LandingShowcase } from "@/components/landing/LandingShowcase";
 import { LandingSteps } from "@/components/landing/LandingSteps";
-import { LandingTrust } from "@/components/landing/LandingTrust";
+import { LandingValueStrip } from "@/components/landing/LandingValueStrip";
 import { useAuthStore } from "@/stores/authStore";
 
-const PAGE_TITLE = "Click Edital — Organize seus estudos para concursos";
+const PAGE_TITLE = "Click Edital — Planejador de estudos e cronograma para concursos";
 const PAGE_DESCRIPTION =
-  "Planeje o edital, acompanhe disciplinas, revise com flashcards e controle prazos. Click Edital: seu plano de concurso em um só lugar.";
+  "Organize o edital, registre horas, acompanhe acertos e progresso. Assinatura anual R$ 149 em até 10x de R$ 14,90. Garantia de 7 dias.";
 
 function useLandingSeo() {
   React.useEffect(() => {
@@ -57,9 +62,14 @@ export function LandingPage() {
       <LandingHeader />
       <main id="conteudo-principal">
         <LandingHero />
-        <LandingFeatures />
+        <LandingValueStrip />
+        <LandingShowcase />
+        <LandingMetrics />
         <LandingSteps />
-        <LandingTrust />
+        <LandingObjections />
+        <LandingFeatures />
+        <LandingOffer />
+        <LandingFaq />
         <LandingFinalCta />
       </main>
       <LandingFooter />

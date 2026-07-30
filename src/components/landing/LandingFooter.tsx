@@ -10,23 +10,28 @@ export function LandingFooter() {
       <div className="mx-auto flex max-w-6xl flex-col gap-8 px-4 sm:px-6 md:flex-row md:justify-between">
         <div>
           <LandingLogo size="header" />
-          <p className="mt-2 text-sm text-muted-foreground">Estudo de concurso, organizado.</p>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Seu planejamento de estudos rumo à aprovação.
+          </p>
         </div>
 
         <div className="flex flex-col gap-6 sm:flex-row sm:gap-12">
           <nav aria-label="Rodapé" className="flex flex-col gap-2 text-sm">
-            <a href="#recursos" className="text-muted-foreground hover:text-foreground">
-              Recursos
-            </a>
             <a href="#como-funciona" className="text-muted-foreground hover:text-foreground">
               Como funciona
+            </a>
+            <a href="#indicadores" className="text-muted-foreground hover:text-foreground">
+              Indicadores
+            </a>
+            <a href="#faq" className="text-muted-foreground hover:text-foreground">
+              FAQ
             </a>
             <Link to="/login" className="text-muted-foreground hover:text-foreground">
               Entrar
             </Link>
-            <Link to="/register" className="text-muted-foreground hover:text-foreground">
-              Criar conta
-            </Link>
+            <a href="#oferta" className="text-muted-foreground hover:text-foreground">
+              Assinar
+            </a>
           </nav>
           <nav aria-label="Legal" className="flex flex-col gap-2 text-sm">
             <a href="#termo" className="text-muted-foreground hover:text-foreground" onClick={(e) => e.preventDefault()}>

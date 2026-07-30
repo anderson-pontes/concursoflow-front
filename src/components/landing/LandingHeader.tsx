@@ -6,14 +6,14 @@ import { LandingLogo } from "@/components/landing/LandingLogo";
 import { cn } from "@/lib/utils";
 
 const navLinks = [
-  { href: "#recursos", label: "Recursos" },
   { href: "#como-funciona", label: "Como funciona" },
+  { href: "#indicadores", label: "Indicadores" },
+  { href: "#faq", label: "FAQ" },
 ] as const;
 
 export function LandingHeader() {
   const [scrolled, setScrolled] = React.useState(false);
   const [menuOpen, setMenuOpen] = React.useState(false);
-  const panelRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -68,21 +68,21 @@ export function LandingHeader() {
           >
             Entrar
           </Link>
-          <Link
-            to="/register"
+          <a
+            href="#oferta"
             className="inline-flex min-h-10 items-center justify-center rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground outline-none transition hover:bg-primary-500 focus-visible:ring-2 focus-visible:ring-ring"
           >
-            Começar
-          </Link>
+            Quero assinar
+          </a>
         </nav>
 
         <div className="flex items-center gap-2 md:hidden">
-          <Link
-            to="/register"
+          <a
+            href="#oferta"
             className="inline-flex min-h-10 items-center justify-center rounded-lg bg-primary px-3 text-sm font-semibold text-primary-foreground"
           >
-            Começar
-          </Link>
+            Quero assinar
+          </a>
           <button
             type="button"
             className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-border text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring"
@@ -99,7 +99,6 @@ export function LandingHeader() {
       {menuOpen ? (
         <div
           id="landing-mobile-menu"
-          ref={panelRef}
           className="border-t border-border bg-surface px-4 py-4 md:hidden"
           role="dialog"
           aria-label="Menu de navegação"
@@ -122,6 +121,13 @@ export function LandingHeader() {
             >
               Entrar
             </Link>
+            <a
+              href="#oferta"
+              className="rounded-lg px-3 py-3 text-sm font-medium text-foreground hover:bg-muted"
+              onClick={() => setMenuOpen(false)}
+            >
+              Quero assinar
+            </a>
           </nav>
         </div>
       ) : null}

@@ -3,18 +3,18 @@ import { Link } from "react-router-dom";
 const steps = [
   {
     n: "01",
-    title: "Crie sua conta",
-    body: "Cadastro rápido e acesso ao seu espaço de estudos.",
+    title: "Organize o edital",
+    body: "Defina prioridades, monte o cronograma e veja o que merece atenção.",
   },
   {
     n: "02",
-    title: "Defina o concurso",
-    body: "Informe o concurso (ou os concursos) e as disciplinas do edital.",
+    title: "Registre cada sessão",
+    body: "Horas, questões e revisões entram no sistema rápido — sem virar outra tarefa.",
   },
   {
     n: "03",
-    title: "Estude no ritmo",
-    body: "Use cronograma, registre sessões e revise com o ciclo que você configurar.",
+    title: "Acompanhe a evolução",
+    body: "Veja acertos, avanço e o que precisa ajustar antes da prova.",
   },
 ] as const;
 
@@ -22,14 +22,15 @@ export function LandingSteps() {
   return (
     <section
       id="como-funciona"
-      className="scroll-mt-20 bg-surface-muted py-16 md:py-24"
+      className="scroll-mt-20 bg-primary-50/30 py-16 md:py-24"
       aria-labelledby="como-heading"
     >
       <div className="mx-auto max-w-5xl px-4 sm:px-6">
-        <h2 id="como-heading" className="text-2xl font-semibold tracking-tight text-foreground md:text-3xl">
-          Três passos para começar
+        <p className="text-xs font-semibold uppercase tracking-wider text-primary">Como funciona</p>
+        <h2 id="como-heading" className="mt-2 text-2xl font-semibold tracking-tight text-foreground md:text-3xl">
+          Em 3 passos, você transforma o estudo em uma rotina mais previsível.
         </h2>
-        <p className="mt-2 text-muted-foreground">Do cadastro ao primeiro dia de estudo organizado.</p>
+        <p className="mt-2 text-muted-foreground">Do edital à execução — com clareza do que fazer.</p>
 
         <ol className="mt-12 grid list-none gap-10 sm:grid-cols-3">
           {steps.map((s) => (
