@@ -2,6 +2,7 @@ import disciplinaSrc from "@/assets/disciplina.png";
 import pomodoroSrc from "@/assets/pomodoro.png";
 import registroSrc from "@/assets/registro_estudo.png";
 import { LandingShot } from "@/components/landing/LandingShot";
+import { cn } from "@/lib/utils";
 
 const shots = [
   {
@@ -10,6 +11,8 @@ const shots = [
     label: "Disciplinas",
     title: "Edital verticalizado com prioridade e domínio",
     body: "Acompanhe tópicos, peso e quanto já avançou — sem perder o fio do concurso.",
+    fit: "cover" as const,
+    aspect: "aspect-[16/10]",
   },
   {
     src: pomodoroSrc,
@@ -17,6 +20,8 @@ const shots = [
     label: "Foco",
     title: "Sessões com Pomodoro no ritmo certo",
     body: "Escolha disciplina e duração, inicie a sessão e mantenha o foco no que importa.",
+    fit: "contain" as const,
+    aspect: "aspect-[4/5] sm:aspect-[3/4]",
   },
   {
     src: registroSrc,
@@ -24,11 +29,13 @@ const shots = [
     label: "Registro",
     title: "Registre horas e tópicos em poucos cliques",
     body: "Categoria, tempo e checklist de tópicos — o histórico alimenta seus indicadores.",
+    fit: "contain" as const,
+    aspect: "aspect-[4/5] sm:aspect-[3/4]",
   },
 ] as const;
 
 /**
- * Vitrine de produto — screenshots reais abaixo do hero.
+ * Vitrine de produto — screenshots em faixas narrativas (zigzag).
  */
 export function LandingShowcase() {
   return (
@@ -51,33 +58,49 @@ export function LandingShowcase() {
           </p>
         </div>
 
-        {/* Destaque: disciplina */}
-        <div className="mt-14 grid items-center gap-10 md:grid-cols-12 md:gap-12">
-          <div className="md:col-span-5">
-            <p className="text-xs font-semibold uppercase tracking-wider text-primary">{shots[0].label}</p>
-            <h3 className="mt-2 text-xl font-semibold tracking-tight text-foreground md:text-2xl">
-              {shots[0].title}
-            </h3>
-            <p className="mt-3 text-sm leading-relaxed text-muted-foreground md:text-base">{shots[0].body}</p>
-          </div>
-          <div className="md:col-span-7">
-            <LandingShot src={shots[0].src} alt={shots[0].alt} className="aspect-[16/10]" />
-          </div>
-        </div>
+        <ol className="mt-14 list-none space-y-16 md:mt-16 md:space-y-24">
+          {shots.map((shot, index) => {
+            const reverse = index % 2 === 1;
+            return (
+              <li
+                key={shot.label}
+                className="grid items-center gap-8 md:grid-cols-12 md:gap-10 lg:gap-14"
+              >
+                <div className={cn("md:col-span-5", reverse && "md:order-2")}>
+                  <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-primary">
+                    <span
+                      className="inline-flex h-6 w-6 items-center justify-center rounded-md bg-primary-muted tabular-nums text-[11px] text-primary"
+                      aria-hidden
+                    >
+                      {String(index + 1).padStart(2, "0")}
+                    </span>
+                    {shot.label}
+                  </p>
+                  <h3 className="mt-3 text-xl font-semibold tracking-tight text-foreground md:text-2xl">
+                    {shot.title}
+                  </h3>
+                  <p className="mt-3 max-w-md text-sm leading-relaxed text-muted-foreground md:text-base">
+                    {shot.body}
+                  </p>
+                </div>
 
-        {/* Dupla: pomodoro + registro */}
-        <div className="mt-16 grid gap-10 md:grid-cols-2 md:gap-8">
-          {shots.slice(1).map((shot) => (
-            <article key={shot.label} className="flex flex-col gap-5">
-              <LandingShot src={shot.src} alt={shot.alt} className="aspect-[4/3]" />
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-wider text-primary">{shot.label}</p>
-                <h3 className="mt-1.5 text-lg font-semibold tracking-tight text-foreground">{shot.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{shot.body}</p>
-              </div>
-            </article>
-          ))}
-        </div>
+                <div className={cn("md:col-span-7", reverse && "md:order-1")}>
+                  <LandingShot
+                    src={shot.src}
+                    alt={shot.alt}
+                    fit={shot.fit}
+                    className={cn(
+                      shot.aspect,
+                      shot.fit === "contain"
+                        ? "mx-auto w-full max-w-[22rem] sm:max-w-md"
+                        : "w-full",
+                    )}
+                  />
+                </div>
+              </li>
+            );
+          })}
+        </ol>
       </div>
     </section>
   );
