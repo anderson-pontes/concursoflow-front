@@ -1,6 +1,7 @@
 import { api } from "@/services/api";
 
 export type SubscriptionInfo = {
+  provider: "stripe" | "kiwify" | null;
   status: string;
   has_access: boolean;
   current_period_end: string | null;

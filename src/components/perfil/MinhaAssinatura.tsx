@@ -91,6 +91,11 @@ export function MinhaAssinatura() {
         </div>
       )}
 
+      {data?.provider === "kiwify" ? (
+        <p className="mt-4 rounded-lg bg-muted px-3 py-2 text-xs text-muted-foreground">
+          Para trocar o cartão ou cancelar, use o link de gerenciamento enviado pela Kiwify ao seu e-mail.
+        </p>
+      ) : (
       <Button
         type="button"
         className="mt-4"
@@ -99,6 +104,7 @@ export function MinhaAssinatura() {
       >
         {portalMutation.isPending ? "Abrindo…" : "Gerenciar pagamento"}
       </Button>
+      )}
     </section>
   );
 }
