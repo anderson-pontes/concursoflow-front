@@ -52,7 +52,7 @@ export function LandingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="landing-playful min-h-screen overflow-x-hidden bg-background text-foreground">
       <a
         href="#conteudo-principal"
         className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-primary focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-primary-foreground"

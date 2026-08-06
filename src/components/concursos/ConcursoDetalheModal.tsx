@@ -319,7 +319,6 @@ export function ConcursoDetalheModal({ concurso, onClose, onEdit }: ConcursoDeta
 function ProgressoTab({ concurso }: { concurso: ConcursoRow }) {
   const navigate = useNavigate();
   const cid = concurso.id;
-  const [editalBarReady, setEditalBarReady] = React.useState(false);
 
   const { data: apiDisciplinas = [], isLoading: loadingDisc } = useQuery({
     queryKey: ["concurso-disciplinas-progress", cid],
@@ -380,14 +379,6 @@ function ProgressoTab({ concurso }: { concurso: ConcursoRow }) {
     return computeConcursoCardStatsFromKpis(rows, kpiByDisciplinaId);
   }, [disciplinaIds.length, progressoKpisLoading, rows, kpiByDisciplinaId]);
 
-  React.useEffect(() => {
-    setEditalBarReady(false);
-    const t = requestAnimationFrame(() => setEditalBarReady(true));
-    return () => cancelAnimationFrame(t);
-  }, [cid, apiDisciplinas.length]);
-
-  const EDITAL_PCT = 42;
-
   if (loadingDisc) {
     return <p className="text-sm text-muted-foreground">Carregando disciplinas…</p>;
   }
@@ -430,19 +421,6 @@ function ProgressoTab({ concurso }: { concurso: ConcursoRow }) {
         <Link to="/disciplinas" className="shrink-0 text-xs font-semibold text-primary hover:underline">
           Editar vínculos
         </Link>
-      </div>
-
-      <div>
-        <div className="mb-2 flex items-center justify-between text-[13px]">
-          <span className="text-muted-foreground">Edital lido</span>
-          <span className="font-bold tabular-nums text-primary">{EDITAL_PCT}%</span>
-        </div>
-        <div className="h-2 overflow-hidden rounded-full bg-border">
-          <div
-            className="h-full rounded-full bg-gradient-to-r from-primary to-primary-500 transition-[width] duration-[600ms] ease-out"
-            style={{ width: editalBarReady ? `${EDITAL_PCT}%` : "0%" }}
-          />
-        </div>
       </div>
 
       <div>
