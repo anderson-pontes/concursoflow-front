@@ -141,7 +141,7 @@ export function Login() {
   };
 
   return (
-    <AuthShell>
+    <AuthShell logoAsLink>
       {authMode === "forgot" ? (
         <div className="pb-8">
           <AuthLinkButton onClick={goLogin} className="mb-6">

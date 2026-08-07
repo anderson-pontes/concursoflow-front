@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 
 type AuthShellProps = {
   children: React.ReactNode;
+  logoAsLink?: boolean;
 };
 
 const HERO_FEATURES = [
@@ -19,7 +20,7 @@ const HERO_FEATURES = [
  * Layout auth: hero Click Edital + coluna do formulário.
  * Mobile: faixa compacta com logo; desktop: split 50/50.
  */
-export function AuthShell({ children }: AuthShellProps) {
+export function AuthShell({ children, logoAsLink = false }: AuthShellProps) {
   React.useEffect(() => {
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
@@ -42,7 +43,7 @@ export function AuthShell({ children }: AuthShellProps) {
       {/* Mobile — faixa com logo em chip claro (marca legível) */}
       <div className="auth-hero-gradient flex shrink-0 items-center px-4 py-3 md:hidden">
         <div className="rounded-xl bg-white/95 px-3 py-2 shadow-sm">
-          <ClickEditalLogo size="sm" className="shrink-0" />
+          <ClickEditalLogo size="sm" className="shrink-0" asLink={logoAsLink} />
         </div>
       </div>
 
@@ -55,7 +56,7 @@ export function AuthShell({ children }: AuthShellProps) {
         <div className="relative z-10 flex h-full min-h-0 flex-col">
           <div className="shrink-0 px-8 pb-0 pt-8 lg:px-10">
             <div className="inline-flex rounded-2xl bg-white/95 px-4 py-2.5 shadow-md">
-              <ClickEditalLogo size="md" className="shrink-0" />
+              <ClickEditalLogo size="md" className="shrink-0" asLink={logoAsLink} />
             </div>
             <div className="h-8" aria-hidden />
           </div>

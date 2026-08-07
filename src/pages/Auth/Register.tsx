@@ -126,7 +126,7 @@ export function Register() {
 
   if (submitted) {
     return (
-      <AuthShell>
+      <AuthShell logoAsLink>
         <div className="mx-auto max-w-md text-center">
           <div className="mb-6 text-4xl" aria-hidden>
             ✅
@@ -145,7 +145,7 @@ export function Register() {
   }
 
   return (
-    <AuthShell>
+    <AuthShell logoAsLink>
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-foreground sm:text-[28px]">Criar sua conta</h1>
         <p className="mt-1.5 text-sm text-muted-foreground">
