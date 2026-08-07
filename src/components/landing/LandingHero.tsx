@@ -15,16 +15,16 @@ export function LandingHero() {
       <div className="relative mx-auto grid min-h-[calc(100svh-4rem)] max-w-7xl grid-cols-1 items-center gap-12 px-4 py-14 sm:px-6 md:grid-cols-12 md:py-20 lg:gap-16">
         <div className="md:col-span-6 lg:col-span-5">
           <p className="inline-flex items-center gap-2 rounded-full border border-primary/15 bg-white/80 px-3.5 py-2 text-xs font-bold text-primary shadow-sm backdrop-blur motion-safe:animate-[landing-fade-up_0.55s_ease-out_both]">
-            <Sparkles className="h-3.5 w-3.5" aria-hidden /> Seu edital pode ficar mais leve
+            <Sparkles className="h-3.5 w-3.5" aria-hidden /> Agora com os Mapas de TI da Déia de bônus
           </p>
           <div className="mt-5 motion-safe:animate-[landing-fade-up_0.55s_ease-out_0.04s_both]"><LandingLogo size="hero" asLink={false} /></div>
           <h1 id="landing-hero-heading" className="mt-6 font-display text-4xl font-bold leading-[1.06] tracking-[-0.04em] text-foreground motion-safe:animate-[landing-fade-up_0.55s_ease-out_0.08s_both] sm:text-5xl lg:text-[3.6rem]">
-            Menos caos no edital. <span className="relative whitespace-nowrap text-primary">Mais ritmo
+            Organize o edital. <span className="relative whitespace-nowrap text-primary">Revise melhor
               <svg className="absolute -bottom-2 left-0 w-full text-amber-400" viewBox="0 0 220 12" fill="none" aria-hidden><path d="M3 8C54 2 144 2 217 7" stroke="currentColor" strokeWidth="5" strokeLinecap="round" /></svg>
-            </span>{" "}até a aprovação.
+            </span>{" "}e avance com clareza.
           </h1>
           <p className="mt-6 max-w-xl text-base leading-relaxed text-muted-foreground motion-safe:animate-[landing-fade-up_0.55s_ease-out_0.16s_both] sm:text-lg">
-            Transforme matérias, metas e revisões em um plano visual que mostra o próximo passo — para você gastar energia estudando, não se organizando.
+            O ClickEdital transforma matérias, metas e desempenho em um plano visual. Na assinatura anual, você ainda leva os Mapas de TI da Déia para acelerar suas revisões.
           </p>
           <div className="mt-9 flex flex-col gap-3 motion-safe:animate-[landing-fade-up_0.55s_ease-out_0.24s_both] sm:flex-row sm:items-center">
             <a href="#oferta" className="group inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-primary px-6 text-sm font-bold text-primary-foreground shadow-lg shadow-primary/25 outline-none transition hover:-translate-y-0.5 hover:bg-primary-500 hover:shadow-xl focus-visible:ring-2 focus-visible:ring-ring">Começar minha jornada <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" aria-hidden /></a>
@@ -32,7 +32,7 @@ export function LandingHero() {
           </div>
           <div className="mt-6 flex flex-wrap gap-x-5 gap-y-2 text-sm text-muted-foreground motion-safe:animate-[landing-fade-up_0.55s_ease-out_0.3s_both]">
             <span className="flex items-center gap-1.5"><CheckCircle2 className="h-4 w-4 text-emerald-500" aria-hidden />7 dias de garantia</span>
-            <span className="flex items-center gap-1.5"><CheckCircle2 className="h-4 w-4 text-emerald-500" aria-hidden />Acesso imediato</span>
+            <span className="flex items-center gap-1.5"><CheckCircle2 className="h-4 w-4 text-emerald-500" aria-hidden />Bônus digital sem custo adicional</span>
           </div>
         </div>
 

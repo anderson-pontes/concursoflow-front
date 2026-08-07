@@ -8,6 +8,7 @@ import { LandingFooter } from "@/components/landing/LandingFooter";
 import { LandingHeader } from "@/components/landing/LandingHeader";
 import { LandingHero } from "@/components/landing/LandingHero";
 import { LandingMetrics } from "@/components/landing/LandingMetrics";
+import { LandingMapsBonus } from "@/components/landing/LandingMapsBonus";
 import { LandingObjections } from "@/components/landing/LandingObjections";
 import { LandingOffer } from "@/components/landing/LandingOffer";
 import { LandingShowcase } from "@/components/landing/LandingShowcase";
@@ -15,9 +16,9 @@ import { LandingSteps } from "@/components/landing/LandingSteps";
 import { LandingValueStrip } from "@/components/landing/LandingValueStrip";
 import { useAuthStore } from "@/stores/authStore";
 
-const PAGE_TITLE = "Click Edital — Planejador de estudos e cronograma para concursos";
+const PAGE_TITLE = "ClickEdital — Planejamento para concursos com mapas mentais de TI";
 const PAGE_DESCRIPTION =
-  "Organize o edital, registre horas, acompanhe acertos e progresso. Assinatura anual R$ 149 em até 10x de R$ 14,90. Garantia de 7 dias.";
+  "Organize o edital, acompanhe sua evolução e receba como bônus os Mapas de TI da Déia. Assinatura anual ClickEdital por R$ 149, com garantia de 7 dias.";
 
 function useLandingSeo() {
   React.useEffect(() => {
@@ -68,6 +69,7 @@ export function LandingPage() {
         <LandingSteps />
         <LandingObjections />
         <LandingFeatures />
+        <LandingMapsBonus />
         <LandingOffer />
         <LandingFaq />
         <LandingFinalCta />

@@ -288,6 +288,17 @@
   50% { transform: translateY(-8px) rotate(1deg); }
 }
 
+@keyframes landing-map-pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgb(167 139 250 / 0.24);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 0 12px rgb(167 139 250 / 0);
+    transform: scale(1.04);
+  }
+}
+
 .landing-grid {
   background-image: radial-gradient(circle, rgb(124 58 237 / 0.14) 1.2px, transparent 1.2px);
   background-size: 26px 26px;
@@ -297,6 +308,12 @@
 .landing-float { animation: landing-float 4s ease-in-out infinite; }
 .landing-float-slow { animation: landing-float-slow 5.2s ease-in-out infinite; }
 .landing-mascot-bob { animation: landing-mascot-bob 4.6s ease-in-out infinite; }
+.landing-map-pulse { animation: landing-map-pulse 3.2s ease-in-out infinite; }
+.landing-map-glow {
+  background:
+    radial-gradient(circle at 12% 25%, rgb(124 58 237 / 0.24), transparent 30%),
+    radial-gradient(circle at 88% 75%, rgb(14 165 233 / 0.14), transparent 30%);
+}
 
 @media (prefers-reduced-motion: reduce) {
   .motion-safe\:animate-\[landing-fade-up_0\.55s_ease-out_both\],
@@ -311,6 +328,10 @@
   .landing-float,
   .landing-float-slow,
   .landing-mascot-bob {
+    animation: none !important;
+  }
+
+  .landing-map-pulse {
     animation: none !important;
   }
 }

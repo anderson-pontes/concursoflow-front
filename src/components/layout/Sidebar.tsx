@@ -3,6 +3,7 @@ import { createPortal } from "react-dom";
 import { NavLink, matchPath, useLocation, useNavigate } from "react-router-dom";
 import {
   Bell,
+  BrainCircuit,
   BookOpen,
   CalendarDays,
   ChevronRight,
@@ -46,6 +47,7 @@ const navSections = [
       { to: "/estudos/calendario", label: "Calendário", icon: CalendarDays },
       { to: "/estudos/historico", label: "Histórico", icon: History },
       { to: "/flashcards", label: "Flashcards", icon: Layers },
+      { to: "/mapas-mentais", label: "Mapas Mentais", icon: BrainCircuit },
     ],
   },
   {

@@ -38,6 +38,7 @@ const HistoricoEstudos = lazyNamed(() => import("./pages/HistoricoEstudos"), "Hi
 const Pomodoro = lazyNamed(() => import("./pages/Pomodoro"), "Pomodoro");
 const Avisos = lazyNamed(() => import("./pages/Avisos"), "Avisos");
 const Flashcards = lazyNamed(() => import("./pages/Flashcards"), "Flashcards");
+const MentalMaps = lazyNamed(() => import("./pages/MentalMaps"), "MentalMaps");
 const AdminEstudos = lazyNamed(() => import("./pages/AdminEstudos"), "AdminEstudos");
 const GestaoUsuarios = lazyNamed(() => import("./pages/admin/GestaoUsuarios"), "GestaoUsuarios");
 const UsuarioDetalhe = lazyNamed(() => import("./pages/admin/UsuarioDetalhe"), "UsuarioDetalhe");
@@ -197,6 +198,16 @@ export default function App() {
           <Layout requireAuth={!isAuthed}>
             <LazyPage>
               <Flashcards />
+            </LazyPage>
+          </Layout>
+        }
+      />
+      <Route
+        path="/mapas-mentais"
+        element={
+          <Layout requireAuth={!isAuthed}>
+            <LazyPage>
+              <MentalMaps />
             </LazyPage>
           </Layout>
         }

@@ -6,11 +6,19 @@ import { cn } from "@/lib/utils";
 const faqs = [
   {
     q: "Como recebo o acesso?",
-    a: "Após a confirmação do pagamento da assinatura, seu acesso é liberado. Você entra com o e-mail e a senha cadastrados.",
+    a: "Após a confirmação do pagamento, sua assinatura é liberada. Você entra no ClickEdital com o e-mail e a senha cadastrados e recebe as orientações para acessar o bônus digital.",
+  },
+  {
+    q: "Quais Mapas de TI estão incluídos no bônus?",
+    a: "O conteúdo reúne mapas de Dados e Inteligência, Gestão e Metodologias, Segurança, Banco de Dados, Governança, Redes e Cloud — incluindo assuntos como Big Data, Machine Learning, Agile, LGPD, SQL, NoSQL, ITIL 4, COBIT 2019, TCP/IP e Cloud Computing.",
+  },
+  {
+    q: "Em qual formato recebo os mapas?",
+    a: "O material é digital, com mais de 100 páginas, disponibilizado em PDF e também em imagens de alta resolução. O pacote inclui atualizações por 1 ano.",
   },
   {
     q: "Serve para quem está começando?",
-    a: "Sim. O Click Edital ajuda a organizar o edital e a rotina desde o início — sem precisar de planilha avançada.",
+    a: "Sim. O ClickEdital ajuda a organizar o edital e a rotina desde o início, e os mapas facilitam a visualização e a revisão dos principais assuntos de TI.",
   },
   {
     q: "Tem garantia?",

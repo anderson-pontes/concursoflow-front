@@ -6,6 +6,8 @@ const bullets = [
   "Registro rápido de horas de estudo",
   "Indicadores de acertos por assunto",
   "Painel visual claro para a rotina",
+  "Bônus: Mapas de TI da Déia com mais de 100 páginas",
+  "Mapas em PDF e imagens em alta resolução",
 ] as const;
 
 export function LandingOffer() {
@@ -22,10 +24,10 @@ export function LandingOffer() {
             id="oferta-heading"
             className="mt-2 text-xl font-semibold tracking-tight text-foreground md:text-2xl"
           >
-            Tenha um painel claro do seu estudo e siga o plano com mais foco.
+            Planeje no ClickEdital e revise TI com mapas mentais.
           </h2>
           <p className="mt-2 text-sm text-muted-foreground">
-            12 meses de acesso para organizar o cronograma, registrar horas e acompanhar acertos.
+            12 meses de acesso à plataforma e os Mapas de TI da Déia incluídos como bônus digital.
           </p>
 
           <div className="mt-8 rounded-xl border border-primary/20 bg-primary-muted px-5 py-6 text-center">
@@ -43,7 +45,7 @@ export function LandingOffer() {
               <span className="tabular-nums">R$&nbsp;14,90</span>
             </p>
             <p className="mt-2 text-xs text-muted-foreground">
-              Pagamento seguro · acesso após confirmação
+              Pagamento seguro · acesso após confirmação · bônus sem custo adicional
             </p>
           </div>
 

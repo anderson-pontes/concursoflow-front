@@ -15,10 +15,10 @@ export function LandingFinalCta() {
           id="final-cta-heading"
           className="font-display text-3xl tracking-tight text-foreground md:text-4xl"
         >
-          Pronto para organizar seu edital?
+          Seu plano organizado. Suas revisões mais visuais.
         </h2>
         <p className="mt-4 text-muted-foreground">
-          Crie sua conta, assine e monte o plano de estudos com indicadores claros.
+          Assine o ClickEdital e leve os Mapas de TI da Déia como bônus, sem custo adicional.
         </p>
         <div className="mt-9 flex flex-col items-center gap-3">
           <Link
