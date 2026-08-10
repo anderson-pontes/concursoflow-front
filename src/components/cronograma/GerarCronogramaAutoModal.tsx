@@ -34,8 +34,8 @@ type DisciplinaRow = {
 type BlocoGerado = {
   disciplina_id: string;
   disciplina_nome: string;
-  topico_id: string;
-  topico_nome: string;
+  topico_id: string | null;
+  topico_nome: string | null;
   dia_semana: number;
   duracao_minutos: number;
   data: string;
@@ -231,7 +231,7 @@ export function GerarCronogramaAutoModal({
             <div>
               <DialogTitle className="text-lg font-bold text-card-foreground">Gerar cronograma automático</DialogTitle>
               <p className="mt-0.5 text-sm text-muted-foreground">
-                Distribui sessões por assunto conforme peso e domínio cadastrados nos tópicos.
+                Distribui sessões por assunto ou por disciplina quando ainda não houver tópicos.
               </p>
             </div>
           </div>
@@ -338,7 +338,7 @@ export function GerarCronogramaAutoModal({
             <div className="flex flex-wrap items-center justify-between gap-2">
               <h3 className="text-sm font-semibold text-card-foreground">Disciplinas</h3>
               <span className="text-xs text-muted-foreground">
-                Peso e domínio vêm dos tópicos cadastrados
+                Tópicos são opcionais
               </span>
             </div>
             {rows.length === 0 ? (
@@ -385,9 +385,12 @@ export function GerarCronogramaAutoModal({
                     <p className="mb-1 font-semibold text-card-foreground">{d.full}</p>
                     <ul className="space-y-1 text-muted-foreground">
                       {(previewSemanal.get(d.value) ?? []).map((b, i) => (
-                        <li key={`${b.topico_id}-${i}`} className="flex flex-col gap-0.5">
+                        <li
+                          key={`${b.disciplina_id}-${b.topico_id ?? "disciplina"}-${i}`}
+                          className="flex flex-col gap-0.5"
+                        >
                           <span className="truncate font-medium text-card-foreground">{b.disciplina_nome}</span>
-                          <span className="truncate text-[10px]">{b.topico_nome}</span>
+                          {b.topico_nome ? <span className="truncate text-[10px]">{b.topico_nome}</span> : null}
                           <span className="flex items-center gap-1.5 text-[10px]">
                             <span className="tabular-nums">{fmtBlocoMinutos(b.duracao_minutos)}</span>
                             <span
@@ -409,7 +412,11 @@ export function GerarCronogramaAutoModal({
               </div>
               {preview.blocos.length > 0 ? (
                 <p className="text-[11px] text-muted-foreground">
-                  Primeira sessão: {preview.blocos[0].topico_nome} ({preview.blocos[0].disciplina_nome}) em{" "}
+                  Primeira sessão:{" "}
+                  {preview.blocos[0].topico_nome
+                    ? `${preview.blocos[0].topico_nome} (${preview.blocos[0].disciplina_nome})`
+                    : preview.blocos[0].disciplina_nome}{" "}
+                  em{" "}
                   {format(parseISO(preview.blocos[0].data), "dd/MM/yyyy", { locale: ptBR })}
                 </p>
               ) : null}

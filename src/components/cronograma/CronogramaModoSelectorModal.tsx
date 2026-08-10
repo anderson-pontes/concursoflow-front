@@ -19,11 +19,11 @@ const OPTIONS: ModeOption[] = [
   {
     id: "automatica",
     title: "Automática",
-    description: "Gera o plano pelos tópicos, usando peso no edital e seu domínio.",
+    description: "Gera o plano por tópicos ou diretamente pelas disciplinas quando não houver tópicos.",
     icon: Sparkles,
     showIaBadge: true,
     ariaLabel:
-      "Automática, assistida por IA: gera horários pelos tópicos com base em peso e domínio",
+      "Automática, assistida por IA: gera horários com ou sem tópicos cadastrados",
   },
   {
     id: "analitica",
