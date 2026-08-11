@@ -4,7 +4,9 @@ import { readFile } from "node:fs/promises";
 import ts from "typescript";
 
 const helperUrl = new URL("../src/lib/cronograma/disciplinasConcurso.ts", import.meta.url);
+const cronogramaUrl = new URL("../src/pages/Cronograma.tsx", import.meta.url);
 const helperSource = await readFile(helperUrl, "utf8");
+const cronogramaSource = await readFile(cronogramaUrl, "utf8");
 const source = ts.transpileModule(helperSource, {
   compilerOptions: { module: ts.ModuleKind.ESNext, target: ts.ScriptTarget.ES2022 },
 }).outputText;
@@ -30,4 +32,14 @@ assert.deepEqual(
 assert.deepEqual(filtrarDisciplinasDoConcursoAtivo(disciplinas, "concurso-c"), []);
 assert.deepEqual(filtrarDisciplinasDoConcursoAtivo(disciplinas, null), []);
 
-console.log("Story 13.6 smoke: filtro por concurso ativo aprovado.");
+assert.match(
+  cronogramaSource,
+  /const disciplinasDoConcursoAtivo = React\.useMemo\([\s\S]*?filtrarDisciplinasDoConcursoAtivo/,
+);
+assert.equal(
+  cronogramaSource.match(/disciplinas=\{disciplinasDoConcursoAtivo\}/g)?.length,
+  5,
+  "Os modais Automático, Analítico e Simplificado, incluindo edição, devem usar a lista filtrada.",
+);
+
+console.log("Story 13.6 smoke: filtro por concurso ativo aprovado nos três modos.");

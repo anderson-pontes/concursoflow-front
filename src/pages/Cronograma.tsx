@@ -88,18 +88,15 @@ export function Cronograma() {
     },
   });
 
-  /** Catálogo completo; com concurso ativo, prioriza vinculadas ao concurso no topo. */
-  const disciplinas = React.useMemo(() => {
-    if (!concursoAtivoId) return disciplinasCatalog;
-    const linked = disciplinasCatalog.filter((d) => d.concurso_ids?.includes(concursoAtivoId));
-    const rest = disciplinasCatalog.filter((d) => !d.concurso_ids?.includes(concursoAtivoId));
-    return linked.length > 0 ? [...linked, ...rest] : disciplinasCatalog;
-  }, [disciplinasCatalog, concursoAtivoId]);
-  const disciplinasAutomaticas = React.useMemo(
+  /** Opções de criação e edição pertencentes exclusivamente ao concurso ativo. */
+  const disciplinasDoConcursoAtivo = React.useMemo(
     () => filtrarDisciplinasDoConcursoAtivo(disciplinasCatalog, concursoAtivoId),
     [disciplinasCatalog, concursoAtivoId],
   );
-  const discMap = React.useMemo(() => new Map(disciplinas.map((d) => [d.id, d.nome])), [disciplinas]);
+  const discMap = React.useMemo(
+    () => new Map(disciplinasCatalog.map((d) => [d.id, d.nome])),
+    [disciplinasCatalog],
+  );
 
   const { data: blocos, isLoading } = useQuery({
     queryKey: ["cronograma-blocos", concursoAtivoId ?? null],
@@ -241,25 +238,23 @@ export function Cronograma() {
 
   function handleModoSelect(modo: CronogramaModo) {
     setModoSelectorOpen(false);
+    if (!concursoAtivoId) {
+      toast.error("Selecione um concurso antes de criar o cronograma.");
+      return;
+    }
+    if (loadingDisciplinas) {
+      toast.info("Carregando disciplinas…");
+      return;
+    }
     if (modo === "automatica") {
-      if (!concursoAtivoId) {
-        toast.error("Selecione um concurso antes de gerar o cronograma automático.");
-        return;
-      }
-      if (loadingDisciplinas) {
-        toast.info("Carregando disciplinas…");
-        return;
-      }
       setAutoOpen(true);
       return;
     }
     if (modo === "analitica" || modo === "simplificada") {
-      if (loadingDisciplinas) {
-        toast.info("Carregando disciplinas…");
-        return;
-      }
-      if (disciplinas.length === 0) {
-        toast.error("Nenhuma disciplina no catálogo. Cadastre em Disciplinas & Tópicos.");
+      if (disciplinasDoConcursoAtivo.length === 0) {
+        toast.error(
+          "O concurso ativo não possui disciplinas. Cadastre ou vincule em Disciplinas & Tópicos.",
+        );
         return;
       }
       if (modo === "analitica") setCreateOpen(true);
@@ -523,7 +518,7 @@ export function Cronograma() {
         open={createOpen}
         onClose={() => setCreateOpen(false)}
         onSave={(form) => createMutation.mutate(form)}
-        disciplinas={disciplinas}
+        disciplinas={disciplinasDoConcursoAtivo}
         title="Novo horário (Analítica)"
         isSaving={createMutation.isPending}
       />
@@ -534,7 +529,7 @@ export function Cronograma() {
           onClose={() => setEditBloco(null)}
           onSave={(payload) => updateMutation.mutate({ id: editBloco.id, payload })}
           bloco={editBloco}
-          disciplinas={disciplinas}
+          disciplinas={disciplinasDoConcursoAtivo}
           isSaving={updateMutation.isPending}
         />
       ) : null}
@@ -544,7 +539,7 @@ export function Cronograma() {
           open
           onClose={() => setEditBloco(null)}
           onSave={(form) => updateMutation.mutate({ id: editBloco.id, payload: form })}
-          disciplinas={disciplinas}
+          disciplinas={disciplinasDoConcursoAtivo}
           initialValues={{
             disciplina_id: editBloco.disciplina_id,
             dia_semana: editBloco.dia_semana,
@@ -562,7 +557,7 @@ export function Cronograma() {
       <GerarCronogramaAutoModal
         open={autoOpen}
         onClose={() => setAutoOpen(false)}
-        disciplinas={disciplinasAutomaticas}
+        disciplinas={disciplinasDoConcursoAtivo}
         hasConcursoAtivo={Boolean(concursoAtivoId)}
         onSaved={() => {
           qc.invalidateQueries({ queryKey: ["cronograma-blocos", concursoAtivoId ?? null] });
@@ -573,7 +568,7 @@ export function Cronograma() {
         open={simplificadaOpen}
         onClose={() => setSimplificadaOpen(false)}
         onSave={(form) => simplificadaMutation.mutate(form)}
-        disciplinas={disciplinas}
+        disciplinas={disciplinasDoConcursoAtivo}
         isSaving={simplificadaMutation.isPending}
       />
 
