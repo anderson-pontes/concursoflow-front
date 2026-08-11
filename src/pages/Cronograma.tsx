@@ -25,6 +25,7 @@ import { CronogramaSimplificadoModal } from "@/components/cronograma/CronogramaS
 import { GerarCronogramaAutoModal } from "@/components/cronograma/GerarCronogramaAutoModal";
 import { RegistroEstudoModal } from "@/components/estudos/RegistroEstudoModal";
 import { DIAS, diaAbrev, fmtHorasStats } from "@/lib/cronograma/constants";
+import { filtrarDisciplinasDoConcursoAtivo } from "@/lib/cronograma/disciplinasConcurso";
 import type {
   Bloco,
   DisciplinaOption,
@@ -94,6 +95,10 @@ export function Cronograma() {
     const rest = disciplinasCatalog.filter((d) => !d.concurso_ids?.includes(concursoAtivoId));
     return linked.length > 0 ? [...linked, ...rest] : disciplinasCatalog;
   }, [disciplinasCatalog, concursoAtivoId]);
+  const disciplinasAutomaticas = React.useMemo(
+    () => filtrarDisciplinasDoConcursoAtivo(disciplinasCatalog, concursoAtivoId),
+    [disciplinasCatalog, concursoAtivoId],
+  );
   const discMap = React.useMemo(() => new Map(disciplinas.map((d) => [d.id, d.nome])), [disciplinas]);
 
   const { data: blocos, isLoading } = useQuery({
@@ -237,12 +242,12 @@ export function Cronograma() {
   function handleModoSelect(modo: CronogramaModo) {
     setModoSelectorOpen(false);
     if (modo === "automatica") {
-      if (loadingDisciplinas) {
-        toast.info("Carregando disciplinas…");
+      if (!concursoAtivoId) {
+        toast.error("Selecione um concurso antes de gerar o cronograma automático.");
         return;
       }
-      if (disciplinas.length === 0) {
-        toast.error("Nenhuma disciplina no catálogo. Cadastre em Disciplinas & Tópicos.");
+      if (loadingDisciplinas) {
+        toast.info("Carregando disciplinas…");
         return;
       }
       setAutoOpen(true);
@@ -557,7 +562,8 @@ export function Cronograma() {
       <GerarCronogramaAutoModal
         open={autoOpen}
         onClose={() => setAutoOpen(false)}
-        disciplinas={disciplinas}
+        disciplinas={disciplinasAutomaticas}
+        hasConcursoAtivo={Boolean(concursoAtivoId)}
         onSaved={() => {
           qc.invalidateQueries({ queryKey: ["cronograma-blocos", concursoAtivoId ?? null] });
         }}

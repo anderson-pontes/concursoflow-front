@@ -53,6 +53,7 @@ export type GerarCronogramaAutoModalProps = {
   open: boolean;
   onClose: () => void;
   disciplinas: DisciplinaOption[];
+  hasConcursoAtivo: boolean;
   onSaved?: () => void;
 };
 
@@ -70,6 +71,7 @@ export function GerarCronogramaAutoModal({
   open,
   onClose,
   disciplinas,
+  hasConcursoAtivo,
   onSaved,
 }: GerarCronogramaAutoModalProps) {
   const [sessoesPorDia, setSessoesPorDia] = React.useState<Record<number, number>>({
@@ -343,7 +345,14 @@ export function GerarCronogramaAutoModal({
             </div>
             {rows.length === 0 ? (
               <p className="rounded-lg border border-dashed border-border px-4 py-6 text-center text-sm text-muted-foreground">
-                Nenhuma disciplina no catálogo. Cadastre em <strong>Disciplinas &amp; Tópicos</strong>.
+                {hasConcursoAtivo ? (
+                  <>
+                    O concurso ativo ainda não possui disciplinas. Cadastre ou vincule em{" "}
+                    <strong>Disciplinas &amp; Tópicos</strong>.
+                  </>
+                ) : (
+                  "Selecione um concurso antes de gerar o cronograma automático."
+                )}
               </p>
             ) : (
               <ul className="space-y-2">
