@@ -42,7 +42,7 @@ export function LandingMetrics() {
             Acompanhe seu progresso e ajuste a rotina com base no que você realmente estudou.
           </h2>
           <p className="mt-3 text-muted-foreground">
-            O Click Edital transforma seus registros em uma visão prática — para manter o ritmo e evitar
+            O ClickEdital transforma seus registros em uma visão prática — para manter o ritmo e evitar
             improviso.
           </p>
         </div>

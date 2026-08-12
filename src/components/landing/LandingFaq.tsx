@@ -5,32 +5,52 @@ import { cn } from "@/lib/utils";
 
 const faqs = [
   {
-    q: "Como recebo o acesso?",
-    a: "Após a confirmação do pagamento, sua assinatura é liberada. Você entra no ClickEdital com o e-mail e a senha cadastrados e recebe as orientações para acessar o bônus digital.",
+    q: "Preciso cadastrar meu próprio edital?",
+    a: "Sim. Você cadastra o concurso e inclui as disciplinas e os tópicos previstos no edital. Também pode anexar o PDF para consulta, mas o conteúdo não é extraído nem preenchido automaticamente.",
   },
   {
-    q: "Quais Mapas de TI estão incluídos no bônus?",
-    a: "O conteúdo reúne mapas de Dados e Inteligência, Gestão e Metodologias, Segurança, Banco de Dados, Governança, Redes e Cloud — incluindo assuntos como Big Data, Machine Learning, Agile, LGPD, SQL, NoSQL, ITIL 4, COBIT 2019, TCP/IP e Cloud Computing.",
+    q: "Existem editais prontos disponíveis?",
+    a: "Não. O ClickEdital não oferece um catálogo de editais prontos. Você monta a organização com base no edital do concurso que está estudando.",
   },
   {
-    q: "Em qual formato recebo os mapas?",
-    a: "O material é digital, com mais de 100 páginas, disponibilizado em PDF e também em imagens de alta resolução. O pacote inclui atualizações por 1 ano.",
+    q: "O ClickEdital monta meu cronograma automaticamente?",
+    a: "Sim, se você escolher o modo automático. Depois de cadastrar o concurso, as disciplinas e os tópicos, informe quantas sessões fará por dia e a duração de cada sessão. O sistema considera as prioridades dos tópicos, mostra uma prévia e só salva depois da sua confirmação. Você também pode usar os modos analítico ou simplificado.",
   },
   {
-    q: "Serve para quem está começando?",
-    a: "Sim. O ClickEdital ajuda a organizar o edital e a rotina desde o início, e os mapas facilitam a visualização e a revisão dos principais assuntos de TI.",
+    q: "Posso organizar mais de um concurso?",
+    a: "Sim. Você pode cadastrar vários concursos e vincular disciplinas a um ou mais deles. Um concurso fica ativo por vez para orientar os painéis e registros da rotina.",
   },
   {
-    q: "Tem garantia?",
-    a: "Sim. Você tem 7 dias de garantia. Se não fizer sentido para você, falamos sobre o reembolso conforme a política da assinatura.",
+    q: "Consigo alterar o cronograma depois?",
+    a: "Sim. Depois de gerar ou montar o cronograma, você pode editar horários e blocos, reorganizar a semana ou remover ocorrências conforme sua rotina mudar.",
   },
   {
-    q: "Preciso instalar algo?",
-    a: "Não. É uma plataforma web: acesse pelo navegador no computador ou no celular.",
+    q: "O sistema avisa quando preciso revisar um conteúdo?",
+    a: "Ao registrar um estudo, você pode programar revisões e acompanhar as próximas revisões no sistema. A área de avisos também ajuda a controlar prazos cadastrados por você; o ClickEdital não deduz datas automaticamente do PDF do edital.",
   },
   {
-    q: "Posso usar para mais de um concurso?",
-    a: "Sim. Você organiza disciplinas e o plano em cima do concurso (ou concursos) que estiver priorizando.",
+    q: "Os Mapas de TI estão incluídos em todos os planos?",
+    a: "Os Mapas de TI da Déia estão incluídos como bônus na assinatura anual apresentada nesta página, sem custo adicional durante os 12 meses de acesso.",
+  },
+  {
+    q: "O ClickEdital serve para concursos que não possuem disciplinas de TI?",
+    a: "Sim. A plataforma organiza concursos de qualquer área. Os Mapas de TI são apenas um bônus complementar para quem estuda conteúdos de Tecnologia da Informação.",
+  },
+  {
+    q: "Posso acessar pelo celular?",
+    a: "Sim. O ClickEdital é uma plataforma web responsiva e pode ser acessado pelo navegador no computador, tablet ou celular, sem instalação.",
+  },
+  {
+    q: "O que acontece depois que eu concluo a assinatura?",
+    a: "Após a confirmação do pagamento, o acesso anual é liberado para a conta cadastrada. Você entra com seu e-mail e senha, cadastra o concurso e começa a organizar disciplinas, tópicos e cronograma.",
+  },
+  {
+    q: "O que está incluído no bônus de Mapas de TI?",
+    a: "Você recebe mapas visuais em PDF e imagens de alta resolução, com conteúdos de Dados, Inteligência, Gestão, Segurança, Banco de Dados, Governança, Redes e Cloud, além de atualizações durante um ano.",
+  },
+  {
+    q: "A assinatura tem garantia?",
+    a: "Sim. Você tem sete dias de garantia para avaliar o ClickEdital e solicitar o reembolso conforme a política da assinatura.",
   },
 ] as const;
 

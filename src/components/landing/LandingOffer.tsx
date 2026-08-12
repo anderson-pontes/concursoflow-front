@@ -2,12 +2,13 @@ import { Link } from "react-router-dom";
 import { Check, ShieldCheck } from "lucide-react";
 
 const bullets = [
-  "Cronograma conectado ao seu edital",
-  "Registro rápido de horas de estudo",
-  "Indicadores de acertos por assunto",
-  "Painel visual claro para a rotina",
-  "Bônus: Mapas de TI da Déia com mais de 100 páginas",
-  "Mapas em PDF e imagens em alta resolução",
+  "12 meses de acesso à plataforma",
+  "Organização do edital por disciplinas e tópicos",
+  "Cronograma de estudos",
+  "Registro de horas e sessões",
+  "Controle de revisões",
+  "Indicadores de desempenho",
+  "Bônus: Mapas de TI da Déia em PDF e imagens",
 ] as const;
 
 export function LandingOffer() {
@@ -24,10 +25,10 @@ export function LandingOffer() {
             id="oferta-heading"
             className="mt-2 text-xl font-semibold tracking-tight text-foreground md:text-2xl"
           >
-            Planeje no ClickEdital e revise TI com mapas mentais.
+            Um ano para organizar seus estudos e acompanhar sua evolução
           </h2>
           <p className="mt-2 text-sm text-muted-foreground">
-            12 meses de acesso à plataforma e os Mapas de TI da Déia incluídos como bônus digital.
+            Tenha 12 meses de acesso ao ClickEdital para organizar o conteúdo do seu concurso, registrar sua rotina e acompanhar seu progresso até a prova.
           </p>
 
           <div className="mt-8 rounded-xl border border-primary/20 bg-primary-muted px-5 py-6 text-center">
@@ -41,8 +42,7 @@ export function LandingOffer() {
             </p>
             <p className="mt-1 text-sm text-muted-foreground">por ano</p>
             <p className="mt-3 text-base font-semibold text-primary">
-              em até <span className="tabular-nums">10x</span> de{" "}
-              <span className="tabular-nums">R$&nbsp;14,90</span>
+              em até <span className="tabular-nums">10x</span>
             </p>
             <p className="mt-2 text-xs text-muted-foreground">
               Pagamento seguro · acesso após confirmação · bônus sem custo adicional
@@ -66,7 +66,7 @@ export function LandingOffer() {
             to="/register"
             className="mt-8 inline-flex min-h-12 w-full items-center justify-center rounded-lg bg-primary px-5 text-sm font-semibold text-primary-foreground outline-none transition hover:bg-primary-500 focus-visible:ring-2 focus-visible:ring-ring"
           >
-            Quero assinar agora
+            Quero organizar meus estudos
           </Link>
         </div>
       </div>

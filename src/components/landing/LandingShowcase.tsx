@@ -54,7 +54,7 @@ export function LandingShowcase() {
             Veja o cronograma, as disciplinas e o foco em ação.
           </h2>
           <p className="mt-3 text-muted-foreground">
-            Telas reais do Click Edital — o mesmo ambiente que você usa depois de assinar.
+            Telas reais do ClickEdital — o mesmo ambiente que você usa depois de assinar.
           </p>
         </div>
 

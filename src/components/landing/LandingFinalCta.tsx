@@ -15,17 +15,17 @@ export function LandingFinalCta() {
           id="final-cta-heading"
           className="font-display text-3xl tracking-tight text-foreground md:text-4xl"
         >
-          Seu plano organizado. Suas revisões mais visuais.
+          Comece com seu edital e avance com uma rotina mais clara.
         </h2>
         <p className="mt-4 text-muted-foreground">
-          Assine o ClickEdital e leve os Mapas de TI da Déia como bônus, sem custo adicional.
+          Cadastre seu concurso, organize prioridades e acompanhe o que você estuda em um único lugar.
         </p>
         <div className="mt-9 flex flex-col items-center gap-3">
           <Link
             to="/register"
             className="inline-flex min-h-12 items-center justify-center rounded-lg bg-primary px-6 text-sm font-semibold text-primary-foreground outline-none transition hover:bg-primary-500 focus-visible:ring-2 focus-visible:ring-ring"
           >
-            Quero assinar agora
+            Quero organizar meus estudos
           </Link>
           <Link
             to="/login"

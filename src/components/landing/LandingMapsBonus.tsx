@@ -9,6 +9,7 @@ import {
   Sparkles,
   Workflow,
 } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const modules = [
   {
@@ -44,7 +45,7 @@ const modules = [
 ] as const;
 
 const highlights = [
-  { icon: FileImage, title: "+100 páginas", body: "PDF e imagens em alta resolução" },
+  { icon: FileImage, title: "Material visual", body: "PDF e imagens em alta resolução" },
   { icon: RefreshCw, title: "Atualizações por 1 ano", body: "Material atualizado durante o período" },
 ] as const;
 
@@ -68,10 +69,13 @@ export function LandingMapsBonus() {
               id="bonus-mapas-heading"
               className="mt-5 font-display text-3xl font-bold leading-tight tracking-tight sm:text-4xl"
             >
-              Organize a jornada no ClickEdital. Memorize TI com os Mapas da Déia.
+              Assine o ClickEdital e receba os Mapas de TI como bônus
             </h2>
             <p className="mt-5 max-w-xl text-base leading-relaxed text-slate-300 md:text-lg">
-              Menos tempo tentando resumir conteúdos extensos e mais agilidade para revisar os pontos que aparecem nas provas. O material visual conecta conceitos e ajuda você a voltar ao assunto com rapidez.
+              Além de organizar toda a sua preparação no ClickEdital, você recebe mapas visuais para revisar conteúdos de Tecnologia da Informação.
+            </p>
+            <p className="mt-3 max-w-xl text-sm leading-relaxed text-slate-400">
+              O ClickEdital é a plataforma principal e funciona para concursos de qualquer área. Os mapas são um bônus especialmente útil para quem também estuda TI.
             </p>
 
             <div className="mt-8 grid gap-3 sm:grid-cols-2">
@@ -84,12 +88,12 @@ export function LandingMapsBonus() {
               ))}
             </div>
 
-            <a
-              href="#oferta"
+            <Link
+              to="/register"
               className="mt-8 inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-white px-6 text-sm font-bold text-slate-950 outline-none transition hover:-translate-y-0.5 hover:bg-violet-50 focus-visible:ring-2 focus-visible:ring-violet-300"
             >
-              <Check className="h-4 w-4 text-primary" aria-hidden /> Quero ClickEdital + mapas
-            </a>
+              <Check className="h-4 w-4 text-primary" aria-hidden /> Quero organizar meus estudos
+            </Link>
           </div>
 
           <div className="relative">

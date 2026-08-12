@@ -16,9 +16,9 @@ import { LandingSteps } from "@/components/landing/LandingSteps";
 import { LandingValueStrip } from "@/components/landing/LandingValueStrip";
 import { useAuthStore } from "@/stores/authStore";
 
-const PAGE_TITLE = "ClickEdital — Planejamento para concursos com mapas mentais de TI";
+const PAGE_TITLE = "ClickEdital — Organize seu edital e acompanhe seus estudos";
 const PAGE_DESCRIPTION =
-  "Organize o edital, acompanhe sua evolução e receba como bônus os Mapas de TI da Déia. Assinatura anual ClickEdital por R$ 149, com garantia de 7 dias.";
+  "Cadastre as disciplinas e os tópicos do seu edital, organize prioridades e acompanhe horas, revisões, questões e evolução em um só lugar.";
 
 function useLandingSeo() {
   React.useEffect(() => {
@@ -63,11 +63,11 @@ export function LandingPage() {
       <LandingHeader />
       <main id="conteudo-principal">
         <LandingHero />
-        <LandingValueStrip />
-        <LandingShowcase />
-        <LandingMetrics />
         <LandingSteps />
         <LandingObjections />
+        <LandingShowcase />
+        <LandingValueStrip />
+        <LandingMetrics />
         <LandingFeatures />
         <LandingMapsBonus />
         <LandingOffer />

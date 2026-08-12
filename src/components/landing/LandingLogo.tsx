@@ -8,7 +8,7 @@ type LandingLogoProps = {
 };
 
 /**
- * Marca Click Edital na landing — delega ao componente compartilhado.
+ * Marca ClickEdital na landing — delega ao componente compartilhado.
  */
 export function LandingLogo({ className, size = "header", asLink = true }: LandingLogoProps) {
   return (

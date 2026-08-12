@@ -11,7 +11,7 @@ export function LandingFooter() {
         <div>
           <LandingLogo size="header" />
           <p className="mt-2 text-sm text-muted-foreground">
-            Seu planejamento de estudos rumo à aprovação.
+            Seu edital e sua rotina de estudos em um só lugar.
           </p>
         </div>
 
@@ -33,22 +33,10 @@ export function LandingFooter() {
               Assinar
             </a>
           </nav>
-          <nav aria-label="Legal" className="flex flex-col gap-2 text-sm">
-            <a href="#termo" className="text-muted-foreground hover:text-foreground" onClick={(e) => e.preventDefault()}>
-              Termos
-            </a>
-            <a
-              href="#privacidade"
-              className="text-muted-foreground hover:text-foreground"
-              onClick={(e) => e.preventDefault()}
-            >
-              Privacidade
-            </a>
-          </nav>
         </div>
       </div>
       <p className="mx-auto mt-10 max-w-6xl px-4 text-xs text-muted-foreground sm:px-6">
-        © {year} Click Edital
+        © {year} ClickEdital
       </p>
     </footer>
   );

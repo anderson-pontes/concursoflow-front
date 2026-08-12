@@ -68,21 +68,22 @@ export function LandingHeader() {
           >
             Entrar
           </Link>
-          <a
-            href="#oferta"
+          <Link
+            to="/register"
             className="inline-flex min-h-10 items-center justify-center rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground outline-none transition hover:bg-primary-500 focus-visible:ring-2 focus-visible:ring-ring"
           >
-            Quero assinar
-          </a>
+            Organizar meus estudos
+          </Link>
         </nav>
 
         <div className="flex items-center gap-2 md:hidden">
-          <a
-            href="#oferta"
+          <Link
+            to="/register"
+            aria-label="Organizar meus estudos"
             className="inline-flex min-h-10 items-center justify-center rounded-lg bg-primary px-3 text-sm font-semibold text-primary-foreground"
           >
-            Quero assinar
-          </a>
+            Organizar
+          </Link>
           <button
             type="button"
             className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-border text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring"
@@ -121,13 +122,13 @@ export function LandingHeader() {
             >
               Entrar
             </Link>
-            <a
-              href="#oferta"
+            <Link
+              to="/register"
               className="rounded-lg px-3 py-3 text-sm font-medium text-foreground hover:bg-muted"
               onClick={() => setMenuOpen(false)}
             >
-              Quero assinar
-            </a>
+              Organizar meus estudos
+            </Link>
           </nav>
         </div>
       ) : null}
