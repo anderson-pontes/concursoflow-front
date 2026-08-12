@@ -27,12 +27,11 @@ export function HandDrawnAccent({ variant, className }: HandDrawnAccentProps) {
       {variant === "swoop" && (
         <>
           <path
-            d="M7 103C25 67 62 38 106 22C164 2 234 8 290 31C320 43 341 58 354 74C357 78 356 81 352 83C349 85 346 82 343 79C325 61 304 49 284 41C230 20 166 15 110 31C69 45 38 72 19 105C16 110 4 110 7 103Z"
+            d="M7 103C27 65 63 37 107 22C164 3 233 8 289 30C319 42 341 57 354 73C357 77 356 79 353 81C350 82 347 80 344 77C327 59 305 47 284 39C230 18 166 13 109 29C67 42 36 71 18 105C15 110 4 109 7 103Z"
             fill="currentColor"
           />
-          <path {...commonProps} d="M17 98C36 66 69 42 109 28" strokeWidth="2.5" opacity="0.5" />
-          <path {...commonProps} d="M296 37C318 47 336 59 349 75" strokeWidth="2" opacity="0.45" />
-          <path {...commonProps} d="M24 108C45 77 73 55 105 42" strokeWidth="2" opacity="0.35" />
+          <path {...commonProps} d="M17 99C37 66 69 43 108 30" strokeWidth="1.8" opacity="0.38" />
+          <path {...commonProps} d="M298 37C319 47 336 59 349 74" strokeWidth="1.5" opacity="0.32" />
         </>
       )}
 
