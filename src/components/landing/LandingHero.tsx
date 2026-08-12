@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 
 import dashboardSrc from "@/assets/dashboard.png";
 import mascotSrc from "@/assets/mascote.svg";
+import { HandDrawnAccent } from "@/components/landing/HandDrawnAccent";
 import { LandingLogo } from "@/components/landing/LandingLogo";
 import { LandingShot } from "@/components/landing/LandingShot";
 
@@ -24,21 +25,10 @@ export function LandingHero() {
               Transforme o edital do seu concurso em um plano de estudos{" "}
               <span className="text-primary">claro e organizado.</span>
             </span>
-            <svg
+            <HandDrawnAccent
+              variant="swoop"
               className="pointer-events-none absolute -left-6 top-[48%] z-0 h-[45%] w-[calc(100%+3rem)] overflow-visible text-yellow-400 sm:-left-10 sm:top-[49%] sm:h-[43%] sm:w-[calc(100%+5rem)]"
-              viewBox="0 0 360 110"
-              fill="none"
-              preserveAspectRatio="none"
-              aria-hidden
-            >
-              <path
-                d="M8 103C27 61 61 34 105 21C164 3 235 9 290 32C319 44 340 59 352 76"
-                stroke="currentColor"
-                strokeWidth="9"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
+            />
           </h1>
           <p className="mt-6 max-w-xl text-base leading-relaxed text-muted-foreground motion-safe:animate-[landing-fade-up_0.55s_ease-out_0.16s_both] sm:text-lg">
             Cadastre as disciplinas e os tópicos do seu edital, organize suas prioridades e acompanhe horas estudadas, revisões, questões e evolução em um único lugar.

@@ -1,5 +1,7 @@
 import { CheckCircle2 } from "lucide-react";
 
+import { HandDrawnAccent } from "@/components/landing/HandDrawnAccent";
+
 const benefits = [
   "Visualize todo o conteúdo do edital.",
   "Descubra quais assuntos precisam de mais atenção.",
@@ -19,7 +21,11 @@ export function LandingObjections() {
             id="objecoes-heading"
             className="mt-2 text-2xl font-semibold tracking-tight text-foreground md:text-3xl"
           >
-            Pare de estudar sem saber se está realmente avançando
+            Pare de estudar sem saber se está{" "}
+            <span className="relative isolate inline-block px-1">
+              <span className="relative z-10">realmente avançando</span>
+              <HandDrawnAccent variant="circle" className="absolute -inset-x-3 -inset-y-2 z-0 h-[calc(100%+1rem)] w-[calc(100%+1.5rem)] text-emerald-500/55" />
+            </span>
           </h2>
           <p className="mt-4 text-sm leading-relaxed text-muted-foreground md:text-base">
             Quando o edital está espalhado entre PDFs, planilhas e anotações, fica difícil saber o que priorizar. O ClickEdital centraliza sua preparação e transforma seus registros em decisões mais claras.

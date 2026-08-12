@@ -1,6 +1,7 @@
 import { BarChart3, BellRing, CalendarDays, Check, ClipboardList, Clock3, Timer } from "lucide-react";
 
 import dashboardSrc from "@/assets/dashboard.png";
+import { HandDrawnAccent } from "@/components/landing/HandDrawnAccent";
 import { LandingShot } from "@/components/landing/LandingShot";
 
 const features = [
@@ -72,7 +73,11 @@ export function LandingFeatures() {
             ))}
           </ul>
 
-          <div className="lg:sticky lg:top-24">
+          <div className="relative lg:sticky lg:top-24">
+            <HandDrawnAccent
+              variant="arrow"
+              className="absolute -right-2 -top-12 z-10 hidden h-16 w-40 -rotate-6 text-yellow-400 md:block"
+            />
             <LandingShot
               src={dashboardSrc}
               alt="Dashboard ClickEdital com métricas, heatmap e plano do dia"

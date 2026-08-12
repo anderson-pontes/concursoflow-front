@@ -1,6 +1,8 @@
 import { BookOpenCheck, ClipboardList, ListTodo, TrendingUp } from "lucide-react";
 import { Link } from "react-router-dom";
 
+import { HandDrawnAccent } from "@/components/landing/HandDrawnAccent";
+
 const steps = [
   { n: "01", icon: ClipboardList, title: "Cadastre seu concurso", body: "Informe o concurso que está estudando e cadastre as disciplinas e os tópicos previstos no edital." },
   { n: "02", icon: ListTodo, title: "Organize suas prioridades", body: "Defina pesos, níveis de domínio, metas e prioridades para concentrar seu tempo nos assuntos mais importantes." },
@@ -12,7 +14,17 @@ export function LandingSteps() {
   return (
     <section id="como-funciona" className="relative scroll-mt-20 overflow-hidden bg-primary-50 py-20 md:py-28" aria-labelledby="como-heading">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
-        <div className="text-center"><p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">Como funciona na prática</p><h2 id="como-heading" className="mx-auto mt-3 max-w-3xl text-3xl font-bold tracking-tight text-foreground md:text-4xl">Do edital à rotina de estudos em poucos passos</h2><p className="mx-auto mt-3 max-w-2xl text-muted-foreground">O ClickEdital transforma o conteúdo do seu concurso em uma rotina que você consegue acompanhar e ajustar.</p></div>
+        <div className="text-center">
+          <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">Como funciona na prática</p>
+          <h2 id="como-heading" className="mx-auto mt-3 max-w-3xl text-3xl font-bold tracking-tight text-foreground md:text-4xl">
+            Do edital à rotina de estudos em{" "}
+            <span className="relative isolate inline-block">
+              <span className="relative z-10">poucos passos</span>
+              <HandDrawnAccent variant="underline" className="absolute -bottom-7 left-0 z-0 h-9 w-full text-primary/55" />
+            </span>
+          </h2>
+          <p className="mx-auto mt-5 max-w-2xl text-muted-foreground">O ClickEdital transforma o conteúdo do seu concurso em uma rotina que você consegue acompanhar e ajustar.</p>
+        </div>
         <ol className="relative mt-14 grid list-none gap-6 sm:grid-cols-2 lg:grid-cols-4">
           <div className="absolute left-[12%] right-[12%] top-10 hidden border-t-2 border-dashed border-primary/25 lg:block" aria-hidden />
           {steps.map((step, index) => (

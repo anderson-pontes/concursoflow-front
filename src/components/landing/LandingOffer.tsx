@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom";
 import { Check, ShieldCheck } from "lucide-react";
 
+import { HandDrawnAccent } from "@/components/landing/HandDrawnAccent";
+
 const bullets = [
   "12 meses de acesso à plataforma",
   "Organização do edital por disciplinas e tópicos",
@@ -42,7 +44,11 @@ export function LandingOffer() {
             </p>
             <p className="mt-1 text-sm text-muted-foreground">por ano</p>
             <p className="mt-3 text-base font-semibold text-primary">
-              em até <span className="tabular-nums">10x</span>
+              em até{" "}
+              <span className="relative isolate inline-block px-1 tabular-nums">
+                <span className="relative z-10">10x</span>
+                <HandDrawnAccent variant="wave" className="absolute -bottom-4 left-0 z-0 h-5 w-full text-yellow-400" />
+              </span>
             </p>
             <p className="mt-2 text-xs text-muted-foreground">
               Pagamento seguro · acesso após confirmação · bônus sem custo adicional
