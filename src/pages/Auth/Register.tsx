@@ -214,9 +214,15 @@ export function Register() {
               })}
             />
           </label>
-          <AuthEmailField id="reg-email" registration={register("email")} error={errors.email?.message} />
+          <AuthEmailField
+            id="reg-email"
+            label="E-mail"
+            registration={register("email")}
+            error={errors.email?.message}
+          />
           <AuthEmailField
             id="reg-email2"
+            label="Confirmar e-mail"
             registration={register("email_confirm")}
             error={errors.email_confirm?.message}
           />

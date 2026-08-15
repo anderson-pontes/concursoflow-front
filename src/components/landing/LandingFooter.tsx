@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Mail, Youtube } from "lucide-react";
+import { Instagram, Mail, Youtube } from "lucide-react";
 
 import { LandingLogo } from "@/components/landing/LandingLogo";
 
@@ -56,6 +56,16 @@ export function LandingFooter() {
               >
                 <Youtube className="h-4 w-4 shrink-0" aria-hidden />
                 YouTube @clickedital
+              </a>
+              <a
+                href="https://www.instagram.com/clickedital/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex min-h-8 items-center gap-2 text-muted-foreground transition-colors hover:text-foreground focus-visible:rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                aria-label="Instagram @clickedital, abre em nova aba"
+              >
+                <Instagram className="h-4 w-4 shrink-0" aria-hidden />
+                Instagram @clickedital
               </a>
             </div>
           </section>
