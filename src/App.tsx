@@ -42,6 +42,10 @@ const MentalMaps = lazyNamed(() => import("./pages/MentalMaps"), "MentalMaps");
 const AdminEstudos = lazyNamed(() => import("./pages/AdminEstudos"), "AdminEstudos");
 const GestaoUsuarios = lazyNamed(() => import("./pages/admin/GestaoUsuarios"), "GestaoUsuarios");
 const UsuarioDetalhe = lazyNamed(() => import("./pages/admin/UsuarioDetalhe"), "UsuarioDetalhe");
+const EditaisCatalogo = lazyNamed(() => import("./pages/admin/EditaisCatalogo"), "EditaisCatalogo");
+const EditalCatalogoEditor = lazyNamed(() => import("./pages/admin/EditalCatalogoEditor"), "EditalCatalogoEditor");
+const AtivarEditalCatalogo = lazyNamed(() => import("./pages/AtivarEditalCatalogo"), "AtivarEditalCatalogo");
+const PlanoGuiado = lazyNamed(() => import("./pages/PlanoGuiado"), "PlanoGuiado");
 const Perfil = lazyNamed(() => import("./pages/Perfil"), "Perfil");
 
 function LazyPage({ children }: { children: React.ReactNode }) {
@@ -124,6 +128,22 @@ export default function App() {
       />
       <Route path="/concursos/planos" element={<Navigate to="/concursos" replace />} />
       <Route path="/concursos/planos/:id" element={<Navigate to="/concursos" replace />} />
+      <Route
+        path="/concursos/adicionar"
+        element={
+          <Layout requireAuth={!isAuthed}>
+            <LazyPage><AtivarEditalCatalogo /></LazyPage>
+          </Layout>
+        }
+      />
+      <Route
+        path="/planos/novo"
+        element={
+          <Layout requireAuth={!isAuthed}>
+            <LazyPage><PlanoGuiado /></LazyPage>
+          </Layout>
+        }
+      />
       <Route
         path="/disciplinas/:disciplinaId"
         element={
@@ -232,6 +252,22 @@ export default function App() {
                 <GestaoUsuarios />
               </LazyPage>
             </AdminRoute>
+          </Layout>
+        }
+      />
+      <Route
+        path="/admin/editais"
+        element={
+          <Layout requireAuth={!isAuthed}>
+            <AdminRoute><LazyPage><EditaisCatalogo /></LazyPage></AdminRoute>
+          </Layout>
+        }
+      />
+      <Route
+        path="/admin/editais/:id"
+        element={
+          <Layout requireAuth={!isAuthed}>
+            <AdminRoute><LazyPage><EditalCatalogoEditor /></LazyPage></AdminRoute>
           </Layout>
         }
       />

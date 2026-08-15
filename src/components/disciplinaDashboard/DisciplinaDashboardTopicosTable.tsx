@@ -163,6 +163,11 @@ function SortableRow({
       </td>
       <td className="max-w-[200px] px-3 py-3 font-medium text-slate-900 dark:text-neutral-100">
         <span className="line-clamp-2">{row.descricao}</span>
+        <span className="mt-1 block text-[10px] font-normal text-muted-foreground">
+          {row.sessoes_count} {row.sessoes_count === 1 ? "sessão" : "sessões"}
+          {row.ultimo_estudo_em ? ` · último ${new Date(row.ultimo_estudo_em).toLocaleDateString("pt-BR")}` : " · nunca estudado"}
+          {row.proxima_revisao_em ? ` · revisão ${new Date(`${row.proxima_revisao_em}T12:00:00`).toLocaleDateString("pt-BR")}` : ""}
+        </span>
       </td>
       <td className="px-2 py-3">
         <input
@@ -318,6 +323,7 @@ export function DisciplinaDashboardTopicosTable({
   highlightedTopicoId,
 }: DisciplinaDashboardTopicosTableProps) {
   const [localOrder, setLocalOrder] = React.useState<string[]>([]);
+  const [filtro, setFiltro] = React.useState<"todos" | "pendentes" | "concluidos" | "nunca" | "baixo" | "revisao">("todos");
 
   React.useEffect(() => {
     if (data?.topicos) {
@@ -335,6 +341,18 @@ export function DisciplinaDashboardTopicosTable({
     const byId = new Map(data.topicos.map((t) => [t.id, t]));
     return localOrder.map((id) => byId.get(id)).filter(Boolean) as DisciplinaDashboardTopicoRow[];
   }, [data?.topicos, localOrder]);
+
+  const visibleRows = React.useMemo(() => {
+    const hoje = new Date().toISOString().slice(0, 10);
+    return orderedRows.filter((row) => {
+      if (filtro === "pendentes") return !row.concluido_edital;
+      if (filtro === "concluidos") return row.concluido_edital;
+      if (filtro === "nunca") return row.sessoes_count === 0;
+      if (filtro === "baixo") return row.certas + row.erradas + row.em_branco > 0 && row.aproveitamento_pct < 60;
+      if (filtro === "revisao") return Boolean(row.proxima_revisao_em && row.proxima_revisao_em <= hoje);
+      return true;
+    });
+  }, [orderedRows, filtro]);
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
@@ -357,6 +375,7 @@ export function DisciplinaDashboardTopicosTable({
       </div>
 
       <div className="border-b border-slate-100 p-4 dark:border-neutral-800">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <button
           type="button"
           disabled={isDemoMode}
@@ -366,6 +385,13 @@ export function DisciplinaDashboardTopicosTable({
           <Plus className="h-4 w-4" />
           Adicionar tópicos
         </button>
+        <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+          Filtrar conteúdo
+          <select value={filtro} onChange={(event) => setFiltro(event.target.value as typeof filtro)} className="mt-1 block min-h-11 rounded-lg border border-border bg-background px-3 text-sm font-medium normal-case text-foreground">
+            <option value="todos">Todos</option><option value="pendentes">Pendentes</option><option value="concluidos">Concluídos</option><option value="nunca">Nunca estudados</option><option value="baixo">Baixo desempenho</option><option value="revisao">Revisão atrasada</option>
+          </select>
+        </label>
+        </div>
       </div>
 
       <TopicosModal
@@ -428,7 +454,7 @@ export function DisciplinaDashboardTopicosTable({
             </thead>
             <SortableContext items={localOrder} strategy={verticalListSortingStrategy}>
               <tbody>
-                {orderedRows.map((row) => (
+                {visibleRows.map((row) => (
                   <SortableRow
                     key={row.id}
                     row={row}
@@ -453,6 +479,9 @@ export function DisciplinaDashboardTopicosTable({
           <p className="px-6 py-10 text-center text-sm text-slate-500">
             Nenhum tópico cadastrado. Adicione o primeiro acima.
           </p>
+        ) : null}
+        {!isLoading && data && data.topicos.length > 0 && visibleRows.length === 0 ? (
+          <p className="px-6 py-10 text-center text-sm text-slate-500">Nenhum tópico corresponde a este filtro.</p>
         ) : null}
       </div>
     </section>

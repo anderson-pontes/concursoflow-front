@@ -28,6 +28,9 @@ export type DisciplinaDashboardTopicoRow = {
   prioridade: number;
   ultima_revisao_em: string | null;
   intervalo_idx: number;
+  sessoes_count: number;
+  ultimo_estudo_em: string | null;
+  proxima_revisao_em: string | null;
 };
 
 export type DisciplinaDashboardResponse = {

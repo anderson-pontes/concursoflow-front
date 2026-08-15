@@ -2,7 +2,7 @@ import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { differenceInCalendarDays, format, parseISO } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { Calendar, CheckCircle2, Flame, Target } from "lucide-react";
+import { Calendar, CheckCircle2, Flame, Play, Target } from "lucide-react";
 import { Link } from "react-router-dom";
 
 import { api } from "@/services/api";
@@ -53,6 +53,18 @@ type Concurso = {
   data_prova: string | null;
 };
 
+type ProximoEstudo = {
+  item_id: string;
+  concurso_id: string;
+  disciplina_id: string;
+  disciplina_nome: string;
+  topico_id: string | null;
+  topico_nome: string | null;
+  data: string;
+  duracao_minutos: number;
+  sessoes_recentes: number;
+};
+
 function fmtHoras(h: number): string {
   if (h <= 0) return "0 min";
   const totalMin = Math.round(h * 60);
@@ -98,6 +110,12 @@ export function Dashboard() {
     () => concursos.find((c) => c.id === concursoAtivoId) ?? null,
     [concursos, concursoAtivoId],
   );
+
+  const { data: proximoEstudo, isLoading: loadingProximo } = useQuery({
+    queryKey: ["dashboard", "proximo-estudo", concursoAtivoId],
+    queryFn: async () => (await api.get<ProximoEstudo | null>("/dashboard/proximo-estudo", { params: { concurso_id: concursoAtivoId } })).data,
+    enabled: Boolean(concursoAtivoId),
+  });
 
   const diasParaProva = React.useMemo(() => {
     if (!concursoAtivo?.data_prova) return null;
@@ -181,6 +199,21 @@ export function Dashboard() {
   return (
     <div className="space-y-6 pb-8">
       {!concursoAtivoId ? <BannerSemConcurso /> : null}
+
+      {concursoAtivoId ? (
+        <section className="rounded-2xl border border-primary/25 bg-gradient-to-r from-primary-muted to-card p-5 shadow-sm" aria-labelledby="proximo-estudo-title">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wide text-primary">Próxima ação</p>
+              <h2 id="proximo-estudo-title" className="mt-1 text-lg font-bold text-card-foreground">
+                {loadingProximo ? "Buscando seu próximo estudo…" : proximoEstudo ? proximoEstudo.disciplina_nome : "Planejamento concluído por enquanto"}
+              </h2>
+              {proximoEstudo ? <p className="mt-1 text-sm text-muted-foreground">{proximoEstudo.topico_nome ? `${proximoEstudo.topico_nome} · ` : ""}{format(parseISO(proximoEstudo.data), "dd 'de' MMMM", { locale: ptBR })} · {proximoEstudo.duracao_minutos} min</p> : !loadingProximo ? <p className="mt-1 text-sm text-muted-foreground">Crie ou ajuste o cronograma para receber uma próxima recomendação.</p> : null}
+            </div>
+            {proximoEstudo ? <div className="flex flex-wrap gap-2"><Link to={`/pomodoro?disciplina=${proximoEstudo.disciplina_id}`} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground hover:bg-primary/90"><Play className="h-4 w-4" /> Iniciar estudo</Link><button type="button" onClick={() => { setRegistroPrefill({ disciplinaId: proximoEstudo.disciplina_id, topicoId: proximoEstudo.topico_id }); setRegistroOpen(true); }} className="min-h-11 rounded-lg border border-border bg-card px-4 text-sm font-semibold hover:bg-muted">Registrar manualmente</button></div> : <ButtonLink />}
+          </div>
+        </section>
+      ) : null}
 
       <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
         <div>
@@ -450,6 +483,7 @@ export function Dashboard() {
           setRegistroPrefill(null);
         }}
         defaultDisciplinaId={registroPrefill?.disciplinaId ?? null}
+        defaultConcursoId={concursoAtivoId}
         defaultTopicos={
           registroPrefill?.topicoId
             ? [{ id: registroPrefill.topicoId, nome: "" }]
@@ -459,3 +493,5 @@ export function Dashboard() {
     </div>
   );
 }
+
+function ButtonLink() { return <Link to="/planos/novo" className="inline-flex min-h-11 items-center justify-center rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground hover:bg-primary/90">Criar plano guiado</Link>; }

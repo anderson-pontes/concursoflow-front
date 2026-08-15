@@ -1,6 +1,7 @@
 import React from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 import { ConcursoDetalheModal } from "@/components/concursos/ConcursoDetalheModal";
 import { ConcursoCardSkeleton } from "@/components/concursos/ConcursoCardSkeleton";
@@ -23,6 +24,8 @@ import type { Disciplina } from "@/lib/disciplinas/types";
 
 export function Concursos() {
   const qc = useQueryClient();
+  const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const {
     data: concursos,
@@ -103,6 +106,14 @@ export function Concursos() {
     setInput(DEFAULT_CONCURSO_INPUT);
     setIsModalOpen(true);
   };
+
+  React.useEffect(() => {
+    if (searchParams.get("novo") !== "manual") return;
+    openCreate();
+    setSearchParams({}, { replace: true });
+    // Executa apenas quando a URL solicita explicitamente o fluxo manual.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
 
   const openEdit = (c: Concurso) => {
     setEditing(c);
@@ -205,6 +216,7 @@ export function Concursos() {
         onSearchChange={setSearch}
         onStatusFilterChange={setStatusFilter}
         onCreate={openCreate}
+        onChooseCatalog={() => navigate("/planos/novo")}
       />
 
       <ConcursosSummaryBar totalCadastrados={totalCadastrados} totalAtivos={totalAtivos} />
@@ -222,7 +234,7 @@ export function Concursos() {
           ))}
         </div>
       ) : !concursos?.length ? (
-        <ConcursosEmptyState onCreate={openCreate} />
+        <ConcursosEmptyState onCreate={openCreate} onChooseCatalog={() => navigate("/planos/novo")} />
       ) : (
         <div
           className={cn(

@@ -8,6 +8,7 @@ import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { invalidateEstudosQueries } from "@/lib/estudos/invalidateQueries";
+import { cn } from "@/lib/utils";
 import { api } from "@/services/api";
 import { createCategoria, listCategorias } from "@/services/categorias";
 import { getRevisoesConfig } from "@/services/revisoesConfig";
@@ -19,6 +20,7 @@ type Props = {
   open: boolean;
   onClose: () => void;
   defaultDisciplinaId?: string | null;
+  defaultConcursoId?: string | null;
   /** Tópicos pré-selecionados ao abrir um registro novo (sem sessaoId). */
   defaultTopicos?: RegistroDefaultTopico[] | null;
   /** Duração em segundos pré-preenchida (vinda do timer). Ignorada ao editar sessão existente. */
@@ -43,6 +45,8 @@ type SessaoEstudoApi = {
   topico_id: string | null;
   topico_ids: string[];
   plano_id: string | null;
+  concurso_id: string | null;
+  modalidade: "teoria" | "questoes" | "revisao" | null;
   categoria_id: string | null;
   data_referencia: string | null;
   inicio: string;
@@ -129,6 +133,7 @@ export function RegistroEstudoModal({
   open,
   onClose,
   defaultDisciplinaId,
+  defaultConcursoId,
   defaultTopicos,
   defaultDuracaoSegundos,
   defaultAcertos,
@@ -145,6 +150,7 @@ export function RegistroEstudoModal({
   const [dateCustom, setDateCustom] = React.useState(new Date().toISOString().slice(0, 10));
 
   const [categoriaId, setCategoriaId] = React.useState("");
+  const [modalidade, setModalidade] = React.useState<"teoria" | "questoes" | "revisao">("teoria");
   const [disciplinaId, setDisciplinaId] = React.useState(defaultDisciplinaId ?? "");
 
   const [hours, setHours] = React.useState(0);
@@ -189,6 +195,7 @@ export function RegistroEstudoModal({
     setMaterial("");
     setComentarios("");
     setTeoriaFinalizada(false);
+    setModalidade("teoria");
     setContabilizar(true);
     setProgramarRevisoes(false);
     setAcertos(defaultAcertos ?? 0);
@@ -282,6 +289,7 @@ export function RegistroEstudoModal({
     setMaterial(sessaoData.material ?? "");
     setComentarios(sessaoData.comentarios ?? "");
     setTeoriaFinalizada(sessaoData.teoria_finalizada);
+    setModalidade(sessaoData.modalidade ?? (sessaoData.questoes_acertos + sessaoData.questoes_erros + sessaoData.questoes_em_branco > 0 ? "questoes" : "teoria"));
     setContabilizar(sessaoData.contabilizar_no_planejamento);
     setProgramarRevisoes(sessaoData.programar_revisoes);
     setRevisoesDias(
@@ -406,6 +414,8 @@ export function RegistroEstudoModal({
         topico_id: selectedTopicos[0]?.id ?? null,
         topico_ids: selectedTopicos.map((t) => t.id),
         plano_id: sessaoId && sessaoData ? sessaoData.plano_id : null,
+        concurso_id: defaultConcursoId ?? concursoAtivoId ?? (sessaoId && sessaoData ? sessaoData.concurso_id : null),
+        modalidade,
         categoria_id: categoriaId || null,
         data_referencia: baseDate,
         inicio: inicio.toISOString(),
@@ -603,6 +613,15 @@ export function RegistroEstudoModal({
               </div>
             </div>
           </div>
+
+          <fieldset>
+            <legend className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-neutral-400">Modalidade do estudo</legend>
+            <div className="mt-2 grid grid-cols-3 gap-2">
+              {([['teoria', 'Teoria'], ['questoes', 'Questões'], ['revisao', 'Revisão']] as const).map(([value, label]) => (
+                <button key={value} type="button" aria-pressed={modalidade === value} onClick={() => setModalidade(value)} className={cn("min-h-11 rounded-lg border px-3 text-sm font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary", modalidade === value ? "border-primary bg-primary text-primary-foreground" : "border-border bg-background hover:bg-muted")}>{label}</button>
+              ))}
+            </div>
+          </fieldset>
 
           <section className="rounded-xl border-[0.5px] border-slate-200/90 bg-slate-50/50 p-3 dark:border-neutral-800 dark:bg-neutral-900/60">
             <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-neutral-400">Tempo de estudo</p>

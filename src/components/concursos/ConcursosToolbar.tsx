@@ -9,6 +9,7 @@ type Props = {
   onSearchChange: (value: string) => void;
   onStatusFilterChange: (value: ConcursoStatusFilter) => void;
   onCreate: () => void;
+  onChooseCatalog: () => void;
 };
 
 const SEGMENTS: { id: ConcursoStatusFilter; label: string }[] = [
@@ -23,6 +24,7 @@ export function ConcursosToolbar({
   onSearchChange,
   onStatusFilterChange,
   onCreate,
+  onChooseCatalog,
 }: Props) {
   return (
     <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
@@ -69,10 +71,13 @@ export function ConcursosToolbar({
         <button
           type="button"
           onClick={onCreate}
-          className="inline-flex h-11 items-center justify-center gap-2 rounded-[10px] bg-primary px-5 text-sm font-bold text-white shadow-sm transition-all duration-200 hover:-translate-y-px hover:bg-primary-700"
+          className="inline-flex h-11 items-center justify-center gap-2 rounded-[10px] border border-border bg-card px-4 text-sm font-semibold text-foreground transition hover:bg-muted"
         >
           <span className="text-lg leading-none">+</span>
-          Novo concurso
+          Cadastro manual
+        </button>
+        <button type="button" onClick={onChooseCatalog} className="inline-flex h-11 items-center justify-center gap-2 rounded-[10px] bg-primary px-5 text-sm font-bold text-primary-foreground shadow-sm transition-all duration-200 hover:-translate-y-px hover:bg-primary-700">
+          Criar plano guiado
         </button>
       </div>
     </div>
@@ -101,7 +106,7 @@ export function ConcursosSummaryBar({
   );
 }
 
-export function ConcursosEmptyState({ onCreate }: { onCreate: () => void }) {
+export function ConcursosEmptyState({ onCreate, onChooseCatalog }: { onCreate: () => void; onChooseCatalog: () => void }) {
   return (
     <div
       className="flex flex-col items-center justify-center rounded-2xl border-[1.5px] border-[var(--border-default)] bg-[var(--bg-surface)] px-8 py-16 text-center shadow-card"
@@ -111,13 +116,10 @@ export function ConcursosEmptyState({ onCreate }: { onCreate: () => void }) {
       <p className="mt-2 max-w-md text-sm text-[var(--text-secondary)]">
         Adicione seu primeiro concurso-alvo e comece a estudar com foco.
       </p>
-      <button
-        type="button"
-        onClick={onCreate}
-        className="mt-8 inline-flex items-center gap-2 rounded-[10px] bg-primary px-6 py-3.5 text-sm font-bold text-white shadow-md transition-all duration-200 hover:-translate-y-px hover:bg-primary-700"
-      >
-        + Cadastrar meu primeiro concurso
-      </button>
+      <div className="mt-8 flex flex-col gap-2 sm:flex-row">
+        <button type="button" onClick={onChooseCatalog} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-[10px] bg-primary px-6 py-3 text-sm font-bold text-primary-foreground shadow-md transition hover:-translate-y-px hover:bg-primary-700">Criar plano guiado</button>
+        <button type="button" onClick={onCreate} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-[10px] border border-border bg-card px-6 py-3 text-sm font-semibold text-foreground hover:bg-muted">Cadastrar manualmente</button>
+      </div>
     </div>
   );
 }

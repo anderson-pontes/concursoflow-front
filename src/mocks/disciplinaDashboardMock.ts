@@ -1,7 +1,7 @@
 import type { DisciplinaDashboardResponse, DisciplinaDashboardTopicoRow } from "@/types/disciplinaDashboard";
 
 function enrichTopico(
-  t: Omit<DisciplinaDashboardTopicoRow, "peso" | "dominio" | "prioridade" | "ultima_revisao_em" | "intervalo_idx">,
+  t: Omit<DisciplinaDashboardTopicoRow, "peso" | "dominio" | "prioridade" | "ultima_revisao_em" | "intervalo_idx" | "sessoes_count" | "ultimo_estudo_em" | "proxima_revisao_em">,
   idx: number,
 ): DisciplinaDashboardTopicoRow {
   const dominio = t.concluido_edital ? 5 : Math.min(4, 1 + (idx % 4));
@@ -13,6 +13,9 @@ function enrichTopico(
     prioridade: peso * (6 - dominio),
     ultima_revisao_em: dominio >= 5 ? "2026-06-01" : null,
     intervalo_idx: dominio >= 5 ? idx % 5 : 0,
+    sessoes_count: Math.max(0, 5 - (idx % 6)),
+    ultimo_estudo_em: idx % 6 === 5 ? null : "2026-08-10T14:00:00Z",
+    proxima_revisao_em: dominio >= 5 ? "2026-08-14" : null,
   };
 }
 

@@ -3,6 +3,7 @@ import { createPortal } from "react-dom";
 import { NavLink, matchPath, useLocation, useNavigate } from "react-router-dom";
 import {
   Bell,
+  LibraryBig,
   BrainCircuit,
   BookOpen,
   CalendarDays,
@@ -141,7 +142,10 @@ export function Sidebar({
     if (isAdminUser(user)) {
       base.push({
         label: "ADMINISTRAÇÃO",
-        items: [{ to: "/admin/usuarios", label: "Gestão de Usuários", icon: Users }],
+        items: [
+          { to: "/admin/usuarios", label: "Gestão de Usuários", icon: Users },
+          { to: "/admin/editais", label: "Catálogo de Editais", icon: LibraryBig },
+        ],
       });
     }
     return base;
