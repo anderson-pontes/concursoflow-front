@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { Instagram, Mail, Youtube } from "lucide-react";
 
 import { LandingLogo } from "@/components/landing/LandingLogo";
 
@@ -33,6 +34,41 @@ export function LandingFooter() {
               Assinar
             </a>
           </nav>
+
+          <section aria-labelledby="landing-contact-title" className="min-w-0">
+            <h2 id="landing-contact-title" className="text-sm font-semibold text-foreground">
+              Contato
+            </h2>
+            <div className="mt-2 flex flex-col gap-2 text-sm">
+              <a
+                href="mailto:clickedital@gmail.com"
+                className="inline-flex min-h-8 items-center gap-2 text-muted-foreground transition-colors hover:text-foreground focus-visible:rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              >
+                <Mail className="h-4 w-4 shrink-0" aria-hidden />
+                clickedital@gmail.com
+              </a>
+              <a
+                href="https://www.youtube.com/@clickedital"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex min-h-8 items-center gap-2 text-muted-foreground transition-colors hover:text-foreground focus-visible:rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                aria-label="Canal @clickedital no YouTube, abre em nova aba"
+              >
+                <Youtube className="h-4 w-4 shrink-0" aria-hidden />
+                YouTube @clickedital
+              </a>
+              <a
+                href="https://www.instagram.com/clickedital/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex min-h-8 items-center gap-2 text-muted-foreground transition-colors hover:text-foreground focus-visible:rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                aria-label="Instagram @clickedital, abre em nova aba"
+              >
+                <Instagram className="h-4 w-4 shrink-0" aria-hidden />
+                Instagram @clickedital
+              </a>
+            </div>
+          </section>
         </div>
       </div>
       <p className="mx-auto mt-10 max-w-6xl px-4 text-xs text-muted-foreground sm:px-6">

@@ -38,9 +38,10 @@ type AuthEmailFieldProps = {
   id: string;
   registration: UseFormRegisterReturn<string>;
   error?: string;
+  label?: string;
 };
 
-export function AuthEmailField({ id, registration, error }: AuthEmailFieldProps) {
+export function AuthEmailField({ id, registration, error, label = "E-mail" }: AuthEmailFieldProps) {
   const hasError = Boolean(error);
   return (
     <div className="space-y-1.5">
@@ -49,7 +50,7 @@ export function AuthEmailField({ id, registration, error }: AuthEmailFieldProps)
         type="email"
         autoComplete="email"
         variant="auth"
-        label="E-mail"
+        label={label}
         error={hasError}
         leftSlot="✉️"
         aria-invalid={hasError}
