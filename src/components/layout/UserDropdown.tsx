@@ -1,4 +1,4 @@
-import { KeyRound, LogOut, User } from "lucide-react";
+import { KeyRound, LogOut, Mail, User, Youtube } from "lucide-react";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -92,6 +92,35 @@ export function UserDropdown({ compact = false }: { compact?: boolean }) {
                 <KeyRound className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden />
                 Alterar senha
               </button>
+            </div>
+
+            <div className="border-t border-border py-1">
+              <p className="px-3 pb-1 pt-2 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+                Suporte
+              </p>
+              <a
+                role="menuitem"
+                tabIndex={-1}
+                href="mailto:clickedital@gmail.com"
+                className="flex min-h-11 w-full items-center gap-2 px-3 text-sm text-foreground hover:bg-surface-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset"
+                onClick={() => setMenuOpen(false)}
+              >
+                <Mail className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden />
+                Suporte por e-mail
+              </a>
+              <a
+                role="menuitem"
+                tabIndex={-1}
+                href="https://www.youtube.com/@clickedital"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex min-h-11 w-full items-center gap-2 px-3 text-sm text-foreground hover:bg-surface-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset"
+                aria-label="Canal @clickedital no YouTube, abre em nova aba"
+                onClick={() => setMenuOpen(false)}
+              >
+                <Youtube className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden />
+                Canal @clickedital
+              </a>
             </div>
 
             <div className="border-t border-border py-1">
