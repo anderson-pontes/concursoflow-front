@@ -1,4 +1,4 @@
-import { LayoutGrid, List, Plus, Search } from "lucide-react";
+import { BookOpenText, LayoutGrid, List, Plus, Search } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 
 import { cn } from "@/lib/utils";
@@ -23,8 +23,8 @@ type DisciplinasToolbarProps = {
   summary: DisciplinasSummary;
   concursoId: string;
   isCreating: boolean;
-  viewMode: "cards" | "table";
-  onViewModeChange: (mode: "cards" | "table") => void;
+  viewMode: "cards" | "table" | "edital";
+  onViewModeChange: (mode: "cards" | "table" | "edital") => void;
 };
 
 export function DisciplinasToolbar({
@@ -176,6 +176,21 @@ export function DisciplinasToolbar({
               )}
             >
               <List className="h-4 w-4" aria-hidden />
+            </button>
+            <button
+              type="button"
+              aria-label="Vista do edital verticalizado"
+              aria-pressed={viewMode === "edital"}
+              disabled={!concursoId}
+              onClick={() => onViewModeChange("edital")}
+              className={cn(
+                "inline-flex h-9 w-9 items-center justify-center rounded-md transition-colors disabled:cursor-not-allowed disabled:opacity-40",
+                viewMode === "edital"
+                  ? "bg-card text-foreground shadow-sm"
+                  : "text-muted-foreground hover:text-foreground",
+              )}
+            >
+              <BookOpenText className="h-4 w-4" aria-hidden />
             </button>
           </div>
         </div>

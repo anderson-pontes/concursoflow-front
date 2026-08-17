@@ -59,3 +59,16 @@ export type PlanoGuiadoResponse = {
   sessoes_planejadas: number;
   preview: PlanejamentoPreview;
 };
+
+export type PlanejamentoAtual = {
+  concurso_id: string;
+  nome: string;
+  orgao: string;
+  cargo: string | null;
+  banca: string | null;
+  data_prova: string | null;
+  observacoes: string | null;
+  tipo_plano: string;
+  disciplinas: DisciplinaPlanoInput[];
+  planejamento: ConfigPlanejamento;
+};

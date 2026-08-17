@@ -46,6 +46,7 @@ const EditaisCatalogo = lazyNamed(() => import("./pages/admin/EditaisCatalogo"),
 const EditalCatalogoEditor = lazyNamed(() => import("./pages/admin/EditalCatalogoEditor"), "EditalCatalogoEditor");
 const AtivarEditalCatalogo = lazyNamed(() => import("./pages/AtivarEditalCatalogo"), "AtivarEditalCatalogo");
 const PlanoGuiado = lazyNamed(() => import("./pages/PlanoGuiado"), "PlanoGuiado");
+const ReplanejarPlano = lazyNamed(() => import("./pages/ReplanejarPlano"), "ReplanejarPlano");
 const Perfil = lazyNamed(() => import("./pages/Perfil"), "Perfil");
 
 function LazyPage({ children }: { children: React.ReactNode }) {
@@ -141,6 +142,14 @@ export default function App() {
         element={
           <Layout requireAuth={!isAuthed}>
             <LazyPage><PlanoGuiado /></LazyPage>
+          </Layout>
+        }
+      />
+      <Route
+        path="/planos/:concursoId/replanejar"
+        element={
+          <Layout requireAuth={!isAuthed}>
+            <LazyPage><ReplanejarPlano /></LazyPage>
           </Layout>
         }
       />

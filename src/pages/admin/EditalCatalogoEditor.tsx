@@ -1,15 +1,16 @@
 import React from "react";
 import { isAxiosError } from "axios";
-import { ArrowLeft, BookOpen, ExternalLink, FileSpreadsheet, FileText, Plus, Save, Send, Trash2 } from "lucide-react";
+import { ArrowLeft, BookOpen, ExternalLink, FileSpreadsheet, FileText, ImageIcon, ListPlus, Plus, Save, Send, Trash2 } from "lucide-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useParams } from "react-router-dom";
 import { toast } from "sonner";
 
 import { EditalImportDialog } from "@/components/admin/editais/EditalImportDialog";
 import { FileDropZone } from "@/components/concursos/FileDropZone";
+import { CatalogLogo } from "@/components/editais/CatalogLogo";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { atualizarEditalAdmin, criarVersaoRascunho, obterEditalAdmin, publicarVersao, salvarEstruturaVersao, uploadEditalAdmin } from "@/services/editaisCatalogo";
+import { atualizarEditalAdmin, criarVersaoRascunho, obterEditalAdmin, publicarVersao, salvarEstruturaVersao, uploadEditalAdmin, uploadLogoAdmin } from "@/services/editaisCatalogo";
 import type { EditalCargoCatalogo, EditalCatalogoInput, EditalDisciplinaCatalogo } from "@/types/editaisCatalogo";
 
 const inputClass = "min-h-11 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-60";
@@ -53,6 +54,7 @@ export function EditalCatalogoEditor() {
   const [importOpen, setImportOpen] = React.useState(false);
   const [selectedCargoId, setSelectedCargoId] = React.useState<string | null>(null);
   const [pendingEditalFile, setPendingEditalFile] = React.useState<File | null>(null);
+  const [pendingLogoFile, setPendingLogoFile] = React.useState<File | null>(null);
   const [meta, setMeta] = React.useState<EditalCatalogoInput>({ nome: "", orgao: "", banca: null, url_oficial: null });
   const [cargos, setCargos] = React.useState<EditalCargoCatalogo[]>([]);
 
@@ -95,6 +97,19 @@ export function EditalCatalogoEditor() {
     mutationFn: () => criarVersaoRascunho(id),
     onSuccess: () => { void qc.invalidateQueries({ queryKey: ["admin-edital", id] }); toast.success("Nova versão em rascunho criada."); },
   });
+  const logoMutation = useMutation({
+    mutationFn: () => {
+      if (!pendingLogoFile) throw new Error("Selecione uma logo");
+      return uploadLogoAdmin(id, pendingLogoFile);
+    },
+    onSuccess: () => {
+      setPendingLogoFile(null);
+      void qc.invalidateQueries({ queryKey: ["admin-edital", id] });
+      void qc.invalidateQueries({ queryKey: ["admin-editais"] });
+      toast.success("Logo do órgão atualizada.");
+    },
+    onError: (error) => toast.error(apiErrorMessage(error, "Não foi possível salvar a logo.")),
+  });
 
   const selectedCargo = cargos.find((cargo) => cargo.id === selectedCargoId) ?? null;
   const updateCargo = (next: EditalCargoCatalogo) => setCargos((items) => items.map((cargo) => cargo.id === next.id ? next : cargo));
@@ -107,11 +122,13 @@ export function EditalCatalogoEditor() {
   return (
     <div className="space-y-5 pb-10">
       <header className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
-        <div><Link to="/admin/editais" className="mb-2 inline-flex min-h-11 items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground"><ArrowLeft className="h-4 w-4" /> Voltar aos concursos</Link><h1 className="text-2xl font-bold tracking-tight">{edital.nome}</h1><p className="mt-1 text-sm text-muted-foreground">Versão {versao.numero} · <span className="capitalize">{versao.status}</span></p></div>
+        <div><Link to="/admin/editais" className="mb-2 inline-flex min-h-11 items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground"><ArrowLeft className="h-4 w-4" /> Voltar ao catálogo</Link><div className="flex items-center gap-3"><CatalogLogo src={edital.logo_url} orgao={edital.orgao} /><div><h1 className="text-2xl font-bold tracking-tight">{edital.nome}</h1><p className="mt-1 text-sm text-muted-foreground">Versão {versao.numero} · <span className="capitalize">{versao.status}</span></p></div></div></div>
         <div className="flex flex-wrap gap-2">{editable ? <><Button variant="outline" className="min-h-11 gap-2" onClick={() => setImportOpen(true)}><FileSpreadsheet className="h-4 w-4" /> Importar planilha</Button><Button variant="outline" className="min-h-11 gap-2" disabled={saveMutation.isPending || publishMutation.isPending} onClick={() => { const issue = structureIssue(cargos); if (issue) toast.error(issue); else saveMutation.mutate(); }}><Save className="h-4 w-4" /> {saveMutation.isPending ? "Salvando…" : "Salvar rascunho"}</Button><Button className="min-h-11 gap-2" disabled={publishMutation.isPending || saveMutation.isPending} onClick={() => { const issue = structureIssue(cargos, true); if (issue) { toast.error(issue); return; } if (window.confirm("Salvar e publicar esta versão? Depois de publicada ela não poderá ser alterada.")) publishMutation.mutate(); }}><Send className="h-4 w-4" /> {publishMutation.isPending ? "Salvando e publicando…" : "Publicar"}</Button></> : <Button className="min-h-11" disabled={draftMutation.isPending} onClick={() => draftMutation.mutate()}>{draftMutation.isPending ? "Criando…" : "Criar nova versão"}</Button>}</div>
       </header>
 
       {!editable ? <div className="rounded-xl border border-primary/30 bg-primary-muted p-4 text-sm text-foreground"><strong>Versão somente leitura.</strong> Crie uma nova versão para alterar o conteúdo publicado.</div> : null}
+
+      <section className="rounded-xl border border-border bg-card p-5 shadow-sm"><div className="mb-4"><h2 className="font-semibold">Identidade do órgão</h2><p className="mt-1 text-xs text-muted-foreground">A logo facilita o reconhecimento do edital na busca e pode ser atualizada sem alterar a versão publicada.</p></div><div className="grid gap-4 lg:grid-cols-[220px_minmax(0,1fr)]"><div className="flex items-center gap-3 rounded-xl border border-border bg-muted/20 p-4"><CatalogLogo src={edital.logo_url} orgao={edital.orgao} size="lg" /><div className="min-w-0"><strong className="block truncate text-sm">{edital.orgao}</strong><span className="text-xs text-muted-foreground">Prévia no catálogo</span></div></div><div><FileDropZone id="edit-catalogo-logo-file" label={edital.logo_url ? "Substituir logo" : "Logo do órgão"} description="Selecionar imagem" accept=".png,.jpg,.jpeg,.webp" file={pendingLogoFile} onFileChange={setPendingLogoFile} icon={ImageIcon} variant="aprov" hint="PNG, JPG ou WEBP · até 2 MB · prefira imagem quadrada" />{pendingLogoFile ? <div className="mt-3 flex justify-end"><Button className="min-h-11" disabled={logoMutation.isPending} onClick={() => logoMutation.mutate()}>{logoMutation.isPending ? "Salvando logo…" : "Salvar logo"}</Button></div> : null}</div></div></section>
 
       <section className="rounded-xl border border-border bg-card p-5 shadow-sm"><div className="mb-4"><h2 className="font-semibold">1. Dados do concurso</h2><p className="mt-1 text-xs text-muted-foreground">Estas informações ajudam o aluno a encontrar o concurso no catálogo.</p></div><div className="grid gap-4 md:grid-cols-2"><label className="text-sm font-medium">Nome *<input className={`${inputClass} mt-1.5`} disabled={!metadataEditable} value={meta.nome} onChange={(e) => setMeta((s) => ({ ...s, nome: e.target.value }))} /></label><label className="text-sm font-medium">Órgão *<input className={`${inputClass} mt-1.5`} disabled={!metadataEditable} value={meta.orgao} onChange={(e) => setMeta((s) => ({ ...s, orgao: e.target.value }))} /></label><label className="text-sm font-medium">Banca<input className={`${inputClass} mt-1.5`} disabled={!metadataEditable} value={meta.banca ?? ""} onChange={(e) => setMeta((s) => ({ ...s, banca: e.target.value || null }))} /></label><label className="text-sm font-medium">URL oficial<input type="url" className={`${inputClass} mt-1.5`} disabled={!metadataEditable} value={meta.url_oficial?.startsWith("/uploads/") ? "" : meta.url_oficial ?? ""} onChange={(e) => setMeta((s) => ({ ...s, url_oficial: e.target.value || null }))} placeholder="https://..." /></label></div>{editable && !metadataEditable ? <p className="mt-3 text-xs text-muted-foreground">Os dados gerais permanecem vinculados ao concurso já publicado. Nesta nova versão, altere apenas cargos, disciplinas e tópicos.</p> : null}</section>
 
@@ -135,6 +152,38 @@ function CargoEditor({ cargo, editable, allowRemove, onChange, onRemove }: { car
 
 function DisciplinaEditor({ disciplina, editable, onChange, onRemove }: { disciplina: EditalDisciplinaCatalogo; editable: boolean; onChange: (disciplina: EditalDisciplinaCatalogo) => void; onRemove: () => void }) {
   const [open, setOpen] = React.useState(true);
+  const [bulkOpen, setBulkOpen] = React.useState(false);
+  const [bulkText, setBulkText] = React.useState("");
+  const [bulkWeight, setBulkWeight] = React.useState(1);
   const addTopico = () => onChange({ ...disciplina, topicos: [...disciplina.topicos, { id: newId(), descricao: "", ordem: disciplina.topicos.length + 1, peso: 1 }] });
-  return <article className="rounded-xl border border-border"><div className="flex items-center gap-2 p-3"><button type="button" className="min-h-11 min-w-0 flex-1 text-left" aria-expanded={open} onClick={() => setOpen((value) => !value)}><strong className="block truncate">{disciplina.nome}</strong><span className="text-xs text-muted-foreground">{disciplina.topicos.length} tópicos</span></button>{editable ? <Button variant="ghost" size="icon-lg" aria-label={`Remover ${disciplina.nome}`} onClick={onRemove}><Trash2 className="text-destructive" /></Button> : null}</div>{open ? <div className="space-y-4 border-t border-border p-4"><div className="grid gap-3 sm:grid-cols-[1fr_120px]"><label className="text-xs font-medium">Nome<input className={`${inputClass} mt-1`} disabled={!editable} value={disciplina.nome} onChange={(e) => onChange({ ...disciplina, nome: e.target.value })} /></label><label className="text-xs font-medium">Sigla<input className={`${inputClass} mt-1`} disabled={!editable} value={disciplina.sigla ?? ""} onChange={(e) => onChange({ ...disciplina, sigla: e.target.value || null })} /></label></div><div className="space-y-2">{disciplina.topicos.map((topico, index) => <div key={topico.id} className="grid grid-cols-[32px_minmax(0,1fr)_76px_40px] items-center gap-2"><span className="text-center text-xs text-muted-foreground">{index + 1}</span><input aria-label={`Tópico ${index + 1}`} className={inputClass} disabled={!editable} value={topico.descricao} onChange={(e) => onChange({ ...disciplina, topicos: disciplina.topicos.map((item) => item.id === topico.id ? { ...item, descricao: e.target.value } : item) })} /><input aria-label={`Peso do tópico ${index + 1}`} type="number" min={1} className={inputClass} disabled={!editable} value={topico.peso} onChange={(e) => onChange({ ...disciplina, topicos: disciplina.topicos.map((item) => item.id === topico.id ? { ...item, peso: Number(e.target.value) } : item) })} />{editable ? <Button variant="ghost" size="icon-lg" aria-label={`Remover tópico ${index + 1}`} onClick={() => onChange({ ...disciplina, topicos: disciplina.topicos.filter((item) => item.id !== topico.id) })}><Trash2 className="text-destructive" /></Button> : <span />}</div>)}</div>{editable ? <Button variant="outline" className="min-h-11" onClick={addTopico}><Plus /> Tópico</Button> : null}</div> : null}</article>;
+  const parsedTopics = parseBulkTopics(bulkText, disciplina.topicos.map((item) => item.descricao));
+  const addBulkTopics = () => {
+    if (!parsedTopics.length) return;
+    const created = parsedTopics.map((descricao, index) => ({ id: newId(), descricao, ordem: disciplina.topicos.length + index + 1, peso: bulkWeight }));
+    onChange({ ...disciplina, topicos: [...disciplina.topicos, ...created] });
+    setBulkText("");
+    setBulkOpen(false);
+  };
+  return (
+    <article className="rounded-xl border border-border bg-background/40">
+      <div className="flex items-center gap-2 p-3"><button type="button" className="min-h-11 min-w-0 flex-1 text-left" aria-expanded={open} onClick={() => setOpen((value) => !value)}><strong className="block truncate">{disciplina.nome}</strong><span className="text-xs text-muted-foreground">{disciplina.topicos.length} tópicos cadastrados</span></button>{editable ? <Button variant="ghost" size="icon-lg" aria-label={`Remover ${disciplina.nome}`} onClick={onRemove}><Trash2 className="text-destructive" /></Button> : null}</div>
+      {open ? <div className="space-y-4 border-t border-border p-4"><div className="grid gap-3 sm:grid-cols-[1fr_120px]"><label className="text-xs font-medium">Nome<input className={`${inputClass} mt-1`} disabled={!editable} value={disciplina.nome} onChange={(e) => onChange({ ...disciplina, nome: e.target.value })} /></label><label className="text-xs font-medium">Sigla<input className={`${inputClass} mt-1`} disabled={!editable} value={disciplina.sigla ?? ""} onChange={(e) => onChange({ ...disciplina, sigla: e.target.value || null })} /></label></div>
+        {disciplina.topicos.length ? <div className="space-y-2"><div className="hidden grid-cols-[32px_minmax(0,1fr)_76px_40px] gap-2 px-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground sm:grid"><span>#</span><span>Tópico</span><span>Peso</span><span /></div>{disciplina.topicos.map((topico, index) => <div key={topico.id} className="grid gap-2 rounded-lg border border-border p-2 sm:grid-cols-[32px_minmax(0,1fr)_76px_40px] sm:items-center sm:border-0 sm:p-0"><span className="hidden text-center text-xs text-muted-foreground sm:block">{index + 1}</span><input aria-label={`Tópico ${index + 1}`} className={inputClass} disabled={!editable} value={topico.descricao} onChange={(e) => onChange({ ...disciplina, topicos: disciplina.topicos.map((item) => item.id === topico.id ? { ...item, descricao: e.target.value } : item) })} /><div className="flex items-center gap-2"><span className="text-xs text-muted-foreground sm:hidden">Peso</span><input aria-label={`Peso do tópico ${index + 1}`} type="number" min={1} className={inputClass} disabled={!editable} value={topico.peso} onChange={(e) => onChange({ ...disciplina, topicos: disciplina.topicos.map((item) => item.id === topico.id ? { ...item, peso: Number(e.target.value) } : item) })} /></div>{editable ? <Button variant="ghost" size="icon-lg" className="justify-self-end" aria-label={`Remover tópico ${index + 1}`} onClick={() => onChange({ ...disciplina, topicos: disciplina.topicos.filter((item) => item.id !== topico.id).map((item, itemIndex) => ({ ...item, ordem: itemIndex + 1 })) })}><Trash2 className="text-destructive" /></Button> : <span />}</div>)}</div> : <p className="rounded-lg border border-dashed border-border p-5 text-center text-xs text-muted-foreground">Nenhum tópico nesta disciplina.</p>}
+        {editable ? <><div className="flex flex-wrap gap-2"><Button variant="outline" className="min-h-11" onClick={addTopico}><Plus /> Adicionar um tópico</Button><Button variant="outline" className="min-h-11" aria-expanded={bulkOpen} onClick={() => setBulkOpen((value) => !value)}><ListPlus /> Adicionar vários</Button></div>{bulkOpen ? <div className="rounded-xl border border-primary/20 bg-primary-muted/40 p-4"><div className="flex flex-col gap-3 sm:flex-row sm:items-start"><label className="min-w-0 flex-1 text-xs font-medium">Cole um tópico por linha<textarea autoFocus rows={7} className="mt-1.5 w-full resize-y rounded-lg border border-border bg-background px-3 py-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring" value={bulkText} onChange={(event) => setBulkText(event.target.value)} placeholder={"Conceitos iniciais\nPrincípios fundamentais\nPoderes administrativos"} /><span className="mt-1 block font-normal text-muted-foreground">Numeração e marcadores no início das linhas são removidos automaticamente.</span></label><label className="text-xs font-medium sm:w-24">Peso<input type="number" min={1} className={`${inputClass} mt-1.5`} value={bulkWeight} onChange={(event) => setBulkWeight(Math.max(1, Number(event.target.value) || 1))} /></label></div><div className="mt-3 flex flex-wrap items-center justify-between gap-3"><span className="text-xs text-muted-foreground" aria-live="polite">{parsedTopics.length} tópico{parsedTopics.length === 1 ? "" : "s"} novo{parsedTopics.length === 1 ? "" : "s"}</span><div className="flex gap-2"><Button variant="ghost" className="min-h-10" onClick={() => { setBulkOpen(false); setBulkText(""); }}>Cancelar</Button><Button className="min-h-10" disabled={!parsedTopics.length} onClick={addBulkTopics}>Adicionar {parsedTopics.length || ""} tópicos</Button></div></div></div> : null}</> : null}
+      </div> : null}
+    </article>
+  );
+}
+
+function parseBulkTopics(value: string, existing: string[]) {
+  const seen = new Set(existing.map((item) => item.trim().toLocaleLowerCase("pt-BR")));
+  const result: string[] = [];
+  for (const rawLine of value.split(/\r?\n/)) {
+    const line = rawLine.replace(/^\s*(?:[-*•]|\d+[.)-]?)\s*/, "").trim();
+    const key = line.toLocaleLowerCase("pt-BR");
+    if (!line || seen.has(key)) continue;
+    seen.add(key);
+    result.push(line);
+  }
+  return result;
 }

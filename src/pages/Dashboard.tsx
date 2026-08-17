@@ -2,7 +2,7 @@ import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { differenceInCalendarDays, format, parseISO } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { Calendar, CheckCircle2, Flame, Play, Target } from "lucide-react";
+import { BookOpenCheck, Calendar, CheckCircle2, Flame, Play, RefreshCw, Target } from "lucide-react";
 import { Link } from "react-router-dom";
 
 import { api } from "@/services/api";
@@ -30,6 +30,18 @@ type DashboardResumo = {
   taxa_cumprimento_mes?: number;
   minutos_planejados_mes?: number;
   minutos_realizados_mes?: number;
+};
+
+type RevisoesPendentes = {
+  total: number;
+  items: Array<{
+    disciplina_id: string;
+    disciplina_nome: string;
+    topico_id: string;
+    topico_nome: string;
+    data_prevista: string;
+    dias_atraso: number;
+  }>;
 };
 
 type HeatmapData = {
@@ -114,6 +126,11 @@ export function Dashboard() {
   const { data: proximoEstudo, isLoading: loadingProximo } = useQuery({
     queryKey: ["dashboard", "proximo-estudo", concursoAtivoId],
     queryFn: async () => (await api.get<ProximoEstudo | null>("/dashboard/proximo-estudo", { params: { concurso_id: concursoAtivoId } })).data,
+    enabled: Boolean(concursoAtivoId),
+  });
+  const { data: revisoesPendentes } = useQuery({
+    queryKey: ["dashboard", "revisoes-pendentes", concursoAtivoId],
+    queryFn: async () => (await api.get<RevisoesPendentes>("/dashboard/revisoes-pendentes", { params: { concurso_id: concursoAtivoId } })).data,
     enabled: Boolean(concursoAtivoId),
   });
 
@@ -210,9 +227,22 @@ export function Dashboard() {
               </h2>
               {proximoEstudo ? <p className="mt-1 text-sm text-muted-foreground">{proximoEstudo.topico_nome ? `${proximoEstudo.topico_nome} · ` : ""}{format(parseISO(proximoEstudo.data), "dd 'de' MMMM", { locale: ptBR })} · {proximoEstudo.duracao_minutos} min</p> : !loadingProximo ? <p className="mt-1 text-sm text-muted-foreground">Crie ou ajuste o cronograma para receber uma próxima recomendação.</p> : null}
             </div>
-            {proximoEstudo ? <div className="flex flex-wrap gap-2"><Link to={`/pomodoro?disciplina=${proximoEstudo.disciplina_id}`} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground hover:bg-primary/90"><Play className="h-4 w-4" /> Iniciar estudo</Link><button type="button" onClick={() => { setRegistroPrefill({ disciplinaId: proximoEstudo.disciplina_id, topicoId: proximoEstudo.topico_id }); setRegistroOpen(true); }} className="min-h-11 rounded-lg border border-border bg-card px-4 text-sm font-semibold hover:bg-muted">Registrar manualmente</button></div> : <ButtonLink />}
+            {proximoEstudo ? <div className="flex flex-wrap gap-2"><Link to={`/pomodoro?disciplina=${proximoEstudo.disciplina_id}`} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground hover:bg-primary/90"><Play className="h-4 w-4" /> Iniciar estudo</Link><button type="button" onClick={() => { setRegistroPrefill({ disciplinaId: proximoEstudo.disciplina_id, topicoId: proximoEstudo.topico_id }); setRegistroOpen(true); }} className="min-h-11 rounded-lg border border-border bg-card px-4 text-sm font-semibold hover:bg-muted">Registrar manualmente</button><Link to={`/planos/${concursoAtivoId}/replanejar`} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-border bg-card px-4 text-sm font-semibold hover:bg-muted"><RefreshCw className="h-4 w-4" /> Replanejar</Link></div> : <ButtonLink />}
           </div>
         </section>
+      ) : null}
+
+      {concursoAtivoId ? (
+        <div className="grid gap-4 lg:grid-cols-2">
+          <section className="rounded-xl border border-border bg-card p-5 shadow-sm" aria-labelledby="meta-semanal-title">
+            <div className="flex items-center gap-2"><Target className="h-5 w-5 text-primary" /><h2 id="meta-semanal-title" className="font-semibold">Meta semanal</h2></div>
+            {(() => { const goal = Math.max((resumo?.meta_horas ?? 0) * 7, 0); const current = resumo?.horas_semana ?? 0; const percent = goal > 0 ? Math.min(100, Math.round((current / goal) * 100)) : 0; return <><div className="mt-4 flex items-end justify-between gap-3"><div><strong className="text-2xl">{fmtHoras(current)}</strong><span className="ml-2 text-sm text-muted-foreground">de {fmtHoras(goal)}</span></div><span className="text-sm font-semibold text-primary">{percent}%</span></div><div className="mt-3 h-2 overflow-hidden rounded-full bg-muted"><div className="h-full rounded-full bg-primary transition-[width]" style={{ width: `${percent}%` }} /></div><p className="mt-3 text-sm text-muted-foreground">{resumo?.questoes_semana ?? 0} questões respondidas nos últimos 7 dias.</p></>; })()}
+          </section>
+          <section className="rounded-xl border border-border bg-card p-5 shadow-sm" aria-labelledby="revisoes-pendentes-title">
+            <div className="flex items-center justify-between gap-3"><div className="flex items-center gap-2"><BookOpenCheck className="h-5 w-5 text-primary" /><h2 id="revisoes-pendentes-title" className="font-semibold">Revisões pendentes</h2></div><span className="rounded-full bg-primary-muted px-2.5 py-1 text-xs font-semibold text-primary">{revisoesPendentes?.total ?? 0}</span></div>
+            {revisoesPendentes?.items.length ? <ul className="mt-3 divide-y divide-border">{revisoesPendentes.items.slice(0, 3).map((item) => <li key={item.topico_id} className="flex items-center gap-3 py-3"><div className="min-w-0 flex-1"><strong className="block truncate text-sm">{item.topico_nome}</strong><span className="text-xs text-muted-foreground">{item.disciplina_nome}{item.dias_atraso > 0 ? ` · ${item.dias_atraso} dia(s) em atraso` : " · revisar hoje"}</span></div><Link to={`/disciplinas/${item.disciplina_id}?topico=${item.topico_id}`} className="inline-flex min-h-10 items-center rounded-lg border border-border px-3 text-xs font-semibold hover:bg-muted">Revisar</Link></li>)}</ul> : <p className="mt-4 text-sm text-muted-foreground">Nenhuma revisão atrasada no concurso ativo.</p>}
+          </section>
+        </div>
       ) : null}
 
       <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">

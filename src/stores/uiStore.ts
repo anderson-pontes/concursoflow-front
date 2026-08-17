@@ -5,8 +5,8 @@ type UiState = {
   sidebarCollapsed: boolean;
   setSidebarCollapsed: (collapsed: boolean) => void;
   toggleSidebarCollapsed: () => void;
-  disciplinasViewMode: "cards" | "table";
-  setDisciplinasViewMode: (mode: "cards" | "table") => void;
+  disciplinasViewMode: "cards" | "table" | "edital";
+  setDisciplinasViewMode: (mode: "cards" | "table" | "edital") => void;
 };
 
 export const useUiStore = create<UiState>()(

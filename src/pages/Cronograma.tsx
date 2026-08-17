@@ -1,7 +1,7 @@
 import React from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { isAxiosError } from "axios";
-import { BookOpen, Clock, ListChecks, Pencil, Plus, Trash2, BarChart3, Calendar } from "lucide-react";
+import { BookOpen, Clock, ListChecks, Pencil, Plus, Trash2, BarChart3, Calendar, RefreshCw } from "lucide-react";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
 
@@ -294,6 +294,16 @@ export function Cronograma() {
           <p className="text-sm text-muted-foreground">Planejamento semanal de estudos</p>
         </div>
         <div className="flex flex-wrap gap-2 lg:max-w-[min(100%,42rem)] lg:justify-end">
+          {concursoAtivoId ? (
+            <Link
+              to={`/planos/${concursoAtivoId}/replanejar`}
+              title="Replanejar concurso ativo"
+              className="inline-flex min-h-10 items-center gap-2 rounded-lg border border-border bg-card px-2.5 py-2 text-sm font-medium text-card-foreground shadow-sm hover:bg-muted sm:px-3"
+            >
+              <RefreshCw className="h-4 w-4 shrink-0" />
+              <span className="hidden sm:inline">Replanejar</span>
+            </Link>
+          ) : null}
           <button
             type="button"
             onClick={() => setAgendaHojeOpen(true)}

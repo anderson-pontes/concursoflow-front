@@ -20,6 +20,7 @@ export type EditalDisciplinaCatalogo = {
 export type EditalCargoCatalogo = {
   id: string;
   nome: string;
+  especialidade?: string | null;
   ordem: number;
   disciplinas: EditalDisciplinaCatalogo[];
   disciplinas_total?: number;
@@ -32,6 +33,7 @@ export type EditalVersaoCatalogo = {
   status: EditalStatus;
   publicada_em: string | null;
   published_at?: string | null;
+  data_prova?: string | null;
   cargos: EditalCargoCatalogo[];
 };
 
@@ -41,6 +43,7 @@ export type EditalCatalogo = {
   orgao: string;
   banca: string | null;
   url_oficial: string | null;
+  logo_url: string | null;
   status: EditalStatus;
   versao_atual: EditalVersaoCatalogo | null;
   versoes?: EditalVersaoCatalogo[];
@@ -54,6 +57,15 @@ export type EditalCatalogoInput = Pick<EditalCatalogo, "nome" | "orgao" | "banca
 export type EditalCatalogoInitialInput = EditalCatalogoInput & {
   cargo_nome: string;
   arquivo: File | null;
+  logo: File | null;
+};
+
+export type EditalCatalogoPage = {
+  items: EditalCatalogo[];
+  page: number;
+  page_size: number;
+  total: number;
+  total_pages: number;
 };
 
 export type ImportacaoErro = {

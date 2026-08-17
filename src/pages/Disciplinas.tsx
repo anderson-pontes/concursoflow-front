@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 import { DisciplinaCard } from "@/components/disciplinas/DisciplinaCard";
+import { EditalVerticalizadoOverview } from "@/components/disciplinas/EditalVerticalizadoOverview";
 import { DisciplinasDataTable } from "@/components/disciplinas/DisciplinasDataTable";
 import {
   DisciplinaCardSkeleton,
@@ -36,6 +37,12 @@ export function Disciplinas() {
   const [modalOpen, setModalOpen] = React.useState(false);
   const [modalMode, setModalMode] = React.useState<"create" | "edit">("create");
   const [editingDisciplina, setEditingDisciplina] = React.useState<Disciplina | null>(null);
+
+  React.useEffect(() => {
+    if (viewMode === "edital" && !concursoId) {
+      setViewMode("cards");
+    }
+  }, [concursoId, setViewMode, viewMode]);
 
   const searchTerm = search.trim();
 
@@ -235,6 +242,12 @@ export function Disciplinas() {
             );
           })}
         </div>
+      ) : null}
+
+      {!loadingDisciplinas && viewMode === "edital" && concursoId ? (
+        <EditalVerticalizadoOverview
+          disciplinas={disciplinas.filter((disciplina) => isLinkedToConcurso(disciplina, concursoId))}
+        />
       ) : null}
 
       <ModalDisciplinaForm

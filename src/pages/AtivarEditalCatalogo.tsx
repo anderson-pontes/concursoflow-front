@@ -1,14 +1,18 @@
 import React from "react";
-import { ArrowLeft, ArrowRight, BookOpenCheck, Building2, CalendarDays, CheckCircle2, Search } from "lucide-react";
+import { ArrowLeft, ArrowRight, BookOpenCheck, CheckCircle2, Search } from "lucide-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 import { AtivacaoStepper } from "@/components/editais/AtivacaoStepper";
+import { CatalogDetailsDialog } from "@/components/editais/CatalogDetailsDialog";
+import { CatalogPagination } from "@/components/editais/CatalogPagination";
+import { PublicCatalogResults } from "@/components/editais/PublicCatalogResults";
+import { CatalogViewToggle, type CatalogViewMode } from "@/components/editais/CatalogViewToggle";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
-import { ativarEdital, listarEditaisPublicados, obterEditalPublicado } from "@/services/editaisCatalogo";
+import { ativarEdital, obterEditalPublicado, paginarEditaisPublicados } from "@/services/editaisCatalogo";
 import { useConcursoStore } from "@/stores/concursoStore";
 import type { EditalCargoCatalogo } from "@/types/editaisCatalogo";
 
@@ -19,7 +23,11 @@ function makeIdempotencyKey() {
 export function AtivarEditalCatalogo() {
   const [step, setStep] = React.useState(1);
   const [search, setSearch] = React.useState("");
+  const deferredSearch = React.useDeferredValue(search.trim());
+  const [page, setPage] = React.useState(1);
+  const [viewMode, setViewMode] = React.useState<CatalogViewMode>("cards");
   const [editalId, setEditalId] = React.useState<string | null>(null);
+  const [detailsId, setDetailsId] = React.useState<string | null>(null);
   const [cargoId, setCargoId] = React.useState<string | null>(null);
   const [disciplinas, setDisciplinas] = React.useState<string[]>([]);
   const idempotencyKey = React.useRef(makeIdempotencyKey());
@@ -28,9 +36,13 @@ export function AtivarEditalCatalogo() {
   const qc = useQueryClient();
   const setConcursoAtivoId = useConcursoStore((state) => state.setConcursoAtivoId);
 
-  const listQuery = useQuery({ queryKey: ["catalogo-editais", search], queryFn: () => listarEditaisPublicados(search) });
+  React.useEffect(() => setPage(1), [deferredSearch]);
+  const listQuery = useQuery({ queryKey: ["catalogo-editais", deferredSearch, page], queryFn: () => paginarEditaisPublicados({ search: deferredSearch, page, pageSize: 8 }) });
+  React.useEffect(() => {
+    if (listQuery.data && page > Math.max(1, listQuery.data.total_pages)) setPage(Math.max(1, listQuery.data.total_pages));
+  }, [listQuery.data, page]);
   const detailQuery = useQuery({ queryKey: ["catalogo-edital", editalId], queryFn: () => obterEditalPublicado(editalId!), enabled: Boolean(editalId) });
-  const edital = detailQuery.data ?? listQuery.data?.find((item) => item.id === editalId) ?? null;
+  const edital = detailQuery.data ?? listQuery.data?.items.find((item) => item.id === editalId) ?? null;
   const versao = edital?.versao_atual ?? null;
   const cargo = versao?.cargos.find((item) => item.id === cargoId) ?? null;
 
@@ -56,7 +68,7 @@ export function AtivarEditalCatalogo() {
       <AtivacaoStepper current={step} />
 
       <main className="rounded-2xl border border-border bg-card p-4 shadow-sm sm:p-6">
-        {step === 1 ? <section aria-labelledby="step-title"><h2 id="step-title" className="text-lg font-semibold">Qual edital você está estudando?</h2><p className="mt-1 text-sm text-muted-foreground">Mostramos apenas versões revisadas e publicadas.</p><label className="relative mt-5 block"><span className="sr-only">Buscar edital</span><Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" /><input type="search" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Buscar por órgão, edital ou banca" className="min-h-11 w-full rounded-lg border border-border bg-background py-2 pl-9 pr-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring" /></label>{listQuery.isLoading ? <p className="py-16 text-center text-sm text-muted-foreground" role="status">Carregando catálogo…</p> : null}{listQuery.isError ? <p role="alert" className="mt-4 rounded-lg border border-destructive/30 bg-destructive/10 p-4 text-sm text-destructive">Não foi possível carregar os editais. <button className="font-semibold underline" onClick={() => void listQuery.refetch()}>Tentar novamente</button></p> : null}<div className="mt-4 grid gap-3 md:grid-cols-2">{listQuery.data?.map((item) => <button key={item.id} type="button" aria-pressed={editalId === item.id} onClick={() => selectEdital(item.id)} className={cn("min-h-28 rounded-xl border p-4 text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring", editalId === item.id ? "border-primary bg-primary-muted ring-1 ring-primary" : "border-border hover:border-primary/50 hover:bg-muted/30")}><span className="flex items-start gap-3"><span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary-muted text-primary"><Building2 /></span><span className="min-w-0"><strong className="block">{item.nome}</strong><span className="mt-1 block text-sm text-muted-foreground">{item.orgao}{item.banca ? ` · ${item.banca}` : ""}</span><span className="mt-2 inline-flex items-center gap-1 text-xs text-muted-foreground"><CalendarDays className="h-3.5 w-3.5" /> Versão {item.versao_atual?.numero ?? "publicada"}</span></span></span></button>)}</div>{!listQuery.isLoading && !listQuery.data?.length ? <div className="py-14 text-center"><BookOpenCheck className="mx-auto h-10 w-10 text-muted-foreground" /><h3 className="mt-3 font-semibold">Nenhum edital encontrado</h3><p className="mt-1 text-sm text-muted-foreground">Você ainda pode cadastrar seu concurso manualmente.</p><Button asChild variant="outline" className="mt-4 min-h-11"><Link to="/concursos?novo=manual">Cadastrar manualmente</Link></Button></div> : null}</section> : null}
+        {step === 1 ? <section aria-labelledby="step-title"><div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between"><div><h2 id="step-title" className="text-lg font-semibold">Qual edital você está estudando?</h2><p className="mt-1 text-sm text-muted-foreground">Consulte versões revisadas e publicadas pelo ClickEdital.</p></div><div className="flex flex-wrap items-center gap-3">{listQuery.data ? <span className="text-xs text-muted-foreground">{listQuery.data.total} edital{listQuery.data.total === 1 ? "" : "is"} disponível{listQuery.data.total === 1 ? "" : "is"}</span> : null}<CatalogViewToggle value={viewMode} onValueChange={setViewMode} /></div></div><label className="relative mt-5 block"><span className="sr-only">Buscar edital</span><Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" /><input type="search" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Buscar por concurso, órgão, banca ou cargo" className="min-h-11 w-full rounded-lg border border-border bg-background py-2 pl-9 pr-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring" /></label>{listQuery.isLoading ? <p className="py-16 text-center text-sm text-muted-foreground" role="status">Carregando catálogo…</p> : null}{listQuery.isError ? <p role="alert" className="mt-4 rounded-lg border border-destructive/30 bg-destructive/10 p-4 text-sm text-destructive">Não foi possível carregar os editais. <button className="font-semibold underline" onClick={() => void listQuery.refetch()}>Tentar novamente</button></p> : null}{listQuery.data?.items.length ? <PublicCatalogResults items={listQuery.data.items} selectedId={editalId} viewMode={viewMode} onSelect={selectEdital} onViewDetails={setDetailsId} /> : null}{!listQuery.isLoading && !listQuery.data?.items.length ? <div className="py-14 text-center"><BookOpenCheck className="mx-auto h-10 w-10 text-muted-foreground" /><h3 className="mt-3 font-semibold">Nenhum edital encontrado</h3><p className="mt-1 text-sm text-muted-foreground">Tente outro termo ou cadastre seu concurso manualmente.</p><Button asChild variant="outline" className="mt-4 min-h-11"><Link to="/concursos?novo=manual">Cadastrar manualmente</Link></Button></div> : null}{listQuery.data?.items.length ? <div className="mt-5"><CatalogPagination page={listQuery.data.page} totalPages={listQuery.data.total_pages} total={listQuery.data.total} onPageChange={setPage} /></div> : null}</section> : null}
 
         {step === 2 ? <section aria-labelledby="step-title"><h2 id="step-title" className="text-lg font-semibold">Escolha seu cargo ou especialidade</h2><p className="mt-1 text-sm text-muted-foreground">{edital?.nome}</p>{detailQuery.isLoading ? <p className="py-16 text-center text-sm text-muted-foreground" role="status">Carregando cargos…</p> : null}{detailQuery.isError ? <p role="alert" className="mt-4 rounded-lg bg-destructive/10 p-4 text-sm text-destructive">Não foi possível carregar os cargos.</p> : null}<div className="mt-5 grid gap-3 sm:grid-cols-2" role="radiogroup" aria-label="Cargo do edital">{versao?.cargos.map((item) => <button key={item.id} type="button" role="radio" aria-checked={cargoId === item.id} onClick={() => selectCargo(item)} className={cn("min-h-24 rounded-xl border p-4 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring", cargoId === item.id ? "border-primary bg-primary-muted ring-1 ring-primary" : "border-border hover:border-primary/50")}><strong className="block">{item.nome}</strong><span className="mt-2 block text-sm text-muted-foreground">{item.disciplinas.length} disciplinas · {item.disciplinas.reduce((sum, disc) => sum + (disc.topicos_total ?? disc.topicos.length), 0)} tópicos</span></button>)}</div></section> : null}
 
@@ -64,6 +76,8 @@ export function AtivarEditalCatalogo() {
 
         {step === 4 && edital && cargo ? <section aria-labelledby="step-title"><h2 id="step-title" className="text-lg font-semibold">Revise seu novo plano</h2><p className="mt-1 text-sm text-muted-foreground">Nada será alterado nos seus concursos atuais.</p><div className="mt-5 grid gap-3 sm:grid-cols-3"><Summary label="Edital" value={edital.nome} /><Summary label="Cargo" value={cargo.nome} /><Summary label="Conteúdo" value={`${disciplinas.length} disciplinas · ${cargo.disciplinas.filter((item) => disciplinas.includes(item.id)).reduce((sum, item) => sum + (item.topicos_total ?? item.topicos.length), 0)} tópicos`} /></div><div className="mt-5 rounded-xl border border-border"><ul className="divide-y divide-border">{cargo.disciplinas.filter((item) => disciplinas.includes(item.id)).map((item) => <li key={item.id} className="flex items-center gap-3 p-3 text-sm"><CheckCircle2 className="h-4 w-4 text-success" /><span className="flex-1 font-medium">{item.nome}</span><span className="text-xs text-muted-foreground">{item.topicos_total ?? item.topicos.length} tópicos</span></li>)}</ul></div>{activation.isError ? <div role="alert" className="mt-4 rounded-lg border border-destructive/30 bg-destructive/10 p-4 text-sm text-destructive">Não foi possível ativar o plano. Sua seleção foi mantida; tente novamente.</div> : null}</section> : null}
       </main>
+
+      <CatalogDetailsDialog editalId={detailsId} scope="public" open={Boolean(detailsId)} onOpenChange={(open) => { if (!open) setDetailsId(null); }} />
 
       <footer className="fixed inset-x-0 bottom-0 z-20 border-t border-border bg-background/95 p-3 backdrop-blur sm:static sm:border-0 sm:bg-transparent sm:p-0"><div className="mx-auto flex max-w-5xl items-center justify-between gap-3"><Button variant="outline" className="min-h-11" disabled={step === 1 || activation.isPending} onClick={() => setStep((value) => Math.max(1, value - 1))}><ArrowLeft /> Voltar</Button>{step < 4 ? <Button className="min-h-11" disabled={!canContinue || (step === 1 && detailQuery.isLoading)} onClick={() => setStep((value) => Math.min(4, value + 1))}>Continuar <ArrowRight /></Button> : <Button className="min-h-11 px-5" disabled={activation.isPending} onClick={() => activation.mutate()}>{activation.isPending ? "Criando seu plano…" : "Criar e ativar plano"}</Button>}</div></footer>
     </div>

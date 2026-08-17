@@ -4,22 +4,26 @@ import type {
   EditalCatalogo,
   EditalCatalogoInput,
   EditalCatalogoInitialInput,
+  EditalCatalogoPage,
   EditalCargoCatalogo,
   ImportacaoResumo,
 } from "@/types/editaisCatalogo";
 
-type ListEnvelope<T> = T[] | { items: T[] };
+type PageEnvelope<T> = {
+  items: T[];
+  page: number;
+  page_size: number;
+  total: number;
+  total_pages: number;
+};
 
 type RawEdital = Omit<EditalCatalogo, "status" | "versao_atual" | "url_oficial"> & {
   status?: EditalCatalogo["status"];
   versao_atual?: EditalCatalogo["versao_atual"];
   edital_url?: string | null;
   url_oficial?: string | null;
+  updated_at?: string;
 };
-
-function unwrap<T>(data: ListEnvelope<T>): T[] {
-  return Array.isArray(data) ? data : data.items;
-}
 
 function normalize(raw: RawEdital, publicOnly = false): EditalCatalogo {
   const versoes = (raw.versoes ?? []).map((versao) => ({
@@ -38,14 +42,26 @@ function normalize(raw: RawEdital, publicOnly = false): EditalCatalogo {
     ? versoes.find((item) => item.status === "publicado")
     : versoes.find((item) => item.status === "rascunho") ?? versoes.find((item) => item.status === "publicado") ?? versoes[0]) ?? null;
   const status = raw.status ?? versaoAtual?.status ?? "rascunho";
-  return { ...raw, status, url_oficial: raw.url_oficial ?? raw.edital_url ?? null, versoes, versao_atual: versaoAtual };
+  return { ...raw, atualizado_em: raw.atualizado_em ?? raw.updated_at, logo_url: raw.logo_url ?? null, status, url_oficial: raw.url_oficial ?? raw.edital_url ?? null, versoes, versao_atual: versaoAtual };
+}
+
+function normalizePage(data: PageEnvelope<RawEdital> | RawEdital[], publicOnly = false): EditalCatalogoPage {
+  if (Array.isArray(data)) {
+    return { items: data.map((item) => normalize(item, publicOnly)), page: 1, page_size: data.length || 12, total: data.length, total_pages: data.length ? 1 : 0 };
+  }
+  return { ...data, items: data.items.map((item) => normalize(item, publicOnly)) };
+}
+
+export async function paginarEditaisAdmin(params: { search?: string; status?: string; page?: number; pageSize?: number } = {}): Promise<EditalCatalogoPage> {
+  const { search = "", status = "", page = 1, pageSize = 12 } = params;
+  const { data } = await api.get<PageEnvelope<RawEdital> | RawEdital[]>("/admin/editais", {
+    params: { search: search || undefined, status: status || undefined, page, page_size: pageSize },
+  });
+  return normalizePage(data);
 }
 
 export async function listarEditaisAdmin(search = "", status = ""): Promise<EditalCatalogo[]> {
-  const { data } = await api.get<ListEnvelope<RawEdital>>("/admin/editais", {
-    params: { search: search || undefined, status: status || undefined },
-  });
-  return unwrap(data).map((item) => normalize(item));
+  return (await paginarEditaisAdmin({ search, status, pageSize: 50 })).items;
 }
 
 export async function obterEditalAdmin(id: string): Promise<EditalCatalogo> {
@@ -60,6 +76,7 @@ export async function criarEditalAdmin(input: EditalCatalogoInitialInput): Promi
   if (input.banca?.trim()) form.append("banca", input.banca.trim());
   if (input.url_oficial?.trim()) form.append("edital_url", input.url_oficial.trim());
   if (input.arquivo) form.append("file", input.arquivo);
+  if (input.logo) form.append("logo", input.logo);
   const created = (await api.post<RawEdital>("/admin/editais/inicializar", form, {
     headers: { "Content-Type": "multipart/form-data" },
   })).data;
@@ -75,6 +92,14 @@ export async function uploadEditalAdmin(id: string, file: File): Promise<EditalC
   const form = new FormData();
   form.append("file", file);
   return normalize((await api.post<RawEdital>(`/admin/editais/${id}/upload-edital`, form, {
+    headers: { "Content-Type": "multipart/form-data" },
+  })).data);
+}
+
+export async function uploadLogoAdmin(id: string, logo: File): Promise<EditalCatalogo> {
+  const form = new FormData();
+  form.append("logo", logo);
+  return normalize((await api.post<RawEdital>(`/admin/editais/${id}/upload-logo`, form, {
     headers: { "Content-Type": "multipart/form-data" },
   })).data);
 }
@@ -141,10 +166,15 @@ export async function importarVerticalizacao(
 }
 
 export async function listarEditaisPublicados(search = ""): Promise<EditalCatalogo[]> {
-  const { data } = await api.get<ListEnvelope<RawEdital>>("/catalogo/editais", {
-    params: { search: search || undefined },
+  return (await paginarEditaisPublicados({ search, pageSize: 50 })).items;
+}
+
+export async function paginarEditaisPublicados(params: { search?: string; page?: number; pageSize?: number } = {}): Promise<EditalCatalogoPage> {
+  const { search = "", page = 1, pageSize = 12 } = params;
+  const { data } = await api.get<PageEnvelope<RawEdital> | RawEdital[]>("/catalogo/editais", {
+    params: { search: search || undefined, page, page_size: pageSize },
   });
-  return unwrap(data).map((item) => normalize(item, true));
+  return normalizePage(data, true);
 }
 
 export async function obterEditalPublicado(id: string): Promise<EditalCatalogo> {
