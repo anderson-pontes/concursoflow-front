@@ -130,7 +130,7 @@ export function CronogramaBlocoCard({
           aria-label={minutos >= 1 ? `Play Pomodoro ${diaLabel}` : "Duração inválida"}
           disabled={minutos < 1}
           onClick={() => launchPomodoroFromBloco(navigate, bloco, minutos)}
-          className="inline-flex h-7 items-center gap-1 rounded-md border border-primary-300 bg-primary-50 px-1.5 text-[11px] font-semibold text-primary-700 transition hover:bg-primary-100 disabled:cursor-not-allowed disabled:opacity-50 dark:border-primary-700 dark:bg-primary-950/40 dark:text-primary-300 dark:hover:bg-primary-900/50 sm:px-2"
+          className="inline-flex min-h-10 items-center gap-1.5 rounded-md border border-primary-300 bg-primary-50 px-2.5 text-xs font-semibold text-primary-700 transition hover:bg-primary-100 disabled:cursor-not-allowed disabled:opacity-50 dark:border-primary-700 dark:bg-primary-950/40 dark:text-primary-300 dark:hover:bg-primary-900/50"
         >
           <Play className="h-3.5 w-3.5 fill-current" />
           <span className="sr-only sm:not-sr-only">Play</span>
@@ -139,7 +139,7 @@ export function CronogramaBlocoCard({
           to={buildDisciplinaDashboardUrl(bloco.disciplina_id, launchTopicoId)}
           title="Abrir dashboard da disciplina"
           aria-label={`Dashboard ${disciplinaNome}`}
-          className="inline-flex h-7 items-center gap-1 rounded-md border border-border px-1.5 text-[11px] font-medium text-muted-foreground transition hover:bg-muted hover:text-foreground sm:px-2"
+          className="inline-flex min-h-10 items-center gap-1.5 rounded-md border border-border px-2.5 text-xs font-medium text-muted-foreground transition hover:bg-muted hover:text-foreground"
         >
           <BarChart3 className="h-3.5 w-3.5 shrink-0" />
           <span className="sr-only xl:not-sr-only">Disciplina</span>
@@ -151,7 +151,7 @@ export function CronogramaBlocoCard({
             title="Estender vigência por mais 12 meses"
             onClick={onEstender}
             className={cn(
-              "inline-flex h-7 items-center rounded-md border px-1.5 text-[10px] font-semibold transition disabled:opacity-50 sm:px-2 sm:text-[11px]",
+              "inline-flex min-h-10 items-center rounded-md border px-2.5 text-xs font-semibold transition disabled:opacity-50",
               expirado
                 ? "border-amber-400 bg-amber-50 text-amber-900 hover:bg-amber-100 dark:border-amber-600 dark:bg-amber-950/40 dark:text-amber-100"
                 : "border-border font-medium text-muted-foreground hover:bg-muted hover:text-foreground",
@@ -167,7 +167,7 @@ export function CronogramaBlocoCard({
             title="Editar bloco"
             aria-label={`Editar ${disciplinaNome}`}
             onClick={onEdit}
-            className="flex h-7 w-7 items-center justify-center rounded-md border border-border text-muted-foreground hover:bg-muted"
+            className="flex h-10 w-10 items-center justify-center rounded-md border border-border text-muted-foreground hover:bg-muted"
           >
             <Pencil className="h-3.5 w-3.5" />
           </button>
@@ -177,7 +177,7 @@ export function CronogramaBlocoCard({
             aria-label={`Remover ${disciplinaNome}`}
             disabled={deletePending}
             onClick={onDelete}
-            className="flex h-7 w-7 items-center justify-center rounded-md border border-border text-danger-500 hover:bg-danger-50 dark:hover:bg-danger-950/30"
+            className="flex h-10 w-10 items-center justify-center rounded-md border border-border text-danger-500 hover:bg-danger-50 dark:hover:bg-danger-950/30"
           >
             <Trash2 className="h-3.5 w-3.5" />
           </button>

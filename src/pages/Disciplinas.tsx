@@ -20,12 +20,14 @@ import type { Disciplina, FilterSeg } from "@/lib/disciplinas/types";
 import { api } from "@/services/api";
 import { useConcursoAtivoId } from "@/stores/concursoStore";
 import { useUiStore } from "@/stores/uiStore";
+import { Button } from "@/components/ui/button";
 
 function isLinkedToConcurso(d: Disciplina, concursoId: string) {
   return d.concurso_ids.includes(concursoId);
 }
 
 export function Disciplinas() {
+  const PAGE_SIZE = 9;
   const qc = useQueryClient();
   const concursoAtivoId = useConcursoAtivoId();
   const concursoId = concursoAtivoId ?? "";
@@ -37,6 +39,7 @@ export function Disciplinas() {
   const [modalOpen, setModalOpen] = React.useState(false);
   const [modalMode, setModalMode] = React.useState<"create" | "edit">("create");
   const [editingDisciplina, setEditingDisciplina] = React.useState<Disciplina | null>(null);
+  const [visibleCount, setVisibleCount] = React.useState(PAGE_SIZE);
 
   React.useEffect(() => {
     if (viewMode === "edital" && !concursoId) {
@@ -99,6 +102,7 @@ export function Disciplinas() {
       return true;
     });
   }, [disciplinas, filterSeg, concursoId]);
+  const visibleDisciplinas = filteredDisciplinas.slice(0, visibleCount);
 
   const summary = React.useMemo(() => {
     let emProg = 0;
@@ -151,15 +155,15 @@ export function Disciplinas() {
     <div className="min-h-full space-y-6 pb-10">
       <DisciplinasToolbar
         search={search}
-        onSearchChange={setSearch}
+        onSearchChange={(value) => { setSearch(value); setVisibleCount(PAGE_SIZE); }}
         filterSeg={filterSeg}
-        onFilterChange={setFilterSeg}
+        onFilterChange={(value) => { setFilterSeg(value); setVisibleCount(PAGE_SIZE); }}
         onCreate={openCreate}
         summary={summary}
         concursoId={concursoId}
         isCreating={createMutation.isPending}
         viewMode={viewMode}
-        onViewModeChange={setViewMode}
+        onViewModeChange={(value) => { setViewMode(value); setVisibleCount(PAGE_SIZE); }}
       />
 
       {loadingDisciplinas ? (
@@ -206,7 +210,7 @@ export function Disciplinas() {
 
       {!loadingDisciplinas && filteredDisciplinas.length > 0 && viewMode === "table" ? (
         <DisciplinasDataTable
-          disciplinas={filteredDisciplinas}
+          disciplinas={visibleDisciplinas}
           concursoId={concursoId}
           onEdit={openEdit}
           onToggleConcurso={(d) => toggleConcursoMutation.mutate(d)}
@@ -219,7 +223,7 @@ export function Disciplinas() {
 
       {!loadingDisciplinas && filteredDisciplinas.length > 0 && viewMode === "cards" ? (
         <div className="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-4 xl:grid-cols-3">
-          {filteredDisciplinas.map((disciplina, index) => {
+          {visibleDisciplinas.map((disciplina, index) => {
             const total = disciplina.topicos_total ?? 0;
             const estudados = disciplina.topicos_estudados ?? 0;
             const stats = getTopicosProgressFromCounts(total, estudados);
@@ -241,6 +245,14 @@ export function Disciplinas() {
               />
             );
           })}
+        </div>
+      ) : null}
+
+      {!loadingDisciplinas && viewMode !== "edital" && visibleCount < filteredDisciplinas.length ? (
+        <div className="flex justify-center">
+          <Button type="button" variant="outline" onClick={() => setVisibleCount((count) => count + PAGE_SIZE)}>
+            Mostrar mais disciplinas ({filteredDisciplinas.length - visibleCount})
+          </Button>
         </div>
       ) : null}
 

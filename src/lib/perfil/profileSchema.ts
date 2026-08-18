@@ -2,7 +2,7 @@ import { differenceInYears, parseISO } from "date-fns";
 import { z } from "zod";
 
 import { isValidCpf } from "@/lib/cpfValidate";
-import { maskCep, maskCpf, maskPhoneBr, unmaskCep, unmaskCpf } from "@/lib/inputMasks";
+import { maskCep, maskCpf, maskPhoneBr, unmaskCpf } from "@/lib/inputMasks";
 import type { MeApiResponse } from "@/services/profileApi";
 
 export function formatDateForInput(iso: string | null | undefined): string {

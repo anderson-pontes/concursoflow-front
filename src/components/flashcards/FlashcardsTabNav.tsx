@@ -22,7 +22,7 @@ export function FlashcardsTabNav({ tabs, activeTab, dueTodayTotal, onTabChange }
         role="tablist"
         aria-label="Seções de flashcards"
         onKeyDown={onTablistKeyDown}
-        className="-mx-1 flex gap-1 overflow-x-auto pb-0 scrollbar-thin sm:mx-0"
+        className="grid grid-cols-3 gap-1"
       >
         {tabs.map((t) => {
           const active = activeTab === t.id;
@@ -35,14 +35,14 @@ export function FlashcardsTabNav({ tabs, activeTab, dueTodayTotal, onTabChange }
               tabIndex={active ? 0 : -1}
               onClick={() => onTabChange(t.id)}
               className={[
-                "group relative flex shrink-0 items-center gap-2 px-4 py-3 text-sm font-semibold transition-colors",
+                "group relative flex min-h-11 min-w-0 items-center justify-center gap-1.5 px-2 py-3 text-xs font-semibold transition-colors sm:gap-2 sm:px-4 sm:text-sm",
                 active
                   ? "text-primary"
                   : "text-muted-foreground hover:text-foreground dark:text-neutral-400 dark:hover:text-neutral-200",
               ].join(" ")}
             >
               {t.icon}
-              <span className="whitespace-nowrap">{t.label}</span>
+              <span className="min-w-0 truncate">{t.label}</span>
               {t.id === "revisar" ? (
                 <span
                   className={[

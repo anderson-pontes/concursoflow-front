@@ -254,7 +254,6 @@ export function FlashcardsReviewTab({
               <div
                 className="fc-review-card-content mx-auto max-w-full text-center text-[18px] font-medium leading-[1.8] text-foreground"
                 style={{ overflowWrap: "break-word", fontWeight: 500 }}
-                // eslint-disable-next-line react/no-danger
                 dangerouslySetInnerHTML={{ __html: currentCard.frente }}
               />
 
@@ -283,7 +282,6 @@ export function FlashcardsReviewTab({
                     <p className="mb-2 text-[10px] font-medium uppercase tracking-[2px] text-muted-foreground">VERSO</p>
                     <div
                       className="fc-review-card-content rounded-[12px] border-l-[3px] border-primary bg-surface-muted p-5 text-base leading-[1.8] text-foreground"
-                      // eslint-disable-next-line react/no-danger
                       dangerouslySetInnerHTML={{ __html: currentCard.verso }}
                     />
 

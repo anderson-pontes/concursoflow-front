@@ -9,8 +9,11 @@
     "preview": "vite preview --host 0.0.0.0 --port 3000",
     "preview:lh": "vite preview --host 0.0.0.0 --port 4173",
     "typecheck": "tsc -b --pretty",
-    "lint": "npm run typecheck && npm run check:design-tokens",
-    "test": "node --test scripts/qa-ui-contracts.test.mjs",
+    "lint": "eslint \"src/**/*.{ts,tsx}\" vite.config.ts vitest.config.ts --max-warnings=25 && npm run check:design-tokens",
+    "test": "vitest run && node --test scripts/qa-ui-contracts.test.mjs",
+    "test:unit": "vitest run",
+    "test:e2e": "node scripts/smoke-e2e.mjs",
+    "audit:data": "node scripts/audit-data-quality.mjs",
     "test:ui": "node --test scripts/qa-ui-contracts.test.mjs",
     "qa:ux-visual": "node scripts/qa-ux-visual.mjs",
     "qa:ux-public": "node scripts/qa-ux-public.mjs",
@@ -59,16 +62,28 @@
     "zustand": "^4.5.0"
   },
   "devDependencies": {
+    "@eslint/js": "^9.39.0",
+    "@testing-library/jest-dom": "^7.0.1",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.5",
     "@types/react": "^18.3.0",
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.3.0",
     "autoprefixer": "^10.4.0",
+    "eslint": "^9.39.0",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-react-refresh": "^0.5.4",
+    "globals": "^17.11.0",
+    "jsdom": "^30.0.1",
     "lighthouse": "^13.4.0",
     "postcss": "^8.4.0",
     "puppeteer": "^25.3.0",
     "sharp": "^0.35.3",
     "tailwindcss": "^3.4.0",
     "typescript": "^5.5.0",
-    "vite": "^5.3.0"
+    "typescript-eslint": "^8.67.0",
+    "vite": "^5.3.0",
+    "vitest": "^4.1.11"
   }
 }

@@ -4,7 +4,6 @@ import { format, parseISO } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { useQueries, useQuery } from "@tanstack/react-query";
 import { Link, useNavigate } from "react-router-dom";
-import { toast } from "sonner";
 
 import {
   computeConcursoCardStatsFromKpis,
@@ -50,8 +49,6 @@ function acertoBadgeClass(pct: number) {
   return "bg-destructive/10 text-destructive";
 }
 
-const TOAST_BR = { duration: 3000, position: "bottom-right" as const };
-
 export function ConcursoDetalheModal({ concurso, onClose, onEdit }: ConcursoDetalheModalProps) {
   const onTablistKeyDown = useTablistNavigation();
   const [tab, setTab] = React.useState<TabId>("dados");
@@ -63,7 +60,7 @@ export function ConcursoDetalheModal({ concurso, onClose, onEdit }: ConcursoDeta
 
   React.useEffect(() => {
     if (concurso) setTab("dados");
-  }, [concurso?.id]);
+  }, [concurso]);
 
   React.useEffect(() => {
     if (!concurso) return;
@@ -72,7 +69,7 @@ export function ConcursoDetalheModal({ concurso, onClose, onEdit }: ConcursoDeta
       ...p,
       concursoMeta: { ...p.concursoMeta, [concurso.id]: { label } },
     }));
-  }, [concurso?.id, concurso?.cargo, concurso?.nome]);
+  }, [concurso]);
 
   if (!concurso) {
     return <Dialog open={false} onOpenChange={(o) => { if (!o) onClose(); }} />;

@@ -8,7 +8,7 @@ const outputDir = join(root, "docs", "qa", "ux-ui");
 const baseUrl = process.env.QA_BASE_URL || "http://localhost:3000";
 const email = process.env.QA_EMAIL || "seed@example.com";
 const password = process.env.QA_PASSWORD || "Seed@2026";
-const routes = ["/dashboard", "/cronograma", "/pomodoro", "/estudos/historico", "/concursos", "/disciplinas", "/mapas-mentais"];
+const routes = ["/dashboard", "/cronograma", "/pomodoro", "/estudos/historico", "/concursos", "/disciplinas", "/mapas-mentais", "/flashcards", "/configuracoes/estudos", "/admin/usuarios"];
 const viewports = [
   { name: "desktop", width: 1440, height: 900 },
   { name: "mobile", width: 390, height: 844 },

@@ -16,6 +16,8 @@ import {
 } from "@/types/userManagement";
 import { cn } from "@/lib/utils";
 import { SelectField } from "@/components/ui/select-field";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 export function GestaoUsuarios() {
   const [page, setPage] = React.useState(1);
@@ -50,16 +52,16 @@ export function GestaoUsuarios() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h2 className="text-lg font-semibold">Gestão de Usuários</h2>
+          <h1 className="text-xl font-semibold">Gestão de Usuários</h1>
           <p className="text-sm text-muted-foreground">Assinaturas, bloqueio e administração de contas.</p>
         </div>
-        <button
+        <Button
           type="button"
-          className="min-h-11 rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground transition hover:bg-primary-700"
+          size="lg"
           onClick={() => setCreateOpen(true)}
         >
           + Criar usuário
-        </button>
+        </Button>
       </div>
 
       <CriarUsuarioModal
@@ -84,8 +86,8 @@ export function GestaoUsuarios() {
 
       <div className="rounded-xl border border-border bg-card p-4 shadow-sm sm:p-5">
         <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
-          <input
-            className="min-h-11 rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          <Input
+            aria-label="Buscar usuários por nome, e-mail ou CPF"
             placeholder="Nome, e-mail ou CPF"
             value={search}
             onChange={(e) => {
@@ -98,7 +100,7 @@ export function GestaoUsuarios() {
           <SelectField value={studyGoal} onValueChange={(value) => { setStudyGoal(value); setPage(1); }} options={[{ value: "", label: "Todos os objetivos" }, ...STUDY_GOAL_OPTIONS]} />
         </div>
 
-        <div className="mt-4 overflow-x-auto">
+        <div className="mt-4 hidden overflow-x-auto md:block">
           <table className="w-full min-w-[800px] text-left text-sm">
             <thead>
               <tr className="border-b border-border text-xs text-muted-foreground">
@@ -155,28 +157,75 @@ export function GestaoUsuarios() {
           </table>
         </div>
 
-        <div className="mt-4 flex items-center justify-between text-sm">
+        <div className="mt-4 space-y-3 md:hidden" aria-live="polite">
+          {isLoading ? (
+            <div className="rounded-xl border border-border p-6 text-center text-sm text-muted-foreground">
+              Carregando usuários...
+            </div>
+          ) : (list?.items ?? []).length === 0 ? (
+            <div className="rounded-xl border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
+              Nenhum usuário encontrado com os filtros atuais.
+            </div>
+          ) : (
+            (list?.items ?? []).map((u) => (
+              <article key={u.id} className="rounded-xl border border-border bg-background p-4 shadow-sm">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <h2 className="truncate font-semibold text-foreground">{u.name}</h2>
+                    <p className="truncate text-sm text-muted-foreground">{u.email}</p>
+                  </div>
+                  <span className={cn("shrink-0 rounded px-2 py-1 text-xs font-medium", STATUS_BADGE_CLASS[u.status as UserStatus])}>
+                    {statusLabel(u.status)}
+                  </span>
+                </div>
+                <dl className="mt-4 grid grid-cols-2 gap-x-3 gap-y-2 text-sm">
+                  <div>
+                    <dt className="text-xs text-muted-foreground">Objetivo</dt>
+                    <dd className="mt-0.5 font-medium">{studyGoalLabel(u.study_goal)}</dd>
+                  </div>
+                  <div>
+                    <dt className="text-xs text-muted-foreground">Assinatura</dt>
+                    <dd className="mt-0.5 font-medium">{subscriptionStatusLabel(u.subscription_status)}</dd>
+                  </div>
+                  <div>
+                    <dt className="text-xs text-muted-foreground">Cadastro</dt>
+                    <dd className="mt-0.5">{new Date(u.created_at).toLocaleDateString("pt-BR")}</dd>
+                  </div>
+                  <div>
+                    <dt className="text-xs text-muted-foreground">Último acesso</dt>
+                    <dd className="mt-0.5">{u.last_login_at ? new Date(u.last_login_at).toLocaleDateString("pt-BR") : "—"}</dd>
+                  </div>
+                </dl>
+                <Button asChild variant="outline" className="mt-4 w-full">
+                  <Link to={`/admin/usuarios/${u.id}`}>Ver detalhes</Link>
+                </Button>
+              </article>
+            ))
+          )}
+        </div>
+
+        <div className="mt-4 flex flex-col gap-3 text-sm sm:flex-row sm:items-center sm:justify-between">
           <span className="text-muted-foreground">{list?.total ?? 0} registro(s)</span>
-          <div className="flex gap-2">
-            <button
+          <div className="flex items-center justify-between gap-2 sm:justify-end">
+            <Button
               type="button"
-              className="min-h-11 min-w-11 rounded-lg border border-border px-3 py-2 disabled:opacity-40"
+              variant="outline"
               disabled={page <= 1}
               onClick={() => setPage((p) => p - 1)}
             >
               Anterior
-            </button>
+            </Button>
             <span className="flex min-h-11 items-center px-1">
               {page} / {totalPages}
             </span>
-            <button
+            <Button
               type="button"
-              className="min-h-11 min-w-11 rounded-lg border border-border px-3 py-2 disabled:opacity-40"
+              variant="outline"
               disabled={page >= totalPages}
               onClick={() => setPage((p) => p + 1)}
             >
               Próxima
-            </button>
+            </Button>
           </div>
         </div>
       </div>

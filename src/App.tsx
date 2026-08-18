@@ -2,10 +2,6 @@ import React, { Suspense } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import { useAuthStore } from "./stores/authStore";
 import { Layout } from "./components/layout/Layout";
-import { Login } from "./pages/Auth/Login";
-import { Dashboard } from "./pages/Dashboard";
-import { Concursos } from "./pages/Concursos";
-import { Disciplinas } from "./pages/Disciplinas";
 import { AdminRoute } from "./components/layout/AdminRoute";
 import { PageSkeleton } from "./components/ui/page-skeleton";
 
@@ -21,6 +17,10 @@ function lazyNamed<T extends Record<string, React.ComponentType<object>>>(
 }
 
 const Landing = lazyNamed(() => import("./pages/Landing"), "LandingPage");
+const Login = lazyNamed(() => import("./pages/Auth/Login"), "Login");
+const Dashboard = lazyNamed(() => import("./pages/Dashboard"), "Dashboard");
+const Concursos = lazyNamed(() => import("./pages/Concursos"), "Concursos");
+const Disciplinas = lazyNamed(() => import("./pages/Disciplinas"), "Disciplinas");
 const DisciplinaDashboard = lazyNamed(() => import("./pages/DisciplinaDashboard"), "DisciplinaDashboard");
 const Register = lazyNamed(() => import("./pages/Auth/Register"), "Register");
 const ResetPassword = lazyNamed(() => import("./pages/Auth/ResetPassword"), "ResetPassword");
@@ -64,7 +64,7 @@ export default function App() {
           </LazyPage>
         }
       />
-      <Route path="/login" element={<Login />} />
+      <Route path="/login" element={<LazyPage><Login /></LazyPage>} />
       <Route
         path="/register"
         element={

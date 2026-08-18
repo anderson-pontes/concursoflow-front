@@ -138,7 +138,10 @@ export function Flashcards() {
   const totalCardsGlobal = metrics?.total_cards ?? 0;
 
   const globalStreak = React.useMemo(
-    () => readStreak(STREAK_GLOBAL_KEY).count,
+    () => {
+      void streakRev;
+      return readStreak(STREAK_GLOBAL_KEY).count;
+    },
 
     [streakRev],
   );
@@ -189,23 +192,6 @@ export function Flashcards() {
   }, [cfgData]);
 
   /* ── Mutations ── */
-
-  const deleteDeckMutation = useMutation({
-    mutationFn: async (id: string) => api.delete(`/flashcards/decks/${id}`),
-
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["flashcards-decks"] });
-      qc.invalidateQueries({ queryKey: ["flashcards-decks-flat"] });
-      qc.invalidateQueries({ queryKey: ["flashcards-decks-tree"] });
-
-      qc.invalidateQueries({ queryKey: ["flashcards-metrics"] });
-
-      toast.success("Baralho excluído.");
-
-      setView("decks");
-      setSelectedDeck(null);
-    },
-  });
 
   const deleteAllDecksMutation = useMutation({
     mutationFn: async () => (await api.delete("/flashcards/decks")).data as { decks_removidos: number },
@@ -409,12 +395,6 @@ export function Flashcards() {
     return () => window.removeEventListener("keydown", onKey);
   }, [tab, reviewSessionActive, currentCard, flipped, responderMutation]);
 
-  const deckStreakCount = React.useCallback(
-    (deckId: string) => readStreak(`${STREAK_DECK_PREFIX}${deckId}`).count,
-
-    [streakRev],
-  );
-
   const resetReviewSession = React.useCallback(() => {
     setReviewIdx(0);
 
@@ -502,10 +482,8 @@ export function Flashcards() {
             deckMetrics={deckMetrics}
             selectedDeck={selectedDeck}
             deckCards={deckCards}
-            deckStreakCount={deckStreakCount}
             onOpenDeckModal={(deck) => setDeckModal({ open: true, deck })}
             onOpenImport={() => setImportOpen(true)}
-            onDeleteDeck={(id) => deleteDeckMutation.mutate(id)}
             onDeleteAllDecks={() => deleteAllDecksMutation.mutate()}
             deletingAll={deleteAllDecksMutation.isPending}
             onSelectDeck={(deck) => {

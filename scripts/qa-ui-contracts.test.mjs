@@ -59,6 +59,7 @@ test("dívidas visuais auditadas possuem proteções estruturais", () => {
   const authShell = read("src/components/auth/AuthShell.tsx");
   const register = read("src/pages/Auth/Register.tsx");
   const cronograma = read("src/pages/Cronograma.tsx");
+  const cronogramaGrid = read("src/components/cronograma/CronogramaWeekGrid.tsx");
   const historico = read("src/pages/HistoricoEstudos.tsx");
   const dashboard = read("src/components/dashboard/DashboardOverview.tsx");
   const calendar = read("src/components/ui/calendar.tsx");
@@ -67,7 +68,8 @@ test("dívidas visuais auditadas possuem proteções estruturais", () => {
   assert.match(authShell, /justify-start[^\n]+md:justify-center/);
   assert.doesNotMatch(register, /max-h-\[min\(70vh,640px\)\]|overflow-y-auto/);
   assert.match(cronograma, /stats && totalBlocos > 0/);
-  assert.match(cronograma, /\) : totalBlocos > 0 \? \(/);
+  assert.match(cronograma, /<CronogramaWeekGrid/);
+  assert.match(cronogramaGrid, /if \(totalBlocos === 0\) return null/);
   assert.match(historico, /Nenhuma sessão registrada/);
   assert.match(historico, /Link to="\/pomodoro"/);
   assert.match(dashboard, /totalScheduled === 0/);

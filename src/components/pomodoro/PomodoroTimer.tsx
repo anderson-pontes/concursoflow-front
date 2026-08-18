@@ -126,10 +126,10 @@ export function PomodoroTimer({ onActiveChange, disciplinaNome, topicoNome }: Po
     setImmersive(true);
   };
 
-  const resume = () => {
+  const resume = React.useCallback(() => {
     if (!canStart || isRunning) return;
     resumeSession();
-  };
+  }, [canStart, isRunning, resumeSession]);
 
   const confirmReset = () => {
     if (!hasSession) return;

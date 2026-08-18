@@ -51,7 +51,7 @@ export function RevisaoDiasChips({ dias, onChange, disabled = false }: RevisaoDi
         {dias.map((n) => (
           <span
             key={n}
-            className="inline-flex items-center gap-1 rounded-full border border-border bg-background px-2.5 py-1 text-sm font-medium tabular-nums text-foreground"
+            className="inline-flex min-h-10 items-center gap-1 rounded-full border border-border bg-background pl-3 text-sm font-medium tabular-nums text-foreground"
           >
             {n}
             <button
@@ -59,7 +59,7 @@ export function RevisaoDiasChips({ dias, onChange, disabled = false }: RevisaoDi
               disabled={disabled}
               aria-label={`Remover ${n} dias`}
               onClick={() => remove(n)}
-              className="rounded-full p-0.5 text-muted-foreground hover:bg-muted hover:text-foreground disabled:opacity-50"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full text-muted-foreground hover:bg-muted hover:text-foreground disabled:opacity-50"
             >
               <X className="h-3.5 w-3.5" aria-hidden />
             </button>

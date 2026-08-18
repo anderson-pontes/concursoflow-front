@@ -1,13 +1,13 @@
 import React from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { isAxiosError } from "axios";
-import { BookOpen, Clock, ListChecks, Pencil, Plus, Trash2, BarChart3, Calendar, RefreshCw, MoreHorizontal } from "lucide-react";
+import { BookOpen, Clock, ListChecks, Plus, Trash2, BarChart3, Calendar, RefreshCw, MoreHorizontal } from "lucide-react";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
 
 import { CronogramaAgendaHojeDialog } from "@/components/cronograma/CronogramaAgendaHojeDialog";
 import { BlocoFormModal } from "@/components/cronograma/BlocoFormModal";
-import { CronogramaBlocoCard } from "@/components/cronograma/CronogramaBlocoCard";
+import { CronogramaWeekGrid } from "@/components/cronograma/CronogramaWeekGrid";
 import {
   CronogramaModoSelectorModal,
   type CronogramaModo,
@@ -33,8 +33,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { EmptyState } from "@/components/ui/empty-state";
-import { Skeleton } from "@/components/ui/skeleton";
-import { DIAS, diaAbrev, fmtHorasStats } from "@/lib/cronograma/constants";
+import { DIAS, fmtHorasStats } from "@/lib/cronograma/constants";
 import { filtrarDisciplinasDoConcursoAtivo } from "@/lib/cronograma/disciplinasConcurso";
 import type {
   Bloco,
@@ -51,7 +50,6 @@ import {
   previewEstenderFim,
   vigenciaFim12Meses,
 } from "@/lib/cronograma/types";
-import { cn } from "@/lib/utils";
 import { api } from "@/services/api";
 import { useConcursoAtivoId } from "@/stores/concursoStore";
 
@@ -396,112 +394,27 @@ export function Cronograma() {
         </div>
       ) : null}
 
-      {isLoading ? (
-        <div className="pb-1">
-          <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 xl:grid-cols-7 xl:gap-3">
-            {DIAS.map((d) => (
-              <Skeleton key={d} className="h-40 rounded-xl" />
-            ))}
-          </div>
-        </div>
-      ) : totalBlocos > 0 ? (
-        <div className="pb-1">
-          <div
-            className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7 xl:gap-3"
-            role="list"
-            aria-label="Dias da semana"
-          >
-            {DIAS.map((dia) => {
-              const isHoje = dia === diaHoje;
-              const items = groupedPorDisciplina[dia] ?? [];
-              return (
-                <div
-                  key={dia}
-                  role="listitem"
-                  className={cn(
-                    "min-w-0 rounded-xl border p-2.5 sm:p-3",
-                    isHoje
-                      ? "border-primary-400 bg-primary-50/60 shadow-sm dark:border-primary-600 dark:bg-primary-950/30"
-                      : "border-border bg-card",
-                  )}
-                >
-                  <div className="mb-2 flex items-center justify-between gap-1">
-                    <span
-                      className={cn(
-                        "flex min-w-0 flex-wrap items-center gap-1 text-xs font-semibold uppercase tracking-wide",
-                        isHoje ? "text-primary-700 dark:text-primary-300" : "text-muted-foreground",
-                      )}
-                    >
-                      <span>{diaAbrev[dia]}</span>
-                      {isHoje ? (
-                        <span className="rounded-full bg-primary px-1.5 py-0.5 text-xs font-bold normal-case text-primary-foreground">
-                          hoje
-                        </span>
-                      ) : null}
-                    </span>
-                    <div className="flex shrink-0 items-center gap-1">
-                      {items.length === 1 ? (
-                        <button
-                          type="button"
-                          title={`Editar ${diaAbrev[dia]}`}
-                          aria-label={`Editar bloco de ${diaAbrev[dia]}`}
-                          onClick={() => setEditBloco(items[0])}
-                          className="flex h-7 w-7 items-center justify-center rounded-md border border-border text-muted-foreground hover:bg-muted"
-                        >
-                          <Pencil className="h-3.5 w-3.5" />
-                        </button>
-                      ) : null}
-                      {items.length > 0 ? (
-                        <span className="rounded-full bg-muted px-1.5 text-xs font-medium tabular-nums text-muted-foreground">
-                          {items.length}
-                        </span>
-                      ) : null}
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    {items.map((bloco) => (
-                      <CronogramaBlocoCard
-                        key={bloco.id}
-                        bloco={bloco}
-                        disciplinaNome={discMap.get(bloco.disciplina_id) ?? "—"}
-                        diaLabel={diaAbrev[dia]}
-                        onEdit={() => setEditBloco(bloco)}
-                        onDelete={() =>
-                          setRemoveTarget({
-                            bloco,
-                            dataAlvo: nextOccurrenceISO(bloco.dia_semana),
-                            diaLabel: diaAbrev[dia],
-                          })
-                        }
-                        deletePending={removerMutation.isPending}
-                        estenderPending={estenderMutation.isPending}
-                        onEstender={
-                          bloco.grupo_id
-                            ? () => {
-                                const ate = fmtDateBR(previewEstenderFim(bloco.vigencia_fim));
-                                void requestConfirmation({
-                                  title: "Estender vigência do cronograma?",
-                                  description: `A vigência deste cronograma será estendida por mais 12 meses, até ${ate}.`,
-                                  confirmLabel: "Estender vigência",
-                                }).then((confirmed) => {
-                                  if (confirmed) estenderMutation.mutate(bloco.grupo_id!);
-                                });
-                              }
-                            : undefined
-                        }
-                      />
-                    ))}
-                    {items.length === 0 ? (
-                      <p className="py-4 text-center text-xs text-muted-foreground">Sem blocos</p>
-                    ) : null}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      ) : null}
+      <CronogramaWeekGrid
+        isLoading={isLoading}
+        totalBlocos={totalBlocos}
+        diaHoje={diaHoje}
+        grouped={groupedPorDisciplina}
+        disciplinaNome={(id) => discMap.get(id) ?? "—"}
+        deletePending={removerMutation.isPending}
+        extendPending={estenderMutation.isPending}
+        onEdit={setEditBloco}
+        onRemove={(bloco, diaLabel) => setRemoveTarget({ bloco, dataAlvo: nextOccurrenceISO(bloco.dia_semana), diaLabel })}
+        onExtend={(bloco) => {
+          const ate = fmtDateBR(previewEstenderFim(bloco.vigencia_fim));
+          void requestConfirmation({
+            title: "Estender vigência do cronograma?",
+            description: `A vigência deste cronograma será estendida por mais 12 meses, até ${ate}.`,
+            confirmLabel: "Estender vigência",
+          }).then((confirmed) => {
+            if (confirmed && bloco.grupo_id) estenderMutation.mutate(bloco.grupo_id);
+          });
+        }}
+      />
 
       <CronogramaAgendaHojeDialog
         open={agendaHojeOpen}

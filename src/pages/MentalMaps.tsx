@@ -130,8 +130,10 @@ function MentalMapCard({
 }
 
 export function MentalMaps() {
+  const PAGE_SIZE = 6;
   const [search, setSearch] = React.useState("");
   const [category, setCategory] = React.useState("Todos");
+  const [visibleCount, setVisibleCount] = React.useState(PAGE_SIZE);
   const [busyAction, setBusyAction] = React.useState<string | null>(null);
   const catalog = useQuery({ queryKey: ["mental-maps"], queryFn: listMentalMaps });
 
@@ -150,6 +152,7 @@ export function MentalMaps() {
     });
   }, [catalog.data?.items, category, search]);
   const hasFilters = Boolean(search.trim()) || category !== "Todos";
+  const visibleMaps = filtered.slice(0, visibleCount);
 
   const clearFilters = () => {
     setSearch("");
@@ -230,7 +233,7 @@ export function MentalMaps() {
             <Input
               type="search"
               value={search}
-              onChange={(event) => setSearch(event.target.value)}
+              onChange={(event) => { setSearch(event.target.value); setVisibleCount(PAGE_SIZE); }}
               placeholder="Buscar por assunto…"
               className="min-h-11 bg-card pl-10 pr-11"
             />
@@ -245,7 +248,7 @@ export function MentalMaps() {
                 key={item}
                 type="button"
                 variant={category === item ? "default" : "outline"}
-                onClick={() => setCategory(item)}
+                onClick={() => { setCategory(item); setVisibleCount(PAGE_SIZE); }}
                 aria-pressed={category === item}
                 className="min-h-10 shrink-0 rounded-full px-4 text-xs"
               >
@@ -277,9 +280,16 @@ export function MentalMaps() {
           ) : null}
           {filtered.length ? (
             <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-              {filtered.map((item) => (
+              {visibleMaps.map((item) => (
                 <MentalMapCard key={item.slug} item={item} busyAction={busyAction} onAccess={handleAccess} />
               ))}
+            </div>
+          ) : null}
+          {visibleCount < filtered.length ? (
+            <div className="mt-6 flex justify-center">
+              <Button type="button" variant="outline" onClick={() => setVisibleCount((count) => count + PAGE_SIZE)}>
+                Mostrar mais mapas ({filtered.length - visibleCount})
+              </Button>
             </div>
           ) : null}
         </div>

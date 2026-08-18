@@ -52,9 +52,8 @@ export default defineConfig({
         manualChunks(id) {
           if (!id.includes("node_modules")) return;
           if (id.includes("@tanstack/react-query")) return "query";
-          if (id.includes("react-router") || id.includes("react-dom") || id.match(/[/\\]react[/\\]/)) {
-            return "vendor";
-          }
+          if (id.includes("react-router")) return "router";
+          if (id.includes("react-dom") || id.match(/[/\\]react[/\\]/)) return "react-core";
           // TipTap/Recharts ficam nos chunks das rotas lazy (não forçar chunks globais).
         },
       },

@@ -1,14 +1,8 @@
 import React from "react";
-import { Calendar, Check, Info, Minus, Plus, Search, X } from "lucide-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
-import { Checkbox } from "@/components/ui/checkbox";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { DatePicker } from "@/components/ui/date-picker";
-import { Label } from "@/components/ui/label";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { invalidateEstudosQueries } from "@/lib/estudos/invalidateQueries";
 import { cn } from "@/lib/utils";
@@ -16,121 +10,12 @@ import { api } from "@/services/api";
 import { createCategoria, listCategorias } from "@/services/categorias";
 import { getRevisoesConfig } from "@/services/revisoesConfig";
 import { useConcursoAtivoId } from "@/stores/concursoStore";
+import { RegistroTopicosSection } from "@/components/estudos/RegistroTopicosSection";
+import { RegistroDetalhesSection, RegistroOptionsSection } from "@/components/estudos/RegistroDetalhesSections";
+import { NovaCategoriaDialog, RegistroDateSelector, RegistroModalFooter, RegistroModalHeader } from "@/components/estudos/RegistroModalChrome";
+import { dedupeTopicosPorId, fmtDateValue, fmtHms, hmsToSeconds, NONE_DISCIPLINA, NOVA_CATEGORIA_VALUE, TimeSegment, type DisciplinaOpt, type RegistroEstudoModalProps, type SessaoEstudoApi, type TopicoOpt } from "@/components/estudos/registroEstudoSupport";
 
-export type RegistroDefaultTopico = { id: string; nome: string };
-
-type Props = {
-  open: boolean;
-  onClose: () => void;
-  defaultDisciplinaId?: string | null;
-  defaultConcursoId?: string | null;
-  /** Tópicos pré-selecionados ao abrir um registro novo (sem sessaoId). */
-  defaultTopicos?: RegistroDefaultTopico[] | null;
-  /** Duração em segundos pré-preenchida (vinda do timer). Ignorada ao editar sessão existente. */
-  defaultDuracaoSegundos?: number | null;
-  /** Questões pré-preenchidas do timer. Ignoradas ao editar sessão existente. */
-  defaultAcertos?: number | null;
-  defaultErros?: number | null;
-  defaultBranco?: number | null;
-  /** Quando definido, o modal carrega a sessão e salva com PATCH. */
-  sessaoId?: string | null;
-  /** Data de referência pré-selecionada (YYYY-MM-DD) para registro retroativo. */
-  defaultDataReferencia?: string | null;
-  onSaved?: () => void;
-};
-
-type DisciplinaOpt = { id: string; nome: string };
-type TopicoOpt = { id: string; nome: string; status?: string };
-
-type SessaoEstudoApi = {
-  id: string;
-  disciplina_id: string;
-  topico_id: string | null;
-  topico_ids: string[];
-  plano_id: string | null;
-  concurso_id: string | null;
-  modalidade: "teoria" | "questoes" | "revisao" | null;
-  categoria_id: string | null;
-  data_referencia: string | null;
-  inicio: string;
-  fim: string | null;
-  duracao_minutos: number;
-  tempo_estudo_segundos: number;
-  material: string | null;
-  comentarios: string | null;
-  teoria_finalizada: boolean;
-  contabilizar_no_planejamento: boolean;
-  programar_revisoes: boolean;
-  revisoes_dias: number[];
-  questoes_acertos: number;
-  questoes_erros: number;
-  questoes_em_branco: number;
-  paginas_blocos: { inicio: number; fim: number }[];
-};
-
-const NOVA_CATEGORIA_VALUE = "__nova_categoria__";
-/** Valor sentinela para o Select de disciplina quando nada está selecionado */
-const NONE_DISCIPLINA = "__none_disciplina__";
-
-function fmtDateValue(kind: "hoje" | "ontem" | "outro", custom: string) {
-  if (kind === "outro") return custom;
-  const d = new Date();
-  if (kind === "ontem") d.setDate(d.getDate() - 1);
-  return d.toISOString().slice(0, 10);
-}
-
-function hmsToSeconds(hours: number, minutes: number, seconds: number) {
-  return hours * 3600 + minutes * 60 + seconds;
-}
-
-function fmtHms(hours: number, minutes: number, seconds: number) {
-  return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
-}
-
-type TimeSegmentProps = {
-  label: string;
-  value: number;
-  onInc: () => void;
-  onDec: () => void;
-};
-
-function TimeSegment({ label, value, onInc, onDec }: TimeSegmentProps) {
-  return (
-    <div className="flex-1 rounded-lg border-[0.5px] border-slate-200/90 bg-white px-3 py-2.5 dark:border-neutral-700 dark:bg-neutral-900">
-      <p className="text-center text-[10px] font-semibold uppercase tracking-wide text-slate-500 dark:text-neutral-400">{label}</p>
-      <div className="mt-1 flex items-center justify-center gap-2">
-        <button
-          type="button"
-          onClick={onDec}
-          className="inline-flex h-7 w-7 items-center justify-center rounded-md border-[0.5px] border-slate-300 text-slate-600 transition hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 dark:border-neutral-600 dark:text-neutral-200 dark:hover:bg-neutral-800"
-          aria-label={`Diminuir ${label.toLowerCase()}`}
-        >
-          <Minus className="h-3.5 w-3.5" />
-        </button>
-        <span className="w-8 text-center font-mono text-2xl font-semibold tabular-nums text-slate-900 dark:text-neutral-100">{String(value).padStart(2, "0")}</span>
-        <button
-          type="button"
-          onClick={onInc}
-          className="inline-flex h-7 w-7 items-center justify-center rounded-md border-[0.5px] border-slate-300 text-slate-600 transition hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 dark:border-neutral-600 dark:text-neutral-200 dark:hover:bg-neutral-800"
-          aria-label={`Aumentar ${label.toLowerCase()}`}
-        >
-          <Plus className="h-3.5 w-3.5" />
-        </button>
-      </div>
-    </div>
-  );
-}
-
-function dedupeTopicosPorId(rows: RegistroDefaultTopico[]): TopicoOpt[] {
-  const seen = new Set<string>();
-  const out: TopicoOpt[] = [];
-  for (const t of rows) {
-    if (!t.id || seen.has(t.id)) continue;
-    seen.add(t.id);
-    out.push({ id: t.id, nome: t.nome });
-  }
-  return out;
-}
+export type { RegistroDefaultTopico } from "@/components/estudos/registroEstudoSupport";
 
 export function RegistroEstudoModal({
   open,
@@ -145,7 +30,7 @@ export function RegistroEstudoModal({
   sessaoId,
   defaultDataReferencia,
   onSaved,
-}: Props) {
+}: RegistroEstudoModalProps) {
   const qc = useQueryClient();
   const concursoAtivoId = useConcursoAtivoId();
 
@@ -220,6 +105,7 @@ export function RegistroEstudoModal({
     open,
     sessaoId,
     defaultDisciplinaId,
+    defaultTopicos,
     defaultTopicosSignature,
     defaultDuracaoSegundos,
     defaultAcertos,
@@ -332,7 +218,7 @@ export function RegistroEstudoModal({
         status: topicos.find((t) => t.id === p.id)?.status ?? p.status,
       })),
     );
-  }, [topicos, sessaoData?.id]);
+  }, [topicos, sessaoData]);
 
   React.useEffect(() => {
     if (!categoriaId && categorias?.length) setCategoriaId(categorias[0].id);
@@ -360,11 +246,6 @@ export function RegistroEstudoModal({
     if (!term) return listaTopicosCheckbox;
     return listaTopicosCheckbox.filter((t) => t.nome.toLowerCase().includes(term));
   }, [listaTopicosCheckbox, topicoBusca]);
-
-  const isTopicoSelected = React.useCallback(
-    (id: string) => selectedTopicos.some((t) => t.id === id),
-    [selectedTopicos],
-  );
 
   const toggleTopico = (topico: TopicoOpt) => {
     setSelectedTopicos((prev) =>
@@ -527,21 +408,7 @@ export function RegistroEstudoModal({
         aria-describedby={undefined}
         className="block max-h-[94vh] w-full max-w-4xl gap-0 overflow-y-auto rounded-2xl border-[0.5px] border-slate-200/90 bg-white p-0 shadow-2xl dark:border-neutral-700 dark:bg-neutral-950"
       >
-        <div className="border-b border-[0.5px] border-slate-200/90 px-6 py-5 dark:border-neutral-800">
-          <div className="flex items-center justify-between">
-            <DialogTitle className="text-2xl font-semibold text-slate-900 dark:text-neutral-100">
-              {sessaoId ? "Editar registro de estudo" : "Registro de estudo"}
-            </DialogTitle>
-            <button
-              type="button"
-              onClick={onClose}
-              className="rounded-lg border-[0.5px] border-slate-300 p-1.5 text-slate-500 transition hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-800"
-              aria-label="Fechar"
-            >
-              <X className="h-4 w-4" />
-            </button>
-          </div>
-        </div>
+        <RegistroModalHeader editing={Boolean(sessaoId)} onClose={onClose} />
 
         <div className="relative space-y-5 px-6 pt-5 pb-10">
           {sessaoId && loadingSessao ? (
@@ -549,30 +416,7 @@ export function RegistroEstudoModal({
               <p className="text-sm font-medium text-slate-600 dark:text-neutral-300">Carregando registro…</p>
             </div>
           ) : null}
-          <div className="flex flex-wrap items-center gap-2">
-            <Calendar className="h-4 w-4 text-primary" aria-hidden />
-            {(["hoje", "ontem", "outro"] as const).map((k) => (
-              <button
-                key={k}
-                type="button"
-                onClick={() => setDateKind(k)}
-                className={`min-h-11 rounded-lg border-[0.5px] px-3 py-1.5 text-sm font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
-                  dateKind === k
-                    ? "border-transparent bg-primary text-primary-foreground"
-                    : "border-border text-foreground hover:bg-muted"
-                }`}
-              >
-                {k === "hoje" ? "Hoje" : k === "ontem" ? "Ontem" : "Outro"}
-              </button>
-            ))}
-            {dateKind === "outro" ? (
-              <DatePicker
-                value={dateCustom}
-                onValueChange={setDateCustom}
-                className="min-w-48"
-              />
-            ) : null}
-          </div>
+          <RegistroDateSelector kind={dateKind} customDate={dateCustom} onKindChange={setDateKind} onCustomDateChange={setDateCustom} />
 
           <div className="grid gap-4 md:grid-cols-2">
             <div className="block">
@@ -645,319 +489,46 @@ export function RegistroEstudoModal({
             </div>
           </section>
 
-          <section className="rounded-xl border-[0.5px] border-slate-200/90 bg-white p-3 dark:border-neutral-800 dark:bg-neutral-900/50">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-neutral-400">Tópicos estudados</p>
-            <p className="mt-1 text-[11px] leading-snug text-slate-500 dark:text-neutral-500">
-              Com a categoria Teoria, só aparecem tópicos ainda não finalizados (não dominados). Nas outras categorias, todos os tópicos da disciplina ficam visíveis, incluindo os já concluídos.
-            </p>
-
-            <div className="mt-2 rounded-lg border-[0.5px] border-slate-300 px-3 py-2 dark:border-neutral-700">
-              <div className="flex items-center gap-2">
-                <Search className="h-4 w-4 text-slate-400" />
-                <input
-                  value={topicoBusca}
-                  onChange={(e) => setTopicoBusca(e.target.value)}
-                  placeholder="Buscar tópico..."
-                  className="w-full bg-transparent text-sm outline-none placeholder:text-slate-400"
-                />
-              </div>
-            </div>
-
-            <div className="mt-2 max-h-52 overflow-y-auto rounded-lg border-[0.5px] border-slate-200/90 bg-white dark:border-neutral-800 dark:bg-neutral-900">
-              {filteredTopicos.length === 0 ? (
-                <p className="px-3 py-4 text-sm text-slate-500">Nenhum tópico encontrado.</p>
-              ) : (
-                <ul className="divide-y divide-slate-100 dark:divide-neutral-800">
-                  {filteredTopicos.map((topico, idx) => (
-                    <li key={topico.id} className="flex items-center gap-3 px-3 py-2">
-                      <Checkbox
-                        checked={isTopicoSelected(topico.id)}
-                        onCheckedChange={() => toggleTopico(topico)}
-                        aria-label={`Selecionar tópico ${topico.nome}`}
-                        className="mt-0.5"
-                      />
-                      <span className="w-4 text-xs text-slate-400">{idx + 1}</span>
-                      <span className="text-sm text-slate-800 dark:text-neutral-200">{topico.nome}</span>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
-
-            <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
-              <p className="text-xs text-slate-500">{selectedTopicos.length} selecionado(s)</p>
-              <div className="flex items-center gap-2">
-                <input
-                  value={novoTopicoNome}
-                  onChange={(e) => setNovoTopicoNome(e.target.value)}
-                  placeholder="Novo tópico"
-                  className="h-9 rounded-lg border-[0.5px] border-slate-300 px-2.5 text-xs outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 dark:border-neutral-700 dark:bg-neutral-900"
-                />
-                <button
-                  type="button"
-                  onClick={() => {
-                    const nome = novoTopicoNome.trim();
-                    if (!nome) return;
-                    if (!disciplinaId) {
-                      toast.error("Selecione uma disciplina para criar tópico.");
-                      return;
-                    }
-                    createTopicoMutation.mutate(nome);
-                  }}
-                  className="inline-flex h-9 items-center gap-1.5 rounded-lg border-[0.5px] border-slate-300 px-3 text-xs font-medium text-slate-700 transition hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 dark:border-neutral-600 dark:text-neutral-200 dark:hover:bg-neutral-800"
-                >
-                  <Plus className="h-3.5 w-3.5" /> Novo tópico
-                </button>
-              </div>
-            </div>
-
-            {selectedTopicos.length > 0 ? (
-              <div className="mt-2 flex flex-wrap gap-2">
-                {selectedTopicos.map((t) => (
-                  <span
-                    key={t.id}
-                    className="inline-flex items-center gap-1 rounded-full border-[0.5px] border-violet-200 bg-violet-50 px-2.5 py-1 text-xs font-medium text-violet-800 dark:border-violet-800 dark:bg-violet-950/40 dark:text-violet-200"
-                  >
-                    <Check className="h-3 w-3" />
-                    {t.nome}
-                    <button type="button" onClick={() => setSelectedTopicos((s) => s.filter((x) => x.id !== t.id))} className="rounded p-0.5 hover:bg-violet-200/70 dark:hover:bg-violet-900" aria-label={`Remover ${t.nome}`}>
-                      <X className="h-3 w-3" />
-                    </button>
-                  </span>
-                ))}
-              </div>
-            ) : null}
-          </section>
-
-          <div className="grid gap-4 md:grid-cols-2">
-            <label>
-              <span className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-neutral-400">Material</span>
-              <input
-                value={material}
-                onChange={(e) => setMaterial(e.target.value)}
-                className="mt-1.5 w-full rounded-lg border-[0.5px] border-slate-300 bg-white px-3 py-2.5 text-sm outline-none transition focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 dark:border-neutral-700 dark:bg-neutral-900"
-                placeholder="Ex: Livro, PDF, apostila..."
-              />
-            </label>
-            <label>
-              <span className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-neutral-400">Comentários</span>
-              <input
-                value={comentarios}
-                onChange={(e) => setComentarios(e.target.value)}
-                className="mt-1.5 w-full rounded-lg border-[0.5px] border-slate-300 bg-white px-3 py-2.5 text-sm outline-none transition focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 dark:border-neutral-700 dark:bg-neutral-900"
-                placeholder="Observações sobre o estudo"
-              />
-            </label>
-          </div>
-
-          <div className="grid gap-3 lg:grid-cols-3">
-            <div className="rounded-xl border-[0.5px] border-slate-200/90 bg-white p-3 dark:border-neutral-800 dark:bg-neutral-900/40">
-              <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Questões</p>
-              <div className="mt-2 grid grid-cols-3 gap-2">
-                <label className="flex flex-col gap-1">
-                  <span className="text-[10px] font-medium text-emerald-600 dark:text-emerald-400">Certas</span>
-                  <input
-                    type="number"
-                    min={0}
-                    value={acertos}
-                    onChange={(e) => setAcertos(Number(e.target.value || 0))}
-                    className="rounded-md border-[0.5px] border-slate-300 px-2 py-1.5 text-sm outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 dark:border-neutral-700 dark:bg-neutral-900"
-                  />
-                </label>
-                <label className="flex flex-col gap-1">
-                  <span className="text-[10px] font-medium text-rose-600 dark:text-rose-400">Erradas</span>
-                  <input
-                    type="number"
-                    min={0}
-                    value={erros}
-                    onChange={(e) => setErros(Number(e.target.value || 0))}
-                    className="rounded-md border-[0.5px] border-slate-300 px-2 py-1.5 text-sm outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 dark:border-neutral-700 dark:bg-neutral-900"
-                  />
-                </label>
-                <label className="flex flex-col gap-1">
-                  <span className="text-[10px] font-medium text-slate-500 dark:text-slate-400">Em branco</span>
-                  <input
-                    type="number"
-                    min={0}
-                    value={branco}
-                    onChange={(e) => setBranco(Number(e.target.value || 0))}
-                    className="rounded-md border-[0.5px] border-slate-300 px-2 py-1.5 text-sm outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 dark:border-neutral-700 dark:bg-neutral-900"
-                  />
-                </label>
-              </div>
-            </div>
-
-            <div className="rounded-xl border-[0.5px] border-slate-200/90 bg-white p-3 dark:border-neutral-800 dark:bg-neutral-900/40">
-              <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Páginas</p>
-              {paginas.map((p, i) => (
-                <div key={i} className="mt-2 grid grid-cols-2 gap-2">
-                  <input value={p.inicio} onChange={(e) => setPaginas((s) => s.map((x, idx) => (idx === i ? { ...x, inicio: e.target.value } : x)))} placeholder="Início" className="rounded-md border-[0.5px] border-slate-300 px-2 py-1.5 text-sm outline-none focus:border-primary-500 dark:border-neutral-700 dark:bg-neutral-900" />
-                  <input value={p.fim} onChange={(e) => setPaginas((s) => s.map((x, idx) => (idx === i ? { ...x, fim: e.target.value } : x)))} placeholder="Fim" className="rounded-md border-[0.5px] border-slate-300 px-2 py-1.5 text-sm outline-none focus:border-primary-500 dark:border-neutral-700 dark:bg-neutral-900" />
-                </div>
-              ))}
-              <button type="button" onClick={() => setPaginas((s) => [...s, { inicio: "", fim: "" }])} className="mt-2 inline-flex items-center gap-1 rounded-md border-[0.5px] border-slate-300 px-2 py-1 text-xs text-slate-700 hover:bg-slate-50 dark:border-neutral-700 dark:text-neutral-200 dark:hover:bg-neutral-800">
-                <Plus className="h-3 w-3" />
-                Linha
-              </button>
-            </div>
-
-            <div className="rounded-xl border-[0.5px] border-slate-200/90 bg-white p-3 dark:border-neutral-800 dark:bg-neutral-900/40">
-              <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Revisões</p>
-              {programarRevisoes ? (
-                <>
-                  <div className="mt-2 flex flex-wrap gap-2">
-                    {[...new Set(revisoesDias)]
-                      .sort((a, b) => a - b)
-                      .map((d) => (
-                        <span key={d} className="inline-flex items-center gap-1 rounded-full border-[0.5px] border-violet-200 bg-violet-50 px-2 py-1 text-xs text-violet-800 dark:border-violet-700 dark:bg-violet-950/40 dark:text-violet-200">
-                          D+{d}
-                          <button type="button" onClick={() => setRevisoesDias((s) => s.filter((x) => x !== d))} className="rounded p-0.5 hover:bg-violet-200/70 dark:hover:bg-violet-900" aria-label={`Remover dia ${d}`}>
-                            <X className="h-3 w-3" />
-                          </button>
-                        </span>
-                      ))}
-                  </div>
-                  <div className="mt-2 flex items-center gap-2">
-                    <input type="number" min={1} value={novoDiaRevisao} onChange={(e) => setNovoDiaRevisao(e.target.value)} placeholder="Dia" className="h-8 w-20 rounded-md border-[0.5px] border-slate-300 px-2 text-sm outline-none focus:border-primary-500 dark:border-neutral-700 dark:bg-neutral-900" />
-                    <button type="button" onClick={addDiaRevisao} className="h-8 rounded-md border-[0.5px] border-slate-300 px-2.5 text-xs text-slate-700 hover:bg-slate-50 dark:border-neutral-700 dark:text-neutral-200 dark:hover:bg-neutral-800">Adicionar</button>
-                  </div>
-                </>
-              ) : (
-                <p className="mt-2 text-xs text-slate-500">Ative &quot;Programar revisões&quot; para definir os dias.</p>
-              )}
-            </div>
-          </div>
-
-          <section
-            className="mt-10 rounded-xl border-[0.5px] border-slate-200/90 bg-slate-50/80 p-5 sm:p-6 dark:border-neutral-800 dark:bg-neutral-900/55"
-            aria-labelledby="registro-opcoes-titulo"
-          >
-            <h3 id="registro-opcoes-titulo" className="mb-4 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-neutral-400">
-              Opções do registro
-            </h3>
-            <div className="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-start sm:gap-x-10 sm:gap-y-4">
-              <div className="flex items-start gap-2.5">
-                <Checkbox
-                  id="registro-teoria-finalizada"
-                  className="mt-0.5"
-                  checked={teoriaFinalizada}
-                  onCheckedChange={(v) => setTeoriaFinalizada(v === true)}
-                />
-                <Label htmlFor="registro-teoria-finalizada" className="cursor-pointer pt-0.5 text-sm font-normal leading-snug text-slate-700 dark:text-neutral-300">
-                  Teoria finalizada
-                </Label>
-              </div>
-              <div className="flex items-start gap-2.5">
-                <Checkbox
-                  id="registro-contabilizar-planejamento"
-                  className="mt-0.5"
-                  checked={contabilizar}
-                  onCheckedChange={(v) => setContabilizar(v === true)}
-                />
-                <Label
-                  htmlFor="registro-contabilizar-planejamento"
-                  className="inline-flex cursor-pointer items-center gap-1.5 pt-0.5 text-sm font-normal leading-snug text-slate-700 dark:text-neutral-300"
-                >
-                  Contabilizar no planejamento
-                  <Info className="h-3.5 w-3.5 shrink-0 text-slate-400 dark:text-neutral-500" aria-hidden />
-                </Label>
-              </div>
-              <div className="flex items-start gap-2.5">
-                <Checkbox
-                  id="registro-programar-revisoes"
-                  className="mt-0.5"
-                  checked={programarRevisoes}
-                  onCheckedChange={(v) => setProgramarRevisoes(v === true)}
-                />
-                <Label htmlFor="registro-programar-revisoes" className="cursor-pointer pt-0.5 text-sm font-normal leading-snug text-slate-700 dark:text-neutral-300">
-                  Programar revisões
-                </Label>
-              </div>
-              {!sessaoId ? (
-                <div className="flex items-start gap-2.5">
-                  <Checkbox
-                    id="registro-salvar-e-novo"
-                    className="mt-0.5"
-                    checked={saveAndNew}
-                    onCheckedChange={(v) => setSaveAndNew(v === true)}
-                  />
-                  <Label htmlFor="registro-salvar-e-novo" className="cursor-pointer pt-0.5 text-sm font-normal leading-snug text-slate-700 dark:text-neutral-300">
-                    Salvar e criar novo
-                  </Label>
-                </div>
-              ) : null}
-            </div>
-          </section>
-        </div>
-
-        <div className="flex items-center justify-end gap-2 border-t border-[0.5px] border-slate-200/90 px-6 py-5 dark:border-neutral-800">
-          <button type="button" onClick={onClose} className="rounded-xl border-[0.5px] border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-200 dark:hover:bg-neutral-800">
-            Cancelar
-          </button>
-          <button
-            type="button"
-            onClick={() => {
+          <RegistroTopicosSection
+            topics={filteredTopicos}
+            selected={selectedTopicos}
+            search={topicoBusca}
+            newTopic={novoTopicoNome}
+            onSearchChange={setTopicoBusca}
+            onNewTopicChange={setNovoTopicoNome}
+            onToggle={toggleTopico}
+            onRemove={(id) => setSelectedTopicos((current) => current.filter((topic) => topic.id !== id))}
+            onCreate={() => {
+              const nome = novoTopicoNome.trim();
               if (!disciplinaId) {
-                toast.error("Selecione uma disciplina");
+                toast.error("Selecione uma disciplina para criar tópico.");
                 return;
               }
-              const seg = hmsToSeconds(hours, minutes, seconds);
-              if (seg <= 0) {
-                toast.error("Informe um tempo de estudo maior que zero");
-                return;
-              }
-              if (seg > 24 * 3600) {
-                toast.error("O tempo máximo é 24 horas");
-                return;
-              }
-              saveMutation.mutate();
+              createTopicoMutation.mutate(nome);
             }}
-            disabled={saveMutation.isPending || (Boolean(sessaoId) && loadingSessao)}
-            className="min-h-11 rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-sm transition hover:bg-primary-700 disabled:opacity-60"
-          >
-            {sessaoId ? "Salvar alterações" : "Salvar registro"}
-          </button>
+          />
+
+          <RegistroDetalhesSection material={material} comments={comentarios} correct={acertos} wrong={erros} blank={branco} pages={paginas} scheduleReviews={programarRevisoes} reviewDays={revisoesDias} newReviewDay={novoDiaRevisao} onMaterialChange={setMaterial} onCommentsChange={setComentarios} onCorrectChange={setAcertos} onWrongChange={setErros} onBlankChange={setBranco} onPagesChange={setPaginas} onReviewDaysChange={setRevisoesDias} onNewReviewDayChange={setNovoDiaRevisao} onAddReviewDay={addDiaRevisao} />
+
+          <RegistroOptionsSection completedTheory={teoriaFinalizada} countInPlan={contabilizar} scheduleReviews={programarRevisoes} saveAndNew={saveAndNew} editing={Boolean(sessaoId)} onCompletedTheoryChange={setTeoriaFinalizada} onCountInPlanChange={setContabilizar} onScheduleReviewsChange={setProgramarRevisoes} onSaveAndNewChange={setSaveAndNew} />
         </div>
+
+        <RegistroModalFooter
+          editing={Boolean(sessaoId)}
+          busy={saveMutation.isPending || (Boolean(sessaoId) && loadingSessao)}
+          onClose={onClose}
+          onSave={() => {
+            if (!disciplinaId) return void toast.error("Selecione uma disciplina");
+            const totalSeconds = hmsToSeconds(hours, minutes, seconds);
+            if (totalSeconds <= 0) return void toast.error("Informe um tempo de estudo maior que zero");
+            if (totalSeconds > 24 * 3600) return void toast.error("O tempo máximo é 24 horas");
+            saveMutation.mutate();
+          }}
+        />
       </DialogContent>
     </Dialog>
 
-    <Dialog open={novaCategoriaOpen} onOpenChange={setNovaCategoriaOpen}>
-      <DialogContent className="max-w-md">
-        <DialogHeader>
-          <DialogTitle>Nova categoria</DialogTitle>
-          <DialogDescription>Crie uma categoria para organizar este registro de estudo.</DialogDescription>
-        </DialogHeader>
-        <form
-          className="space-y-4"
-          onSubmit={(event) => {
-            event.preventDefault();
-            const nome = novaCategoriaNome.trim();
-            if (!nome) return;
-            createCategoriaMutation.mutate(nome);
-          }}
-        >
-          <div className="space-y-2">
-            <Label htmlFor="nova-categoria-nome">Nome da categoria</Label>
-            <Input
-              id="nova-categoria-nome"
-              autoFocus
-              value={novaCategoriaNome}
-              onChange={(event) => setNovaCategoriaNome(event.target.value)}
-              placeholder="Ex.: Simulado"
-              maxLength={80}
-            />
-          </div>
-          <div className="flex justify-end gap-2">
-            <Button type="button" variant="outline" onClick={() => setNovaCategoriaOpen(false)}>
-              Cancelar
-            </Button>
-            <Button type="submit" disabled={!novaCategoriaNome.trim() || createCategoriaMutation.isPending}>
-              {createCategoriaMutation.isPending ? "Criando…" : "Criar categoria"}
-            </Button>
-          </div>
-        </form>
-      </DialogContent>
-    </Dialog>
+    <NovaCategoriaDialog open={novaCategoriaOpen} name={novaCategoriaNome} busy={createCategoriaMutation.isPending} onOpenChange={setNovaCategoriaOpen} onNameChange={setNovaCategoriaNome} onSubmit={() => { const nome = novaCategoriaNome.trim(); if (nome) createCategoriaMutation.mutate(nome); }} />
     </>
   );
 }

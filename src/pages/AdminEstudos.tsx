@@ -157,7 +157,7 @@ export function ConfiguracoesEstudos() {
     const source = revisoes.dias?.length ? revisoes.dias : [...REVISAO_DIAS_PADRAO];
     setDiasDraft(sortDiasAsc(source));
     setDiasHydrated(true);
-  }, [revisoes?.id, revisoes?.updated_at]);
+  }, [revisoes]);
 
   const savedDias = revisoes?.dias ?? [];
   const cicloDirty = diasHydrated && !diasEqual(diasDraft, savedDias);
@@ -322,7 +322,7 @@ export function ConfiguracoesEstudos() {
             type="button"
             disabled={loadingRevisoes || saveRevisoesMutation.isPending}
             onClick={() => setDiasDraft([...REVISAO_DIAS_PADRAO])}
-            className="mt-2 self-start text-sm font-medium text-primary hover:underline disabled:opacity-50 sm:mt-0"
+            className="mt-2 inline-flex min-h-10 items-center self-start rounded-md px-3 text-sm font-medium text-primary hover:bg-muted hover:underline disabled:opacity-50 sm:mt-0"
           >
             Restaurar padrão
           </button>

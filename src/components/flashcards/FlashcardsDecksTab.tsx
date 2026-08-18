@@ -19,12 +19,10 @@ type Props = {
   deckMetrics: DeckMetricRow[];
   selectedDeck: Deck | null;
   deckCards: Flashcard[];
-  deckStreakCount: (deckId: string) => number;
   onOpenDeckModal: (deck?: Deck | null) => void;
   onOpenImport: () => void;
   onDeleteAllDecks: () => void;
   deletingAll: boolean;
-  onDeleteDeck: (id: string) => void;
   onSelectDeck: (deck: Deck) => void;
   onBackToDecks: () => void;
   onOpenCardModal: (card?: Flashcard | null) => void;
@@ -39,12 +37,10 @@ export function FlashcardsDecksTab({
   deckMetrics,
   selectedDeck,
   deckCards,
-  deckStreakCount,
   onOpenDeckModal,
   onOpenImport,
   onDeleteAllDecks,
   deletingAll,
-  onDeleteDeck,
   onSelectDeck,
   onBackToDecks,
   onOpenCardModal,
@@ -61,7 +57,7 @@ export function FlashcardsDecksTab({
           <p className="max-w-xl text-sm text-muted-foreground dark:text-neutral-400">
             Agrupe cartões por matéria ou edital. Cada baralho usa o algoritmo Anki para priorizar o que você mais precisa rever.
           </p>
-          <div className="flex shrink-0 flex-wrap gap-2">
+          {decks.length > 0 ? <div className="flex shrink-0 flex-wrap gap-2">
             <button
               type="button"
               onClick={onOpenImport}
@@ -96,7 +92,7 @@ export function FlashcardsDecksTab({
               <Trash2 className="h-4 w-4" />
               {deletingAll ? "Excluindo..." : "Excluir todos"}
             </button>
-          </div>
+          </div> : null}
         </div>
 
         <div>
