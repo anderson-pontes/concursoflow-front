@@ -7,6 +7,7 @@ import type { Disciplina } from "@/lib/disciplinas/types";
 import { cn } from "@/lib/utils";
 import { api } from "@/services/api";
 import type { DisciplinaDashboardResponse, DisciplinaDashboardTopicoRow } from "@/types/disciplinaDashboard";
+import { SelectField } from "@/components/ui/select-field";
 
 type Filter = "todos" | "pendentes" | "concluidos" | "nunca" | "baixo" | "revisao";
 
@@ -22,7 +23,7 @@ export function EditalVerticalizadoOverview({ disciplinas }: { disciplinas: Disc
     <section aria-labelledby="edital-verticalizado-title" className="space-y-4">
       <div className="flex flex-col gap-3 rounded-xl border border-border bg-card p-4 sm:flex-row sm:items-end sm:justify-between">
         <div><h2 id="edital-verticalizado-title" className="font-semibold">Edital verticalizado</h2><p className="text-sm text-muted-foreground">Expanda uma disciplina para conferir progresso, desempenho e revisões dos tópicos.</p></div>
-        <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Filtrar tópicos<select value={filter} onChange={(event) => setFilter(event.target.value as Filter)} className="mt-1 block min-h-11 rounded-lg border border-border bg-background px-3 text-sm font-medium normal-case text-foreground"><option value="todos">Todos</option><option value="pendentes">Pendentes</option><option value="concluidos">Concluídos</option><option value="nunca">Nunca estudados</option><option value="baixo">Baixo desempenho</option><option value="revisao">Revisão atrasada</option></select></label>
+        <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Filtrar tópicos<SelectField value={filter} onValueChange={(value) => setFilter(value as Filter)} className="mt-1 min-w-48 font-medium normal-case" options={[{ value: "todos", label: "Todos" }, { value: "pendentes", label: "Pendentes" }, { value: "concluidos", label: "Concluídos" }, { value: "nunca", label: "Nunca estudados" }, { value: "baixo", label: "Baixo desempenho" }, { value: "revisao", label: "Revisão atrasada" }]} /></label>
       </div>
       <div className="space-y-3">
         {disciplinas.map((disciplina) => <DisciplinaAccordion key={disciplina.id} disciplina={disciplina} open={openId === disciplina.id} onToggle={() => setOpenId((current) => current === disciplina.id ? null : disciplina.id)} filter={filter} />)}

@@ -6,6 +6,8 @@ import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { DatePicker } from "@/components/ui/date-picker";
+import { SelectField } from "@/components/ui/select-field";
 import {
   Dialog,
   DialogContent,
@@ -152,7 +154,7 @@ export function ReplanejarPlano() {
               <Checkbox aria-label={`Incluir ${disciplina.nome}`} checked={disciplina.ativa} onCheckedChange={(checked) => updateDisciplina(index, { ativa: Boolean(checked) })} />
               <strong>{disciplina.nome}</strong>
               <Field label="Peso (1–10)"><input type="number" min={1} max={10} value={disciplina.peso} onChange={(event) => updateDisciplina(index, { peso: Number(event.target.value) })} className="input-base" /></Field>
-              <Field label="Conhecimento"><select value={disciplina.conhecimento} onChange={(event) => updateDisciplina(index, { conhecimento: event.target.value as NivelConhecimento })} className="input-base">{CONHECIMENTO.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select></Field>
+              <Field label="Conhecimento"><SelectField value={disciplina.conhecimento} onValueChange={(value) => updateDisciplina(index, { conhecimento: value as NivelConhecimento })} options={CONHECIMENTO} /></Field>
             </div>
           ))}
         </div>
@@ -161,10 +163,10 @@ export function ReplanejarPlano() {
       <section className="rounded-2xl border border-border bg-card p-5 shadow-sm">
         <h2 className="text-lg font-semibold">Disponibilidade e sessões</h2>
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
-          <Field label="Formato"><select value={config.tipo} onChange={(event) => updateConfig({ tipo: event.target.value as ConfigPlanejamento["tipo"] })} className="input-base"><option value="ciclo">Ciclo de estudos</option><option value="semanal">Grade semanal</option></select></Field>
+          <Field label="Formato"><SelectField value={config.tipo} onValueChange={(value) => updateConfig({ tipo: value as ConfigPlanejamento["tipo"] })} options={[{ value: "ciclo", label: "Ciclo de estudos" }, { value: "semanal", label: "Grade semanal" }]} /></Field>
           <div />
-          <Field label="Replanejar a partir de"><input type="date" value={config.data_inicio} onChange={(event) => updateConfig({ data_inicio: event.target.value })} className="input-base" /></Field>
-          <Field label="Planejar até"><input type="date" value={config.data_fim} onChange={(event) => updateConfig({ data_fim: event.target.value })} className="input-base" /></Field>
+          <Field label="Replanejar a partir de"><DatePicker value={config.data_inicio} onValueChange={(value) => updateConfig({ data_inicio: value })} /></Field>
+          <Field label="Planejar até"><DatePicker value={config.data_fim} onValueChange={(value) => updateConfig({ data_fim: value })} /></Field>
           <Field label="Sessão mínima (min)"><input type="number" min={5} max={240} value={config.sessao_min_minutos} onChange={(event) => updateConfig({ sessao_min_minutos: Number(event.target.value) })} className="input-base" /></Field>
           <Field label="Sessão máxima (min)"><input type="number" min={5} max={240} value={config.sessao_max_minutos} onChange={(event) => updateConfig({ sessao_max_minutos: Number(event.target.value) })} className="input-base" /></Field>
         </div>

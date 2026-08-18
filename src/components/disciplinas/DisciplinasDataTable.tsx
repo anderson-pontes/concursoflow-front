@@ -4,6 +4,7 @@ import type { ColumnDef } from "@tanstack/react-table";
 import { BarChart3, Pencil, Trash2 } from "lucide-react";
 
 import { DataTable } from "@/components/ui/DataTable";
+import { useConfirmDialog } from "@/components/ui/confirm-dialog";
 import { getDisciplinaStatusLabel, getTopicosProgressFromCounts } from "@/components/disciplinas/disciplinaProgress";
 import { fmtPontos } from "@/lib/disciplinas/pontos";
 import type { Disciplina } from "@/lib/disciplinas/types";
@@ -24,6 +25,7 @@ export function DisciplinasDataTable({
   onToggleConcurso,
   onConfirmDelete,
 }: DisciplinasDataTableProps) {
+  const { requestConfirmation, confirmDialog } = useConfirmDialog();
   const columns = React.useMemo<ColumnDef<Disciplina>[]>(
     () => [
       {
@@ -158,7 +160,14 @@ export function DisciplinasDataTable({
                 type="button"
                 title="Excluir"
                 onClick={() => {
-                  if (window.confirm(`Excluir "${d.nome}"?`)) void onConfirmDelete(d);
+                  void requestConfirmation({
+                    title: "Excluir disciplina?",
+                    description: `A disciplina “${d.nome}” será excluída. Esta ação não pode ser desfeita.`,
+                    confirmLabel: "Excluir disciplina",
+                    variant: "destructive",
+                  }).then((confirmed) => {
+                    if (confirmed) void onConfirmDelete(d);
+                  });
                 }}
                 className="rounded-md p-1.5 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30"
               >
@@ -176,16 +185,19 @@ export function DisciplinasDataTable({
         },
       },
     ],
-    [concursoId, onConfirmDelete, onEdit, onToggleConcurso],
+    [concursoId, onConfirmDelete, onEdit, onToggleConcurso, requestConfirmation],
   );
 
   return (
-    <DataTable
-      data={disciplinas}
-      columns={columns}
-      searchColumnId="nome"
-      searchPlaceholder="Filtrar na tabela…"
-      emptyMessage="Nenhuma disciplina neste filtro."
-    />
+    <>
+      <DataTable
+        data={disciplinas}
+        columns={columns}
+        searchColumnId="nome"
+        searchPlaceholder="Filtrar na tabela…"
+        emptyMessage="Nenhuma disciplina neste filtro."
+      />
+      {confirmDialog}
+    </>
   );
 }

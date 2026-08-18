@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import type { FilterSeg } from "@/lib/disciplinas/types";
 import { api } from "@/services/api";
 import { useConcursoStore } from "@/stores/concursoStore";
+import { SelectField } from "@/components/ui/select-field";
 
 export type DisciplinasSummary = {
   n: number;
@@ -94,19 +95,13 @@ export function DisciplinasToolbar({
             />
           </div>
           {concursos.length > 0 ? (
-            <select
+            <SelectField
               aria-label="Concurso ativo"
-              className="min-h-10 min-w-[12rem] rounded-lg border border-border bg-card px-3 text-sm text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              className="min-w-[12rem]"
               value={concursoId}
-              onChange={(e) => setConcursoAtivoId(e.target.value || null)}
-            >
-              <option value="">Concurso ativo…</option>
-              {concursos.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.orgao} — {c.cargo ?? c.nome}
-                </option>
-              ))}
-            </select>
+              onValueChange={(value) => setConcursoAtivoId(value || null)}
+              options={[{ value: "", label: "Concurso ativo…" }, ...concursos.map((c) => ({ value: c.id, label: `${c.orgao} — ${c.cargo ?? c.nome}` }))]}
+            />
           ) : null}
         </div>
 
@@ -130,7 +125,7 @@ export function DisciplinasToolbar({
                   aria-pressed={filterSeg === seg.id}
                   onClick={() => onFilterChange(seg.id)}
                   className={cn(
-                    "min-h-9 shrink-0 rounded-md px-3 text-sm font-medium transition-colors",
+                    "min-h-10 shrink-0 rounded-md px-3 text-sm font-medium transition-colors",
                     filterSeg === seg.id
                       ? "bg-card text-foreground shadow-sm"
                       : "text-muted-foreground hover:text-foreground",
@@ -155,7 +150,7 @@ export function DisciplinasToolbar({
               aria-pressed={viewMode === "cards"}
               onClick={() => onViewModeChange("cards")}
               className={cn(
-                "inline-flex h-9 w-9 items-center justify-center rounded-md transition-colors",
+                "inline-flex h-10 w-10 items-center justify-center rounded-md transition-colors",
                 viewMode === "cards"
                   ? "bg-card text-foreground shadow-sm"
                   : "text-muted-foreground hover:text-foreground",
@@ -169,7 +164,7 @@ export function DisciplinasToolbar({
               aria-pressed={viewMode === "table"}
               onClick={() => onViewModeChange("table")}
               className={cn(
-                "inline-flex h-9 w-9 items-center justify-center rounded-md transition-colors",
+                "inline-flex h-10 w-10 items-center justify-center rounded-md transition-colors",
                 viewMode === "table"
                   ? "bg-card text-foreground shadow-sm"
                   : "text-muted-foreground hover:text-foreground",
@@ -184,7 +179,7 @@ export function DisciplinasToolbar({
               disabled={!concursoId}
               onClick={() => onViewModeChange("edital")}
               className={cn(
-                "inline-flex h-9 w-9 items-center justify-center rounded-md transition-colors disabled:cursor-not-allowed disabled:opacity-40",
+                "inline-flex h-10 w-10 items-center justify-center rounded-md transition-colors disabled:cursor-not-allowed disabled:opacity-40",
                 viewMode === "edital"
                   ? "bg-card text-foreground shadow-sm"
                   : "text-muted-foreground hover:text-foreground",

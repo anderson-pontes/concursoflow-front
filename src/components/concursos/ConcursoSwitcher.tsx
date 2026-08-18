@@ -72,6 +72,12 @@ export function ConcursoSwitcher({ collapsed = false, mobileOpen = false, onAfte
 
   React.useEffect(() => {
     if (!open) return;
+    const selectedIndex = concursos.findIndex((c) => c.id === concursoAtivoId);
+    setActiveIndex(selectedIndex >= 0 ? selectedIndex : 0);
+  }, [open, concursos, concursoAtivoId, setActiveIndex]);
+
+  React.useEffect(() => {
+    if (!open) return;
     const onMouseDown = (e: MouseEvent) => {
       const el = rootRef.current;
       if (!el || el.contains(e.target as Node)) return;
@@ -131,17 +137,23 @@ export function ConcursoSwitcher({ collapsed = false, mobileOpen = false, onAfte
   const panel = open ? (
     <div
       className={cn(
-        "z-[130] rounded-xl border border-border bg-surface p-2 shadow-md",
+        "z-[130] overflow-hidden rounded-xl border border-border bg-popover text-popover-foreground shadow-lg",
         collapsed && !mobileOpen
           ? "absolute left-full top-0 ml-2 w-[min(260px,calc(100vw-5rem))]"
-          : "absolute left-0 right-0 mt-2 max-h-[min(16rem,50vh)] overflow-y-auto",
+          : "absolute left-0 right-0 mt-2",
       )}
-      role="listbox"
-      id={listboxId}
-      aria-label="Selecionar concurso"
     >
-      <div className="px-2 py-1 text-xs text-muted-foreground">Concurso ativo</div>
-      <div className="max-h-56 space-y-1 overflow-y-auto">
+      <div className="border-b border-border px-3 py-2.5">
+        <p id={`${listboxId}-label`} className="text-xs font-medium text-muted-foreground">
+          Trocar concurso ativo
+        </p>
+      </div>
+      <div
+        className="max-h-[min(18rem,calc(100dvh-13rem))] space-y-1 overflow-y-auto overscroll-contain p-2"
+        role="listbox"
+        id={listboxId}
+        aria-labelledby={`${listboxId}-label`}
+      >
         {concursos.length === 0 ? (
           <p className="px-3 py-2 text-xs text-muted-foreground">Nenhum concurso cadastrado.</p>
         ) : (
@@ -153,7 +165,8 @@ export function ConcursoSwitcher({ collapsed = false, mobileOpen = false, onAfte
               id={getOptionId(index)}
               aria-selected={c.id === concursoAtivoId}
               className={cn(
-                "flex min-h-11 w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left hover:bg-surface-hover",
+                "flex min-h-12 w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left transition-colors hover:bg-muted",
+                c.id === concursoAtivoId && "bg-primary-muted/70",
                 index === activeIndex && "bg-surface-hover ring-2 ring-inset ring-ring",
               )}
               onMouseEnter={() => setActiveIndex(index)}
@@ -172,18 +185,19 @@ export function ConcursoSwitcher({ collapsed = false, mobileOpen = false, onAfte
           ))
         )}
       </div>
-      <div className="my-1 border-t border-border" />
-      <button
-        type="button"
-        className="flex min-h-11 w-full items-center rounded-lg px-3 text-left text-xs font-medium text-primary hover:bg-surface-hover"
-        onClick={() => {
-          setOpen(false);
-          navigate("/concursos");
-          onAfterPick?.();
-        }}
-      >
-        + Gerenciar concursos
-      </button>
+      <div className="border-t border-border p-2">
+        <button
+          type="button"
+          className="flex min-h-11 w-full items-center rounded-lg px-3 text-left text-xs font-semibold text-primary transition-colors hover:bg-primary-muted"
+          onClick={() => {
+            setOpen(false);
+            navigate("/concursos");
+            onAfterPick?.();
+          }}
+        >
+          + Gerenciar concursos
+        </button>
+      </div>
     </div>
   ) : null;
 

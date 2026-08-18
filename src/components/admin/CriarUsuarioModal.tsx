@@ -4,6 +4,7 @@ import { isAxiosError } from "axios";
 import { toast } from "sonner";
 
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { SelectField } from "@/components/ui/select-field";
 import { createUserAdmin } from "@/services/adminUsers";
 
 type Props = {
@@ -99,19 +100,11 @@ export function CriarUsuarioModal({ open, onClose, onCreated }: Props) {
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <label className="block text-sm">
                 <span className="font-medium text-foreground">Perfil</span>
-                <select className={fieldClass} value={role} onChange={(e) => setRole(e.target.value as "user" | "admin")}>
-                  <option value="user">Usuário</option>
-                  <option value="admin">Administrador</option>
-                </select>
+                <SelectField className="mt-1.5" value={role} onValueChange={(value) => setRole(value as "user" | "admin")} options={[{ value: "user", label: "Usuário" }, { value: "admin", label: "Administrador" }]} />
               </label>
               <label className="block text-sm">
                 <span className="font-medium text-foreground">Status</span>
-                <select className={fieldClass} value={status} onChange={(e) => setStatus(e.target.value)}>
-                  <option value="ativo">Ativo</option>
-                  <option value="pendente">Pendente</option>
-                  <option value="bloqueado">Bloqueado</option>
-                  <option value="inativo">Inativo</option>
-                </select>
+                <SelectField className="mt-1.5" value={status} onValueChange={setStatus} options={[{ value: "ativo", label: "Ativo" }, { value: "pendente", label: "Pendente" }, { value: "bloqueado", label: "Bloqueado" }, { value: "inativo", label: "Inativo" }]} />
               </label>
             </div>
 

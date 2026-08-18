@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { api } from "@/services/api";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import type { Deck } from "@/lib/flashcards/types";
+import { SelectField } from "@/components/ui/select-field";
 
 type Disciplina = { id: string; nome: string };
 
@@ -137,36 +138,14 @@ export function DeckFormModal({ open, onClose, deck, flatDecks = [] }: Props) {
             <label className="mb-1.5 block text-sm font-medium text-card-foreground">
               Disciplina
             </label>
-            <select
-              className="w-full rounded-xl border border-border bg-background px-3 py-2.5 text-sm text-card-foreground outline-none focus:ring-2 focus:ring-primary-500"
-              value={disciplinaId}
-              onChange={(e) => setDisciplinaId(e.target.value)}
-            >
-              <option value="">Nenhuma</option>
-              {(disciplinas ?? []).map((d) => (
-                <option key={d.id} value={d.id}>{d.nome}</option>
-              ))}
-            </select>
+            <SelectField value={disciplinaId} onValueChange={setDisciplinaId} options={[{ value: "", label: "Nenhuma" }, ...(disciplinas ?? []).map((d) => ({ value: d.id, label: d.nome }))]} />
           </div>
 
           <div>
             <label className="mb-1.5 block text-sm font-medium text-card-foreground">
               Baralho pai (opcional)
             </label>
-            <select
-              className="w-full rounded-xl border border-border bg-background px-3 py-2.5 text-sm text-card-foreground outline-none focus:ring-2 focus:ring-primary-500"
-              value={parentId}
-              onChange={(e) => setParentId(e.target.value)}
-            >
-              <option value="">Nenhum (raiz)</option>
-              {flatDecks
-                .filter((d) => d.id !== deck?.id)
-                .map((d) => (
-                  <option key={d.id} value={d.id}>
-                    {d.full_path ?? d.nome}
-                  </option>
-                ))}
-            </select>
+            <SelectField value={parentId} onValueChange={setParentId} options={[{ value: "", label: "Nenhum (raiz)" }, ...flatDecks.filter((d) => d.id !== deck?.id).map((d) => ({ value: d.id, label: d.full_path ?? d.nome }))]} />
           </div>
 
           {/* Cor */}

@@ -10,6 +10,8 @@ import { fmtPontos } from "@/lib/disciplinas/pontos";
 import { fmtBlocoMinutos } from "@/lib/cronograma/constants";
 import { cn } from "@/lib/utils";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { DatePicker } from "@/components/ui/date-picker";
+import { useConfirmDialog } from "@/components/ui/confirm-dialog";
 import { api } from "@/services/api";
 
 const DIAS_SEMANA = [
@@ -74,6 +76,7 @@ export function GerarCronogramaAutoModal({
   hasConcursoAtivo,
   onSaved,
 }: GerarCronogramaAutoModalProps) {
+  const { requestConfirmation, confirmDialog } = useConfirmDialog();
   const [sessoesPorDia, setSessoesPorDia] = React.useState<Record<number, number>>({
     0: 2,
     1: 2,
@@ -183,14 +186,14 @@ export function GerarCronogramaAutoModal({
       toast.error(err);
       return;
     }
-    if (
-      !window.confirm(
-        "Isso substituirá os blocos atuais do cronograma semanal pelo padrão gerado. Deseja continuar?",
-      )
-    ) {
-      return;
-    }
-    gerarMutation.mutate(true);
+    void requestConfirmation({
+      title: "Substituir cronograma atual?",
+      description: "Os blocos atuais do cronograma semanal serão substituídos pelo padrão gerado. Esta ação não pode ser desfeita.",
+      confirmLabel: "Substituir e salvar",
+      variant: "destructive",
+    }).then((confirmed) => {
+      if (confirmed) gerarMutation.mutate(true);
+    });
   };
 
   const previewSemanal = React.useMemo(() => {
@@ -310,27 +313,23 @@ export function GerarCronogramaAutoModal({
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
                 <label className="mb-1.5 block text-sm font-medium">Data de início</label>
-                <input
-                  type="date"
+                <DatePicker
                   value={dataInicio}
-                  onChange={(e) => {
-                    setDataInicio(e.target.value);
+                  onValueChange={(value) => {
+                    setDataInicio(value);
                     setPreview(null);
                   }}
-                  className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary-500"
                 />
               </div>
               <div>
                 <label className="mb-1.5 block text-sm font-medium">Data de fim</label>
-                <input
-                  type="date"
+                <DatePicker
                   value={dataFim}
                   min={dataInicio}
-                  onChange={(e) => {
-                    setDataFim(e.target.value);
+                  onValueChange={(value) => {
+                    setDataFim(value);
                     setPreview(null);
                   }}
-                  className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary-500"
                 />
               </div>
             </div>
@@ -462,6 +461,7 @@ export function GerarCronogramaAutoModal({
           </div>
         </footer>
       </DialogContent>
+      {confirmDialog}
     </Dialog>
   );
 }

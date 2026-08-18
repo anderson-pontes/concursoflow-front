@@ -2,11 +2,11 @@ import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { differenceInCalendarDays, format, parseISO } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { BookOpenCheck, Calendar, CheckCircle2, Flame, Play, RefreshCw, Target } from "lucide-react";
+import { BookOpenCheck, CheckCircle2, Flame, Play, RefreshCw, Target } from "lucide-react";
 import { Link } from "react-router-dom";
 
 import { api } from "@/services/api";
-import { KpiCard } from "@/components/dashboard/KpiCard";
+import { DashboardKpis, DashboardWeeklySchedule } from "@/components/dashboard/DashboardOverview";
 import { HeatmapCard } from "@/components/dashboard/HeatmapCard";
 import { CalendarioMensalWidget } from "@/components/calendario/CalendarioMensalWidget";
 import { BannerSemConcurso } from "@/components/dashboard/BannerSemConcurso";
@@ -16,6 +16,7 @@ import type { Bloco } from "@/lib/cronograma/types";
 import type { Disciplina } from "@/lib/disciplinas/types";
 import { cn } from "@/lib/utils";
 import { useConcursoAtivoId } from "@/stores/concursoStore";
+import { Button } from "@/components/ui/button";
 
 type DashboardResumo = {
   horas_hoje: number;
@@ -227,7 +228,7 @@ export function Dashboard() {
               </h2>
               {proximoEstudo ? <p className="mt-1 text-sm text-muted-foreground">{proximoEstudo.topico_nome ? `${proximoEstudo.topico_nome} · ` : ""}{format(parseISO(proximoEstudo.data), "dd 'de' MMMM", { locale: ptBR })} · {proximoEstudo.duracao_minutos} min</p> : !loadingProximo ? <p className="mt-1 text-sm text-muted-foreground">Crie ou ajuste o cronograma para receber uma próxima recomendação.</p> : null}
             </div>
-            {proximoEstudo ? <div className="flex flex-wrap gap-2"><Link to={`/pomodoro?disciplina=${proximoEstudo.disciplina_id}`} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground hover:bg-primary/90"><Play className="h-4 w-4" /> Iniciar estudo</Link><button type="button" onClick={() => { setRegistroPrefill({ disciplinaId: proximoEstudo.disciplina_id, topicoId: proximoEstudo.topico_id }); setRegistroOpen(true); }} className="min-h-11 rounded-lg border border-border bg-card px-4 text-sm font-semibold hover:bg-muted">Registrar manualmente</button><Link to={`/planos/${concursoAtivoId}/replanejar`} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-border bg-card px-4 text-sm font-semibold hover:bg-muted"><RefreshCw className="h-4 w-4" /> Replanejar</Link></div> : <ButtonLink />}
+            {proximoEstudo ? <div className="flex flex-wrap gap-2"><Button asChild><Link to={`/pomodoro?disciplina=${proximoEstudo.disciplina_id}`}><Play /> Iniciar estudo</Link></Button><Button type="button" variant="outline" onClick={() => { setRegistroPrefill({ disciplinaId: proximoEstudo.disciplina_id, topicoId: proximoEstudo.topico_id }); setRegistroOpen(true); }}>Registrar manualmente</Button><Button asChild variant="outline"><Link to={`/planos/${concursoAtivoId}/replanejar`}><RefreshCw /> Replanejar</Link></Button></div> : <ButtonLink />}
           </div>
         </section>
       ) : null}
@@ -274,131 +275,8 @@ export function Dashboard() {
         ) : null}
       </div>
 
-      <section className="rounded-xl border border-border bg-card p-4 shadow-sm">
-        <div className="mb-3 flex items-center justify-between">
-          <h2 className="flex items-center gap-2 text-sm font-semibold text-card-foreground">
-            <Calendar className="h-4 w-4" />
-            Cronograma da semana
-          </h2>
-          <Link to="/cronograma" className="text-xs font-medium text-primary-600 hover:underline dark:text-primary-400">
-            Ver completo
-          </Link>
-        </div>
-        <div className="-mx-1 overflow-x-auto pb-1" role="region" aria-label="Cronograma da semana">
-          <div className="grid min-w-[720px] grid-cols-7 gap-2 px-1">
-          {DIAS.map((dia) => {
-            const items = blocosSemana?.[dia] ?? [];
-            const isHoje = dia === diaHoje;
-            return (
-              <div
-                key={dia}
-                className={cn(
-                  "flex min-h-[132px] flex-col rounded-lg border p-2",
-                  isHoje
-                    ? "border-primary-400 bg-primary-50/50 dark:border-primary-600 dark:bg-primary-950/20"
-                    : "border-border/60 bg-background/40",
-                )}
-              >
-                <div className="mb-1.5 flex items-center justify-between">
-                  <p
-                    className={cn(
-                      "text-xs font-semibold uppercase tracking-wide",
-                      isHoje ? "text-primary-700 dark:text-primary-300" : "text-muted-foreground",
-                    )}
-                  >
-                    {diaAbrev[dia]}
-                  </p>
-                  {items.length > 0 ? (
-                    <span
-                      className={cn(
-                        "rounded-full px-1.5 text-[11px] font-medium tabular-nums",
-                        isHoje ? "bg-primary-100 text-primary-700 dark:bg-primary-900/50 dark:text-primary-300" : "bg-muted text-muted-foreground",
-                      )}
-                    >
-                      {items.length}
-                    </span>
-                  ) : null}
-                </div>
-                <div className="flex flex-1 flex-col gap-1">
-                  {items.slice(0, 3).map((b) => (
-                    <div
-                      key={b.id}
-                      className="rounded-md border border-border/50 bg-card px-1.5 py-1 shadow-sm"
-                    >
-                      <div className="flex items-center gap-1">
-                        <span className={cn("h-2 w-2 shrink-0 rounded-full", getTipoDot(b.tipo))} />
-                        <span className="truncate text-xs font-medium text-card-foreground">
-                          {discMap.get(b.disciplina_id) ?? "Disciplina"}
-                        </span>
-                      </div>
-                      {b.topico_nome ? (
-                        <span className="mt-0.5 block truncate pl-3 text-[11px] leading-tight text-muted-foreground">
-                          {b.topico_nome}
-                        </span>
-                      ) : null}
-                      <span className="mt-0.5 block pl-3 text-[11px] tabular-nums text-muted-foreground/80">
-                        {b.hora_inicio}
-                      </span>
-                    </div>
-                  ))}
-                  {items.length > 3 ? (
-                    <Link
-                      to="/cronograma"
-                      className="mt-auto text-[11px] font-medium text-primary-600 hover:underline dark:text-primary-400"
-                    >
-                      +{items.length - 3} mais
-                    </Link>
-                  ) : items.length === 0 ? (
-                    <span className="mt-auto text-xs text-muted-foreground/50">—</span>
-                  ) : null}
-                </div>
-              </div>
-            );
-          })}
-          </div>
-        </div>
-      </section>
-
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
-        <KpiCard
-          label="Horas hoje"
-          value={fmtHoras(resumo?.horas_hoje ?? 0)}
-          sub={`Meta: ${fmtHoras(resumo?.meta_horas ?? 4)}`}
-          progress={
-            resumo && resumo.meta_horas > 0
-              ? Math.max(0, Math.min(100, Math.round((resumo.horas_hoje / resumo.meta_horas) * 100)))
-              : 0
-          }
-          badgeVariant="amber"
-        />
-        <KpiCard label="Horas na semana" value={fmtHoras(resumo?.horas_semana ?? 0)} sub="Últimos 7 dias" badgeVariant="amber" />
-        <KpiCard
-          label="Sequência"
-          value={`${resumo?.streak_dias ?? 0} dias`}
-          sub="Dias consecutivos"
-          badge={(resumo?.streak_dias ?? 0) > 0 ? "Em dia" : "Comece hoje"}
-          badgeVariant={(resumo?.streak_dias ?? 0) > 0 ? "green" : "amber"}
-        />
-        <KpiCard label="Sessões" value={`${resumo?.sessoes_semana ?? 0}`} sub="Esta semana" badgeVariant="amber" />
-        <KpiCard
-          label="Rendimento"
-          value={`${(resumo?.rendimento_medio ?? 0).toFixed(1)}%`}
-          sub="Média no período"
-          badgeVariant={(resumo?.rendimento_medio ?? 0) > 0 ? "green" : "amber"}
-        />
-        <KpiCard
-          label="Flashcards"
-          value={`${resumo?.flashcards_para_revisar ?? 0}`}
-          sub="Para revisar"
-          badgeVariant={(resumo?.flashcards_para_revisar ?? 0) > 0 ? "amber" : "green"}
-        />
-        <KpiCard
-          label="Cumprimento mês"
-          value={`${(resumo?.taxa_cumprimento_mes ?? 0).toFixed(0)}%`}
-          sub={`${fmtMinutos(resumo?.minutos_realizados_mes ?? 0)} estudadas de ${fmtMinutos(resumo?.minutos_planejados_mes ?? 0)} planejadas`}
-          badgeVariant={(resumo?.taxa_cumprimento_mes ?? 0) >= 80 ? "green" : "amber"}
-        />
-      </div>
+      <DashboardWeeklySchedule schedule={blocosSemana} today={diaHoje} disciplineNames={discMap} />
+      <DashboardKpis summary={resumo} />
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1fr_320px]">
         <div className="space-y-4">
@@ -449,29 +327,30 @@ export function Dashboard() {
                 planoHoje.map(({ bloco, disciplina, minutos }) => {
                   const badge = getTipo(bloco.tipo);
                   return (
-                    <button
+                    <Button
                       key={bloco.id}
                       type="button"
+                      variant="outline"
                       onClick={() => {
                         setRegistroPrefill({ disciplinaId: bloco.disciplina_id, topicoId: bloco.topico_id });
                         setRegistroOpen(true);
                       }}
-                      className="flex min-h-11 w-full items-start gap-2 rounded-lg border border-border bg-background p-2.5 text-left transition hover:border-primary-300 hover:bg-primary-50/30 dark:hover:bg-primary-950/20"
+                      className="h-auto min-h-11 w-full items-start justify-start whitespace-normal p-2.5 text-left hover:border-primary/40 hover:bg-primary/5"
                     >
                       <span className={cn("mt-1 h-2 w-2 shrink-0 rounded-full", getTipoDot(bloco.tipo))} />
                       <div className="min-w-0 flex-1">
                         <p className="truncate text-xs font-semibold text-card-foreground">{disciplina}</p>
                         {bloco.topico_nome ? (
-                          <p className="truncate text-[11px] text-muted-foreground">{bloco.topico_nome}</p>
+                          <p className="truncate text-xs text-muted-foreground">{bloco.topico_nome}</p>
                         ) : null}
                         <div className="mt-1 flex flex-wrap items-center gap-1.5">
-                          <span className="text-[11px] tabular-nums text-muted-foreground">
+                          <span className="text-xs tabular-nums text-muted-foreground">
                             {bloco.hora_inicio}–{bloco.hora_fim} · {fmtMinutos(minutos)}
                           </span>
-                          <span className={cn("rounded-full px-1.5 py-0.5 text-[11px] font-semibold", badge.cls)}>{badge.label}</span>
+                          <span className={cn("rounded-full px-1.5 py-0.5 text-xs font-semibold", badge.cls)}>{badge.label}</span>
                         </div>
                       </div>
-                    </button>
+                    </Button>
                   );
                 })
               )}
@@ -484,7 +363,7 @@ export function Dashboard() {
                 <Flame className="h-4 w-4 text-amber-500" />
                 Avisos próximos
               </h2>
-              <Link to="/avisos" className="text-xs font-medium text-primary-600 hover:underline dark:text-primary-400">
+              <Link to="/avisos" className="inline-flex min-h-10 items-center text-xs font-medium text-primary hover:underline">
                 Ver todos
               </Link>
             </div>
@@ -495,7 +374,7 @@ export function Dashboard() {
                 {avisos.slice(0, 5).map((a) => (
                   <li key={a.id} className="rounded-lg bg-muted/40 px-2.5 py-2 text-xs">
                     <p className="font-medium text-card-foreground">{a.titulo}</p>
-                    <p className="text-[11px] text-muted-foreground">
+                    <p className="text-xs text-muted-foreground">
                       {format(parseISO(a.data_vencimento), "dd/MM/yyyy", { locale: ptBR })}
                     </p>
                   </li>
@@ -524,4 +403,4 @@ export function Dashboard() {
   );
 }
 
-function ButtonLink() { return <Link to="/planos/novo" className="inline-flex min-h-11 items-center justify-center rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground hover:bg-primary/90">Criar plano guiado</Link>; }
+function ButtonLink() { return <Button asChild><Link to="/planos/novo">Criar plano guiado</Link></Button>; }

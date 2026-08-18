@@ -418,6 +418,42 @@ Meta: **zero hex em `.tsx`**. Ícones de marca (Google) em `src/assets/icons/*.s
 
 **Regra:** preferir `ui/DataTable`; tabela manual exige justificativa no PR.
 
+### Matriz de adoção shadcn/ui
+
+O projeto usa o registro `radix-nova`, variáveis CSS e tokens semânticos. Os componentes abaixo são a camada padrão; páginas não devem recriar seus estados visuais com HTML e classes locais.
+
+| Necessidade | Componente padrão |
+|------------|-------------------|
+| Campo de uma linha | `ui/input` |
+| Texto multilinha | `ui/textarea` |
+| Opções fixas | `ui/select` |
+| Select simples com array de opções | `ui/select-field` |
+| Escolha booleana | `ui/checkbox` ou `ui/switch` |
+| Ação | `ui/button` |
+| Conteúdo agrupado | `ui/card` |
+| Estado curto | `ui/badge` |
+| Feedback contextual | `ui/alert` |
+| Carregamento estrutural | `ui/skeleton` |
+| Progresso determinado | `ui/progress` |
+| Dados tabulares simples | `ui/table` |
+| Dados com sort/paginação | `ui/DataTable` |
+| Navegação local | `ui/tabs` |
+| Ações secundárias | `ui/dropdown-menu` |
+| Ajuda breve para ícone | `ui/tooltip` |
+| Confirmação destrutiva | `ui/alert-dialog` |
+| Formulário/modal focado | `ui/dialog` |
+| Painel lateral responsivo | `ui/sheet` |
+| Identidade de usuário | `ui/avatar` |
+| Separação de conteúdo | `ui/separator` |
+| Área longa em painel | `ui/scroll-area` |
+| Escolha de data | `ui/date-picker` + `ui/calendar` + `ui/popover` |
+
+**Exceções legítimas:** editor rich text, upload por arrastar, seletores visuais de domínio/cor e tabelas com interação de arrastar ou células altamente específicas. Mesmo nesses casos, foco, bordas, texto e feedback devem consumir tokens semânticos.
+
+**Regra de produto:** adotar o componente quando o padrão de interação corresponder; não inserir uma primitiva apenas por ela existir no catálogo shadcn/ui.
+
+**Controles nativos:** `<select>` e `<input type="date">` não são permitidos em páginas e componentes, pois o menu/calendário é renderizado pelo navegador ou sistema operacional e pode ignorar a paleta. Use `Select`, `SelectField` e `DatePicker`. `input type="time"` permanece uma exceção por não existir primitiva equivalente no shadcn/ui; ele deve ser renderizado por `ui/input` e recebe `accent-color` do token `--primary`.
+
 ### Navegação por teclado (hooks reutilizáveis)
 
 | Hook | Padrão | Uso |

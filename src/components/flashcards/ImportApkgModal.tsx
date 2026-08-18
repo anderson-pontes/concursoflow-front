@@ -5,6 +5,7 @@ import { toast } from "sonner";
 
 import { api } from "@/services/api";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { SelectField } from "@/components/ui/select-field";
 
 type Disciplina = { id: string; nome: string };
 
@@ -208,18 +209,7 @@ export function ImportApkgModal({ open, onClose }: Props) {
                 <label className="mb-1.5 block text-sm font-medium text-card-foreground">
                   Disciplina (opcional)
                 </label>
-                <select
-                  className="w-full rounded-xl border border-border bg-background px-3 py-2.5 text-sm text-card-foreground outline-none focus:ring-2 focus:ring-primary-500"
-                  value={disciplinaId}
-                  onChange={(e) => setDisciplinaId(e.target.value)}
-                >
-                  <option value="">Nenhuma</option>
-                  {(disciplinas ?? []).map((d) => (
-                    <option key={d.id} value={d.id}>
-                      {d.nome}
-                    </option>
-                  ))}
-                </select>
+                <SelectField value={disciplinaId} onValueChange={setDisciplinaId} options={[{ value: "", label: "Nenhuma" }, ...(disciplinas ?? []).map((d) => ({ value: d.id, label: d.nome }))]} />
                 <p className="mt-1 text-xs text-muted-foreground">
                   Os baralhos do pacote mantêm a estrutura original do Anki.
                 </p>

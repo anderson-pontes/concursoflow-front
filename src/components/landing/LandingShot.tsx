@@ -22,6 +22,8 @@ export function LandingShot({
   fit = "cover",
   priority = false,
 }: LandingShotProps) {
+  const priorityProps = { fetchpriority: priority ? "high" : "auto" };
+
   return (
     <figure
       className={cn(
@@ -40,7 +42,7 @@ export function LandingShot({
         )}
         decoding={priority ? "sync" : "async"}
         loading={priority ? "eager" : "lazy"}
-        fetchPriority={priority ? "high" : "auto"}
+        {...priorityProps}
       />
     </figure>
   );

@@ -3,6 +3,9 @@ import { useQuery } from "@tanstack/react-query";
 
 import { CatalogLogo } from "@/components/editais/CatalogLogo";
 import { Button } from "@/components/ui/button";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import { obterEditalAdmin, obterEditalPublicado } from "@/services/editaisCatalogo";
@@ -36,11 +39,11 @@ export function CatalogDetailsDialog({ editalId, scope, open, onOpenChange }: Ca
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-h-[88vh] max-w-4xl overflow-y-auto p-0">
-        {query.isLoading ? <div className="px-6 py-20 text-center text-sm text-muted-foreground" role="status">Carregando detalhes do edital…</div> : null}
-        {query.isError ? <div className="m-6 rounded-xl border border-destructive/30 bg-destructive/10 p-4 text-sm text-destructive" role="alert">Não foi possível carregar os detalhes. <button type="button" className="font-semibold underline" onClick={() => void query.refetch()}>Tentar novamente</button></div> : null}
+        {query.isLoading ? <div className="space-y-4 p-6" role="status" aria-label="Carregando detalhes do edital"><div className="flex gap-4"><Skeleton className="size-16 rounded-xl" /><div className="flex-1 space-y-2"><Skeleton className="h-5 w-32" /><Skeleton className="h-7 w-3/4" /><Skeleton className="h-4 w-1/2" /></div></div><Skeleton className="h-24 rounded-xl" /><Skeleton className="h-48 rounded-xl" /></div> : null}
+        {query.isError ? <Alert variant="destructive" className="m-6 w-auto"><AlertDescription>Não foi possível carregar os detalhes. <button type="button" className="font-semibold underline" onClick={() => void query.refetch()}>Tentar novamente</button></AlertDescription></Alert> : null}
         {edital ? <>
           <DialogHeader className="border-b border-border px-6 py-5 pr-16">
-            <div className="flex items-start gap-4"><CatalogLogo src={edital.logo_url} orgao={edital.orgao} size="lg" /><div className="min-w-0 flex-1"><div className="flex flex-wrap items-center gap-2"><span className={cn("rounded-full px-2.5 py-1 text-xs font-semibold capitalize", statusClass[edital.status])}>{edital.status}</span>{versao ? <span className="rounded-full bg-primary-muted px-2.5 py-1 text-xs font-semibold text-primary">Versão {versao.numero}</span> : null}</div><DialogTitle className="mt-3 text-xl leading-snug">{edital.nome}</DialogTitle><DialogDescription className="mt-1">{edital.orgao}{edital.banca ? ` · ${edital.banca}` : ""}</DialogDescription></div></div>
+            <div className="flex items-start gap-4"><CatalogLogo src={edital.logo_url} orgao={edital.orgao} size="lg" /><div className="min-w-0 flex-1"><div className="flex flex-wrap items-center gap-2"><Badge variant="outline" className={cn("capitalize", statusClass[edital.status])}>{edital.status}</Badge>{versao ? <Badge variant="secondary" className="text-primary">Versão {versao.numero}</Badge> : null}</div><DialogTitle className="mt-3 text-xl leading-snug">{edital.nome}</DialogTitle><DialogDescription className="mt-1">{edital.orgao}{edital.banca ? ` · ${edital.banca}` : ""}</DialogDescription></div></div>
           </DialogHeader>
 
           <div className="space-y-6 px-6 pb-6">

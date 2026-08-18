@@ -9,6 +9,7 @@ import { EditalImportDialog } from "@/components/admin/editais/EditalImportDialo
 import { FileDropZone } from "@/components/concursos/FileDropZone";
 import { CatalogLogo } from "@/components/editais/CatalogLogo";
 import { Button } from "@/components/ui/button";
+import { useConfirmDialog } from "@/components/ui/confirm-dialog";
 import { cn } from "@/lib/utils";
 import { atualizarEditalAdmin, criarVersaoRascunho, obterEditalAdmin, publicarVersao, salvarEstruturaVersao, uploadEditalAdmin, uploadLogoAdmin } from "@/services/editaisCatalogo";
 import type { EditalCargoCatalogo, EditalCatalogoInput, EditalDisciplinaCatalogo } from "@/types/editaisCatalogo";
@@ -51,6 +52,7 @@ function structureIssue(cargos: EditalCargoCatalogo[], publishing = false): stri
 export function EditalCatalogoEditor() {
   const { id = "" } = useParams();
   const qc = useQueryClient();
+  const { requestConfirmation, confirmDialog } = useConfirmDialog();
   const [importOpen, setImportOpen] = React.useState(false);
   const [selectedCargoId, setSelectedCargoId] = React.useState<string | null>(null);
   const [pendingEditalFile, setPendingEditalFile] = React.useState<File | null>(null);
@@ -114,7 +116,19 @@ export function EditalCatalogoEditor() {
   const selectedCargo = cargos.find((cargo) => cargo.id === selectedCargoId) ?? null;
   const updateCargo = (next: EditalCargoCatalogo) => setCargos((items) => items.map((cargo) => cargo.id === next.id ? next : cargo));
   const addCargo = () => { const cargo = { id: newId(), nome: `Novo cargo ${cargos.length + 1}`, ordem: cargos.length + 1, disciplinas: [] }; setCargos((items) => [...items, cargo]); setSelectedCargoId(cargo.id); };
-  const removeCargo = (cargoId: string) => { if (!window.confirm("Remover este cargo e todo o conteúdo dele?")) return; setCargos((items) => items.filter((cargo) => cargo.id !== cargoId).map((cargo, index) => ({ ...cargo, ordem: index + 1 }))); setSelectedCargoId((current) => current === cargoId ? null : current); };
+  const removeCargo = (cargoId: string) => {
+    const cargo = cargos.find((item) => item.id === cargoId);
+    void requestConfirmation({
+      title: "Remover cargo?",
+      description: `O cargo “${cargo?.nome ?? "selecionado"}” e todas as suas disciplinas e tópicos serão removidos deste rascunho.`,
+      confirmLabel: "Remover cargo",
+      variant: "destructive",
+    }).then((confirmed) => {
+      if (!confirmed) return;
+      setCargos((items) => items.filter((item) => item.id !== cargoId).map((item, index) => ({ ...item, ordem: index + 1 })));
+      setSelectedCargoId((current) => current === cargoId ? null : current);
+    });
+  };
 
   if (query.isLoading) return <div className="py-20 text-center text-sm text-muted-foreground" role="status">Carregando editor…</div>;
   if (query.isError || !edital || !versao) return <div role="alert" className="rounded-xl border border-destructive/30 bg-destructive/10 p-5 text-sm text-destructive">Não foi possível abrir este edital. <button className="font-semibold underline" onClick={() => void query.refetch()}>Tentar novamente</button></div>;
@@ -123,7 +137,7 @@ export function EditalCatalogoEditor() {
     <div className="space-y-5 pb-10">
       <header className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
         <div><Link to="/admin/editais" className="mb-2 inline-flex min-h-11 items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground"><ArrowLeft className="h-4 w-4" /> Voltar ao catálogo</Link><div className="flex items-center gap-3"><CatalogLogo src={edital.logo_url} orgao={edital.orgao} /><div><h1 className="text-2xl font-bold tracking-tight">{edital.nome}</h1><p className="mt-1 text-sm text-muted-foreground">Versão {versao.numero} · <span className="capitalize">{versao.status}</span></p></div></div></div>
-        <div className="flex flex-wrap gap-2">{editable ? <><Button variant="outline" className="min-h-11 gap-2" onClick={() => setImportOpen(true)}><FileSpreadsheet className="h-4 w-4" /> Importar planilha</Button><Button variant="outline" className="min-h-11 gap-2" disabled={saveMutation.isPending || publishMutation.isPending} onClick={() => { const issue = structureIssue(cargos); if (issue) toast.error(issue); else saveMutation.mutate(); }}><Save className="h-4 w-4" /> {saveMutation.isPending ? "Salvando…" : "Salvar rascunho"}</Button><Button className="min-h-11 gap-2" disabled={publishMutation.isPending || saveMutation.isPending} onClick={() => { const issue = structureIssue(cargos, true); if (issue) { toast.error(issue); return; } if (window.confirm("Salvar e publicar esta versão? Depois de publicada ela não poderá ser alterada.")) publishMutation.mutate(); }}><Send className="h-4 w-4" /> {publishMutation.isPending ? "Salvando e publicando…" : "Publicar"}</Button></> : <Button className="min-h-11" disabled={draftMutation.isPending} onClick={() => draftMutation.mutate()}>{draftMutation.isPending ? "Criando…" : "Criar nova versão"}</Button>}</div>
+        <div className="flex flex-wrap gap-2">{editable ? <><Button variant="outline" className="min-h-11 gap-2" onClick={() => setImportOpen(true)}><FileSpreadsheet className="h-4 w-4" /> Importar planilha</Button><Button variant="outline" className="min-h-11 gap-2" disabled={saveMutation.isPending || publishMutation.isPending} onClick={() => { const issue = structureIssue(cargos); if (issue) toast.error(issue); else saveMutation.mutate(); }}><Save className="h-4 w-4" /> {saveMutation.isPending ? "Salvando…" : "Salvar rascunho"}</Button><Button className="min-h-11 gap-2" disabled={publishMutation.isPending || saveMutation.isPending} onClick={() => { const issue = structureIssue(cargos, true); if (issue) { toast.error(issue); return; } void requestConfirmation({ title: "Publicar esta versão?", description: "O rascunho será salvo e disponibilizado no catálogo. Depois da publicação, esta versão ficará somente para leitura.", confirmLabel: "Salvar e publicar" }).then((confirmed) => { if (confirmed) publishMutation.mutate(); }); }}><Send className="h-4 w-4" /> {publishMutation.isPending ? "Salvando e publicando…" : "Publicar"}</Button></> : <Button className="min-h-11" disabled={draftMutation.isPending} onClick={() => draftMutation.mutate()}>{draftMutation.isPending ? "Criando…" : "Criar nova versão"}</Button>}</div>
       </header>
 
       {!editable ? <div className="rounded-xl border border-primary/30 bg-primary-muted p-4 text-sm text-foreground"><strong>Versão somente leitura.</strong> Crie uma nova versão para alterar o conteúdo publicado.</div> : null}
@@ -140,6 +154,7 @@ export function EditalCatalogoEditor() {
       </section>
 
       <EditalImportDialog open={importOpen} onClose={() => setImportOpen(false)} editalId={id} versaoId={versao.id} />
+      {confirmDialog}
     </div>
   );
 }

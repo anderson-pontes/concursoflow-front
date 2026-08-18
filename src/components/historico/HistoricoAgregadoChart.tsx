@@ -9,6 +9,7 @@ import {
 } from "recharts";
 
 import type { HistoricoAgregadoPonto } from "@/lib/historico/types";
+import { SelectField } from "@/components/ui/select-field";
 
 type Props = {
   serie: HistoricoAgregadoPonto[];
@@ -27,16 +28,7 @@ export function HistoricoAgregadoChart({ serie, agruparPor, onAgruparChange }: P
     <section className="rounded-xl border border-border bg-card p-4 shadow-sm">
       <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
         <h2 className="text-sm font-semibold text-foreground">Tempo por período</h2>
-        <select
-          value={agruparPor}
-          onChange={(e) => onAgruparChange(e.target.value)}
-          className="min-h-11 rounded-lg border border-border bg-background px-3 text-xs"
-        >
-          <option value="dia">Por dia</option>
-          <option value="semana">Por semana</option>
-          <option value="mes">Por mês</option>
-          <option value="disciplina">Por disciplina</option>
-        </select>
+        <SelectField value={agruparPor} onValueChange={onAgruparChange} className="w-40 text-xs" aria-label="Agrupar gráfico" options={[{ value: "dia", label: "Por dia" }, { value: "semana", label: "Por semana" }, { value: "mes", label: "Por mês" }, { value: "disciplina", label: "Por disciplina" }]} />
       </div>
 
       {data.length === 0 ? (

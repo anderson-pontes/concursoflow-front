@@ -21,6 +21,7 @@ export function HandDrawnAccent({ variant, className }: HandDrawnAccentProps) {
       viewBox="0 0 360 110"
       fill="none"
       preserveAspectRatio="none"
+      data-accent-variant={variant}
       aria-hidden
       focusable="false"
     >

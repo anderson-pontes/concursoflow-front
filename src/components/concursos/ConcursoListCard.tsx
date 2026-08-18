@@ -131,14 +131,14 @@ export function ConcursoListCard({
       <div className="mt-auto flex flex-nowrap items-center gap-2 overflow-hidden border-t border-[var(--border-subtle)] px-5 py-4">
         <button
           type="button"
-          className="inline-flex min-w-fit shrink-0 items-center justify-center gap-1.5 whitespace-nowrap rounded-[10px] border border-[var(--border-default)] bg-[var(--bg-surface)] px-3 py-1.5 text-[13px] font-semibold text-[var(--text-primary)] hover:bg-[var(--bg-surface-hover)]"
+          className="inline-flex min-h-10 min-w-fit shrink-0 items-center justify-center gap-1.5 whitespace-nowrap rounded-[10px] border border-[var(--border-default)] bg-[var(--bg-surface)] px-3 py-1.5 text-sm font-semibold text-[var(--text-primary)] hover:bg-[var(--bg-surface-hover)]"
           onClick={onViewDetails}
         >
           Ver detalhes
         </button>
         <button
           type="button"
-          className="inline-flex min-w-fit shrink-0 items-center justify-center gap-1.5 whitespace-nowrap rounded-[10px] border border-[var(--border-default)] bg-[var(--bg-surface)] px-3 py-1.5 text-[13px] font-semibold text-[var(--text-primary)] hover:bg-[var(--bg-surface-hover)]"
+          className="inline-flex min-h-10 min-w-fit shrink-0 items-center justify-center gap-1.5 whitespace-nowrap rounded-[10px] border border-[var(--border-default)] bg-[var(--bg-surface)] px-3 py-1.5 text-sm font-semibold text-[var(--text-primary)] hover:bg-[var(--bg-surface-hover)]"
           onClick={onEdit}
         >
           Editar
@@ -175,7 +175,7 @@ export function ConcursoListCard({
           ) : (
             <button
               type="button"
-              className="flex h-9 min-w-[36px] shrink-0 items-center justify-center rounded-lg p-2 text-lg leading-none text-[var(--text-muted)] hover:bg-destructive/10 hover:text-destructive"
+              className="flex h-10 min-w-10 shrink-0 items-center justify-center rounded-lg p-2 text-lg leading-none text-[var(--text-muted)] hover:bg-destructive/10 hover:text-destructive"
               aria-label="Excluir concurso"
               onClick={onDeletePrompt}
               disabled={deletePending}

@@ -3,6 +3,10 @@ import { useQuery } from "@tanstack/react-query";
 import { X } from "lucide-react";
 
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { TimePicker } from "@/components/ui/time-picker";
 import { DIAS, defaultForm, diaLabels, tipoMap } from "@/lib/cronograma/constants";
 import type { Bloco, DisciplinaOption, FormState } from "@/lib/cronograma/types";
 import { cn } from "@/lib/utils";
@@ -65,78 +69,74 @@ export function BlocoFormModal({
       >
         <div className="flex items-center justify-between border-b border-border px-5 py-4">
           <DialogTitle className="text-base font-semibold text-card-foreground">{title}</DialogTitle>
-          <button
+          <Button
             type="button"
+            variant="outline"
+            size="icon"
             onClick={onClose}
-            className="flex min-h-11 min-w-11 items-center justify-center rounded-lg border border-border text-muted-foreground transition hover:bg-muted"
             aria-label="Fechar"
           >
             <X className="h-4 w-4" />
-          </button>
+          </Button>
         </div>
 
         <div className="max-h-[70dvh] space-y-4 overflow-y-auto px-5 py-5">
           <div>
             <label className="mb-1.5 block text-sm font-medium text-card-foreground">Disciplina</label>
-            <select
-              className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-card-foreground outline-none focus:ring-2 focus:ring-primary-500"
+            <Select
               value={form.disciplina_id}
-              onChange={(e) =>
+              onValueChange={(value) =>
                 setForm((s) => ({
                   ...s,
-                  disciplina_id: e.target.value,
+                  disciplina_id: value,
                   topico_ids: [],
                 }))
               }
             >
-              <option value="" disabled>Selecione...</option>
-              {disciplinas.map((d) => <option key={d.id} value={d.id}>{d.nome}</option>)}
-            </select>
+              <SelectTrigger><SelectValue placeholder="Selecione..." /></SelectTrigger>
+              <SelectContent>{disciplinas.map((d) => <SelectItem key={d.id} value={d.id}>{d.nome}</SelectItem>)}</SelectContent>
+            </Select>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="mb-1.5 block text-sm font-medium text-card-foreground">Dia</label>
-              <select
-                className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-card-foreground outline-none focus:ring-2 focus:ring-primary-500"
+              <Select
                 value={form.dia_semana}
-                onChange={(e) => setForm((s) => ({ ...s, dia_semana: e.target.value as Bloco["dia_semana"] }))}
+                onValueChange={(value) => setForm((s) => ({ ...s, dia_semana: value as Bloco["dia_semana"] }))}
               >
-                {DIAS.map((k) => <option key={k} value={k}>{diaLabels[k]}</option>)}
-              </select>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>{DIAS.map((k) => <SelectItem key={k} value={k}>{diaLabels[k]}</SelectItem>)}</SelectContent>
+              </Select>
             </div>
             <div>
               <label className="mb-1.5 block text-sm font-medium text-card-foreground">Tipo</label>
-              <select
-                className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-card-foreground outline-none focus:ring-2 focus:ring-primary-500"
+              <Select
                 value={form.tipo}
-                onChange={(e) => setForm((s) => ({ ...s, tipo: e.target.value }))}
+                onValueChange={(value) => setForm((s) => ({ ...s, tipo: value }))}
               >
-                {Object.entries(tipoMap).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
-              </select>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>{Object.entries(tipoMap).map(([k, v]) => <SelectItem key={k} value={k}>{v.label}</SelectItem>)}</SelectContent>
+              </Select>
             </div>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="mb-1.5 block text-sm font-medium text-card-foreground">Início</label>
-              <input
-                type="time"
-                className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-card-foreground outline-none focus:ring-2 focus:ring-primary-500"
+              <TimePicker
+                aria-label="Horário de início"
                 value={form.hora_inicio}
-                onChange={(e) => setForm((s) => ({ ...s, hora_inicio: e.target.value }))}
+                onValueChange={(value) => setForm((s) => ({ ...s, hora_inicio: value }))}
               />
             </div>
             <div>
               <label className="mb-1.5 block text-sm font-medium text-card-foreground">Fim</label>
-              <input
-                type="time"
-                className={cn(
-                  "w-full rounded-lg border px-3 py-2 text-sm text-card-foreground outline-none focus:ring-2 focus:ring-primary-500 bg-background",
-                  horaFimInvalida ? "border-danger-400" : "border-border",
-                )}
+              <TimePicker
+                aria-label="Horário de fim"
+                aria-invalid={horaFimInvalida}
                 value={form.hora_fim}
-                onChange={(e) => setForm((s) => ({ ...s, hora_fim: e.target.value }))}
+                onValueChange={(value) => setForm((s) => ({ ...s, hora_fim: value }))}
               />
               {horaFimInvalida ? <p className="mt-1 text-xs text-danger-600">Fim deve ser após o início.</p> : null}
             </div>
@@ -168,11 +168,9 @@ export function BlocoFormModal({
                         checked ? "bg-primary-50 dark:bg-primary-950/40" : "hover:bg-muted",
                       )}
                     >
-                      <input
-                        type="checkbox"
+                      <Checkbox
                         checked={checked}
-                        onChange={() => toggleTopico(t.id)}
-                        className="h-4 w-4 rounded border-border text-primary-600 focus:ring-primary-500"
+                        onCheckedChange={() => toggleTopico(t.id)}
                       />
                       <span className="min-w-0 truncate text-card-foreground">{t.descricao}</span>
                     </label>
@@ -185,17 +183,16 @@ export function BlocoFormModal({
         </div>
 
         <div className="flex justify-end gap-2 border-t border-border px-5 py-4">
-          <button type="button" onClick={onClose} className="rounded-lg border border-border px-4 py-2 text-sm text-muted-foreground hover:bg-muted">
+          <Button type="button" variant="outline" onClick={onClose}>
             Cancelar
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
             disabled={!form.disciplina_id || horaFimInvalida || isSaving}
             onClick={() => onSave(form)}
-            className="rounded-lg bg-primary-600 px-4 py-2 text-sm font-semibold text-white hover:bg-primary-700 disabled:opacity-50"
           >
             {isSaving ? "Salvando…" : "Salvar"}
-          </button>
+          </Button>
         </div>
       </DialogContent>
     </Dialog>

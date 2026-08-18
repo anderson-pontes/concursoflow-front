@@ -19,6 +19,7 @@ import { api } from "@/services/api";
 import { usePomodoroStore } from "@/stores/pomodoroStore";
 import { usePomodoroSessionStore } from "@/stores/pomodoroSessionStore";
 import { Button } from "@/components/ui/button";
+import { useConfirmDialog } from "@/components/ui/confirm-dialog";
 
 type TopicoOpt = { id: string; descricao: string };
 
@@ -51,6 +52,7 @@ export function PomodoroTimer({ onActiveChange, disciplinaNome, topicoNome }: Po
   const timerKind = isCronometro ? "stopwatch" : "countdown";
 
   const qc = useQueryClient();
+  const { requestConfirmation, confirmDialog } = useConfirmDialog();
 
   const hasSession = usePomodoroSessionStore((s) => s.hasSession);
   const isRunning = usePomodoroSessionStore((s) => s.isRunning);
@@ -131,10 +133,16 @@ export function PomodoroTimer({ onActiveChange, disciplinaNome, topicoNome }: Po
 
   const confirmReset = () => {
     if (!hasSession) return;
-    if (window.confirm("Cancelar a sessão atual? O tempo não será salvo automaticamente.")) {
+    void requestConfirmation({
+      title: "Cancelar sessão atual?",
+      description: "O tempo desta sessão não será salvo automaticamente. Esta ação não pode ser desfeita.",
+      confirmLabel: "Cancelar sessão",
+      variant: "destructive",
+    }).then((confirmed) => {
+      if (!confirmed) return;
       resetSession();
       setImmersive(false);
-    }
+    });
   };
 
   const openModalWithSnapshot = React.useCallback(
@@ -403,6 +411,7 @@ export function PomodoroTimer({ onActiveChange, disciplinaNome, topicoNome }: Po
         defaultDuracaoSegundos={registroSnapshot?.duracaoSegundos ?? null}
         onSaved={handleModalSaved}
       />
+      {confirmDialog}
     </>
   );
 }

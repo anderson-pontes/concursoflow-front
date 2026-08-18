@@ -2,6 +2,10 @@ import React from "react";
 import { X } from "lucide-react";
 
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { DatePicker } from "@/components/ui/date-picker";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { TimePicker } from "@/components/ui/time-picker";
 import { DIAS, diaLabels, tipoMap } from "@/lib/cronograma/constants";
 import type { Bloco, DisciplinaOption, VigenciaModo } from "@/lib/cronograma/types";
 import { fmtDateBR, hojeISO, vigenciaFim12Meses } from "@/lib/cronograma/types";
@@ -127,64 +131,54 @@ export function CronogramaSimplificadoEditModal({
         <div className="max-h-[70dvh] space-y-4 overflow-y-auto px-5 py-5">
           <div>
             <label className="mb-1.5 block text-sm font-medium">Disciplina</label>
-            <select
-              className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary-500"
+            <Select
               value={disciplinaId}
-              onChange={(e) => setDisciplinaId(e.target.value)}
+              onValueChange={setDisciplinaId}
             >
-              {disciplinas.map((d) => (
-                <option key={d.id} value={d.id}>{d.nome}</option>
-              ))}
-            </select>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>{disciplinas.map((d) => <SelectItem key={d.id} value={d.id}>{d.nome}</SelectItem>)}</SelectContent>
+            </Select>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="mb-1.5 block text-sm font-medium">Dia</label>
-              <select
-                className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary-500"
+              <Select
                 value={dia}
-                onChange={(e) => setDia(e.target.value as Bloco["dia_semana"])}
+                onValueChange={(value) => setDia(value as Bloco["dia_semana"])}
               >
-                {DIAS.map((k) => (
-                  <option key={k} value={k}>{diaLabels[k]}</option>
-                ))}
-              </select>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>{DIAS.map((k) => <SelectItem key={k} value={k}>{diaLabels[k]}</SelectItem>)}</SelectContent>
+              </Select>
             </div>
             <div>
               <label className="mb-1.5 block text-sm font-medium">Tipo</label>
-              <select
-                className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary-500"
+              <Select
                 value={tipo}
-                onChange={(e) => setTipo(e.target.value)}
+                onValueChange={setTipo}
               >
-                {Object.entries(tipoMap).map(([k, v]) => (
-                  <option key={k} value={k}>{v.label}</option>
-                ))}
-              </select>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>{Object.entries(tipoMap).map(([k, v]) => <SelectItem key={k} value={k}>{v.label}</SelectItem>)}</SelectContent>
+              </Select>
             </div>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="mb-1.5 block text-sm font-medium">Início</label>
-              <input
-                type="time"
-                className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary-500"
+              <TimePicker
+                aria-label="Horário de início"
                 value={horaInicio}
-                onChange={(e) => setHoraInicio(e.target.value)}
+                onValueChange={setHoraInicio}
               />
             </div>
             <div>
               <label className="mb-1.5 block text-sm font-medium">Fim</label>
-              <input
-                type="time"
-                className={cn(
-                  "w-full rounded-lg border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary-500",
-                  horaFimInvalida ? "border-danger-400" : "border-border",
-                )}
+              <TimePicker
+                aria-label="Horário de fim"
+                aria-invalid={horaFimInvalida}
                 value={horaFim}
-                onChange={(e) => setHoraFim(e.target.value)}
+                onValueChange={setHoraFim}
               />
             </div>
           </div>
@@ -221,27 +215,21 @@ export function CronogramaSimplificadoEditModal({
             <div className="mt-3 grid grid-cols-2 gap-3">
               <div className={vigenciaModo === "periodo" ? "" : "col-span-2"}>
                 <label className="mb-1.5 block text-xs text-muted-foreground">Data início</label>
-                <input
-                  type="date"
-                  className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary-500"
+                <DatePicker
                   value={vigenciaInicio}
-                  onChange={(e) => {
-                    setVigenciaInicio(e.target.value);
-                    if (vigenciaModo === "12_meses") setVigenciaFim(vigenciaFim12Meses(e.target.value));
+                  onValueChange={(value) => {
+                    setVigenciaInicio(value);
+                    if (vigenciaModo === "12_meses") setVigenciaFim(vigenciaFim12Meses(value));
                   }}
                 />
               </div>
               {vigenciaModo === "periodo" ? (
                 <div>
                   <label className="mb-1.5 block text-xs text-muted-foreground">Data fim</label>
-                  <input
-                    type="date"
-                    className={cn(
-                      "w-full rounded-lg border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary-500",
-                      periodoFimErro ? "border-danger-400" : "border-border",
-                    )}
+                  <DatePicker
+                    className={periodoFimErro ? "[&_button]:border-danger-400" : undefined}
                     value={vigenciaFim}
-                    onChange={(e) => setVigenciaFim(e.target.value)}
+                    onValueChange={setVigenciaFim}
                   />
                 </div>
               ) : null}
@@ -253,21 +241,20 @@ export function CronogramaSimplificadoEditModal({
         </div>
 
         <div className="flex justify-end gap-2 border-t border-border px-5 py-4">
-          <button
+          <Button
             type="button"
+            variant="outline"
             onClick={onClose}
-            className="rounded-lg border border-border px-4 py-2 text-sm text-muted-foreground hover:bg-muted"
           >
             Cancelar
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
             disabled={!canSave}
             onClick={handleSave}
-            className="rounded-lg bg-primary-600 px-4 py-2 text-sm font-semibold text-white hover:bg-primary-700 disabled:opacity-50"
           >
             {isSaving ? "Salvando…" : "Salvar"}
-          </button>
+          </Button>
         </div>
       </DialogContent>
     </Dialog>

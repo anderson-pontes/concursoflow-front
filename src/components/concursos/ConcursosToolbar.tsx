@@ -1,3 +1,7 @@
+import { Plus, Search } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import type { ConcursoStatusFilter } from "@/lib/concursos/types";
 import { cn } from "@/lib/utils";
 
@@ -27,26 +31,35 @@ export function ConcursosToolbar({
   onChooseCatalog,
 }: Props) {
   return (
-    <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
-      <div>
-        <h1 className="text-[28px] font-bold leading-tight text-[var(--text-primary)]">Concursos</h1>
-        <p className="mt-1 text-sm text-[var(--text-secondary)]">
-          Gerencie seus concursos-alvo e acompanhe seu progresso
-        </p>
+    <div className="space-y-4">
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+        <div>
+          <h1 className="text-[28px] font-bold leading-tight text-[var(--text-primary)]">Concursos</h1>
+          <p className="mt-1 text-sm text-[var(--text-secondary)]">
+            Gerencie seus concursos-alvo e acompanhe seu progresso
+          </p>
+        </div>
+        <div className="flex flex-col gap-2 sm:flex-row lg:shrink-0">
+          <Button type="button" variant="outline" size="lg" onClick={onCreate}>
+            <Plus />
+            Cadastro manual
+          </Button>
+          <Button type="button" size="lg" onClick={onChooseCatalog} className="font-bold">
+            Criar plano guiado
+          </Button>
+        </div>
       </div>
 
-      <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
-        <div className="relative w-full sm:w-[240px]">
-          <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-base opacity-60" aria-hidden>
-            🔍
-          </span>
-          <input
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+        <div className="relative w-full sm:max-w-sm">
+          <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden />
+          <Input
             type="search"
             value={search}
             onChange={(e) => onSearchChange(e.target.value)}
             placeholder="Buscar concurso..."
             aria-label="Buscar concurso"
-            className="h-11 w-full rounded-[10px] border-[1.5px] border-[var(--border-default)] bg-white py-2 pl-10 pr-3 text-sm text-[var(--text-primary)] outline-none transition placeholder:text-[var(--text-muted)] focus:border-primary focus:ring-2 focus:ring-primary/20 dark:bg-[var(--bg-surface)] dark:focus:ring-2 focus:ring-primary/20"
+            className="h-11 pl-10"
           />
         </div>
 
@@ -57,7 +70,7 @@ export function ConcursosToolbar({
               type="button"
               onClick={() => onStatusFilterChange(seg.id)}
               className={cn(
-                "rounded-lg px-3 py-2 text-sm font-semibold transition-all duration-200",
+                "min-h-10 rounded-lg px-3 py-2 text-sm font-semibold transition-all duration-200",
                 statusFilter === seg.id
                   ? "bg-primary text-primary-foreground shadow-sm"
                   : "bg-transparent text-muted-foreground dark:text-[var(--text-secondary)]",
@@ -68,17 +81,6 @@ export function ConcursosToolbar({
           ))}
         </div>
 
-        <button
-          type="button"
-          onClick={onCreate}
-          className="inline-flex h-11 items-center justify-center gap-2 rounded-[10px] border border-border bg-card px-4 text-sm font-semibold text-foreground transition hover:bg-muted"
-        >
-          <span className="text-lg leading-none">+</span>
-          Cadastro manual
-        </button>
-        <button type="button" onClick={onChooseCatalog} className="inline-flex h-11 items-center justify-center gap-2 rounded-[10px] bg-primary px-5 text-sm font-bold text-primary-foreground shadow-sm transition-all duration-200 hover:-translate-y-px hover:bg-primary-700">
-          Criar plano guiado
-        </button>
       </div>
     </div>
   );

@@ -17,7 +17,7 @@ function saudacaoPorHora(): string {
 }
 
 const iconBtnClass =
-  "inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-border bg-surface text-muted-foreground transition-colors hover:bg-surface-hover hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background sm:h-10 sm:w-10";
+  "inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-border bg-surface text-muted-foreground transition-colors hover:bg-surface-hover hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background";
 
 const cmdItemClass =
   "flex min-h-11 w-full items-center rounded-lg px-3 text-left text-sm text-foreground hover:bg-surface-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset";
@@ -95,14 +95,14 @@ export function Header({
             <Menu className="h-5 w-5" />
           </button>
           <div className="min-w-0 flex-1">
-            <h1 className="truncate text-sm font-semibold leading-tight text-foreground sm:text-base">
+            <p className="truncate text-sm font-semibold leading-tight text-foreground sm:text-base">
               <span className="sm:hidden">
                 {saudacao}, {nomeSaudacao}
               </span>
               <span className="hidden sm:inline">
                 {saudacao}, {nomeSaudacao}!
               </span>
-            </h1>
+            </p>
             <p className="mt-0.5 hidden truncate text-xs text-muted-foreground lg:block">
               Estude com foco e consistência.
             </p>

@@ -1,0 +1,81 @@
+{
+  "generatedAt": "2026-08-18T02:01:14.596Z",
+  "baseUrl": "http://localhost:3000",
+  "results": [
+    {
+      "viewport": "desktop",
+      "route": "/",
+      "screenshot": "desktop-landing.png",
+      "pathname": "/",
+      "h1Count": 1,
+      "horizontalOverflow": false,
+      "scrollContainers": [],
+      "formHasOwnScroll": false,
+      "accentTouchesText": true
+    },
+    {
+      "viewport": "desktop",
+      "route": "/login",
+      "screenshot": "desktop-login.png",
+      "pathname": "/login",
+      "h1Count": 1,
+      "horizontalOverflow": false,
+      "scrollContainers": [
+        "main"
+      ],
+      "formHasOwnScroll": false,
+      "accentTouchesText": false
+    },
+    {
+      "viewport": "desktop",
+      "route": "/register",
+      "screenshot": "desktop-register.png",
+      "pathname": "/register",
+      "h1Count": 1,
+      "horizontalOverflow": false,
+      "scrollContainers": [
+        "main"
+      ],
+      "formHasOwnScroll": false,
+      "accentTouchesText": false
+    },
+    {
+      "viewport": "mobile",
+      "route": "/",
+      "screenshot": "mobile-landing.png",
+      "pathname": "/",
+      "h1Count": 1,
+      "horizontalOverflow": false,
+      "scrollContainers": [],
+      "formHasOwnScroll": false,
+      "accentTouchesText": false
+    },
+    {
+      "viewport": "mobile",
+      "route": "/login",
+      "screenshot": "mobile-login.png",
+      "pathname": "/login",
+      "h1Count": 1,
+      "horizontalOverflow": false,
+      "scrollContainers": [
+        "main"
+      ],
+      "formHasOwnScroll": false,
+      "accentTouchesText": false
+    },
+    {
+      "viewport": "mobile",
+      "route": "/register",
+      "screenshot": "mobile-register.png",
+      "pathname": "/register",
+      "h1Count": 1,
+      "horizontalOverflow": false,
+      "scrollContainers": [
+        "main"
+      ],
+      "formHasOwnScroll": false,
+      "accentTouchesText": false
+    }
+  ],
+  "passed": true
+}

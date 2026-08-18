@@ -5,6 +5,8 @@ import { useQuery } from "@tanstack/react-query";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import { api } from "@/services/api";
+import { DatePicker } from "@/components/ui/date-picker";
+import { SelectField } from "@/components/ui/select-field";
 
 export type AvisoFormValues = {
   concurso_id: string;
@@ -136,20 +138,13 @@ export function AvisoFormDialog({
                 >
                   Concurso <span className="text-[var(--text-muted)]">(opcional)</span>
                 </label>
-                <select
+                <SelectField
                   id="aviso-concurso"
                   disabled={isPending}
                   value={values.concurso_id}
-                  onChange={(e) => setValues((s) => ({ ...s, concurso_id: e.target.value }))}
-                  className="h-11 w-full rounded-[10px] border border-[var(--border-default)] bg-[var(--bg-surface)] px-3 text-sm text-[var(--text-primary)] outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
-                >
-                  <option value="">Sem concurso</option>
-                  {concursos.map((c) => (
-                    <option key={c.id} value={c.id}>
-                      {c.nome}
-                    </option>
-                  ))}
-                </select>
+                  onValueChange={(value) => setValues((s) => ({ ...s, concurso_id: value }))}
+                  options={[{ value: "", label: "Sem concurso" }, ...concursos.map((c) => ({ value: c.id, label: c.nome }))]}
+                />
               </div>
 
               <div>
@@ -159,22 +154,13 @@ export function AvisoFormDialog({
                 >
                   Tipo
                 </label>
-                <select
+                <SelectField
                   id="aviso-tipo"
                   disabled={isPending}
                   value={values.tipo}
-                  onChange={(e) => setValues((s) => ({ ...s, tipo: e.target.value }))}
-                  className="h-11 w-full rounded-[10px] border border-[var(--border-default)] bg-[var(--bg-surface)] px-3 text-sm text-[var(--text-primary)] outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
-                >
-                  {!tipoKnown && values.tipo ? (
-                    <option value={values.tipo}>{values.tipo}</option>
-                  ) : null}
-                  {AVISO_TIPO_OPTIONS.map((o) => (
-                    <option key={o.value} value={o.value}>
-                      {o.label}
-                    </option>
-                  ))}
-                </select>
+                  onValueChange={(value) => setValues((s) => ({ ...s, tipo: value }))}
+                  options={[...(!tipoKnown && values.tipo ? [{ value: values.tipo, label: values.tipo }] : []), ...AVISO_TIPO_OPTIONS]}
+                />
               </div>
             </div>
 
@@ -204,14 +190,11 @@ export function AvisoFormDialog({
                 >
                   Data vencimento <span className="text-red-500">*</span>
                 </label>
-                <input
+                <DatePicker
                   id="aviso-data"
-                  type="date"
-                  required
                   disabled={isPending}
                   value={values.data_vencimento}
-                  onChange={(e) => setValues((s) => ({ ...s, data_vencimento: e.target.value }))}
-                  className="h-11 w-full rounded-[10px] border border-[var(--border-default)] bg-[var(--bg-surface)] px-3 text-sm text-[var(--text-primary)] outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+                  onValueChange={(value) => setValues((s) => ({ ...s, data_vencimento: value }))}
                 />
               </div>
 

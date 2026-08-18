@@ -28,6 +28,8 @@ import {
   Trash2,
   X,
 } from "lucide-react";
+import { SelectField } from "@/components/ui/select-field";
+import { useConfirmDialog } from "@/components/ui/confirm-dialog";
 
 import { TopicosModal } from "@/components/disciplinas/TopicosModal";
 import { DominioPicker } from "@/components/disciplinas/DominioPicker";
@@ -106,6 +108,7 @@ function SortableRow({
   onEditTopico: (topico: { id: string; descricao: string }) => void;
   highlighted?: boolean;
 }) {
+  const { requestConfirmation, confirmDialog } = useConfirmDialog();
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: row.id,
     disabled: isDemoMode,
@@ -121,7 +124,8 @@ function SortableRow({
   const prio = prioridadeAssunto(row.peso, row.dominio);
 
   return (
-    <tr
+    <>
+      <tr
       ref={setNodeRef}
       style={style}
       data-topico-id={row.id}
@@ -287,7 +291,14 @@ function SortableRow({
                 className="flex w-full items-center gap-2 px-3 py-2 text-left text-xs text-rose-600 hover:bg-rose-50 dark:text-rose-400 dark:hover:bg-rose-950/30"
                 onClick={() => {
                   onMenuRowChange(null);
-                  if (window.confirm("Excluir este tópico?")) excluirTopico.mutate(row.id);
+                  void requestConfirmation({
+                    title: "Excluir tópico?",
+                    description: `O tópico “${row.descricao}” será excluído. Esta ação não pode ser desfeita.`,
+                    confirmLabel: "Excluir tópico",
+                    variant: "destructive",
+                  }).then((confirmed) => {
+                    if (confirmed) excluirTopico.mutate(row.id);
+                  });
                 }}
               >
                 <Trash2 className="h-3.5 w-3.5" />
@@ -297,7 +308,9 @@ function SortableRow({
           ) : null}
         </div>
       </td>
-    </tr>
+      </tr>
+      {confirmDialog}
+    </>
   );
 }
 
@@ -387,9 +400,7 @@ export function DisciplinaDashboardTopicosTable({
         </button>
         <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
           Filtrar conteúdo
-          <select value={filtro} onChange={(event) => setFiltro(event.target.value as typeof filtro)} className="mt-1 block min-h-11 rounded-lg border border-border bg-background px-3 text-sm font-medium normal-case text-foreground">
-            <option value="todos">Todos</option><option value="pendentes">Pendentes</option><option value="concluidos">Concluídos</option><option value="nunca">Nunca estudados</option><option value="baixo">Baixo desempenho</option><option value="revisao">Revisão atrasada</option>
-          </select>
+          <SelectField value={filtro} onValueChange={(value) => setFiltro(value as typeof filtro)} className="mt-1 min-w-48 font-medium normal-case" options={[{ value: "todos", label: "Todos" }, { value: "pendentes", label: "Pendentes" }, { value: "concluidos", label: "Concluídos" }, { value: "nunca", label: "Nunca estudados" }, { value: "baixo", label: "Baixo desempenho" }, { value: "revisao", label: "Revisão atrasada" }]} />
         </label>
         </div>
       </div>

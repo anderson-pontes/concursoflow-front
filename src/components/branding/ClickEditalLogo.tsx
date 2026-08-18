@@ -49,6 +49,7 @@ export function ClickEditalLogo({
 }: ClickEditalLogoProps) {
   const mark = MARK_PX[size];
   const inverse = variant === "inverse";
+  const priorityProps = fetchPriority ? { fetchpriority: fetchPriority } : {};
 
   const inner = (
     <>
@@ -60,7 +61,7 @@ export function ClickEditalLogo({
         height={mark.w}
         className={cn("shrink-0 object-contain", mark.className)}
         decoding="async"
-        fetchPriority={fetchPriority}
+        {...priorityProps}
       />
       {!markOnly && (
         <span

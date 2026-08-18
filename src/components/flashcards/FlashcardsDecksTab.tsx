@@ -10,6 +10,7 @@ import {
   stripHtml,
 } from "@/lib/flashcards/utils";
 import { DeckTree } from "@/components/flashcards/DeckTree";
+import { useConfirmDialog } from "@/components/ui/confirm-dialog";
 
 type Props = {
   view: FlashcardsView;
@@ -50,6 +51,7 @@ export function FlashcardsDecksTab({
   onDeleteCard,
   onStartReview,
 }: Props) {
+  const { requestConfirmation, confirmDialog } = useConfirmDialog();
   const safeTree = treeDecks.length > 0 ? treeDecks : decks.filter((d) => !d.parent_id);
 
   if (view === "decks") {
@@ -80,9 +82,14 @@ export function FlashcardsDecksTab({
               type="button"
               disabled={deletingAll || decks.length === 0}
               onClick={() => {
-                if (confirm("Excluir TODOS os baralhos? Esta ação oculta todos os decks da sua conta.")) {
-                  onDeleteAllDecks();
-                }
+                void requestConfirmation({
+                  title: "Excluir todos os baralhos?",
+                  description: "Todos os baralhos serão ocultados da sua conta. Esta ação não pode ser desfeita.",
+                  confirmLabel: "Excluir todos",
+                  variant: "destructive",
+                }).then((confirmed) => {
+                  if (confirmed) onDeleteAllDecks();
+                });
               }}
               className="inline-flex items-center justify-center gap-2 rounded-xl border border-red-200 bg-white px-4 py-2.5 text-sm font-semibold text-red-600 transition hover:bg-red-50 disabled:opacity-60 dark:border-red-900/50 dark:bg-neutral-800 dark:text-red-400"
             >
@@ -147,6 +154,7 @@ export function FlashcardsDecksTab({
             </div>
           )}
         </div>
+        {confirmDialog}
       </>
     );
   }
@@ -283,8 +291,14 @@ export function FlashcardsDecksTab({
                     <button
                       type="button"
                       onClick={() => {
-                        if (confirm("Excluir este cartão?"))
-                          onDeleteCard(card.id);
+                        void requestConfirmation({
+                          title: "Excluir cartão?",
+                          description: "Este cartão será removido do baralho. Esta ação não pode ser desfeita.",
+                          confirmLabel: "Excluir cartão",
+                          variant: "destructive",
+                        }).then((confirmed) => {
+                          if (confirmed) onDeleteCard(card.id);
+                        });
                       }}
                       className="rounded-lg p-2 text-muted-foreground hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-950/40"
                       title="Excluir"
@@ -298,6 +312,7 @@ export function FlashcardsDecksTab({
           })}
         </ul>
       )}
+      {confirmDialog}
     </div>
   );
 }

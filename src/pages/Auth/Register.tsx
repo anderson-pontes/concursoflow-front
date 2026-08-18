@@ -15,6 +15,8 @@ import {
 } from "@/components/auth/AuthFields";
 import { AuthShell } from "@/components/auth/AuthShell";
 import { PasswordStrength } from "@/components/ui/PasswordStrength";
+import { DatePicker } from "@/components/ui/date-picker";
+import { SelectField } from "@/components/ui/select-field";
 import { isValidCpf } from "@/lib/cpfValidate";
 import {
   maskCpf,
@@ -90,7 +92,7 @@ export function Register() {
     mode: "onBlur",
   });
 
-  const { register, handleSubmit, watch, formState: { errors } } = form;
+  const { register, handleSubmit, watch, setValue, formState: { errors } } = form;
   const password = watch("password");
 
   const mutation = useMutation({
@@ -154,7 +156,7 @@ export function Register() {
       </div>
 
       <form
-        className={cn("max-h-[min(70vh,640px)] space-y-6 overflow-y-auto pr-1", shakeForm && "auth-form-shake")}
+        className={cn("space-y-6", shakeForm && "auth-form-shake")}
         onSubmit={handleSubmit((v) => mutation.mutate(v))}
       >
         <section className="space-y-3">
@@ -180,17 +182,11 @@ export function Register() {
           </label>
           <label className="block text-sm">
             <span className="font-medium text-foreground">Data de nascimento</span>
-            <input type="date" className={fieldClass} {...register("birth_date")} />
+            <DatePicker className="mt-1" value={watch("birth_date")} onValueChange={(value) => setValue("birth_date", value, { shouldDirty: true, shouldValidate: true })} />
           </label>
           <label className="block text-sm">
             <span className="font-medium text-foreground">Sexo</span>
-            <select className={fieldClass} {...register("gender")}>
-              <option value="">Selecione</option>
-              <option value="feminino">Feminino</option>
-              <option value="masculino">Masculino</option>
-              <option value="outro">Outro</option>
-              <option value="prefiro_nao_informar">Prefiro não informar</option>
-            </select>
+            <SelectField className="mt-1" value={watch("gender") ?? ""} onValueChange={(value) => setValue("gender", value, { shouldDirty: true, shouldValidate: true })} options={[{ value: "", label: "Selecione" }, { value: "feminino", label: "Feminino" }, { value: "masculino", label: "Masculino" }, { value: "outro", label: "Outro" }, { value: "prefiro_nao_informar", label: "Prefiro não informar" }]} />
           </label>
           <label className="block text-sm">
             <span className="font-medium text-foreground">Telefone celular</span>

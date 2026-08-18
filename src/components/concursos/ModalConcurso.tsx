@@ -4,6 +4,7 @@ import { FileText, ImageIcon } from "lucide-react";
 import { CreatableSelect } from "@/components/concursos/CreatableSelect";
 import { FileDropZone } from "@/components/concursos/FileDropZone";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { DatePicker } from "@/components/ui/date-picker";
 import { cn } from "@/lib/utils";
 
 export type ConcursoFormInput = {
@@ -233,13 +234,11 @@ export function ModalConcurso({
                     <FieldLabel htmlFor="concurso-data-prova" optional>
                       Data da prova
                     </FieldLabel>
-                    <input
+                    <DatePicker
                       id="concurso-data-prova"
-                      type="date"
                       disabled={isPending}
                       value={input.data_prova ?? ""}
-                      onChange={(e) => setInput((s) => ({ ...s, data_prova: e.target.value || null }))}
-                      className={fieldInputClass}
+                      onValueChange={(value) => setInput((s) => ({ ...s, data_prova: value || null }))}
                     />
                   </div>
                 </div>

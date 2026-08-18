@@ -1,6 +1,7 @@
 import { LayoutGrid, List } from "lucide-react";
 
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 export type CatalogViewMode = "cards" | "table";
 
@@ -35,17 +36,18 @@ export function CatalogViewToggle({ value, onValueChange, className }: CatalogVi
 
 function ViewButton({ active, label, icon, onClick }: { active: boolean; label: string; icon: React.ReactNode; onClick: () => void }) {
   return (
-    <button
+    <Button
       type="button"
+      variant="ghost"
       aria-pressed={active}
       onClick={onClick}
       className={cn(
-        "inline-flex min-h-9 items-center gap-2 rounded-md px-3 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+        "min-h-9 gap-2 px-3",
         active ? "bg-card text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground",
       )}
     >
       {icon}
       <span>{label}</span>
-    </button>
+    </Button>
   );
 }

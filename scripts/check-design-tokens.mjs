@@ -19,7 +19,11 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const SRC = path.join(__dirname, "../src");
 
 /** Caminhos relativos a src/ com rgba permitido em .tsx (editor rich text legado). */
-const RGBA_TSX_ALLOWLIST = ["components/flashcards/RichTextEditor.tsx"];
+const RGBA_TSX_ALLOWLIST = [
+  "components/flashcards/RichTextEditor.tsx",
+  // Gradiente visual do mock de produto; valor decorativo sem significado semântico.
+  "components/landing/LandingShot.tsx",
+];
 
 /** Caminhos relativos a src/lib/ com rgba permitido (gradientes decorativos). */
 const RGBA_LIB_ALLOWLIST = ["lib/pomodoro/theme.ts"];
@@ -42,11 +46,18 @@ const SIZE_ALLOWLIST = [
   "components/layout/Sidebar.tsx",
   "pages/Dashboard.tsx",
   "pages/DisciplinaDashboard.tsx",
+  // Orquestradores legados com muitos fluxos/modais; extração adicional deve ser tratada sem misturar regras de negócio.
+  "pages/Avisos.tsx",
+  "pages/Cronograma.tsx",
 ];
 
 const HEX_RE = /#[0-9A-Fa-f]{3,8}\b/g;
 const RGBA_RE = /rgba?\([^)]+\)/g;
 const INTER_FONT_RE = /fontFamily\s*:\s*["']Inter/g;
+const NATIVE_SELECT_RE = /<select\b/g;
+const NATIVE_DATE_RE = /type\s*=\s*["']date["']/g;
+const NATIVE_TIME_RE = /type\s*=\s*["']time["']/g;
+const NATIVE_CONFIRM_RE = /\b(?:(?:window|globalThis)\.)?(?:alert|confirm|prompt)\s*\(/g;
 
 function walk(dir, acc = [], ext = ".tsx") {
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
@@ -81,6 +92,8 @@ const interViolations = [];
 const rgbaTsxWarnings = [];
 const rgbaLibWarnings = [];
 const sizeWarnings = [];
+const nativeControlViolations = [];
+const nativeDialogViolations = [];
 
 for (const file of tsxFiles) {
   const rel = relFromSrc(file);
@@ -88,6 +101,10 @@ for (const file of tsxFiles) {
   const hexHits = findMatches(content, HEX_RE);
   const rgbaHits = findMatches(content, RGBA_RE);
   const interHits = findMatches(content, INTER_FONT_RE);
+  const nativeSelectHits = findMatches(content, NATIVE_SELECT_RE);
+  const nativeDateHits = findMatches(content, NATIVE_DATE_RE);
+  const nativeTimeHits = findMatches(content, NATIVE_TIME_RE);
+  const nativeDialogHits = findMatches(content, NATIVE_CONFIRM_RE);
   const isUi = rel.startsWith("components/ui/");
 
   const lineCount = content.split("\n").length;
@@ -105,6 +122,14 @@ for (const file of tsxFiles) {
 
   if (interHits.length > 0) {
     interViolations.push({ rel, hits: interHits });
+  }
+
+  if (nativeSelectHits.length > 0 || nativeDateHits.length > 0 || nativeTimeHits.length > 0) {
+    nativeControlViolations.push({ rel, hits: [...nativeSelectHits, ...nativeDateHits, ...nativeTimeHits] });
+  }
+
+  if (nativeDialogHits.length > 0) {
+    nativeDialogViolations.push({ rel, hits: nativeDialogHits });
   }
 
   if (rgbaHits.length > 0 && !isUi && !RGBA_TSX_ALLOWLIST.includes(rel)) {
@@ -157,6 +182,28 @@ if (interViolations.length === 0) {
   console.log("");
 }
 
+if (nativeControlViolations.length === 0) {
+  console.log("✅ Nenhum select, calendário de data ou seletor de hora nativo em .tsx");
+} else {
+  console.log(`❌ Controles nativos fora do design system em ${nativeControlViolations.length} arquivo(s):\n`);
+  for (const { rel, hits } of nativeControlViolations) {
+    console.log(`  ${rel}`);
+    for (const h of hits.slice(0, 5)) console.log(`    L${h.line}: ${h.match}`);
+  }
+  console.log("");
+}
+
+if (nativeDialogViolations.length === 0) {
+  console.log("✅ Nenhum alert, confirm ou prompt nativo em .tsx");
+} else {
+  console.log(`❌ Diálogos nativos fora do design system em ${nativeDialogViolations.length} arquivo(s):\n`);
+  for (const { rel, hits } of nativeDialogViolations) {
+    console.log(`  ${rel}`);
+    for (const h of hits.slice(0, 5)) console.log(`    L${h.line}: ${h.match}`);
+  }
+  console.log("");
+}
+
 if (rgbaTsxWarnings.length > 0) {
   console.log(`⚠️  rgba() em .tsx fora da allowlist (${rgbaTsxWarnings.length} arquivo(s)):`);
   for (const { rel, count } of rgbaTsxWarnings) console.log(`   - ${rel} (${count})`);
@@ -179,7 +226,7 @@ if (sizeWarnings.length === 0) {
 
 console.log("");
 
-const failed = uiViolations.length > 0 || hexViolations.length > 0 || interViolations.length > 0;
+const failed = uiViolations.length > 0 || hexViolations.length > 0 || interViolations.length > 0 || nativeControlViolations.length > 0 || nativeDialogViolations.length > 0;
 
 if (failed) {
   console.log("Falhou. Paletas: src/lib/palette/*.ts · Tipografia: font-sans (Geist)");

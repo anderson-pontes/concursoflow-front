@@ -7,6 +7,7 @@ import { MODE_OPTIONS } from "@/lib/pomodoro/constants";
 import { formatFocusDurationLabel, MAX_FOCUS_HOURS, MAX_FOCUS_MINUTES } from "@/lib/pomodoro/duration";
 import { cn } from "@/lib/utils";
 import { usePomodoroStore, type PomodoroMode } from "@/stores/pomodoroStore";
+import { SelectField } from "@/components/ui/select-field";
 
 type DisciplinaOpt = { id: string; nome: string };
 
@@ -120,24 +121,17 @@ export function PomodoroConfigPanel({
                 Cadastre uma disciplina para iniciar.
               </p>
             ) : (
-              <select
+              <SelectField
                 id="pomodoro-disciplina"
                 disabled={disabled}
-                className={fieldClass}
                 value={disciplinaId ?? ""}
-                onChange={(e) => {
-                  setDisciplinaId(e.target.value || null);
+                onValueChange={(value) => {
+                  setDisciplinaId(value || null);
                   setTopicoId(null);
                   onPersist?.();
                 }}
-              >
-                <option value="">Selecione...</option>
-                {disciplinas.map((d) => (
-                  <option key={d.id} value={d.id}>
-                    {d.nome}
-                  </option>
-                ))}
-              </select>
+                options={[{ value: "", label: "Selecione..." }, ...disciplinas.map((d) => ({ value: d.id, label: d.nome }))]}
+              />
             )}
           </div>
 
@@ -145,23 +139,16 @@ export function PomodoroConfigPanel({
             <label htmlFor="pomodoro-topico" className="mb-1.5 block text-sm font-medium">
               Tópico <span className="font-normal text-muted-foreground">(opcional)</span>
             </label>
-            <select
+            <SelectField
               id="pomodoro-topico"
               disabled={disabled || !disciplinaId || loadingTopicos}
-              className={fieldClass}
               value={topicoId ?? ""}
-              onChange={(e) => {
-                setTopicoId(e.target.value || null);
+              onValueChange={(value) => {
+                setTopicoId(value || null);
                 onPersist?.();
               }}
-            >
-              <option value="">Sem tópico específico</option>
-              {(topicos ?? []).map((t) => (
-                <option key={t.id} value={t.id}>
-                  {t.descricao}
-                </option>
-              ))}
-            </select>
+              options={[{ value: "", label: "Sem tópico específico" }, ...(topicos ?? []).map((t) => ({ value: t.id, label: t.descricao }))]}
+            />
           </div>
         </div>
 

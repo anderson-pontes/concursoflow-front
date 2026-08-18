@@ -1,0 +1,307 @@
+{
+  "generatedAt": "2026-08-18T02:11:03.333Z",
+  "baseUrl": "http://localhost:3000",
+  "results": [
+    {
+      "viewport": "desktop",
+      "route": "/dashboard",
+      "screenshot": "desktop-dashboard.png",
+      "pathname": "/dashboard",
+      "title": "Click Edital",
+      "h1Count": 1,
+      "horizontalOverflow": false,
+      "unnamedControls": 0,
+      "undersizedTargets": 3,
+      "unnamedSamples": [],
+      "undersizedSamples": [
+        {
+          "width": 1,
+          "height": 1,
+          "html": "<a href=\"#main-content\" class=\"sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[300] focus:rounded-lg focus:bg-primary focus:px-4 focus:py-2.5 focus:text-sm "
+        },
+        {
+          "width": 75,
+          "height": 16,
+          "html": "<a class=\"text-xs font-medium text-primary-600 hover:underline dark:text-primary-400\" href=\"/estudos/calendario\">Ver completo</a>"
+        },
+        {
+          "width": 37,
+          "height": 16,
+          "html": "<a class=\"truncate font-medium text-card-foreground hover:underline\" href=\"/disciplinas/3e69e294-ecc9-4ac1-8056-02fa8f548160\">Direito</a>"
+        }
+      ],
+      "bodyText": "Pular para o conteúdo\nClick Edital\n🏆\nCONCURSO ATIVO\nBACEN — Analista\nPRINCIPAL\nDashboard\nMeus Concursos\nDisciplinas\nCronograma\nESTUDO\nPomodoro\nCalendário\nHistó"
+    },
+    {
+      "viewport": "desktop",
+      "route": "/cronograma",
+      "screenshot": "desktop-cronograma.png",
+      "pathname": "/cronograma",
+      "title": "Click Edital",
+      "h1Count": 1,
+      "horizontalOverflow": false,
+      "unnamedControls": 0,
+      "undersizedTargets": 1,
+      "unnamedSamples": [],
+      "undersizedSamples": [
+        {
+          "width": 1,
+          "height": 1,
+          "html": "<a href=\"#main-content\" class=\"sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[300] focus:rounded-lg focus:bg-primary focus:px-4 focus:py-2.5 focus:text-sm "
+        }
+      ],
+      "bodyText": "Pular para o conteúdo\nClick Edital\n🏆\nCONCURSO ATIVO\nBACEN — Analista\nPRINCIPAL\nDashboard\nMeus Concursos\nDisciplinas\nCronograma\nESTUDO\nPomodoro\nCalendário\nHistó"
+    },
+    {
+      "viewport": "desktop",
+      "route": "/pomodoro",
+      "screenshot": "desktop-pomodoro.png",
+      "pathname": "/pomodoro",
+      "title": "Click Edital",
+      "h1Count": 1,
+      "horizontalOverflow": false,
+      "unnamedControls": 0,
+      "undersizedTargets": 1,
+      "unnamedSamples": [],
+      "undersizedSamples": [
+        {
+          "width": 1,
+          "height": 1,
+          "html": "<a href=\"#main-content\" class=\"sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[300] focus:rounded-lg focus:bg-primary focus:px-4 focus:py-2.5 focus:text-sm "
+        }
+      ],
+      "bodyText": "Pular para o conteúdo\nClick Edital\n🏆\nCONCURSO ATIVO\nBACEN — Analista\nPRINCIPAL\nDashboard\nMeus Concursos\nDisciplinas\nCronograma\nESTUDO\nPomodoro\nCalendário\nHistó"
+    },
+    {
+      "viewport": "desktop",
+      "route": "/estudos/historico",
+      "screenshot": "desktop-estudos-historico.png",
+      "pathname": "/estudos/historico",
+      "title": "Click Edital",
+      "h1Count": 1,
+      "horizontalOverflow": false,
+      "unnamedControls": 0,
+      "undersizedTargets": 1,
+      "unnamedSamples": [],
+      "undersizedSamples": [
+        {
+          "width": 1,
+          "height": 1,
+          "html": "<a href=\"#main-content\" class=\"sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[300] focus:rounded-lg focus:bg-primary focus:px-4 focus:py-2.5 focus:text-sm "
+        }
+      ],
+      "bodyText": "Pular para o conteúdo\nClick Edital\n🏆\nCONCURSO ATIVO\nBACEN — Analista\nPRINCIPAL\nDashboard\nMeus Concursos\nDisciplinas\nCronograma\nESTUDO\nPomodoro\nCalendário\nHistó"
+    },
+    {
+      "viewport": "desktop",
+      "route": "/concursos",
+      "screenshot": "desktop-concursos.png",
+      "pathname": "/concursos",
+      "title": "Click Edital",
+      "h1Count": 1,
+      "horizontalOverflow": false,
+      "unnamedControls": 0,
+      "undersizedTargets": 1,
+      "unnamedSamples": [],
+      "undersizedSamples": [
+        {
+          "width": 1,
+          "height": 1,
+          "html": "<a href=\"#main-content\" class=\"sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[300] focus:rounded-lg focus:bg-primary focus:px-4 focus:py-2.5 focus:text-sm "
+        }
+      ],
+      "bodyText": "Pular para o conteúdo\nClick Edital\n🏆\nCONCURSO ATIVO\nBACEN — Analista\nPRINCIPAL\nDashboard\nMeus Concursos\nDisciplinas\nCronograma\nESTUDO\nPomodoro\nCalendário\nHistó"
+    },
+    {
+      "viewport": "desktop",
+      "route": "/disciplinas",
+      "screenshot": "desktop-disciplinas.png",
+      "pathname": "/disciplinas",
+      "title": "Click Edital",
+      "h1Count": 1,
+      "horizontalOverflow": false,
+      "unnamedControls": 0,
+      "undersizedTargets": 1,
+      "unnamedSamples": [],
+      "undersizedSamples": [
+        {
+          "width": 1,
+          "height": 1,
+          "html": "<a href=\"#main-content\" class=\"sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[300] focus:rounded-lg focus:bg-primary focus:px-4 focus:py-2.5 focus:text-sm "
+        }
+      ],
+      "bodyText": "Pular para o conteúdo\nClick Edital\n🏆\nCONCURSO ATIVO\nBACEN — Analista\nPRINCIPAL\nDashboard\nMeus Concursos\nDisciplinas\nCronograma\nESTUDO\nPomodoro\nCalendário\nHistó"
+    },
+    {
+      "viewport": "desktop",
+      "route": "/mapas-mentais",
+      "screenshot": "desktop-mapas-mentais.png",
+      "pathname": "/mapas-mentais",
+      "title": "Click Edital",
+      "h1Count": 1,
+      "horizontalOverflow": false,
+      "unnamedControls": 0,
+      "undersizedTargets": 1,
+      "unnamedSamples": [],
+      "undersizedSamples": [
+        {
+          "width": 1,
+          "height": 1,
+          "html": "<a href=\"#main-content\" class=\"sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[300] focus:rounded-lg focus:bg-primary focus:px-4 focus:py-2.5 focus:text-sm "
+        }
+      ],
+      "bodyText": "Pular para o conteúdo\nClick Edital\n🏆\nCONCURSO ATIVO\nBACEN — Analista\nPRINCIPAL\nDashboard\nMeus Concursos\nDisciplinas\nCronograma\nESTUDO\nPomodoro\nCalendário\nHistó"
+    },
+    {
+      "viewport": "mobile",
+      "route": "/dashboard",
+      "screenshot": "mobile-dashboard.png",
+      "pathname": "/dashboard",
+      "title": "Click Edital",
+      "h1Count": 1,
+      "horizontalOverflow": false,
+      "unnamedControls": 0,
+      "undersizedTargets": 3,
+      "unnamedSamples": [],
+      "undersizedSamples": [
+        {
+          "width": 1,
+          "height": 1,
+          "html": "<a href=\"#main-content\" class=\"sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[300] focus:rounded-lg focus:bg-primary focus:px-4 focus:py-2.5 focus:text-sm "
+        },
+        {
+          "width": 75,
+          "height": 16,
+          "html": "<a class=\"text-xs font-medium text-primary-600 hover:underline dark:text-primary-400\" href=\"/estudos/calendario\">Ver completo</a>"
+        },
+        {
+          "width": 37,
+          "height": 16,
+          "html": "<a class=\"truncate font-medium text-card-foreground hover:underline\" href=\"/disciplinas/3e69e294-ecc9-4ac1-8056-02fa8f548160\">Direito</a>"
+        }
+      ],
+      "bodyText": "Pular para o conteúdo\nClick Edital\n🏆\nCONCURSO ATIVO\nBACEN — Analista\nPRINCIPAL\nDashboard\nMeus Concursos\nDisciplinas\nCronograma\nESTUDO\nPomodoro\nCalendário\nHistó"
+    },
+    {
+      "viewport": "mobile",
+      "route": "/cronograma",
+      "screenshot": "mobile-cronograma.png",
+      "pathname": "/cronograma",
+      "title": "Click Edital",
+      "h1Count": 1,
+      "horizontalOverflow": false,
+      "unnamedControls": 0,
+      "undersizedTargets": 1,
+      "unnamedSamples": [],
+      "undersizedSamples": [
+        {
+          "width": 1,
+          "height": 1,
+          "html": "<a href=\"#main-content\" class=\"sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[300] focus:rounded-lg focus:bg-primary focus:px-4 focus:py-2.5 focus:text-sm "
+        }
+      ],
+      "bodyText": "Pular para o conteúdo\nClick Edital\n🏆\nCONCURSO ATIVO\nBACEN — Analista\nPRINCIPAL\nDashboard\nMeus Concursos\nDisciplinas\nCronograma\nESTUDO\nPomodoro\nCalendário\nHistó"
+    },
+    {
+      "viewport": "mobile",
+      "route": "/pomodoro",
+      "screenshot": "mobile-pomodoro.png",
+      "pathname": "/pomodoro",
+      "title": "Click Edital",
+      "h1Count": 1,
+      "horizontalOverflow": false,
+      "unnamedControls": 0,
+      "undersizedTargets": 1,
+      "unnamedSamples": [],
+      "undersizedSamples": [
+        {
+          "width": 1,
+          "height": 1,
+          "html": "<a href=\"#main-content\" class=\"sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[300] focus:rounded-lg focus:bg-primary focus:px-4 focus:py-2.5 focus:text-sm "
+        }
+      ],
+      "bodyText": "Pular para o conteúdo\nClick Edital\n🏆\nCONCURSO ATIVO\nBACEN — Analista\nPRINCIPAL\nDashboard\nMeus Concursos\nDisciplinas\nCronograma\nESTUDO\nPomodoro\nCalendário\nHistó"
+    },
+    {
+      "viewport": "mobile",
+      "route": "/estudos/historico",
+      "screenshot": "mobile-estudos-historico.png",
+      "pathname": "/estudos/historico",
+      "title": "Click Edital",
+      "h1Count": 1,
+      "horizontalOverflow": false,
+      "unnamedControls": 0,
+      "undersizedTargets": 1,
+      "unnamedSamples": [],
+      "undersizedSamples": [
+        {
+          "width": 1,
+          "height": 1,
+          "html": "<a href=\"#main-content\" class=\"sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[300] focus:rounded-lg focus:bg-primary focus:px-4 focus:py-2.5 focus:text-sm "
+        }
+      ],
+      "bodyText": "Pular para o conteúdo\nClick Edital\n🏆\nCONCURSO ATIVO\nBACEN — Analista\nPRINCIPAL\nDashboard\nMeus Concursos\nDisciplinas\nCronograma\nESTUDO\nPomodoro\nCalendário\nHistó"
+    },
+    {
+      "viewport": "mobile",
+      "route": "/concursos",
+      "screenshot": "mobile-concursos.png",
+      "pathname": "/concursos",
+      "title": "Click Edital",
+      "h1Count": 1,
+      "horizontalOverflow": false,
+      "unnamedControls": 0,
+      "undersizedTargets": 1,
+      "unnamedSamples": [],
+      "undersizedSamples": [
+        {
+          "width": 1,
+          "height": 1,
+          "html": "<a href=\"#main-content\" class=\"sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[300] focus:rounded-lg focus:bg-primary focus:px-4 focus:py-2.5 focus:text-sm "
+        }
+      ],
+      "bodyText": "Pular para o conteúdo\nClick Edital\n🏆\nCONCURSO ATIVO\nBACEN — Analista\nPRINCIPAL\nDashboard\nMeus Concursos\nDisciplinas\nCronograma\nESTUDO\nPomodoro\nCalendário\nHistó"
+    },
+    {
+      "viewport": "mobile",
+      "route": "/disciplinas",
+      "screenshot": "mobile-disciplinas.png",
+      "pathname": "/disciplinas",
+      "title": "Click Edital",
+      "h1Count": 1,
+      "horizontalOverflow": false,
+      "unnamedControls": 0,
+      "undersizedTargets": 1,
+      "unnamedSamples": [],
+      "undersizedSamples": [
+        {
+          "width": 1,
+          "height": 1,
+          "html": "<a href=\"#main-content\" class=\"sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[300] focus:rounded-lg focus:bg-primary focus:px-4 focus:py-2.5 focus:text-sm "
+        }
+      ],
+      "bodyText": "Pular para o conteúdo\nClick Edital\n🏆\nCONCURSO ATIVO\nBACEN — Analista\nPRINCIPAL\nDashboard\nMeus Concursos\nDisciplinas\nCronograma\nESTUDO\nPomodoro\nCalendário\nHistó"
+    },
+    {
+      "viewport": "mobile",
+      "route": "/mapas-mentais",
+      "screenshot": "mobile-mapas-mentais.png",
+      "pathname": "/mapas-mentais",
+      "title": "Click Edital",
+      "h1Count": 1,
+      "horizontalOverflow": false,
+      "unnamedControls": 0,
+      "undersizedTargets": 1,
+      "unnamedSamples": [],
+      "undersizedSamples": [
+        {
+          "width": 1,
+          "height": 1,
+          "html": "<a href=\"#main-content\" class=\"sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[300] focus:rounded-lg focus:bg-primary focus:px-4 focus:py-2.5 focus:text-sm "
+        }
+      ],
+      "bodyText": "Pular para o conteúdo\nClick Edital\n🏆\nCONCURSO ATIVO\nBACEN — Analista\nPRINCIPAL\nDashboard\nMeus Concursos\nDisciplinas\nCronograma\nESTUDO\nPomodoro\nCalendário\nHistó"
+    }
+  ],
+  "passed": true
+}

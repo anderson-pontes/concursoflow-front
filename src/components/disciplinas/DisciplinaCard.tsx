@@ -231,7 +231,7 @@ export function DisciplinaCard({
                 aria-expanded={menuOpen}
                 aria-haspopup="menu"
                 aria-label={`Ações da disciplina ${disciplina.nome}`}
-                className="flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                className="flex h-10 w-10 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
                 onClick={() => setMenuOpen((v) => !v)}
               >
                 <MoreHorizontal className="h-4 w-4" aria-hidden />

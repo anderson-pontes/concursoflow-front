@@ -7,13 +7,10 @@ import { Dashboard } from "./pages/Dashboard";
 import { Concursos } from "./pages/Concursos";
 import { Disciplinas } from "./pages/Disciplinas";
 import { AdminRoute } from "./components/layout/AdminRoute";
+import { PageSkeleton } from "./components/ui/page-skeleton";
 
 function PageLoader() {
-  return (
-    <div className="flex min-h-[50vh] items-center justify-center p-8" role="status" aria-live="polite">
-      <span className="text-sm text-muted-foreground">Carregando…</span>
-    </div>
-  );
+  return <PageSkeleton className="min-h-[50vh]" />;
 }
 
 function lazyNamed<T extends Record<string, React.ComponentType<object>>>(

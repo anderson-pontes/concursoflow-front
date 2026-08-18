@@ -9,6 +9,9 @@ import { Button } from "@/components/ui/button";
 import { MinhaAssinatura } from "@/components/perfil/MinhaAssinatura";
 import { FormSection } from "@/components/ui/FormSection";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { DatePicker } from "@/components/ui/date-picker";
+import { SelectField } from "@/components/ui/select-field";
 import { BR_UFS } from "@/lib/brasilUfs";
 import { maskCep, maskCpf, maskPhoneBr, unmaskCep, unmaskCpf, unmaskPhone } from "@/lib/inputMasks";
 import { meToForm, profileSchema, type ProfileForm } from "@/lib/perfil/profileSchema";
@@ -98,7 +101,7 @@ export function PerfilFormContent({ serverMe, onCancel }: PerfilFormContentProps
       <FormSection title="Dados pessoais" icon={<UserCircle className="h-4 w-4" />}>
         <div>
           <Label htmlFor="pf-name">Nome completo</Label>
-          <input
+          <Input
             id="pf-name"
             className="mt-1.5 min-h-11 w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
             disabled={mutation.isPending}
@@ -110,7 +113,7 @@ export function PerfilFormContent({ serverMe, onCancel }: PerfilFormContentProps
         </div>
         <div>
           <Label htmlFor="pf-email">E-mail</Label>
-          <input
+          <Input
             id="pf-email"
             readOnly
             value={serverMe.email ?? ""}
@@ -121,7 +124,7 @@ export function PerfilFormContent({ serverMe, onCancel }: PerfilFormContentProps
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
             <Label htmlFor="pf-cpf">CPF</Label>
-            <input
+            <Input
               id="pf-cpf"
               className="mt-1.5 min-h-11 w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
               disabled={mutation.isPending}
@@ -134,7 +137,7 @@ export function PerfilFormContent({ serverMe, onCancel }: PerfilFormContentProps
           </div>
           <div>
             <Label htmlFor="pf-phone">Telefone</Label>
-            <input
+            <Input
               id="pf-phone"
               className="mt-1.5 min-h-11 w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
               disabled={mutation.isPending}
@@ -145,12 +148,12 @@ export function PerfilFormContent({ serverMe, onCancel }: PerfilFormContentProps
         </div>
         <div>
           <Label htmlFor="pf-birth">Data de nascimento</Label>
-          <input
+          <DatePicker
             id="pf-birth"
-            type="date"
-            className="mt-1.5 min-h-11 w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="mt-1.5"
             disabled={mutation.isPending}
-            {...register("birth_date")}
+            value={watch("birth_date") ?? ""}
+            onValueChange={(value) => setValue("birth_date", value, { shouldDirty: true, shouldValidate: true })}
           />
           {formState.errors.birth_date ? (
             <p className="mt-1 text-xs text-destructive">{formState.errors.birth_date.message}</p>
@@ -162,7 +165,7 @@ export function PerfilFormContent({ serverMe, onCancel }: PerfilFormContentProps
         <div className="flex flex-col gap-2 sm:flex-row sm:items-end">
           <div className="min-w-0 flex-1">
             <Label htmlFor="pf-cep">CEP</Label>
-            <input
+            <Input
               id="pf-cep"
               className="mt-1.5 min-h-11 w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
               disabled={mutation.isPending}
@@ -180,7 +183,7 @@ export function PerfilFormContent({ serverMe, onCancel }: PerfilFormContentProps
         </div>
         <div>
           <Label htmlFor="pf-street">Logradouro</Label>
-          <input
+          <Input
             id="pf-street"
             className="mt-1.5 min-h-11 w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
             disabled={mutation.isPending}
@@ -190,7 +193,7 @@ export function PerfilFormContent({ serverMe, onCancel }: PerfilFormContentProps
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
             <Label htmlFor="pf-num">Número</Label>
-            <input
+            <Input
               id="pf-num"
               className="mt-1.5 min-h-11 w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
               disabled={mutation.isPending}
@@ -199,7 +202,7 @@ export function PerfilFormContent({ serverMe, onCancel }: PerfilFormContentProps
           </div>
           <div>
             <Label htmlFor="pf-comp">Complemento</Label>
-            <input
+            <Input
               id="pf-comp"
               className="mt-1.5 min-h-11 w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
               disabled={mutation.isPending}
@@ -209,7 +212,7 @@ export function PerfilFormContent({ serverMe, onCancel }: PerfilFormContentProps
         </div>
         <div>
           <Label htmlFor="pf-bairro">Bairro</Label>
-          <input
+          <Input
             id="pf-bairro"
             className="mt-1.5 min-h-11 w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
             disabled={mutation.isPending}
@@ -219,7 +222,7 @@ export function PerfilFormContent({ serverMe, onCancel }: PerfilFormContentProps
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
             <Label htmlFor="pf-city">Cidade</Label>
-            <input
+            <Input
               id="pf-city"
               className="mt-1.5 min-h-11 w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
               disabled={mutation.isPending}
@@ -228,19 +231,14 @@ export function PerfilFormContent({ serverMe, onCancel }: PerfilFormContentProps
           </div>
           <div>
             <Label htmlFor="pf-uf">Estado (UF)</Label>
-            <select
+            <SelectField
               id="pf-uf"
-              className="mt-1.5 min-h-11 w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              className="mt-1.5"
               disabled={mutation.isPending}
-              {...register("address_state")}
-            >
-              <option value="">Selecione</option>
-              {BR_UFS.map((uf) => (
-                <option key={uf} value={uf}>
-                  {uf}
-                </option>
-              ))}
-            </select>
+              value={watch("address_state") ?? ""}
+              onValueChange={(value) => setValue("address_state", value, { shouldDirty: true, shouldValidate: true })}
+              options={[{ value: "", label: "Selecione" }, ...BR_UFS.map((uf) => ({ value: uf, label: uf }))]}
+            />
           </div>
         </div>
       </FormSection>

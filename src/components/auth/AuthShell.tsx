@@ -1,4 +1,5 @@
 import React from "react";
+import { useLocation } from "react-router-dom";
 
 import markPreload from "@/assets/brand/click-edital-mark.svg";
 import { AuthHeroVisual } from "@/components/auth/AuthHeroVisual";
@@ -21,6 +22,13 @@ const HERO_FEATURES = [
  * Mobile: faixa compacta com logo; desktop: split 50/50.
  */
 export function AuthShell({ children, logoAsLink = false }: AuthShellProps) {
+  const { pathname } = useLocation();
+  const mainRef = React.useRef<HTMLElement>(null);
+
+  React.useEffect(() => {
+    mainRef.current?.scrollTo({ top: 0 });
+  }, [pathname]);
+
   React.useEffect(() => {
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
@@ -41,8 +49,8 @@ export function AuthShell({ children, logoAsLink = false }: AuthShellProps) {
   return (
     <div className="fixed inset-0 z-[200] flex h-[100dvh] max-h-[100dvh] w-full flex-col overflow-hidden font-sans md:flex-row">
       {/* Mobile — faixa com logo em chip claro (marca legível) */}
-      <div className="auth-hero-gradient flex shrink-0 items-center px-4 py-3 md:hidden">
-        <div className="rounded-xl bg-white/95 px-3 py-2 shadow-sm">
+      <div className="auth-hero-gradient flex shrink-0 items-center px-4 py-2.5 md:hidden">
+        <div className="rounded-xl bg-white/95 px-3 py-1.5 shadow-sm">
           <ClickEditalLogo size="sm" className="shrink-0" asLink={logoAsLink} />
         </div>
       </div>
@@ -98,8 +106,8 @@ export function AuthShell({ children, logoAsLink = false }: AuthShellProps) {
       </aside>
 
       {/* Coluna formulário */}
-      <main className="auth-form-col-scroll relative flex min-h-0 w-full flex-1 flex-col overflow-y-auto bg-surface md:h-[100dvh] md:w-1/2">
-        <div className="flex min-h-0 flex-1 flex-col items-center justify-center px-4 py-6 sm:px-6 sm:py-8 md:px-12 lg:px-16">
+      <main ref={mainRef} className="auth-form-col-scroll relative flex min-h-0 w-full flex-1 flex-col overflow-y-auto bg-surface md:h-[100dvh] md:w-1/2">
+        <div className="flex min-h-full shrink-0 flex-col items-center justify-start px-4 py-8 sm:px-6 md:justify-center md:px-12 lg:px-16">
           <div className="w-full max-w-[420px]">{children}</div>
         </div>
         <p className="pointer-events-none shrink-0 px-4 pb-4 pt-2 text-center text-[11px] text-muted-foreground sm:pb-6">

@@ -8,6 +8,7 @@ import { PomodoroConfigPanel } from "@/components/pomodoro/PomodoroConfigPanel";
 import { PomodoroTimer } from "@/components/pomodoro/PomodoroTimer";
 import { RegistroEstudoModal } from "@/components/estudos/RegistroEstudoModal";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { usePomodoroConfigSync } from "@/hooks/usePomodoroConfigSync";
 import {
   applyPomodoroLaunchToStore,
@@ -138,7 +139,7 @@ export function Pomodoro() {
   const pageTitle = mode === "cronometro" ? "Cronômetro" : "Pomodoro";
 
   return (
-    <div className="mx-auto max-w-2xl space-y-6 pb-10">
+    <div className="mx-auto max-w-5xl space-y-6 pb-10">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div className="flex items-start gap-3">
           <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-primary-muted text-primary">
@@ -161,24 +162,28 @@ export function Pomodoro() {
         </Button>
       </div>
 
-      {!timerActive ? (
-        <PomodoroConfigPanel
-          key={`${disciplinaId ?? ""}-${topicoId ?? ""}`}
-          disciplinas={disciplinas}
-          loadingDisciplinas={isLoading}
-          onPersist={persistConfig}
-        />
-      ) : (
-        <div className="rounded-xl border border-primary-200 bg-primary-muted/60 px-4 py-3 text-sm text-accent-foreground dark:border-primary/30 dark:bg-primary/10 dark:text-primary-200">
-          Configurações ocultas durante a sessão. Pause ou encerre para alterar duração, modo e disciplina.
+      <div className={cn("grid items-start gap-6", !timerActive && "lg:grid-cols-[minmax(0,1.15fr)_minmax(320px,0.85fr)]")}>
+        <div className="lg:sticky lg:top-20">
+          <PomodoroTimer
+            onActiveChange={setTimerActive}
+            disciplinaNome={disciplinaNome}
+            topicoNome={topicoNome}
+          />
         </div>
-      )}
 
-      <PomodoroTimer
-        onActiveChange={setTimerActive}
-        disciplinaNome={disciplinaNome}
-        topicoNome={topicoNome}
-      />
+        {!timerActive ? (
+          <PomodoroConfigPanel
+            key={`${disciplinaId ?? ""}-${topicoId ?? ""}`}
+            disciplinas={disciplinas}
+            loadingDisciplinas={isLoading}
+            onPersist={persistConfig}
+          />
+        ) : (
+          <div className="rounded-xl border border-primary/30 bg-primary-muted/60 px-4 py-3 text-sm text-accent-foreground dark:bg-primary/10 dark:text-primary-200">
+            Configurações ocultas durante a sessão. Pause ou encerre para alterar duração, modo e disciplina.
+          </div>
+        )}
+      </div>
 
       <RegistroEstudoModal
         open={openRegistro}

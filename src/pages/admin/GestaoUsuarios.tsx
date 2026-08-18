@@ -15,6 +15,7 @@ import {
   type UserStatus,
 } from "@/types/userManagement";
 import { cn } from "@/lib/utils";
+import { SelectField } from "@/components/ui/select-field";
 
 export function GestaoUsuarios() {
   const [page, setPage] = React.useState(1);
@@ -92,51 +93,9 @@ export function GestaoUsuarios() {
               setPage(1);
             }}
           />
-          <select
-            className="min-h-11 rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
-            value={status}
-            onChange={(e) => {
-              setStatus(e.target.value);
-              setPage(1);
-            }}
-          >
-            <option value="">Todos os status</option>
-            {USER_STATUS_OPTIONS.map((o) => (
-              <option key={o.value} value={o.value}>
-                {o.label}
-              </option>
-            ))}
-          </select>
-          <select
-            className="min-h-11 rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
-            value={subscriptionStatus}
-            onChange={(e) => {
-              setSubscriptionStatus(e.target.value);
-              setPage(1);
-            }}
-          >
-            <option value="">Toda assinatura</option>
-            <option value="active">Ativa</option>
-            <option value="past_due">Pgto. pendente</option>
-            <option value="canceled">Cancelada</option>
-            <option value="unpaid">Não paga</option>
-            <option value="incomplete">Incompleta</option>
-          </select>
-          <select
-            className="min-h-11 rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
-            value={studyGoal}
-            onChange={(e) => {
-              setStudyGoal(e.target.value);
-              setPage(1);
-            }}
-          >
-            <option value="">Todos os objetivos</option>
-            {STUDY_GOAL_OPTIONS.map((o) => (
-              <option key={o.value} value={o.value}>
-                {o.label}
-              </option>
-            ))}
-          </select>
+          <SelectField value={status} onValueChange={(value) => { setStatus(value); setPage(1); }} options={[{ value: "", label: "Todos os status" }, ...USER_STATUS_OPTIONS]} />
+          <SelectField value={subscriptionStatus} onValueChange={(value) => { setSubscriptionStatus(value); setPage(1); }} options={[{ value: "", label: "Toda assinatura" }, { value: "active", label: "Ativa" }, { value: "past_due", label: "Pgto. pendente" }, { value: "canceled", label: "Cancelada" }, { value: "unpaid", label: "Não paga" }, { value: "incomplete", label: "Incompleta" }]} />
+          <SelectField value={studyGoal} onValueChange={(value) => { setStudyGoal(value); setPage(1); }} options={[{ value: "", label: "Todos os objetivos" }, ...STUDY_GOAL_OPTIONS]} />
         </div>
 
         <div className="mt-4 overflow-x-auto">

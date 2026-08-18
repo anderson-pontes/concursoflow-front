@@ -1,7 +1,7 @@
 import React from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { isAxiosError } from "axios";
-import { BookOpen, Clock, ListChecks, Pencil, Plus, Trash2, BarChart3, Calendar, RefreshCw } from "lucide-react";
+import { BookOpen, Clock, ListChecks, Pencil, Plus, Trash2, BarChart3, Calendar, RefreshCw, MoreHorizontal } from "lucide-react";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
 
@@ -24,6 +24,16 @@ import {
 import { CronogramaSimplificadoModal } from "@/components/cronograma/CronogramaSimplificadoModal";
 import { GerarCronogramaAutoModal } from "@/components/cronograma/GerarCronogramaAutoModal";
 import { RegistroEstudoModal } from "@/components/estudos/RegistroEstudoModal";
+import { useConfirmDialog } from "@/components/ui/confirm-dialog";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { EmptyState } from "@/components/ui/empty-state";
+import { Skeleton } from "@/components/ui/skeleton";
 import { DIAS, diaAbrev, fmtHorasStats } from "@/lib/cronograma/constants";
 import { filtrarDisciplinasDoConcursoAtivo } from "@/lib/cronograma/disciplinasConcurso";
 import type {
@@ -62,6 +72,7 @@ function editTitleForModo(modo: string | undefined): string {
 export function Cronograma() {
   const qc = useQueryClient();
   const concursoAtivoId = useConcursoAtivoId();
+  const { requestConfirmation, confirmDialog } = useConfirmDialog();
 
   const jsDay = new Date().getDay(); // 0=Sun
   const diaHoje = (["dom", "seg", "ter", "qua", "qui", "sex", "sab"] as Bloco["dia_semana"][])[jsDay];
@@ -290,95 +301,81 @@ export function Cronograma() {
     <div className="space-y-6 pb-10">
       <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
         <div className="min-w-0">
-          <h1 className="text-xl font-semibold tracking-tight text-neutral-900 dark:text-neutral-50">Cronograma</h1>
+          <h1 className="text-xl font-semibold tracking-tight text-foreground">Cronograma</h1>
           <p className="text-sm text-muted-foreground">Planejamento semanal de estudos</p>
         </div>
         <div className="flex flex-wrap gap-2 lg:max-w-[min(100%,42rem)] lg:justify-end">
           {concursoAtivoId ? (
-            <Link
-              to={`/planos/${concursoAtivoId}/replanejar`}
-              title="Replanejar concurso ativo"
-              className="inline-flex min-h-10 items-center gap-2 rounded-lg border border-border bg-card px-2.5 py-2 text-sm font-medium text-card-foreground shadow-sm hover:bg-muted sm:px-3"
-            >
-              <RefreshCw className="h-4 w-4 shrink-0" />
-              <span className="hidden sm:inline">Replanejar</span>
-            </Link>
+            <Button asChild variant="outline" title="Replanejar concurso ativo">
+              <Link to={`/planos/${concursoAtivoId}/replanejar`}>
+                <RefreshCw />
+                <span className="hidden sm:inline">Replanejar</span>
+              </Link>
+            </Button>
           ) : null}
-          <button
+          <Button
             type="button"
+            variant="outline"
             onClick={() => setAgendaHojeOpen(true)}
             title="Ver o que está agendado para estudar na semana"
             aria-label="Ver o que está agendado para estudar na semana"
-            className="inline-flex min-h-10 items-center gap-2 rounded-lg border border-border bg-card px-2.5 py-2 text-sm font-medium text-card-foreground shadow-sm hover:bg-muted sm:px-3"
           >
             <ListChecks className="h-4 w-4 shrink-0" />
             <span className="hidden sm:inline">Agendado</span>
-          </button>
-          <Link
-            to={calendarioMensalHref}
-            title="Calendário mensal"
-            className="inline-flex min-h-10 items-center gap-2 rounded-lg border border-border bg-card px-2.5 py-2 text-sm font-medium text-card-foreground shadow-sm hover:bg-muted sm:px-3"
-          >
-            <Calendar className="h-4 w-4 shrink-0" />
-            <span className="hidden sm:inline">Calendário</span>
-          </Link>
-          <button
-            type="button"
-            onClick={() => setOpenRegistro(true)}
-            title="Novo registro"
-            className="inline-flex min-h-10 items-center gap-2 rounded-lg border border-border bg-card px-2.5 py-2 text-sm font-medium text-card-foreground shadow-sm hover:bg-muted sm:px-3"
-          >
-            <BookOpen className="h-4 w-4 shrink-0" />
-            <span className="hidden sm:inline">Registro</span>
-          </button>
-          <button
-            type="button"
-            disabled={limparMutation.isPending}
-            title="Limpar cronograma"
-            onClick={() => {
-              if (
-                !window.confirm(
-                  "Isso remove todos os blocos do cronograma semanal e os itens gerados automaticamente. Deseja continuar?",
-                )
-              ) {
-                return;
-              }
-              limparMutation.mutate();
-            }}
-            className="inline-flex min-h-10 items-center gap-2 rounded-lg border border-border bg-card px-2.5 py-2 text-sm font-medium text-muted-foreground shadow-sm hover:bg-muted disabled:opacity-50 sm:px-3"
-          >
-            <Trash2 className="h-4 w-4 shrink-0" />
-            <span className="hidden sm:inline">{limparMutation.isPending ? "Limpando…" : "Limpar"}</span>
-          </button>
-          <button
-            type="button"
-            onClick={openCriarCronograma}
-            className="inline-flex min-h-10 items-center gap-2 rounded-lg bg-primary-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary-700"
-          >
-            <Plus className="h-4 w-4 shrink-0" />
-            Criar cronograma
-          </button>
+          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button type="button" variant="outline" aria-label="Mais ações do cronograma">
+                <MoreHorizontal />
+                <span className="hidden sm:inline">Mais ações</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="min-w-52">
+              <DropdownMenuItem asChild className="min-h-10">
+                <Link to={calendarioMensalHref}><Calendar />Calendário mensal</Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem className="min-h-10" onSelect={() => setOpenRegistro(true)}>
+                <BookOpen />Novo registro
+              </DropdownMenuItem>
+              {totalBlocos > 0 ? (
+                <DropdownMenuItem
+                  className="min-h-10"
+                  variant="destructive"
+                  disabled={limparMutation.isPending}
+                  onSelect={() => {
+                    void requestConfirmation({
+                      title: "Limpar cronograma?",
+                      description: "Isso remove todos os blocos do cronograma semanal e os itens gerados automaticamente. Esta ação não pode ser desfeita.",
+                      confirmLabel: "Limpar cronograma",
+                      variant: "destructive",
+                    }).then((confirmed) => {
+                      if (confirmed) limparMutation.mutate();
+                    });
+                  }}
+                >
+                  <Trash2 />{limparMutation.isPending ? "Limpando…" : "Limpar cronograma"}
+                </DropdownMenuItem>
+              ) : null}
+            </DropdownMenuContent>
+          </DropdownMenu>
+          {totalBlocos > 0 ? (
+            <Button type="button" onClick={openCriarCronograma}>
+              <Plus />Criar cronograma
+            </Button>
+          ) : null}
         </div>
       </div>
 
       {!isLoading && totalBlocos === 0 ? (
-        <div className="rounded-xl border border-dashed border-border bg-card/50 px-5 py-8 text-center">
-          <p className="text-sm font-medium text-card-foreground">Nenhum horário no cronograma</p>
-          <p className="mx-auto mt-1 max-w-md text-sm text-muted-foreground">
-            Escolha um modo: automático com IA, analítico com tópicos, ou simplificado por disciplina.
-          </p>
-          <button
-            type="button"
-            onClick={openCriarCronograma}
-            className="mt-4 inline-flex items-center gap-2 rounded-lg bg-primary-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-primary-700"
-          >
-            <Plus className="h-4 w-4" />
-            Criar cronograma
-          </button>
-        </div>
+        <EmptyState
+          icon={Calendar}
+          title="Nenhum horário no cronograma"
+          description="Escolha um modo: automático com IA, analítico com tópicos ou simplificado por disciplina."
+          action={<Button type="button" onClick={openCriarCronograma}><Plus />Criar cronograma</Button>}
+        />
       ) : null}
 
-      {stats ? (
+      {stats && totalBlocos > 0 ? (
         <div className="grid grid-cols-2 gap-2 sm:gap-3 xl:grid-cols-4">
           {[
             { label: "Tempo total", value: fmtHorasStats(stats.tempo_total_horas), icon: Clock },
@@ -391,7 +388,7 @@ export function Cronograma() {
                 <Icon className="h-4 w-4" />
               </span>
               <div className="min-w-0">
-                <p className="truncate text-[10px] font-semibold uppercase tracking-wide text-muted-foreground sm:text-xs">{label}</p>
+                <p className="truncate text-xs font-semibold uppercase tracking-wide text-muted-foreground">{label}</p>
                 <p className="truncate text-sm font-semibold tabular-nums text-card-foreground sm:text-base">{value}</p>
               </div>
             </div>
@@ -400,17 +397,17 @@ export function Cronograma() {
       ) : null}
 
       {isLoading ? (
-        <div className="overflow-x-auto overscroll-x-contain pb-1">
-          <div className="grid min-w-[52rem] grid-cols-7 gap-2 2xl:min-w-0 2xl:gap-3">
+        <div className="pb-1">
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 xl:grid-cols-7 xl:gap-3">
             {DIAS.map((d) => (
-              <div key={d} className="h-40 animate-pulse rounded-xl bg-neutral-100 dark:bg-neutral-800" />
+              <Skeleton key={d} className="h-40 rounded-xl" />
             ))}
           </div>
         </div>
-      ) : (
-        <div className="overflow-x-auto overscroll-x-contain pb-1 [-webkit-overflow-scrolling:touch]">
+      ) : totalBlocos > 0 ? (
+        <div className="pb-1">
           <div
-            className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:min-w-[52rem] md:grid-cols-7 md:gap-2 2xl:min-w-0 2xl:gap-3"
+            className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7 xl:gap-3"
             role="list"
             aria-label="Dias da semana"
           >
@@ -437,7 +434,7 @@ export function Cronograma() {
                     >
                       <span>{diaAbrev[dia]}</span>
                       {isHoje ? (
-                        <span className="rounded-full bg-primary-600 px-1.5 py-0.5 text-[10px] font-bold normal-case text-white">
+                        <span className="rounded-full bg-primary px-1.5 py-0.5 text-xs font-bold normal-case text-primary-foreground">
                           hoje
                         </span>
                       ) : null}
@@ -455,7 +452,7 @@ export function Cronograma() {
                         </button>
                       ) : null}
                       {items.length > 0 ? (
-                        <span className="rounded-full bg-muted px-1.5 text-[11px] font-medium tabular-nums text-muted-foreground">
+                        <span className="rounded-full bg-muted px-1.5 text-xs font-medium tabular-nums text-muted-foreground">
                           {items.length}
                         </span>
                       ) : null}
@@ -483,14 +480,13 @@ export function Cronograma() {
                           bloco.grupo_id
                             ? () => {
                                 const ate = fmtDateBR(previewEstenderFim(bloco.vigencia_fim));
-                                if (
-                                  !window.confirm(
-                                    `Estender a vigência por mais 12 meses (até ${ate})?`,
-                                  )
-                                ) {
-                                  return;
-                                }
-                                estenderMutation.mutate(bloco.grupo_id!);
+                                void requestConfirmation({
+                                  title: "Estender vigência do cronograma?",
+                                  description: `A vigência deste cronograma será estendida por mais 12 meses, até ${ate}.`,
+                                  confirmLabel: "Estender vigência",
+                                }).then((confirmed) => {
+                                  if (confirmed) estenderMutation.mutate(bloco.grupo_id!);
+                                });
                               }
                             : undefined
                         }
@@ -504,11 +500,8 @@ export function Cronograma() {
               );
             })}
           </div>
-          <p className="mt-2 text-center text-[11px] text-muted-foreground md:block 2xl:hidden">
-            Deslize horizontalmente para ver a semana completa
-          </p>
         </div>
-      )}
+      ) : null}
 
       <CronogramaAgendaHojeDialog
         open={agendaHojeOpen}
@@ -605,6 +598,7 @@ export function Cronograma() {
         onClose={() => setOpenRegistro(false)}
         defaultDisciplinaId={null}
       />
+      {confirmDialog}
     </div>
   );
 }

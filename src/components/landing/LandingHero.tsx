@@ -27,7 +27,7 @@ export function LandingHero() {
             </span>
             <HandDrawnAccent
               variant="swoop"
-              className="pointer-events-none absolute -left-6 top-[48%] z-0 h-[45%] w-[calc(100%+3rem)] overflow-visible text-yellow-400 sm:-left-10 sm:top-[49%] sm:h-[43%] sm:w-[calc(100%+5rem)]"
+              className="pointer-events-none absolute -bottom-4 left-0 z-0 h-4 w-full overflow-visible text-yellow-400 sm:-left-10 sm:bottom-auto sm:top-[49%] sm:h-[43%] sm:w-[calc(100%+5rem)]"
             />
           </h1>
           <p className="mt-6 max-w-xl text-base leading-relaxed text-muted-foreground motion-safe:animate-[landing-fade-up_0.55s_ease-out_0.16s_both] sm:text-lg">

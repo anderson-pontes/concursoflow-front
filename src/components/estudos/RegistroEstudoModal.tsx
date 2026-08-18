@@ -4,7 +4,10 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 import { Checkbox } from "@/components/ui/checkbox";
-import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { DatePicker } from "@/components/ui/date-picker";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { invalidateEstudosQueries } from "@/lib/estudos/invalidateQueries";
@@ -150,6 +153,8 @@ export function RegistroEstudoModal({
   const [dateCustom, setDateCustom] = React.useState(new Date().toISOString().slice(0, 10));
 
   const [categoriaId, setCategoriaId] = React.useState("");
+  const [novaCategoriaOpen, setNovaCategoriaOpen] = React.useState(false);
+  const [novaCategoriaNome, setNovaCategoriaNome] = React.useState("");
   const [modalidade, setModalidade] = React.useState<"teoria" | "questoes" | "revisao">("teoria");
   const [disciplinaId, setDisciplinaId] = React.useState(defaultDisciplinaId ?? "");
 
@@ -372,6 +377,8 @@ export function RegistroEstudoModal({
     onSuccess: (c) => {
       qc.invalidateQueries({ queryKey: ["categorias"] });
       setCategoriaId(c.id);
+      setNovaCategoriaOpen(false);
+      setNovaCategoriaNome("");
       toast.success("Categoria criada.");
     },
     onError: () => toast.error("Não foi possível criar a categoria."),
@@ -478,8 +485,8 @@ export function RegistroEstudoModal({
 
   const handleCategoriaSelectValue = (v: string) => {
     if (v === NOVA_CATEGORIA_VALUE) {
-      const nome = window.prompt("Nome da nova categoria");
-      if (nome?.trim()) createCategoriaMutation.mutate(nome.trim());
+      setNovaCategoriaNome("");
+      setNovaCategoriaOpen(true);
       return;
     }
     setCategoriaId(v);
@@ -513,6 +520,7 @@ export function RegistroEstudoModal({
   };
 
   return (
+    <>
     <Dialog open={open} onOpenChange={(o) => { if (!o) onClose(); }}>
       <DialogContent
         hideClose
@@ -558,11 +566,10 @@ export function RegistroEstudoModal({
               </button>
             ))}
             {dateKind === "outro" ? (
-              <input
-                type="date"
+              <DatePicker
                 value={dateCustom}
-                onChange={(e) => setDateCustom(e.target.value)}
-                className="rounded-lg border-[0.5px] border-slate-300 px-3 py-1.5 text-sm outline-none transition focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 dark:border-neutral-600 dark:bg-neutral-900"
+                onValueChange={setDateCustom}
+                className="min-w-48"
               />
             ) : null}
           </div>
@@ -913,6 +920,45 @@ export function RegistroEstudoModal({
         </div>
       </DialogContent>
     </Dialog>
+
+    <Dialog open={novaCategoriaOpen} onOpenChange={setNovaCategoriaOpen}>
+      <DialogContent className="max-w-md">
+        <DialogHeader>
+          <DialogTitle>Nova categoria</DialogTitle>
+          <DialogDescription>Crie uma categoria para organizar este registro de estudo.</DialogDescription>
+        </DialogHeader>
+        <form
+          className="space-y-4"
+          onSubmit={(event) => {
+            event.preventDefault();
+            const nome = novaCategoriaNome.trim();
+            if (!nome) return;
+            createCategoriaMutation.mutate(nome);
+          }}
+        >
+          <div className="space-y-2">
+            <Label htmlFor="nova-categoria-nome">Nome da categoria</Label>
+            <Input
+              id="nova-categoria-nome"
+              autoFocus
+              value={novaCategoriaNome}
+              onChange={(event) => setNovaCategoriaNome(event.target.value)}
+              placeholder="Ex.: Simulado"
+              maxLength={80}
+            />
+          </div>
+          <div className="flex justify-end gap-2">
+            <Button type="button" variant="outline" onClick={() => setNovaCategoriaOpen(false)}>
+              Cancelar
+            </Button>
+            <Button type="submit" disabled={!novaCategoriaNome.trim() || createCategoriaMutation.isPending}>
+              {createCategoriaMutation.isPending ? "Criando…" : "Criar categoria"}
+            </Button>
+          </div>
+        </form>
+      </DialogContent>
+    </Dialog>
+    </>
   );
 }
 

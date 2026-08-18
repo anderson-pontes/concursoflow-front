@@ -2,6 +2,10 @@ import React from "react";
 import { X } from "lucide-react";
 
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { DatePicker } from "@/components/ui/date-picker";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { TimePicker } from "@/components/ui/time-picker";
 import { DIAS, diaAbrev, tipoMap } from "@/lib/cronograma/constants";
 import type { DisciplinaOption, SimplificadoFormState, VigenciaModo } from "@/lib/cronograma/types";
 import { fmtDateBR, hojeISO, vigenciaFim12Meses } from "@/lib/cronograma/types";
@@ -104,16 +108,13 @@ export function CronogramaSimplificadoModal({
         <div className="max-h-[70dvh] space-y-4 overflow-y-auto px-5 py-5">
           <div>
             <label className="mb-1.5 block text-sm font-medium text-card-foreground">Disciplina</label>
-            <select
-              className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary-500"
+            <Select
               value={form.disciplina_id}
-              onChange={(e) => setForm((s) => ({ ...s, disciplina_id: e.target.value }))}
+              onValueChange={(value) => setForm((s) => ({ ...s, disciplina_id: value }))}
             >
-              <option value="" disabled>Selecione...</option>
-              {disciplinas.map((d) => (
-                <option key={d.id} value={d.id}>{d.nome}</option>
-              ))}
-            </select>
+              <SelectTrigger><SelectValue placeholder="Selecione..." /></SelectTrigger>
+              <SelectContent>{disciplinas.map((d) => <SelectItem key={d.id} value={d.id}>{d.nome}</SelectItem>)}</SelectContent>
+            </Select>
           </div>
 
           <div>
@@ -147,23 +148,19 @@ export function CronogramaSimplificadoModal({
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="mb-1.5 block text-sm font-medium text-card-foreground">Início</label>
-              <input
-                type="time"
-                className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary-500"
+              <TimePicker
+                aria-label="Horário de início"
                 value={form.hora_inicio}
-                onChange={(e) => setForm((s) => ({ ...s, hora_inicio: e.target.value }))}
+                onValueChange={(value) => setForm((s) => ({ ...s, hora_inicio: value }))}
               />
             </div>
             <div>
               <label className="mb-1.5 block text-sm font-medium text-card-foreground">Fim</label>
-              <input
-                type="time"
-                className={cn(
-                  "w-full rounded-lg border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary-500",
-                  horaFimInvalida ? "border-danger-400" : "border-border",
-                )}
+              <TimePicker
+                aria-label="Horário de fim"
+                aria-invalid={horaFimInvalida}
                 value={form.hora_fim}
-                onChange={(e) => setForm((s) => ({ ...s, hora_fim: e.target.value }))}
+                onValueChange={(value) => setForm((s) => ({ ...s, hora_fim: value }))}
               />
               {horaFimInvalida ? (
                 <p className="mt-1 text-xs text-danger-600">Fim deve ser após o início.</p>
@@ -173,15 +170,13 @@ export function CronogramaSimplificadoModal({
 
           <div>
             <label className="mb-1.5 block text-sm font-medium text-card-foreground">Tipo</label>
-            <select
-              className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary-500"
+            <Select
               value={form.tipo}
-              onChange={(e) => setForm((s) => ({ ...s, tipo: e.target.value }))}
+              onValueChange={(value) => setForm((s) => ({ ...s, tipo: value }))}
             >
-              {Object.entries(tipoMap).map(([k, v]) => (
-                <option key={k} value={k}>{v.label}</option>
-              ))}
-            </select>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>{Object.entries(tipoMap).map(([k, v]) => <SelectItem key={k} value={k}>{v.label}</SelectItem>)}</SelectContent>
+            </Select>
           </div>
 
           <fieldset>
@@ -220,17 +215,15 @@ export function CronogramaSimplificadoModal({
                 <label className="mb-1.5 block text-xs font-medium text-muted-foreground">
                   Data início
                 </label>
-                <input
-                  type="date"
-                  className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary-500"
+                <DatePicker
                   value={form.vigencia_inicio}
-                  onChange={(e) =>
+                  onValueChange={(value) =>
                     setForm((s) => ({
                       ...s,
-                      vigencia_inicio: e.target.value,
+                      vigencia_inicio: value,
                       vigencia_fim:
                         s.vigencia_modo === "12_meses"
-                          ? vigenciaFim12Meses(e.target.value)
+                          ? vigenciaFim12Meses(value)
                           : s.vigencia_fim,
                     }))
                   }
@@ -241,14 +234,10 @@ export function CronogramaSimplificadoModal({
                   <label className="mb-1.5 block text-xs font-medium text-muted-foreground">
                     Data fim
                   </label>
-                  <input
-                    type="date"
-                    className={cn(
-                      "w-full rounded-lg border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary-500",
-                      periodoFimErro ? "border-danger-400" : "border-border",
-                    )}
+                  <DatePicker
+                    className={periodoFimErro ? "[&_button]:border-danger-400" : undefined}
                     value={form.vigencia_fim}
-                    onChange={(e) => setForm((s) => ({ ...s, vigencia_fim: e.target.value }))}
+                    onValueChange={(value) => setForm((s) => ({ ...s, vigencia_fim: value }))}
                   />
                 </div>
               ) : null}
@@ -267,21 +256,20 @@ export function CronogramaSimplificadoModal({
         </div>
 
         <div className="flex justify-end gap-2 border-t border-border px-5 py-4">
-          <button
+          <Button
             type="button"
+            variant="outline"
             onClick={onClose}
-            className="rounded-lg border border-border px-4 py-2 text-sm text-muted-foreground hover:bg-muted"
           >
             Cancelar
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
             disabled={!canSave}
             onClick={() => onSave(form)}
-            className="rounded-lg bg-primary-600 px-4 py-2 text-sm font-semibold text-white hover:bg-primary-700 disabled:opacity-50"
           >
             {isSaving ? "Salvando…" : "Salvar"}
-          </button>
+          </Button>
         </div>
       </DialogContent>
     </Dialog>

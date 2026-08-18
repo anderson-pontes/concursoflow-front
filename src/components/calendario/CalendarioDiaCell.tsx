@@ -83,7 +83,7 @@ export function CalendarioDiaCell({ dia, diaNumero, isCurrentMonth, isToday, onC
               {fmtMinutosEstudo(dia.minutos_realizados)} / {fmtMinutosEstudo(dia.minutos_planejados)}
             </p>
           ) : dia.minutos_realizados > 0 ? (
-            <p className="truncate text-xs font-medium leading-tight text-sky-700 dark:text-sky-300">
+            <p className="truncate text-xs font-medium leading-tight text-info">
               {fmtMinutosEstudo(dia.minutos_realizados)}
             </p>
           ) : null}
