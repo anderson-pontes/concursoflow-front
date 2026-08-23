@@ -2,7 +2,6 @@ import { ArrowRight, CheckCircle2, Clock3, Flame } from "lucide-react";
 import { Link } from "react-router-dom";
 
 import dashboardSrc from "@/assets/dashboard.png";
-import mascotSrc from "@/assets/mascote.svg";
 import { HandDrawnAccent } from "@/components/landing/HandDrawnAccent";
 import { LandingLogo } from "@/components/landing/LandingLogo";
 import { LandingShot } from "@/components/landing/LandingShot";
@@ -50,7 +49,6 @@ export function LandingHero() {
             <LandingShot src={dashboardSrc} alt="Painel ClickEdital com cronograma da semana, métricas e heatmap de estudos" className="relative aspect-[16/10] rotate-[1deg] rounded-2xl border-4 border-white shadow-xl shadow-primary/20 transition-transform duration-500 hover:rotate-0 hover:scale-[1.01]" position="object-left-top" priority />
             <div className="landing-float-slow absolute -left-1 top-0 flex items-center gap-3 rounded-2xl border border-white/80 bg-white/95 p-3 pr-5 shadow-xl backdrop-blur sm:left-0"><span className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-100 text-amber-600"><Flame className="h-5 w-5" aria-hidden /></span><span><strong className="block text-sm text-foreground">12 dias de foco</strong><small className="text-muted-foreground">Continue assim!</small></span></div>
             <div className="landing-float absolute -bottom-1 right-2 flex items-center gap-3 rounded-2xl border border-white/80 bg-white/95 p-3 pr-5 shadow-xl backdrop-blur sm:right-0"><span className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-100 text-emerald-600"><Clock3 className="h-5 w-5" aria-hidden /></span><span><strong className="block text-sm text-foreground">Meta do dia</strong><small className="text-emerald-600">2h 30min concluídas</small></span></div>
-            <img src={mascotSrc} alt="" className="landing-mascot-bob pointer-events-none absolute -right-4 -top-2 hidden h-28 w-24 object-contain lg:block" aria-hidden />
           </div>
         </div>
       </div>

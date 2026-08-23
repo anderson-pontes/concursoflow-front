@@ -7,16 +7,21 @@ export function CatalogPagination({
   totalPages,
   total,
   onPageChange,
+  itemLabel = "edital",
+  ariaLabel = "Paginação do catálogo",
 }: {
   page: number;
   totalPages: number;
   total: number;
   onPageChange: (page: number) => void;
+  itemLabel?: string;
+  ariaLabel?: string;
 }) {
-  if (totalPages <= 1) return total ? <p className="text-xs text-muted-foreground">{total} edital{total === 1 ? "" : "is"} encontrado{total === 1 ? "" : "s"}.</p> : null;
+  const plural = itemLabel === "edital" ? "editais" : `${itemLabel}s`;
+  if (totalPages <= 1) return total ? <p className="text-xs text-muted-foreground">{total} {total === 1 ? itemLabel : plural} encontrado{total === 1 ? "" : "s"}.</p> : null;
   return (
-    <nav className="flex flex-col gap-3 border-t border-border pt-4 sm:flex-row sm:items-center sm:justify-between" aria-label="Paginação do catálogo">
-      <p className="text-xs text-muted-foreground">Página {page} de {totalPages} · {total} editais</p>
+    <nav className="flex flex-col gap-3 border-t border-border pt-4 sm:flex-row sm:items-center sm:justify-between" aria-label={ariaLabel}>
+      <p className="text-xs text-muted-foreground">Página {page} de {totalPages} · {total} {total === 1 ? itemLabel : plural}</p>
       <div className="flex gap-2">
         <Button type="button" variant="outline" className="min-h-11" disabled={page <= 1} onClick={() => onPageChange(page - 1)}>
           <ChevronLeft className="h-4 w-4" /> Anterior

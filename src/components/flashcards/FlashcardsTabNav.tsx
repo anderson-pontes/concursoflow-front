@@ -4,6 +4,7 @@ import type { FlashcardsTab } from "@/lib/flashcards/types";
 export type FlashcardsTabItem = {
   id: FlashcardsTab;
   label: string;
+  mobileLabel?: string;
   icon: React.ReactNode;
 };
 
@@ -32,6 +33,7 @@ export function FlashcardsTabNav({ tabs, activeTab, dueTodayTotal, onTabChange }
               type="button"
               role="tab"
               aria-selected={active}
+              aria-label={t.label}
               tabIndex={active ? 0 : -1}
               onClick={() => onTabChange(t.id)}
               className={[
@@ -42,7 +44,8 @@ export function FlashcardsTabNav({ tabs, activeTab, dueTodayTotal, onTabChange }
               ].join(" ")}
             >
               {t.icon}
-              <span className="min-w-0 truncate">{t.label}</span>
+              <span className="sm:hidden">{t.mobileLabel ?? t.label}</span>
+              <span className="hidden min-w-0 sm:inline">{t.label}</span>
               {t.id === "revisar" ? (
                 <span
                   className={[

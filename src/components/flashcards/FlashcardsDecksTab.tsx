@@ -1,5 +1,5 @@
 import {
-  Plus, Pencil, Trash2, BookOpen, ChevronRight, FileArchive, Play,
+  Plus, Pencil, Trash2, BookOpen, ChevronRight, FileArchive, Play, MoreHorizontal,
 } from "lucide-react";
 
 import { FLASH_CARD_SHADOW } from "@/lib/flashcards/constants";
@@ -10,7 +10,14 @@ import {
   stripHtml,
 } from "@/lib/flashcards/utils";
 import { DeckTree } from "@/components/flashcards/DeckTree";
+import { Button } from "@/components/ui/button";
 import { useConfirmDialog } from "@/components/ui/confirm-dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 type Props = {
   view: FlashcardsView;
@@ -58,40 +65,49 @@ export function FlashcardsDecksTab({
             Agrupe cartões por matéria ou edital. Cada baralho usa o algoritmo Anki para priorizar o que você mais precisa rever.
           </p>
           {decks.length > 0 ? <div className="flex shrink-0 flex-wrap gap-2">
-            <button
+            <Button
               type="button"
+              variant="outline"
               onClick={onOpenImport}
-              className="inline-flex items-center justify-center gap-2 rounded-xl border-2 border-border bg-white px-4 py-2.5 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-violet-50/70 dark:border-neutral-600 dark:bg-neutral-800 dark:text-neutral-100 dark:hover:border-primary"
+              className="min-h-11 rounded-xl"
             >
               <FileArchive className="h-4 w-4" />
-              Importar Anki (.apkg)
-            </button>
-            <button
+              Importar Anki
+            </Button>
+            <Button
               type="button"
               onClick={() => onOpenDeckModal(null)}
-              className="inline-flex items-center justify-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold text-white shadow-md transition hover:brightness-110 bg-primary"
+              className="min-h-11 rounded-xl"
             >
               <Plus className="h-4 w-4" />
               Novo baralho
-            </button>
-            <button
-              type="button"
-              disabled={deletingAll || decks.length === 0}
-              onClick={() => {
-                void requestConfirmation({
-                  title: "Excluir todos os baralhos?",
-                  description: "Todos os baralhos serão ocultados da sua conta. Esta ação não pode ser desfeita.",
-                  confirmLabel: "Excluir todos",
-                  variant: "destructive",
-                }).then((confirmed) => {
-                  if (confirmed) onDeleteAllDecks();
-                });
-              }}
-              className="inline-flex items-center justify-center gap-2 rounded-xl border border-red-200 bg-white px-4 py-2.5 text-sm font-semibold text-red-600 transition hover:bg-red-50 disabled:opacity-60 dark:border-red-900/50 dark:bg-neutral-800 dark:text-red-400"
-            >
-              <Trash2 className="h-4 w-4" />
-              {deletingAll ? "Excluindo..." : "Excluir todos"}
-            </button>
+            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button type="button" variant="outline" size="icon" className="min-h-11 min-w-11 rounded-xl" aria-label="Mais ações dos baralhos">
+                  <MoreHorizontal aria-hidden />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuItem
+                  disabled={deletingAll || decks.length === 0}
+                  className="min-h-11 gap-2 text-destructive focus:text-destructive"
+                  onSelect={() => {
+                    void requestConfirmation({
+                      title: "Excluir todos os baralhos?",
+                      description: "Todos os baralhos serão ocultados da sua conta. Esta ação não pode ser desfeita.",
+                      confirmLabel: "Excluir todos",
+                      variant: "destructive",
+                    }).then((confirmed) => {
+                      if (confirmed) onDeleteAllDecks();
+                    });
+                  }}
+                >
+                  <Trash2 aria-hidden />
+                  {deletingAll ? "Excluindo..." : "Excluir todos os baralhos"}
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div> : null}
         </div>
 

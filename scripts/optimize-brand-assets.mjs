@@ -53,25 +53,21 @@ async function logoMaskToBrandWebp(pngBuffer, outPath, width) {
 async function mascoteToTransparentWebp(pngBuffer, outPath, { height }) {
   const { data, info } = await sharp(pngBuffer)
     .resize({ height, withoutEnlargement: true })
-    .ensureAlpha()
+    .greyscale()
     .raw()
     .toBuffer({ resolveWithObject: true });
 
-  const { width: w, height: h, channels } = info;
+  const { width: w, height: h } = info;
   const rgba = Buffer.alloc(w * h * 4);
 
   for (let i = 0; i < w * h; i++) {
-    const base = i * channels;
-    const r = data[base];
-    const g = channels > 1 ? data[base + 1] : r;
-    const b = channels > 2 ? data[base + 2] : r;
-    const lum = 0.299 * r + 0.587 * g + 0.114 * b;
-    const o = i * 4;
-    if (lum > 28) {
-      rgba[o] = r;
-      rgba[o + 1] = g;
-      rgba[o + 2] = b;
-      rgba[o + 3] = Math.min(255, Math.round(((lum - 28) / (255 - 28)) * 255));
+    const lum = data[i];
+    const offset = i * 4;
+    if (lum > 40) {
+      rgba[offset] = LOGO_RGB.r;
+      rgba[offset + 1] = LOGO_RGB.g;
+      rgba[offset + 2] = LOGO_RGB.b;
+      rgba[offset + 3] = lum;
     }
   }
 

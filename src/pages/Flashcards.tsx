@@ -1,6 +1,6 @@
 ﻿import React from "react";
 
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { Library, Sparkles, SlidersHorizontal } from "lucide-react";
 
@@ -39,7 +39,6 @@ import type {
   Deck,
   Flashcard,
   FlashcardConfig,
-  FlashcardsMetrics,
   FlashcardsTab,
   FlashcardsView,
 } from "@/lib/flashcards/types";
@@ -49,6 +48,19 @@ import {
   readStreak,
   writeStreak,
 } from "@/lib/flashcards/utils";
+import { useFlashcardsQueries } from "@/hooks/useFlashcardsQueries";
+import { useFlashcardReviewKeyboard } from "@/hooks/useFlashcardReviewKeyboard";
+
+const FLASHCARD_TABS: {
+  id: FlashcardsTab;
+  label: string;
+  mobileLabel: string;
+  icon: React.ReactNode;
+}[] = [
+  { id: "baralhos", label: "Meus Baralhos", mobileLabel: "Baralhos", icon: <Library className="h-5 w-5 shrink-0" strokeWidth={2} /> },
+  { id: "revisar", label: "Revisar Hoje", mobileLabel: "Revisar", icon: <Sparkles className="h-5 w-5 shrink-0" strokeWidth={2} /> },
+  { id: "config", label: "Configurações", mobileLabel: "Ajustes", icon: <SlidersHorizontal className="h-5 w-5 shrink-0" strokeWidth={2} /> },
+];
 
 /* ─── Main page ───────────────────────────────────────────────────────────── */
 
@@ -112,24 +124,12 @@ export function Flashcards() {
 
   const [streakRev, setStreakRev] = React.useState(0);
 
-  /* ── Queries ── */
-
-  const { data: deckFlat = [] } = useQuery({
-    queryKey: ["flashcards-decks-flat"],
-    queryFn: async () => (await api.get("/flashcards/decks/flat")).data as Deck[],
-  });
-
-  const { data: deckTree = [] } = useQuery({
-    queryKey: ["flashcards-decks-tree"],
-    queryFn: async () => (await api.get("/flashcards/decks/tree")).data as Deck[],
-  });
-
-  const { data: metrics } = useQuery({
-    queryKey: ["flashcards-metrics"],
-
-    queryFn: async () =>
-      (await api.get("/flashcards/metrics")).data as FlashcardsMetrics,
-  });
+  const { deckFlat, deckTree, metrics, deckCards, reviewQuery, configQuery } =
+    useFlashcardsQueries({
+      selectedDeckId: selectedDeck?.id,
+      reviewDeckId,
+      tab,
+    });
 
   const deckMetrics = metrics?.decks ?? [];
 
@@ -154,38 +154,7 @@ export function Flashcards() {
         )
       : 0;
 
-  const { data: deckCards = [] } = useQuery({
-    queryKey: ["flashcards-cards", selectedDeck?.id],
-
-    enabled: Boolean(selectedDeck),
-
-    queryFn: async () =>
-      (await api.get(`/flashcards?deck_id=${selectedDeck!.id}&include_subdecks=true`))
-        .data as Flashcard[],
-  });
-
-  const reviewQuery = useQuery({
-    queryKey: ["flashcards-due", reviewDeckId],
-
-    enabled: tab === "revisar",
-
-    queryFn: async () => {
-      const url = reviewDeckId
-        ? `/flashcards/revisar?limit=100&deck_id=${reviewDeckId}&include_subdecks=true`
-        : "/flashcards/revisar?limit=100";
-
-      return (await api.get(url)).data as Flashcard[];
-    },
-  });
-
-  const { data: cfgData, refetch: refetchCfg } = useQuery({
-    queryKey: ["flashcards-config"],
-
-    queryFn: async () =>
-      (await api.get("/flashcards/config")).data as FlashcardConfig,
-
-    enabled: tab === "config",
-  });
+  const { data: cfgData, refetch: refetchCfg } = configQuery;
 
   React.useEffect(() => {
     if (cfgData) setConfigDraft(cfgData);
@@ -340,60 +309,15 @@ export function Flashcards() {
 
   const reviewFocusMode = tab === "revisar" && reviewSessionActive;
 
-  React.useEffect(() => {
-    if (tab !== "revisar" || !reviewSessionActive || !currentCard) return;
-
-    const onKey = (e: KeyboardEvent) => {
-      const el = e.target as HTMLElement | null;
-
-      if (!el) return;
-
-      const tag = el.tagName;
-
-      if (
-        tag === "INPUT" ||
-        tag === "TEXTAREA" ||
-        tag === "SELECT" ||
-        el.isContentEditable
-      )
-        return;
-
-      if (e.key === " " || e.key === "Enter") {
-        if (!flipped) {
-          e.preventDefault();
-
-          setFlipped(true);
-        }
-      }
-
-      if (flipped && !responderMutation.isPending) {
-        const map: Record<string, string> = {
-          "1": "errei",
-          "2": "dificil",
-          "3": "bom",
-          "4": "facil",
-        };
-
-        const label = map[e.key];
-
-        if (label) {
-          e.preventDefault();
-
-          responderMutation.mutate({
-            cardId: currentCard.id,
-
-            label,
-
-            deckId: currentCard.deck_id,
-          });
-        }
-      }
-    };
-
-    window.addEventListener("keydown", onKey);
-
-    return () => window.removeEventListener("keydown", onKey);
-  }, [tab, reviewSessionActive, currentCard, flipped, responderMutation]);
+  useFlashcardReviewKeyboard({
+    tab,
+    sessionActive: reviewSessionActive,
+    currentCard,
+    flipped,
+    responding: responderMutation.isPending,
+    onFlip: () => setFlipped(true),
+    onRespond: responderMutation.mutate,
+  });
 
   const resetReviewSession = React.useCallback(() => {
     setReviewIdx(0);
@@ -421,28 +345,6 @@ export function Flashcards() {
     setSessionStats({ correct: 0, wrong: 0 });
   }, []);
 
-  /* ── Tab bar ── */
-
-  const TABS: { id: FlashcardsTab; label: string; icon: React.ReactNode }[] = [
-    {
-      id: "baralhos",
-      label: "Meus Baralhos",
-      icon: <Library className="h-5 w-5 shrink-0" strokeWidth={2} />,
-    },
-
-    {
-      id: "revisar",
-      label: "Revisar Hoje",
-      icon: <Sparkles className="h-5 w-5 shrink-0" strokeWidth={2} />,
-    },
-
-    {
-      id: "config",
-      label: "Configurações",
-      icon: <SlidersHorizontal className="h-5 w-5 shrink-0" strokeWidth={2} />,
-    },
-  ];
-
   return (
     <div className="-m-6 min-h-full bg-background p-4 text-foreground sm:p-6">
       <div
@@ -464,7 +366,7 @@ export function Flashcards() {
 
         {!reviewFocusMode ? (
           <FlashcardsTabNav
-            tabs={TABS}
+            tabs={FLASHCARD_TABS}
             activeTab={tab}
             dueTodayTotal={dueTodayTotal}
             onTabChange={(t) => {

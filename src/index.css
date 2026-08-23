@@ -337,11 +337,6 @@
   50% { transform: translateY(7px) rotate(1deg); }
 }
 
-@keyframes landing-mascot-bob {
-  0%, 100% { transform: translateY(0) rotate(5deg); }
-  50% { transform: translateY(-8px) rotate(1deg); }
-}
-
 @keyframes landing-map-pulse {
   0%, 100% {
     box-shadow: 0 0 0 0 rgb(167 139 250 / 0.24);
@@ -361,7 +356,6 @@
 
 .landing-float { animation: landing-float 4s ease-in-out infinite; }
 .landing-float-slow { animation: landing-float-slow 5.2s ease-in-out infinite; }
-.landing-mascot-bob { animation: landing-mascot-bob 4.6s ease-in-out infinite; }
 .landing-map-pulse { animation: landing-map-pulse 3.2s ease-in-out infinite; }
 .landing-map-glow {
   background:
@@ -380,8 +374,7 @@
   }
 
   .landing-float,
-  .landing-float-slow,
-  .landing-mascot-bob {
+  .landing-float-slow {
     animation: none !important;
   }
 

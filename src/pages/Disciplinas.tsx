@@ -15,12 +15,21 @@ import {
   toDisciplinaInput,
   type DisciplinaFormValues,
 } from "@/components/disciplinas/ModalDisciplinaForm";
-import { getDisciplinaStatusLabel, getTopicosProgressFromCounts } from "@/components/disciplinas/disciplinaProgress";
+import { getTopicosProgressFromCounts } from "@/components/disciplinas/disciplinaProgress";
 import type { Disciplina, FilterSeg } from "@/lib/disciplinas/types";
 import { api } from "@/services/api";
 import { useConcursoAtivoId } from "@/stores/concursoStore";
 import { useUiStore } from "@/stores/uiStore";
-import { Button } from "@/components/ui/button";
+import { CatalogPagination } from "@/components/editais/CatalogPagination";
+
+type DisciplinaPage = {
+  items: Disciplina[];
+  total: number;
+  page: number;
+  page_size: number;
+  total_pages: number;
+  summary: { total: number; em_progresso: number; no_concurso: number; fora_concurso: number; progresso_medio: number };
+};
 
 function isLinkedToConcurso(d: Disciplina, concursoId: string) {
   return d.concurso_ids.includes(concursoId);
@@ -39,7 +48,7 @@ export function Disciplinas() {
   const [modalOpen, setModalOpen] = React.useState(false);
   const [modalMode, setModalMode] = React.useState<"create" | "edit">("create");
   const [editingDisciplina, setEditingDisciplina] = React.useState<Disciplina | null>(null);
-  const [visibleCount, setVisibleCount] = React.useState(PAGE_SIZE);
+  const [page, setPage] = React.useState(1);
 
   React.useEffect(() => {
     if (viewMode === "edital" && !concursoId) {
@@ -47,20 +56,35 @@ export function Disciplinas() {
     }
   }, [concursoId, setViewMode, viewMode]);
 
-  const searchTerm = search.trim();
+  const searchTerm = React.useDeferredValue(search.trim());
 
-  const { data: disciplinas = [], isLoading: loadingDisciplinas } = useQuery({
-    queryKey: ["disciplinas", "catalog", searchTerm || null],
+  const pageQuery = useQuery({
+    queryKey: ["disciplinas", "paginated", searchTerm || null, concursoId || null, filterSeg, page],
     queryFn: async () =>
       (
-        await api.get("/disciplinas", {
+        await api.get("/disciplinas/paginadas", {
           params: {
-            include_topicos_stats: true,
+            page,
+            page_size: PAGE_SIZE,
             ...(searchTerm ? { search: searchTerm } : {}),
+            ...(concursoId ? { concurso_id: concursoId, vinculo: filterSeg } : {}),
           },
         })
-      ).data as Disciplina[],
+      ).data as DisciplinaPage,
+    enabled: viewMode !== "edital",
   });
+  const editalQuery = useQuery({
+    queryKey: ["disciplinas", "edital", concursoId || null],
+    queryFn: async () => (await api.get("/disciplinas", { params: { include_topicos_stats: true, concurso_id: concursoId } })).data as Disciplina[],
+    enabled: viewMode === "edital" && Boolean(concursoId),
+  });
+  React.useEffect(() => {
+    if (pageQuery.data && pageQuery.data.total_pages > 0 && page > pageQuery.data.total_pages) {
+      setPage(pageQuery.data.total_pages);
+    }
+  }, [page, pageQuery.data]);
+  const disciplinas = viewMode === "edital" ? (editalQuery.data ?? []) : (pageQuery.data?.items ?? []);
+  const loadingDisciplinas = viewMode === "edital" ? editalQuery.isLoading : pageQuery.isLoading;
 
   const createMutation = useMutation({
     mutationFn: async (values: DisciplinaFormValues) =>
@@ -93,35 +117,9 @@ export function Disciplinas() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ["disciplinas"] }),
   });
 
-  const filteredDisciplinas = React.useMemo(() => {
-    return disciplinas.filter((d) => {
-      if (!concursoId) return true;
-      const linked = isLinkedToConcurso(d, concursoId);
-      if (filterSeg === "concurso") return linked;
-      if (filterSeg === "fora") return !linked;
-      return true;
-    });
-  }, [disciplinas, filterSeg, concursoId]);
-  const visibleDisciplinas = filteredDisciplinas.slice(0, visibleCount);
-
-  const summary = React.useMemo(() => {
-    let emProg = 0;
-    let noConcurso = 0;
-    let fora = 0;
-    let pctSum = 0;
-    const n = disciplinas.length;
-    for (const d of disciplinas) {
-      const total = d.topicos_total ?? 0;
-      const estudados = d.topicos_estudados ?? 0;
-      const stats = getTopicosProgressFromCounts(total, estudados);
-      const st = getDisciplinaStatusLabel(stats);
-      if (st.kind === "em_progresso" || st.kind === "iniciando") emProg++;
-      if (concursoId && isLinkedToConcurso(d, concursoId)) noConcurso++;
-      else if (concursoId) fora++;
-      pctSum += stats.pct;
-    }
-    return { n, emProg, noConcurso, fora, media: n > 0 ? Math.round(pctSum / n) : 0 };
-  }, [disciplinas, concursoId]);
+  const summary = pageQuery.data?.summary
+    ? { n: pageQuery.data.summary.total, emProg: pageQuery.data.summary.em_progresso, noConcurso: pageQuery.data.summary.no_concurso, fora: pageQuery.data.summary.fora_concurso, media: pageQuery.data.summary.progresso_medio }
+    : { n: 0, emProg: 0, noConcurso: 0, fora: 0, media: 0 };
 
   const openCreate = () => {
     setModalMode("create");
@@ -155,15 +153,15 @@ export function Disciplinas() {
     <div className="min-h-full space-y-6 pb-10">
       <DisciplinasToolbar
         search={search}
-        onSearchChange={(value) => { setSearch(value); setVisibleCount(PAGE_SIZE); }}
+        onSearchChange={(value) => { setSearch(value); setPage(1); }}
         filterSeg={filterSeg}
-        onFilterChange={(value) => { setFilterSeg(value); setVisibleCount(PAGE_SIZE); }}
+        onFilterChange={(value) => { setFilterSeg(value); setPage(1); }}
         onCreate={openCreate}
         summary={summary}
         concursoId={concursoId}
         isCreating={createMutation.isPending}
         viewMode={viewMode}
-        onViewModeChange={(value) => { setViewMode(value); setVisibleCount(PAGE_SIZE); }}
+        onViewModeChange={(value) => { setViewMode(value); setPage(1); }}
       />
 
       {loadingDisciplinas ? (
@@ -177,7 +175,7 @@ export function Disciplinas() {
         </div>
       ) : null}
 
-      {!loadingDisciplinas && disciplinas.length === 0 && !searchTerm ? (
+      {!loadingDisciplinas && disciplinas.length === 0 && !searchTerm && filterSeg === "todas" && summary.n === 0 ? (
         <div className="flex flex-col items-center rounded-xl border border-dashed border-border bg-card/50 px-6 py-16 text-center">
           <EmptyDisciplinasIllustration />
           <h2 className="mt-6 text-base font-semibold text-card-foreground">Nenhuma disciplina ainda</h2>
@@ -194,23 +192,15 @@ export function Disciplinas() {
         </div>
       ) : null}
 
-      {!loadingDisciplinas && disciplinas.length === 0 && searchTerm ? (
+      {!loadingDisciplinas && disciplinas.length === 0 && (searchTerm || filterSeg !== "todas" || summary.n > 0) ? (
         <div className="rounded-xl border border-border bg-card px-6 py-12 text-center text-sm text-muted-foreground">
-          Nenhuma disciplina encontrada para &ldquo;{searchTerm}&rdquo;.
+          {searchTerm ? <>Nenhuma disciplina encontrada para &ldquo;{searchTerm}&rdquo;.</> : "Nenhuma disciplina neste filtro."}
         </div>
       ) : null}
 
-      {!loadingDisciplinas && disciplinas.length > 0 && filteredDisciplinas.length === 0 ? (
-        <div className="rounded-xl border border-border bg-card px-6 py-12 text-center text-sm text-muted-foreground">
-          {searchTerm
-            ? `Nenhuma disciplina encontrada para "${searchTerm}" neste filtro.`
-            : "Nenhuma disciplina neste filtro."}
-        </div>
-      ) : null}
-
-      {!loadingDisciplinas && filteredDisciplinas.length > 0 && viewMode === "table" ? (
+      {!loadingDisciplinas && disciplinas.length > 0 && viewMode === "table" ? (
         <DisciplinasDataTable
-          disciplinas={visibleDisciplinas}
+          disciplinas={disciplinas}
           concursoId={concursoId}
           onEdit={openEdit}
           onToggleConcurso={(d) => toggleConcursoMutation.mutate(d)}
@@ -221,9 +211,9 @@ export function Disciplinas() {
         />
       ) : null}
 
-      {!loadingDisciplinas && filteredDisciplinas.length > 0 && viewMode === "cards" ? (
+      {!loadingDisciplinas && disciplinas.length > 0 && viewMode === "cards" ? (
         <div className="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-4 xl:grid-cols-3">
-          {visibleDisciplinas.map((disciplina, index) => {
+          {disciplinas.map((disciplina, index) => {
             const total = disciplina.topicos_total ?? 0;
             const estudados = disciplina.topicos_estudados ?? 0;
             const stats = getTopicosProgressFromCounts(total, estudados);
@@ -248,12 +238,8 @@ export function Disciplinas() {
         </div>
       ) : null}
 
-      {!loadingDisciplinas && viewMode !== "edital" && visibleCount < filteredDisciplinas.length ? (
-        <div className="flex justify-center">
-          <Button type="button" variant="outline" onClick={() => setVisibleCount((count) => count + PAGE_SIZE)}>
-            Mostrar mais disciplinas ({filteredDisciplinas.length - visibleCount})
-          </Button>
-        </div>
+      {!loadingDisciplinas && viewMode !== "edital" && pageQuery.data?.total ? (
+        <CatalogPagination page={pageQuery.data.page} totalPages={pageQuery.data.total_pages} total={pageQuery.data.total} onPageChange={setPage} itemLabel="disciplina" ariaLabel="Paginação de disciplinas" />
       ) : null}
 
       {!loadingDisciplinas && viewMode === "edital" && concursoId ? (
