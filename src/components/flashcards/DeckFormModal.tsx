@@ -7,6 +7,10 @@ import { api } from "@/services/api";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import type { Deck } from "@/lib/flashcards/types";
 import { SelectField } from "@/components/ui/select-field";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 
 type Disciplina = { id: string; nome: string };
 
@@ -91,26 +95,27 @@ export function DeckFormModal({ open, onClose, deck, flatDecks = [] }: Props) {
               {isEdit ? "Editar baralho" : "Novo baralho"}
             </DialogTitle>
           </div>
-          <button
+          <Button
             type="button"
             onClick={onClose}
-            className="flex min-h-11 min-w-11 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-card-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            variant="ghost"
+            size="icon"
             aria-label="Fechar"
           >
             <X className="h-4 w-4" />
-          </button>
+          </Button>
         </div>
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-4 px-6 py-5">
           {/* Nome */}
-          <div>
-            <label className="mb-1.5 block text-sm font-medium text-card-foreground">
+          <div className="space-y-1.5">
+            <Label htmlFor="deck-name">
               Nome do baralho <span className="text-danger-500">*</span>
-            </label>
-            <input
+            </Label>
+            <Input
+              id="deck-name"
               type="text"
-              className="w-full rounded-xl border border-border bg-background px-3 py-2.5 text-sm text-card-foreground outline-none focus:ring-2 focus:ring-primary-500"
               placeholder="Ex: Direito Constitucional"
               value={nome}
               onChange={(e) => setNome(e.target.value)}
@@ -120,12 +125,12 @@ export function DeckFormModal({ open, onClose, deck, flatDecks = [] }: Props) {
           </div>
 
           {/* Descrição */}
-          <div>
-            <label className="mb-1.5 block text-sm font-medium text-card-foreground">
+          <div className="space-y-1.5">
+            <Label htmlFor="deck-description">
               Descrição
-            </label>
-            <textarea
-              className="w-full rounded-xl border border-border bg-background px-3 py-2.5 text-sm text-card-foreground outline-none focus:ring-2 focus:ring-primary-500"
+            </Label>
+            <Textarea
+              id="deck-description"
               placeholder="Descrição opcional do baralho..."
               rows={2}
               value={descricao}
@@ -134,23 +139,23 @@ export function DeckFormModal({ open, onClose, deck, flatDecks = [] }: Props) {
           </div>
 
           {/* Disciplina */}
-          <div>
-            <label className="mb-1.5 block text-sm font-medium text-card-foreground">
+          <div className="space-y-1.5">
+            <Label>
               Disciplina
-            </label>
+            </Label>
             <SelectField value={disciplinaId} onValueChange={setDisciplinaId} options={[{ value: "", label: "Nenhuma" }, ...(disciplinas ?? []).map((d) => ({ value: d.id, label: d.nome }))]} />
           </div>
 
-          <div>
-            <label className="mb-1.5 block text-sm font-medium text-card-foreground">
+          <div className="space-y-1.5">
+            <Label>
               Baralho pai (opcional)
-            </label>
+            </Label>
             <SelectField value={parentId} onValueChange={setParentId} options={[{ value: "", label: "Nenhum (raiz)" }, ...flatDecks.filter((d) => d.id !== deck?.id).map((d) => ({ value: d.id, label: d.full_path ?? d.nome }))]} />
           </div>
 
           {/* Cor */}
-          <div>
-            <label className="mb-1.5 block text-sm font-medium text-card-foreground">Cor</label>
+          <fieldset className="space-y-1.5">
+            <legend className="text-sm font-medium text-card-foreground">Cor</legend>
             <div className="flex flex-wrap gap-2">
               {DECK_COLOR_PALETTE.map((c) => (
                 <button
@@ -163,13 +168,15 @@ export function DeckFormModal({ open, onClose, deck, flatDecks = [] }: Props) {
                     borderColor: cor === c ? "white" : "transparent",
                     boxShadow: cor === c ? `0 0 0 3px ${c}` : undefined,
                   }}
-                  title={c}
+                  aria-label={`Selecionar cor ${c}`}
+                  aria-pressed={cor === c}
                 />
               ))}
             </div>
             <div className="mt-2 flex items-center gap-2">
-              <label className="text-xs text-muted-foreground">Personalizada:</label>
+              <Label htmlFor="deck-custom-color" className="text-xs text-muted-foreground">Personalizada:</Label>
               <input
+                id="deck-custom-color"
                 type="color"
                 value={cor}
                 onChange={(e) => setCor(e.target.value)}
@@ -177,7 +184,7 @@ export function DeckFormModal({ open, onClose, deck, flatDecks = [] }: Props) {
               />
               <span className="text-xs text-muted-foreground">{cor}</span>
             </div>
-          </div>
+          </fieldset>
 
           {/* Preview */}
           <div
@@ -196,20 +203,19 @@ export function DeckFormModal({ open, onClose, deck, flatDecks = [] }: Props) {
 
           {/* Actions */}
           <div className="flex justify-end gap-2 pt-2">
-            <button
+            <Button
               type="button"
               onClick={onClose}
-              className="rounded-xl border border-border px-4 py-2 text-sm font-medium text-muted-foreground hover:bg-muted"
+              variant="outline"
             >
               Cancelar
-            </button>
-            <button
+            </Button>
+            <Button
               type="submit"
               disabled={saveMutation.isPending}
-              className="rounded-xl bg-primary-600 px-5 py-2 text-sm font-semibold text-white hover:bg-primary-700 disabled:opacity-60"
             >
               {saveMutation.isPending ? "Salvando..." : isEdit ? "Salvar alterações" : "Criar baralho"}
-            </button>
+            </Button>
           </div>
         </form>
       </DialogContent>

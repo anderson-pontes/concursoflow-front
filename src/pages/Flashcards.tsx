@@ -124,7 +124,7 @@ export function Flashcards() {
 
   const [streakRev, setStreakRev] = React.useState(0);
 
-  const { deckFlat, deckTree, metrics, deckCards, reviewQuery, configQuery } =
+  const { deckFlat, metrics, deckCards, reviewQuery, configQuery } =
     useFlashcardsQueries({
       selectedDeckId: selectedDeck?.id,
       reviewDeckId,
@@ -160,6 +160,22 @@ export function Flashcards() {
     if (cfgData) setConfigDraft(cfgData);
   }, [cfgData]);
 
+  React.useEffect(() => {
+    if (!selectedDeck) return;
+
+    const refreshedDeck = deckFlat.find((deck) => deck.id === selectedDeck.id);
+    if (!refreshedDeck) return;
+
+    const changed =
+      refreshedDeck.nome !== selectedDeck.nome ||
+      refreshedDeck.descricao !== selectedDeck.descricao ||
+      refreshedDeck.cor_hex !== selectedDeck.cor_hex ||
+      refreshedDeck.parent_id !== selectedDeck.parent_id ||
+      refreshedDeck.full_path !== selectedDeck.full_path;
+
+    if (changed) setSelectedDeck(refreshedDeck);
+  }, [deckFlat, selectedDeck]);
+
   /* ── Mutations ── */
 
   const deleteAllDecksMutation = useMutation({
@@ -177,6 +193,29 @@ export function Flashcards() {
           : "Nenhum baralho para remover.",
       );
     },
+    onError: () => toast.error("Não foi possível excluir os baralhos."),
+  });
+
+  const deleteDeckMutation = useMutation({
+    mutationFn: async (deck: Deck) => {
+      await api.delete(`/flashcards/decks/${deck.id}`);
+      return deck;
+    },
+    onSuccess: (deck) => {
+      qc.invalidateQueries({ queryKey: ["flashcards-decks"] });
+      qc.invalidateQueries({ queryKey: ["flashcards-decks-flat"] });
+      qc.invalidateQueries({ queryKey: ["flashcards-decks-tree"] });
+      qc.invalidateQueries({ queryKey: ["flashcards-metrics"] });
+      qc.invalidateQueries({ queryKey: ["flashcards-cards", deck.id] });
+
+      if (selectedDeck?.id === deck.id) {
+        setView("decks");
+        setSelectedDeck(null);
+      }
+
+      toast.success(`Baralho “${deck.nome}” excluído.`);
+    },
+    onError: () => toast.error("Não foi possível excluir o baralho."),
   });
 
   const deleteCardMutation = useMutation({
@@ -380,7 +419,6 @@ export function Flashcards() {
           <FlashcardsDecksTab
             view={view}
             decks={deckFlat}
-            treeDecks={deckTree}
             deckMetrics={deckMetrics}
             selectedDeck={selectedDeck}
             deckCards={deckCards}
@@ -388,6 +426,8 @@ export function Flashcards() {
             onOpenImport={() => setImportOpen(true)}
             onDeleteAllDecks={() => deleteAllDecksMutation.mutate()}
             deletingAll={deleteAllDecksMutation.isPending}
+            onDeleteDeck={(deck) => deleteDeckMutation.mutate(deck)}
+            deletingDeckId={deleteDeckMutation.isPending ? deleteDeckMutation.variables?.id ?? null : null}
             onSelectDeck={(deck) => {
               setSelectedDeck(deck);
               setView("deck-detail");

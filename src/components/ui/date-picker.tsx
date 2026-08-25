@@ -19,6 +19,8 @@ type DatePickerProps = {
   allowClear?: boolean;
   min?: string;
   max?: string;
+  showMonthYearSelectors?: boolean;
+  defaultMonth?: string;
 };
 
 function parseDate(value?: string) {
@@ -27,9 +29,11 @@ function parseDate(value?: string) {
   return isValid(parsed) ? parsed : undefined;
 }
 
-export function DatePicker({ value, onValueChange, placeholder = "Selecione uma data", disabled, className, id, "aria-label": ariaLabel, allowClear = true, min, max }: DatePickerProps) {
+export function DatePicker({ value, onValueChange, placeholder = "Selecione uma data", disabled, className, id, "aria-label": ariaLabel, allowClear = true, min, max, showMonthYearSelectors = false, defaultMonth }: DatePickerProps) {
   const [open, setOpen] = React.useState(false);
   const selected = parseDate(value);
+  const minDate = parseDate(min);
+  const maxDate = parseDate(max);
 
   return (
     <div className={cn("relative", className)}>
@@ -57,7 +61,17 @@ export function DatePicker({ value, onValueChange, placeholder = "Selecione uma 
               setOpen(false);
             }}
             locale={ptBR}
-            disabled={[...(min ? [{ before: parseDate(min)! }] : []), ...(max ? [{ after: parseDate(max)! }] : [])]}
+            captionLayout={showMonthYearSelectors ? "dropdown" : "label"}
+            navLayout={showMonthYearSelectors ? "after" : undefined}
+            startMonth={showMonthYearSelectors ? minDate : undefined}
+            endMonth={showMonthYearSelectors ? maxDate : undefined}
+            defaultMonth={selected ?? parseDate(defaultMonth) ?? maxDate}
+            reverseYears={showMonthYearSelectors}
+            labels={{
+              labelMonthDropdown: () => "Selecionar mês",
+              labelYearDropdown: () => "Selecionar ano",
+            }}
+            disabled={[...(minDate ? [{ before: minDate }] : []), ...(maxDate ? [{ after: maxDate }] : [])]}
           />
         </PopoverContent>
       </Popover>

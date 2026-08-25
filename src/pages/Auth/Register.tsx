@@ -1,4 +1,5 @@
 import React from "react";
+import { format, subYears } from "date-fns";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -69,6 +70,11 @@ function registerErrorMessage(err: unknown): string {
 
 const fieldClass =
   "mt-1 w-full rounded-lg border border-input bg-surface px-3 py-2.5 text-sm text-foreground outline-none transition-colors focus:border-primary focus:ring-2 focus:ring-primary/15";
+
+const today = new Date();
+const birthDateMin = format(subYears(today, 120), "yyyy-MM-dd");
+const birthDateMax = format(today, "yyyy-MM-dd");
+const birthDateDefaultMonth = format(subYears(today, 18), "yyyy-MM-dd");
 
 export function Register() {
   const navigate = useNavigate();
@@ -180,10 +186,20 @@ export function Register() {
             />
             {errors.cpf ? <span className="text-xs text-destructive">{errors.cpf.message}</span> : null}
           </label>
-          <label className="block text-sm">
-            <span className="font-medium text-foreground">Data de nascimento</span>
-            <DatePicker className="mt-1" value={watch("birth_date")} onValueChange={(value) => setValue("birth_date", value, { shouldDirty: true, shouldValidate: true })} />
-          </label>
+          <div className="text-sm">
+            <label htmlFor="reg-birth-date" className="font-medium text-foreground">Data de nascimento</label>
+            <DatePicker
+              id="reg-birth-date"
+              aria-label="Data de nascimento"
+              className="mt-1"
+              value={watch("birth_date")}
+              onValueChange={(value) => setValue("birth_date", value, { shouldDirty: true, shouldValidate: true })}
+              min={birthDateMin}
+              max={birthDateMax}
+              defaultMonth={birthDateDefaultMonth}
+              showMonthYearSelectors
+            />
+          </div>
           <label className="block text-sm">
             <span className="font-medium text-foreground">Sexo</span>
             <SelectField className="mt-1" value={watch("gender") ?? ""} onValueChange={(value) => setValue("gender", value, { shouldDirty: true, shouldValidate: true })} options={[{ value: "", label: "Selecione" }, { value: "feminino", label: "Feminino" }, { value: "masculino", label: "Masculino" }, { value: "outro", label: "Outro" }, { value: "prefiro_nao_informar", label: "Prefiro não informar" }]} />

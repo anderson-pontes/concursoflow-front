@@ -1,5 +1,6 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
+import { Button } from "@/components/ui/button";
 import { fmtMesAno } from "@/lib/calendario/format";
 
 type Props = {
@@ -14,30 +15,35 @@ export function CalendarioMesToolbar({ ano, mes, onPrev, onNext, onToday }: Prop
   return (
     <div className="flex flex-wrap items-center justify-between gap-3">
       <h2 className="text-lg font-semibold text-foreground">{fmtMesAno(ano, mes)}</h2>
-      <div className="flex items-center gap-1">
-        <button
+      <div className="flex items-center gap-1" role="group" aria-label="Navegação do calendário">
+        <Button
           type="button"
+          variant="outline"
           onClick={onToday}
-          className="min-h-11 rounded-lg border border-border px-4 py-2 text-xs font-medium text-muted-foreground transition hover:bg-muted"
+          className="h-11 text-muted-foreground"
         >
           Hoje
-        </button>
-        <button
+        </Button>
+        <Button
           type="button"
+          variant="outline"
+          size="icon-lg"
           onClick={onPrev}
           aria-label="Mês anterior"
-          className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg border border-border text-muted-foreground transition hover:bg-muted"
+          className="text-muted-foreground"
         >
-          <ChevronLeft className="h-4 w-4" />
-        </button>
-        <button
+          <ChevronLeft aria-hidden="true" />
+        </Button>
+        <Button
           type="button"
+          variant="outline"
+          size="icon-lg"
           onClick={onNext}
           aria-label="Próximo mês"
-          className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg border border-border text-muted-foreground transition hover:bg-muted"
+          className="text-muted-foreground"
         >
-          <ChevronRight className="h-4 w-4" />
-        </button>
+          <ChevronRight aria-hidden="true" />
+        </Button>
       </div>
     </div>
   );

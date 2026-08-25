@@ -1,8 +1,9 @@
 import * as React from "react";
 import { ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
-import { DayPicker, type DayButton, type Locale } from "react-day-picker";
+import { DayPicker, type DayButton, type DropdownProps, type Locale } from "react-day-picker";
 
 import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 
 function Calendar({ className, classNames, showOutsideDays = true, locale, components, ...props }: React.ComponentProps<typeof DayPicker>) {
@@ -15,7 +16,12 @@ function Calendar({ className, classNames, showOutsideDays = true, locale, compo
         months: "relative flex flex-col gap-4 sm:flex-row",
         month: "space-y-4",
         month_caption: "relative flex h-10 items-center justify-center px-10",
-        caption_label: "text-sm font-semibold capitalize text-foreground",
+        caption_label: "flex h-9 items-center gap-1 rounded-md px-2 text-sm font-semibold capitalize text-foreground",
+        dropdowns: "flex items-center justify-center gap-1",
+        dropdown_root: "relative rounded-md border border-input bg-background shadow-sm transition-colors focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-1",
+        dropdown: "absolute inset-0 z-10 size-full cursor-pointer opacity-0 disabled:cursor-not-allowed",
+        months_dropdown: "font-medium",
+        years_dropdown: "font-medium tabular-nums",
         nav: "absolute inset-x-0 top-3 z-10 flex items-center justify-between px-3",
         button_previous: "inline-flex size-10 items-center justify-center rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50",
         button_next: "inline-flex size-10 items-center justify-center rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50",
@@ -36,10 +42,42 @@ function Calendar({ className, classNames, showOutsideDays = true, locale, compo
           return <Icon className={cn("size-4", iconClassName)} {...iconProps} />;
         },
         DayButton: (dayProps) => <CalendarDayButton locale={locale} {...dayProps} />,
+        Dropdown: CalendarDropdown,
         ...components,
       }}
       {...props}
     />
+  );
+}
+
+function CalendarDropdown({ options, value, onChange, disabled, "aria-label": ariaLabel }: DropdownProps) {
+  const isMonthSelector = options?.length === 12;
+
+  return (
+    <Select
+      value={String(value)}
+      disabled={disabled}
+      onValueChange={(nextValue) => {
+        onChange?.({ target: { value: nextValue } } as React.ChangeEvent<HTMLSelectElement>);
+      }}
+    >
+      <SelectTrigger
+        aria-label={ariaLabel}
+        className={cn(
+          "h-10 min-h-10 rounded-md px-2.5 text-sm font-semibold capitalize shadow-sm",
+          isMonthSelector ? "w-28" : "w-24",
+        )}
+      >
+        <SelectValue />
+      </SelectTrigger>
+      <SelectContent className="z-[10070] max-h-72 min-w-[var(--radix-select-trigger-width)]">
+        {options?.map((option) => (
+          <SelectItem key={option.value} value={String(option.value)} disabled={option.disabled}>
+            {option.label}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
   );
 }
 

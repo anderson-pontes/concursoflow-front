@@ -1,28 +1,19 @@
-import {
-  Plus, Pencil, Trash2, BookOpen, ChevronRight, FileArchive, Play, MoreHorizontal,
-} from "lucide-react";
+import { BookOpen, ChevronLeft, FileArchive, MoreHorizontal, Pencil, Play, Plus, Trash2 } from "lucide-react";
 
-import { FLASH_CARD_SHADOW } from "@/lib/flashcards/constants";
-import type { Deck, DeckMetricRow, Flashcard, FlashcardsView } from "@/lib/flashcards/types";
-import {
-  cardStudyStatus,
-  metricForDeck,
-  stripHtml,
-} from "@/lib/flashcards/utils";
-import { DeckTree } from "@/components/flashcards/DeckTree";
+import { DeckCatalogCard } from "@/components/flashcards/DeckCatalogCard";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useConfirmDialog } from "@/components/ui/confirm-dialog";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { EmptyState } from "@/components/ui/empty-state";
+import { Progress } from "@/components/ui/progress";
+import type { Deck, DeckMetricRow, Flashcard, FlashcardsView } from "@/lib/flashcards/types";
+import { cardStudyStatus, metricForDeck, stripHtml } from "@/lib/flashcards/utils";
 
 type Props = {
   view: FlashcardsView;
   decks: Deck[];
-  treeDecks: Deck[];
   deckMetrics: DeckMetricRow[];
   selectedDeck: Deck | null;
   deckCards: Flashcard[];
@@ -30,6 +21,8 @@ type Props = {
   onOpenImport: () => void;
   onDeleteAllDecks: () => void;
   deletingAll: boolean;
+  onDeleteDeck: (deck: Deck) => void;
+  deletingDeckId: string | null;
   onSelectDeck: (deck: Deck) => void;
   onBackToDecks: () => void;
   onOpenCardModal: (card?: Flashcard | null) => void;
@@ -40,7 +33,6 @@ type Props = {
 export function FlashcardsDecksTab({
   view,
   decks,
-  treeDecks,
   deckMetrics,
   selectedDeck,
   deckCards,
@@ -48,6 +40,8 @@ export function FlashcardsDecksTab({
   onOpenImport,
   onDeleteAllDecks,
   deletingAll,
+  onDeleteDeck,
+  deletingDeckId,
   onSelectDeck,
   onBackToDecks,
   onOpenCardModal,
@@ -55,274 +49,248 @@ export function FlashcardsDecksTab({
   onStartReview,
 }: Props) {
   const { requestConfirmation, confirmDialog } = useConfirmDialog();
-  const safeTree = treeDecks.length > 0 ? treeDecks : decks.filter((d) => !d.parent_id);
 
-  if (view === "decks") {
+  const requestDeckDeletion = (deck: Deck) => {
+    void requestConfirmation({
+      title: `Excluir “${deck.nome}”?`,
+      description: "O baralho será removido da sua conta. Esta ação não pode ser desfeita.",
+      confirmLabel: "Excluir baralho",
+      variant: "destructive",
+    }).then((confirmed) => {
+      if (confirmed) onDeleteDeck(deck);
+    });
+  };
+
+  if (view === "decks" || !selectedDeck) {
     return (
       <>
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <p className="max-w-xl text-sm text-muted-foreground dark:text-neutral-400">
-            Agrupe cartões por matéria ou edital. Cada baralho usa o algoritmo Anki para priorizar o que você mais precisa rever.
-          </p>
-          {decks.length > 0 ? <div className="flex shrink-0 flex-wrap gap-2">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={onOpenImport}
-              className="min-h-11 rounded-xl"
-            >
-              <FileArchive className="h-4 w-4" />
-              Importar Anki
+        <Card>
+          <CardHeader>
+            <CardTitle>Biblioteca de baralhos</CardTitle>
+            <CardDescription className="max-w-2xl">
+              Organize os cartões por matéria ou edital e acompanhe o que precisa ser revisado.
+            </CardDescription>
+            <CardAction className="hidden gap-2 sm:flex">
+              <Button type="button" variant="outline" onClick={onOpenImport}>
+                <FileArchive aria-hidden="true" /> Importar Anki
+              </Button>
+              <Button type="button" onClick={() => onOpenDeckModal(null)}>
+                <Plus aria-hidden="true" /> Novo baralho
+              </Button>
+              {decks.length > 0 ? (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button type="button" variant="outline" size="icon" aria-label="Mais ações dos baralhos">
+                      <MoreHorizontal aria-hidden="true" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-56">
+                    <DropdownMenuItem
+                      disabled={deletingAll}
+                      className="min-h-10 gap-2 text-destructive focus:text-destructive"
+                      onSelect={() => {
+                        void requestConfirmation({
+                          title: "Excluir todos os baralhos?",
+                          description: "Todos os baralhos serão removidos da sua conta. Esta ação não pode ser desfeita.",
+                          confirmLabel: "Excluir todos",
+                          variant: "destructive",
+                        }).then((confirmed) => {
+                          if (confirmed) onDeleteAllDecks();
+                        });
+                      }}
+                    >
+                      <Trash2 aria-hidden="true" />
+                      {deletingAll ? "Excluindo..." : "Excluir todos os baralhos"}
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              ) : null}
+            </CardAction>
+          </CardHeader>
+          <CardContent className="flex flex-wrap gap-2 sm:hidden">
+            <Button type="button" className="flex-1" onClick={() => onOpenDeckModal(null)}>
+              <Plus aria-hidden="true" /> Novo baralho
             </Button>
-            <Button
-              type="button"
-              onClick={() => onOpenDeckModal(null)}
-              className="min-h-11 rounded-xl"
-            >
-              <Plus className="h-4 w-4" />
-              Novo baralho
+            <Button type="button" variant="outline" className="flex-1" onClick={onOpenImport}>
+              <FileArchive aria-hidden="true" /> Importar
             </Button>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button type="button" variant="outline" size="icon" className="min-h-11 min-w-11 rounded-xl" aria-label="Mais ações dos baralhos">
-                  <MoreHorizontal aria-hidden />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
-                <DropdownMenuItem
-                  disabled={deletingAll || decks.length === 0}
-                  className="min-h-11 gap-2 text-destructive focus:text-destructive"
-                  onSelect={() => {
-                    void requestConfirmation({
-                      title: "Excluir todos os baralhos?",
-                      description: "Todos os baralhos serão ocultados da sua conta. Esta ação não pode ser desfeita.",
-                      confirmLabel: "Excluir todos",
-                      variant: "destructive",
-                    }).then((confirmed) => {
-                      if (confirmed) onDeleteAllDecks();
-                    });
-                  }}
-                >
-                  <Trash2 aria-hidden />
-                  {deletingAll ? "Excluindo..." : "Excluir todos os baralhos"}
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div> : null}
-        </div>
+          </CardContent>
+        </Card>
 
-        <div>
-          {decks.length === 0 ? (
-            <div
-              className="flex flex-col items-center gap-5 rounded-xl border border-dashed border-border bg-card px-6 py-16 text-center shadow-sm"
-            >
-              <svg
-                width="120"
-                height="100"
-                viewBox="0 0 120 100"
-                fill="none"
-                className="text-primary"
-                aria-hidden
-              >
-                <rect x="8" y="20" width="72" height="52" rx="8" fill="currentColor" fillOpacity="0.12" stroke="currentColor" strokeWidth="2" />
-                <rect x="36" y="32" width="72" height="52" rx="8" fill="white" stroke="currentColor" strokeWidth="2" className="dark:fill-neutral-800" />
-                <path d="M52 52h40M52 60h28" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeOpacity="0.5" />
-              </svg>
-              <div>
-                <p className="text-base font-bold text-foreground dark:text-neutral-100">Nenhum baralho ainda</p>
-                <p className="mt-1 text-sm text-muted-foreground dark:text-neutral-400">
-                  Crie baralhos para revisar com repetição espaçada.
-                </p>
+        {decks.length === 0 ? (
+          <EmptyState
+            className="mt-4"
+            icon={BookOpen}
+            title="Crie seu primeiro baralho"
+            description="Adicione cartões manualmente ou importe um arquivo do Anki para começar suas revisões."
+            action={(
+              <div className="flex flex-wrap justify-center gap-2">
+                <Button type="button" onClick={() => onOpenDeckModal(null)}><Plus aria-hidden="true" /> Criar baralho</Button>
+                <Button type="button" variant="outline" onClick={onOpenImport}><FileArchive aria-hidden="true" /> Importar do Anki</Button>
               </div>
-              <div className="flex flex-wrap items-center justify-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => onOpenDeckModal()}
-                  className="inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold text-white shadow-md transition hover:brightness-110 bg-primary"
-                >
-                  <Plus className="h-4 w-4" />
-                  Crie seu primeiro baralho
-                </button>
-                <button
-                  type="button"
-                  onClick={onOpenImport}
-                  className="inline-flex items-center gap-2 rounded-xl border-2 border-border bg-white px-5 py-2.5 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-violet-50/70 dark:border-neutral-600 dark:bg-neutral-800 dark:text-neutral-100"
-                >
-                  <FileArchive className="h-4 w-4" />
-                  Importar do Anki
-                </button>
-              </div>
+            )}
+          />
+        ) : (
+          <section className="mt-4" aria-labelledby="deck-catalog-title">
+            <div className="mb-3 flex items-center justify-between gap-3">
+              <h2 id="deck-catalog-title" className="text-sm font-semibold text-foreground">
+                {decks.length} {decks.length === 1 ? "baralho" : "baralhos"}
+              </h2>
+              <p className="text-xs text-muted-foreground">Ordenados pela sua organização atual</p>
             </div>
-          ) : (
-            <div className="rounded-[12px] border border-neutral-100 bg-white p-3 dark:border-neutral-700 dark:bg-neutral-800">
-              <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground dark:text-neutral-400">
-                Estrutura de baralhos
-              </p>
-              <DeckTree
-                decks={safeTree}
-                selectedId={selectedDeck?.id ?? null}
-                onSelect={onSelectDeck}
-              />
+            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+              {decks.map((deck) => (
+                <DeckCatalogCard
+                  key={deck.id}
+                  deck={deck}
+                  metric={metricForDeck(deckMetrics, deck.id)}
+                  deleting={deletingDeckId === deck.id}
+                  onOpen={onSelectDeck}
+                  onEdit={(item) => onOpenDeckModal(item)}
+                  onDelete={requestDeckDeletion}
+                  onReview={onStartReview}
+                />
+              ))}
             </div>
-          )}
-        </div>
+          </section>
+        )}
         {confirmDialog}
       </>
     );
   }
 
-  const d = selectedDeck!;
+  const d = selectedDeck;
   const dm = metricForDeck(deckMetrics, d.id);
-  const nDominados = deckCards.filter((c) => cardStudyStatus(c) === "dominado").length;
-  const nAprendendo = deckCards.filter((c) => cardStudyStatus(c) === "aprendendo").length;
-  const nNovos = deckCards.filter((c) => cardStudyStatus(c) === "novo").length;
-  const nVencidos = dm.vencidos;
+  const nDominados = deckCards.filter((card) => cardStudyStatus(card) === "dominado").length;
+  const nAprendendo = deckCards.filter((card) => cardStudyStatus(card) === "aprendendo").length;
+  const nNovos = deckCards.filter((card) => cardStudyStatus(card) === "novo").length;
 
   return (
-    <div className="space-y-5">
-      <nav className="flex flex-wrap items-center gap-1 text-sm font-medium text-muted-foreground dark:text-neutral-400">
-        <button
-          type="button"
-          onClick={onBackToDecks}
-          className="rounded-lg px-1 py-0.5 text-primary transition hover:underline dark:text-violet-300"
-        >
-          Flashcards
-        </button>
-        <ChevronRight className="h-4 w-4 shrink-0 opacity-50" aria-hidden />
-        <span className="font-semibold text-foreground dark:text-neutral-100">
-          {d.full_path ?? d.nome}
-        </span>
-      </nav>
+    <div className="space-y-4">
+      <Button type="button" variant="ghost" onClick={onBackToDecks} className="-ml-2">
+        <ChevronLeft aria-hidden="true" /> Voltar aos baralhos
+      </Button>
 
-      <div
-        className="rounded-[12px] border border-neutral-100 bg-white p-5 dark:border-neutral-700 dark:bg-neutral-800"
-        style={{ boxShadow: FLASH_CARD_SHADOW }}
-      >
-        <div className="flex flex-col gap-4">
-          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+      <Card>
+        <CardHeader>
+          <div className="flex min-w-0 items-start gap-3">
+            <div
+              className="flex size-12 shrink-0 items-center justify-center rounded-xl text-white shadow-sm"
+              style={{ backgroundColor: d.cor_hex || "hsl(var(--primary))" }}
+              aria-hidden="true"
+            >
+              <BookOpen className="size-5" />
+            </div>
             <div className="min-w-0">
-              <h2 className="truncate text-2xl font-bold tracking-tight text-foreground dark:text-neutral-100">
-                {d.nome}
-              </h2>
-              <p className="mt-1 text-sm text-muted-foreground dark:text-neutral-400">
-                {deckCards.length} {deckCards.length === 1 ? "cartão" : "cartões"} · {nVencidos} para revisar hoje
-              </p>
-            </div>
-            <div className="flex gap-2">
-              <button
-                type="button"
-                onClick={() => onOpenCardModal(null)}
-                className="inline-flex items-center justify-center gap-2 rounded-[10px] border border-border bg-white px-4 py-2 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-violet-50/60 dark:border-neutral-600 dark:bg-neutral-800 dark:text-neutral-100"
-              >
-                <Plus className="h-4 w-4" />
-                Novo cartão
-              </button>
+              <CardTitle className="truncate text-xl" title={d.nome}>{d.nome}</CardTitle>
+              <CardDescription className="mt-1">
+                {d.descricao || d.full_path || "Gerencie os cartões e acompanhe o progresso deste baralho."}
+              </CardDescription>
             </div>
           </div>
+          <CardAction className="flex gap-1">
+            <Button type="button" variant="outline" size="icon" onClick={() => onOpenDeckModal(d)} aria-label="Editar baralho">
+              <Pencil aria-hidden="true" />
+            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button type="button" variant="outline" size="icon" aria-label="Mais ações do baralho"><MoreHorizontal aria-hidden="true" /></Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuItem
+                  className="min-h-10 gap-2 text-destructive focus:text-destructive"
+                  disabled={deletingDeckId === d.id}
+                  onSelect={() => requestDeckDeletion(d)}
+                >
+                  <Trash2 aria-hidden="true" />
+                  {deletingDeckId === d.id ? "Excluindo..." : "Excluir baralho"}
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </CardAction>
+        </CardHeader>
 
-          <button
-            type="button"
-            onClick={() => onStartReview(d.id)}
-            className="inline-flex w-full items-center justify-center gap-2 rounded-xl px-5 py-4 text-base font-bold text-white shadow-md transition hover:brightness-110 bg-primary"
-          >
-            <Play className="h-5 w-5" />
-            Estudar este baralho
-          </button>
-
-          <div className="grid grid-cols-2 gap-2 text-sm sm:grid-cols-4">
-            <div className="rounded-lg border border-neutral-200 px-3 py-2 dark:border-neutral-700">
-              <p className="text-[11px] uppercase tracking-wide text-muted-foreground">Novos</p>
-              <p className="tabular-nums font-semibold text-foreground dark:text-neutral-100">{nNovos}</p>
-            </div>
-            <div className="rounded-lg border border-neutral-200 px-3 py-2 dark:border-neutral-700">
-              <p className="text-[11px] uppercase tracking-wide text-muted-foreground">Aprendendo</p>
-              <p className="tabular-nums font-semibold text-foreground dark:text-neutral-100">{nAprendendo}</p>
-            </div>
-            <div className="rounded-lg border border-neutral-200 px-3 py-2 dark:border-neutral-700">
-              <p className="text-[11px] uppercase tracking-wide text-muted-foreground">Dominados</p>
-              <p className="tabular-nums font-semibold text-foreground dark:text-neutral-100">{nDominados}</p>
-            </div>
-            <div className="rounded-lg border border-neutral-200 px-3 py-2 dark:border-neutral-700">
-              <p className="text-[11px] uppercase tracking-wide text-muted-foreground">Domínio</p>
-              <p className="tabular-nums font-semibold text-emerald-600 dark:text-emerald-400">{dm.dominio_pct}%</p>
-            </div>
+        <CardContent className="space-y-5">
+          <div className="flex flex-wrap gap-2">
+            <Badge variant="secondary">{deckCards.length} {deckCards.length === 1 ? "cartão" : "cartões"}</Badge>
+            <Badge variant={dm.vencidos > 0 ? "destructive" : "outline"}>
+              {dm.vencidos > 0 ? `${dm.vencidos} para revisar` : "Revisões em dia"}
+            </Badge>
           </div>
-        </div>
-      </div>
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+            {[["Novos", nNovos], ["Aprendendo", nAprendendo], ["Dominados", nDominados], ["Domínio", `${dm.dominio_pct}%`]].map(([label, value]) => (
+              <div key={label} className="rounded-lg border border-border bg-muted/30 p-3">
+                <p className="text-xs font-medium text-muted-foreground">{label}</p>
+                <p className="mt-1 text-lg font-semibold tabular-nums text-foreground">{value}</p>
+              </div>
+            ))}
+          </div>
+          <div className="space-y-2">
+            <div className="flex items-center justify-between text-xs">
+              <span className="font-medium text-muted-foreground">Progresso do baralho</span>
+              <span className="font-semibold tabular-nums">{dm.dominio_pct}%</span>
+            </div>
+            <Progress value={dm.dominio_pct} aria-label={`Progresso do baralho: ${dm.dominio_pct}%`} />
+          </div>
+          <div className="grid gap-2 sm:grid-cols-2">
+            <Button type="button" size="lg" onClick={() => onStartReview(d.id)}><Play aria-hidden="true" /> Estudar este baralho</Button>
+            <Button type="button" size="lg" variant="outline" onClick={() => onOpenCardModal(null)}><Plus aria-hidden="true" /> Novo cartão</Button>
+          </div>
+        </CardContent>
+      </Card>
 
       {deckCards.length === 0 ? (
-        <div
-          className="flex flex-col items-center gap-4 rounded-[12px] border border-dashed border-neutral-300 bg-white py-14 text-center dark:border-neutral-600 dark:bg-neutral-800"
-          style={{ boxShadow: FLASH_CARD_SHADOW }}
-        >
-          <BookOpen className="h-12 w-12 text-primary/40" />
-          <p className="text-sm text-muted-foreground">Nenhum cartão neste baralho.</p>
-          <button
-            type="button"
-            onClick={() => onOpenCardModal()}
-            className="rounded-[10px] px-5 py-2.5 text-sm font-semibold text-white bg-primary"
-          >
-            Criar primeiro cartão
-          </button>
-        </div>
+        <EmptyState
+          icon={BookOpen}
+          title="Este baralho ainda não tem cartões"
+          description="Crie o primeiro cartão para começar a estudar com repetição espaçada."
+          action={<Button type="button" onClick={() => onOpenCardModal(null)}><Plus aria-hidden="true" /> Criar primeiro cartão</Button>}
+        />
       ) : (
-        <ul className="space-y-2">
-          {deckCards.map((card) => {
-            const versoPrev = stripHtml(card.verso);
-            const frenteLine = stripHtml(card.frente) || "(sem conteúdo)";
-            return (
-              <li key={card.id} className="group max-w-full">
-                <div
-                  className="flex max-w-full items-center gap-3 overflow-hidden rounded-[10px] border border-neutral-100 bg-white p-3 [box-sizing:border-box] dark:border-neutral-700 dark:bg-neutral-800"
-                  style={{ boxShadow: FLASH_CARD_SHADOW }}
-                >
-                  <div className="min-w-0 flex-1">
-                    <p
-                      className="truncate text-sm font-semibold text-foreground dark:text-neutral-100"
-                      title={frenteLine}
-                    >
-                      {frenteLine}
-                    </p>
-                    <p
-                      className="mt-1 truncate text-xs text-muted-foreground dark:text-neutral-500"
-                      title={versoPrev || undefined}
-                    >
-                      {versoPrev || "—"}
-                    </p>
-                  </div>
-
-                  <div className="flex shrink-0 gap-1 opacity-100 lg:opacity-0 lg:transition-opacity lg:group-hover:opacity-100">
-                    <button
-                      type="button"
-                      onClick={() => onOpenCardModal(card)}
-                      className="rounded-lg p-2 text-muted-foreground hover:bg-neutral-100 dark:hover:bg-neutral-700"
-                      title="Editar"
-                    >
-                      <Pencil className="h-4 w-4" />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        void requestConfirmation({
-                          title: "Excluir cartão?",
-                          description: "Este cartão será removido do baralho. Esta ação não pode ser desfeita.",
-                          confirmLabel: "Excluir cartão",
-                          variant: "destructive",
-                        }).then((confirmed) => {
-                          if (confirmed) onDeleteCard(card.id);
-                        });
-                      }}
-                      className="rounded-lg p-2 text-muted-foreground hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-950/40"
-                      title="Excluir"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </button>
-                  </div>
-                </div>
-              </li>
-            );
-          })}
-        </ul>
+        <Card>
+          <CardHeader>
+            <CardTitle>Cartões do baralho</CardTitle>
+            <CardDescription>Edite o conteúdo ou remova cartões que não fazem mais parte do estudo.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ul className="divide-y divide-border">
+              {deckCards.map((card) => {
+                const frente = stripHtml(card.frente) || "(sem conteúdo)";
+                const verso = stripHtml(card.verso) || "Sem resposta cadastrada";
+                return (
+                  <li key={card.id} className="flex items-center gap-3 py-3 first:pt-0 last:pb-0">
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm font-medium text-foreground" title={frente}>{frente}</p>
+                      <p className="mt-1 truncate text-xs text-muted-foreground" title={verso}>{verso}</p>
+                    </div>
+                    <div className="flex shrink-0 gap-1">
+                      <Button type="button" variant="ghost" size="icon" onClick={() => onOpenCardModal(card)} aria-label="Editar cartão"><Pencil aria-hidden="true" /></Button>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="text-destructive hover:text-destructive"
+                        onClick={() => {
+                          void requestConfirmation({
+                            title: "Excluir cartão?",
+                            description: "Este cartão será removido do baralho. Esta ação não pode ser desfeita.",
+                            confirmLabel: "Excluir cartão",
+                            variant: "destructive",
+                          }).then((confirmed) => {
+                            if (confirmed) onDeleteCard(card.id);
+                          });
+                        }}
+                        aria-label="Excluir cartão"
+                      >
+                        <Trash2 aria-hidden="true" />
+                      </Button>
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          </CardContent>
+        </Card>
       )}
       {confirmDialog}
     </div>
