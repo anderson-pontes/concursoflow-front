@@ -1,16 +1,16 @@
 {
-  "generatedAt": "2026-08-22T23:08:41.556Z",
+  "generatedAt": "2026-08-30T01:16:16.243Z",
   "baseUrl": "http://localhost:3000",
-  "configurationErrors": [],
+  "configurationErrors": [
+    "Defina QA_ADMIN_EMAIL e QA_ADMIN_PASSWORD para auditar rotas administrativas."
+  ],
   "results": [
     {
       "profile": "user",
       "viewport": "desktop",
       "route": "/dashboard",
       "screenshot": "desktop-dashboard.png",
-      "scrollScreenshots": [
-        "desktop-dashboard-scroll-1.png"
-      ],
+      "scrollScreenshots": [],
       "pageErrors": [],
       "consoleErrors": [],
       "failures": [],
@@ -19,28 +19,11 @@
       "h1Count": 1,
       "horizontalOverflow": false,
       "unnamedControls": 0,
-      "undersizedTargets": 2,
+      "undersizedTargets": 0,
       "errorBoundary": false,
       "unnamedSamples": [],
-      "undersizedSamples": [
-        {
-          "width": 75,
-          "height": 16,
-          "html": "<a class=\"text-xs font-medium text-primary-600 hover:underline dark:text-primary-400\" href=\"/estudos/calendario\">Ver completo</a>"
-        },
-        {
-          "width": 37,
-          "height": 16,
-          "html": "<a class=\"truncate font-medium text-card-foreground hover:underline\" href=\"/disciplinas/3e69e294-ecc9-4ac1-8056-02fa8f548160\">Direito</a>"
-        }
-      ],
-      "scrollContainers": [
-        {
-          "index": 0,
-          "scrollHeight": 2111,
-          "clientHeight": 835
-        }
-      ],
+      "undersizedSamples": [],
+      "scrollContainers": [],
       "bodyText": "Pular para o conteúdo\nClick Edital\n🏆\nCONCURSO ATIVO\nBACEN — Analista\nPRINCIPAL\nDashboard\nMeus Concursos\nDisciplinas\nCronograma\nESTUDO\nPomodoro\nCalendário\nHistó"
     },
     {
@@ -139,7 +122,7 @@
       "scrollContainers": [
         {
           "index": 0,
-          "scrollHeight": 897,
+          "scrollHeight": 1068,
           "clientHeight": 835
         }
       ],
@@ -264,8 +247,7 @@
       "route": "/dashboard",
       "screenshot": "mobile-dashboard.png",
       "scrollScreenshots": [
-        "mobile-dashboard-scroll-1.png",
-        "mobile-dashboard-scroll-2.png"
+        "mobile-dashboard-scroll-1.png"
       ],
       "pageErrors": [],
       "consoleErrors": [],
@@ -275,31 +257,15 @@
       "h1Count": 1,
       "horizontalOverflow": false,
       "unnamedControls": 0,
-      "undersizedTargets": 2,
+      "undersizedTargets": 0,
       "errorBoundary": false,
       "unnamedSamples": [],
-      "undersizedSamples": [
-        {
-          "width": 75,
-          "height": 16,
-          "html": "<a class=\"text-xs font-medium text-primary-600 hover:underline dark:text-primary-400\" href=\"/estudos/calendario\">Ver completo</a>"
-        },
-        {
-          "width": 37,
-          "height": 16,
-          "html": "<a class=\"truncate font-medium text-card-foreground hover:underline\" href=\"/disciplinas/3e69e294-ecc9-4ac1-8056-02fa8f548160\">Direito</a>"
-        }
-      ],
+      "undersizedSamples": [],
       "scrollContainers": [
         {
           "index": 0,
           "scrollHeight": 635,
           "clientHeight": 590
-        },
-        {
-          "index": 1,
-          "scrollHeight": 2817,
-          "clientHeight": 787
         }
       ],
       "bodyText": "Pular para o conteúdo\nClick Edital\n🏆\nCONCURSO ATIVO\nBACEN — Analista\nPRINCIPAL\nDashboard\nMeus Concursos\nDisciplinas\nCronograma\nESTUDO\nPomodoro\nCalendário\nHistó"
@@ -397,7 +363,7 @@
         },
         {
           "index": 1,
-          "scrollHeight": 1111,
+          "scrollHeight": 1388,
           "clientHeight": 787
         }
       ],
@@ -502,7 +468,8 @@
       "route": "/flashcards",
       "screenshot": "mobile-flashcards.png",
       "scrollScreenshots": [
-        "mobile-flashcards-scroll-1.png"
+        "mobile-flashcards-scroll-1.png",
+        "mobile-flashcards-scroll-2.png"
       ],
       "pageErrors": [],
       "consoleErrors": [],
@@ -521,6 +488,11 @@
           "index": 0,
           "scrollHeight": 635,
           "clientHeight": 590
+        },
+        {
+          "index": 1,
+          "scrollHeight": 822,
+          "clientHeight": 787
         }
       ],
       "bodyText": "Pular para o conteúdo\nClick Edital\n🏆\nCONCURSO ATIVO\nBACEN — Analista\nPRINCIPAL\nDashboard\nMeus Concursos\nDisciplinas\nCronograma\nESTUDO\nPomodoro\nCalendário\nHistó"
@@ -559,114 +531,7 @@
         }
       ],
       "bodyText": "Pular para o conteúdo\nClick Edital\n🏆\nCONCURSO ATIVO\nBACEN — Analista\nPRINCIPAL\nDashboard\nMeus Concursos\nDisciplinas\nCronograma\nESTUDO\nPomodoro\nCalendário\nHistó"
-    },
-    {
-      "profile": "admin",
-      "viewport": "desktop",
-      "route": "/admin/usuarios",
-      "screenshot": "desktop-admin-usuarios.png",
-      "scrollScreenshots": [
-        "desktop-admin-usuarios-scroll-1.png",
-        "desktop-admin-usuarios-scroll-2.png"
-      ],
-      "pageErrors": [],
-      "consoleErrors": [],
-      "failures": [],
-      "pathname": "/admin/usuarios",
-      "title": "Click Edital",
-      "h1Count": 1,
-      "horizontalOverflow": false,
-      "unnamedControls": 0,
-      "undersizedTargets": 6,
-      "errorBoundary": false,
-      "unnamedSamples": [],
-      "undersizedSamples": [
-        {
-          "width": 22,
-          "height": 44,
-          "html": "<a class=\"inline-flex min-h-11 items-center text-primary hover:underline\" href=\"/admin/usuarios/48a116bb-6656-4724-8a54-7c90378c81a5\">Ver</a>"
-        },
-        {
-          "width": 22,
-          "height": 44,
-          "html": "<a class=\"inline-flex min-h-11 items-center text-primary hover:underline\" href=\"/admin/usuarios/5452f108-e803-4047-aef7-afebb88a0635\">Ver</a>"
-        },
-        {
-          "width": 22,
-          "height": 44,
-          "html": "<a class=\"inline-flex min-h-11 items-center text-primary hover:underline\" href=\"/admin/usuarios/8f5be971-64b2-430b-bd73-e412372cadbd\">Ver</a>"
-        },
-        {
-          "width": 22,
-          "height": 44,
-          "html": "<a class=\"inline-flex min-h-11 items-center text-primary hover:underline\" href=\"/admin/usuarios/414cef44-501e-4856-a388-a03d2ec576a9\">Ver</a>"
-        },
-        {
-          "width": 22,
-          "height": 44,
-          "html": "<a class=\"inline-flex min-h-11 items-center text-primary hover:underline\" href=\"/admin/usuarios/a9ab5950-92ba-41b6-a1e9-71bbca0b78c4\">Ver</a>"
-        },
-        {
-          "width": 22,
-          "height": 44,
-          "html": "<a class=\"inline-flex min-h-11 items-center text-primary hover:underline\" href=\"/admin/usuarios/7403b461-6b79-48df-a1cf-6a5b5a001529\">Ver</a>"
-        }
-      ],
-      "scrollContainers": [
-        {
-          "index": 0,
-          "scrollHeight": 762,
-          "clientHeight": 646
-        },
-        {
-          "index": 1,
-          "scrollHeight": 858,
-          "clientHeight": 835
-        }
-      ],
-      "bodyText": "Pular para o conteúdo\nClick Edital\n🏆\nCONCURSO ATIVO\nSelecionar concurso\nPRINCIPAL\nDashboard\nMeus Concursos\nDisciplinas\nCronograma\nESTUDO\nPomodoro\nCalendário\nHi"
-    },
-    {
-      "profile": "admin",
-      "viewport": "mobile",
-      "route": "/admin/usuarios",
-      "screenshot": "mobile-admin-usuarios.png",
-      "scrollScreenshots": [
-        "mobile-admin-usuarios-scroll-1.png",
-        "mobile-admin-usuarios-scroll-2.png"
-      ],
-      "pageErrors": [],
-      "consoleErrors": [],
-      "failures": [],
-      "pathname": "/admin/usuarios",
-      "title": "Click Edital",
-      "h1Count": 1,
-      "horizontalOverflow": false,
-      "unnamedControls": 0,
-      "undersizedTargets": 1,
-      "errorBoundary": false,
-      "unnamedSamples": [],
-      "undersizedSamples": [
-        {
-          "width": 36,
-          "height": 36,
-          "html": "<button type=\"button\" class=\"relative inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-border bg-surface text-muted-foreground transition-colors ho"
-        }
-      ],
-      "scrollContainers": [
-        {
-          "index": 0,
-          "scrollHeight": 762,
-          "clientHeight": 590
-        },
-        {
-          "index": 1,
-          "scrollHeight": 2772,
-          "clientHeight": 787
-        }
-      ],
-      "bodyText": "Pular para o conteúdo\nClick Edital\n🏆\nCONCURSO ATIVO\nSelecionar concurso\nPRINCIPAL\nDashboard\nMeus Concursos\nDisciplinas\nCronograma\nESTUDO\nPomodoro\nCalendário\nHi"
     }
   ],
-  "passed": true
+  "passed": false
 }

@@ -1,21 +1,26 @@
-import { useNavigate } from "react-router-dom";
+import { BookOpenCheck } from "lucide-react";
+import { Link } from "react-router-dom";
+
+import { Button } from "@/components/ui/button";
+import { EmptyState } from "@/components/ui/empty-state";
 
 export function BannerSemConcurso() {
-  const navigate = useNavigate();
   return (
-    <div className="mb-4 rounded-xl border border-amber-200 bg-amber-50 p-4 dark:border-amber-900/40 dark:bg-amber-950/30">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <p className="text-sm text-amber-900 dark:text-amber-200">
-          Nenhum concurso ativo. Cadastre um concurso para organizar disciplinas e data da prova.
-        </p>
-        <button
-          type="button"
-          className="min-h-11 rounded-lg bg-primary px-4 py-2 text-xs font-medium text-primary-foreground transition-colors hover:bg-primary-700"
-          onClick={() => navigate("/concursos")}
-        >
-          Criar concurso
-        </button>
-      </div>
-    </div>
+    <EmptyState
+      icon={BookOpenCheck}
+      title="Escolha o concurso que vai orientar seus estudos"
+      description="Ative um edital verticalizado ou cadastre seu concurso para montar um plano com disciplinas e tópicos no contexto correto."
+      className="min-h-[320px] bg-card"
+      action={
+        <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
+          <Button asChild className="min-h-11 w-full sm:w-auto">
+            <Link to="/planos/novo">Escolher edital</Link>
+          </Button>
+          <Button asChild variant="outline" className="min-h-11 w-full sm:w-auto">
+            <Link to="/concursos?novo=manual">Cadastrar manualmente</Link>
+          </Button>
+        </div>
+      }
+    />
   );
 }

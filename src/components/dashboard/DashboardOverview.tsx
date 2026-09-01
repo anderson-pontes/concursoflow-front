@@ -73,7 +73,7 @@ export function DashboardWeeklySchedule({
               <div className="flex flex-1 flex-col gap-1">
                 {items.slice(0, 2).map((item) => (
                   <div key={item.id} className="rounded-md border border-border/50 bg-card px-1.5 py-1 shadow-sm">
-                    <div className="flex items-center gap-1"><span className={cn("size-2 shrink-0 rounded-full", getTipoDot(item.tipo))} /><span className="truncate text-xs font-medium">{disciplineNames.get(item.disciplina_id) ?? "Disciplina"}</span></div>
+                    <div className="flex items-center gap-1"><span className={cn("size-2 shrink-0 rounded-full", getTipoDot(item.tipo))} /><span className="truncate text-xs font-medium">{disciplineNames.get(item.disciplina_id) ?? "Conteúdo indisponível"}</span></div>
                     {item.topico_nome ? <span className="mt-0.5 block truncate pl-3 text-xs text-muted-foreground">{item.topico_nome}</span> : null}
                     <span className="mt-0.5 block pl-3 text-xs tabular-nums text-muted-foreground">{item.hora_inicio}</span>
                   </div>

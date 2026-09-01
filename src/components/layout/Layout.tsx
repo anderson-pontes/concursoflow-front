@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils";
 import { Sidebar } from "./Sidebar";
 import { Header } from "./Header";
 import { PomodoroSessionBadge } from "./PomodoroSessionBadge";
+import { ContextTelemetryObserver } from "./ContextTelemetryObserver";
 
 function AuthenticatedLayout({ children }: { children: React.ReactNode }) {
   const [mobileSidebarOpen, setMobileSidebarOpen] = React.useState(false);
@@ -69,6 +70,7 @@ function AuthenticatedLayout({ children }: { children: React.ReactNode }) {
         collapsed={sidebarCollapsed}
         onCollapsedChange={setSidebarCollapsed}
       />
+      <ContextTelemetryObserver />
       <div
         className={cn(
           "flex min-w-0 flex-1 flex-col overflow-hidden transition-[margin-left] duration-[250ms] [transition-timing-function:cubic-bezier(0.4,0,0.2,1)]",

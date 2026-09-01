@@ -3,6 +3,7 @@ import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 
 import { DeckCatalogCard } from "@/components/flashcards/DeckCatalogCard";
+import { DEFAULT_DECK_COLOR } from "@/lib/palette/deck-colors";
 import type { Deck, DeckMetricRow } from "@/lib/flashcards/types";
 
 const deck: Deck = {
@@ -11,7 +12,7 @@ const deck: Deck = {
   parent_id: null,
   disciplina_id: null,
   descricao: "Princípios fundamentais e direitos individuais.",
-  cor_hex: "#7c3aed",
+  cor_hex: DEFAULT_DECK_COLOR,
   total_cards: 18,
   full_path: "Direito Constitucional",
   created_at: "2026-08-24T00:00:00Z",

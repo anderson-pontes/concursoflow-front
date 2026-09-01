@@ -13,6 +13,7 @@ import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { DatePicker } from "@/components/ui/date-picker";
 import { useConfirmDialog } from "@/components/ui/confirm-dialog";
 import { api } from "@/services/api";
+import { createTelemetryJourney, telemetryErrorCode } from "@/services/telemetry";
 
 const DIAS_SEMANA = [
   { value: 0, label: "Seg", full: "Segunda" },
@@ -77,6 +78,7 @@ export function GerarCronogramaAutoModal({
   onSaved,
 }: GerarCronogramaAutoModalProps) {
   const { requestConfirmation, confirmDialog } = useConfirmDialog();
+  const telemetryJourney = React.useRef(createTelemetryJourney());
   const [sessoesPorDia, setSessoesPorDia] = React.useState<Record<number, number>>({
     0: 2,
     1: 2,
@@ -95,6 +97,7 @@ export function GerarCronogramaAutoModal({
 
   React.useEffect(() => {
     if (!open) return;
+    telemetryJourney.current = createTelemetryJourney();
     setSessoesPorDia({ 0: 2, 1: 2, 2: 2, 3: 2, 4: 2, 5: 0, 6: 0 });
     setDuracaoSessao(50);
     setDuracaoCustom("");
@@ -159,16 +162,33 @@ export function GerarCronogramaAutoModal({
     onSuccess: (data, salvar) => {
       setPreview(data);
       if (salvar) {
+        telemetryJourney.current.track("plan_confirmed", {
+          planning_type: "weekly",
+          block_count: data.total_blocos,
+          total_minutes: data.minutos_totais,
+        });
         toast.success(
           `Cronograma salvo — ${data.total_blocos} sessões, ${fmtBlocoMinutos(data.minutos_totais)} no período.`,
         );
         onSaved?.();
         onClose();
       } else {
+        telemetryJourney.current.track("plan_preview_generated", {
+          planning_type: "weekly",
+          block_count: data.total_blocos,
+          total_minutes: data.minutos_totais,
+        });
         toast.success("Prévia gerada. Revise e clique em salvar quando estiver pronto.");
       }
     },
-    onError: () => toast.error("Não foi possível gerar o cronograma. Verifique os dados."),
+    onError: (error, salvar) => {
+      if (salvar) {
+        telemetryJourney.current.track("plan_confirmation_failed", {
+          error_code: telemetryErrorCode(error),
+        });
+      }
+      toast.error("Não foi possível gerar o cronograma. Verifique os dados.");
+    },
   });
 
   const handlePreview = () => {

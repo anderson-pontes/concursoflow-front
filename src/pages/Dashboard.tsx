@@ -1,5 +1,5 @@
 import React from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { differenceInCalendarDays, format, parseISO } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { BookOpenCheck, CheckCircle2, Flame, Play, RefreshCw, Target } from "lucide-react";
@@ -15,8 +15,15 @@ import { DIAS, diaAbrev, blocoDurationMinutes, fmtBlocoMinutos, getTipo, getTipo
 import type { Bloco } from "@/lib/cronograma/types";
 import type { Disciplina } from "@/lib/disciplinas/types";
 import { cn } from "@/lib/utils";
-import { useConcursoAtivoId } from "@/stores/concursoStore";
+import {
+  useConcursoAtivoId,
+  useConcursoContextError,
+  useConcursoContextResolved,
+} from "@/stores/concursoStore";
 import { Button } from "@/components/ui/button";
+import { PageSkeleton } from "@/components/ui/page-skeleton";
+import { EmptyState } from "@/components/ui/empty-state";
+import { resolveConcursoContextStatus } from "@/lib/concursos/context";
 
 type DashboardResumo = {
   horas_hoje: number;
@@ -92,14 +99,17 @@ function fmtMinutos(min: number): string {
 }
 
 export function Dashboard() {
+  const queryClient = useQueryClient();
   const concursoAtivoId = useConcursoAtivoId();
+  const contextResolved = useConcursoContextResolved();
+  const contextError = useConcursoContextError();
   const [registroOpen, setRegistroOpen] = React.useState(false);
   const [registroPrefill, setRegistroPrefill] = React.useState<{
     disciplinaId: string;
     topicoId?: string | null;
   } | null>(null);
 
-  const { data: resumo } = useQuery({
+  const { data: resumo, isError: resumoError, refetch: refetchResumo } = useQuery({
     queryKey: ["dashboard-resumo", concursoAtivoId ?? null],
     queryFn: async () =>
       (
@@ -107,11 +117,13 @@ export function Dashboard() {
           params: concursoAtivoId ? { concurso_id: concursoAtivoId } : {},
         })
       ).data as DashboardResumo,
+    enabled: contextResolved && Boolean(concursoAtivoId),
   });
 
   const { data: heatmap } = useQuery({
     queryKey: ["dashboard-heatmap"],
     queryFn: async () => (await api.get("/dashboard/heatmap")).data as HeatmapData[],
+    enabled: contextResolved && Boolean(concursoAtivoId),
   });
 
   const { data: concursos = [] } = useQuery({
@@ -124,15 +136,15 @@ export function Dashboard() {
     [concursos, concursoAtivoId],
   );
 
-  const { data: proximoEstudo, isLoading: loadingProximo } = useQuery({
+  const { data: proximoEstudo, isLoading: loadingProximo, isError: proximoError, refetch: refetchProximo } = useQuery({
     queryKey: ["dashboard", "proximo-estudo", concursoAtivoId],
     queryFn: async () => (await api.get<ProximoEstudo | null>("/dashboard/proximo-estudo", { params: { concurso_id: concursoAtivoId } })).data,
-    enabled: Boolean(concursoAtivoId),
+    enabled: contextResolved && Boolean(concursoAtivoId),
   });
   const { data: revisoesPendentes } = useQuery({
     queryKey: ["dashboard", "revisoes-pendentes", concursoAtivoId],
     queryFn: async () => (await api.get<RevisoesPendentes>("/dashboard/revisoes-pendentes", { params: { concurso_id: concursoAtivoId } })).data,
-    enabled: Boolean(concursoAtivoId),
+    enabled: contextResolved && Boolean(concursoAtivoId),
   });
 
   const diasParaProva = React.useMemo(() => {
@@ -141,7 +153,7 @@ export function Dashboard() {
     return differenceInCalendarDays(prova, new Date());
   }, [concursoAtivo]);
 
-  const { data: disciplinas } = useQuery({
+  const { data: disciplinas, isError: disciplinasError, refetch: refetchDisciplinas } = useQuery({
     queryKey: ["disciplinas", "dashboard", concursoAtivoId ?? null],
     queryFn: async () =>
       (
@@ -152,9 +164,10 @@ export function Dashboard() {
           },
         })
       ).data as Disciplina[],
+    enabled: contextResolved && Boolean(concursoAtivoId),
   });
 
-  const { data: blocosRaw } = useQuery({
+  const { data: blocosRaw, isError: blocosError, refetch: refetchBlocos } = useQuery({
     queryKey: ["cronograma-blocos", concursoAtivoId ?? null],
     queryFn: async () =>
       (
@@ -162,11 +175,20 @@ export function Dashboard() {
           params: concursoAtivoId ? { concurso_id: concursoAtivoId } : {},
         })
       ).data as Bloco[],
+    enabled: contextResolved && Boolean(concursoAtivoId),
   });
 
   const { data: avisos = [] } = useQuery({
-    queryKey: ["avisos-proximos"],
-    queryFn: async () => (await api.get("/avisos/proximos", { params: { dias: 7 } })).data as Aviso[],
+    queryKey: ["avisos-concurso", concursoAtivoId],
+    queryFn: async () => {
+      const rows = (await api.get(`/avisos/concurso/${concursoAtivoId}`)).data as Aviso[];
+      const today = new Date();
+      return rows.filter((aviso) => {
+        const daysUntilDue = differenceInCalendarDays(parseISO(aviso.data_vencimento), today);
+        return daysUntilDue >= 0 && daysUntilDue <= 7;
+      });
+    },
+    enabled: contextResolved && Boolean(concursoAtivoId),
   });
 
   const discMap = React.useMemo(
@@ -178,9 +200,9 @@ export function Dashboard() {
   const diaHoje = (["dom", "seg", "ter", "qua", "qui", "sex", "sab"] as Bloco["dia_semana"][])[jsDay];
 
   const blocosSemana = React.useMemo(() => {
-    if (!blocosRaw) return undefined;
-    const ids = concursoAtivoId ? new Set((disciplinas ?? []).map((d) => d.id)) : null;
-    const filtered = ids ? blocosRaw.filter((b) => ids.has(b.disciplina_id)) : blocosRaw;
+    if (!concursoAtivoId || !blocosRaw) return undefined;
+    const ids = new Set((disciplinas ?? []).map((d) => d.id));
+    const filtered = blocosRaw.filter((b) => ids.has(b.disciplina_id));
     const map = Object.fromEntries(DIAS.map((d) => [d, [] as Bloco[]])) as Record<Bloco["dia_semana"], Bloco[]>;
     for (const b of filtered) map[b.dia_semana]?.push(b);
     for (const d of DIAS) map[d] = [...map[d]].sort((a, b) => a.hora_inicio.localeCompare(b.hora_inicio));
@@ -189,11 +211,19 @@ export function Dashboard() {
 
   const planoHoje = React.useMemo(() => {
     if (!blocosSemana) return [];
-    return (blocosSemana[diaHoje] ?? []).map((b) => ({
-      bloco: b,
-      disciplina: discMap.get(b.disciplina_id) ?? "Disciplina",
-      minutos: blocoDurationMinutes(b.hora_inicio, b.hora_fim),
-    }));
+    return (blocosSemana[diaHoje] ?? []).reduce<Array<{ bloco: Bloco; disciplina: string; minutos: number }>>(
+      (items, bloco) => {
+        const disciplina = discMap.get(bloco.disciplina_id);
+        if (!disciplina) return items;
+        items.push({
+          bloco,
+          disciplina,
+          minutos: blocoDurationMinutes(bloco.hora_inicio, bloco.hora_fim),
+        });
+        return items;
+      },
+      [],
+    );
   }, [blocosSemana, diaHoje, discMap]);
 
   const progressoDisciplinas = React.useMemo(() => {
@@ -214,10 +244,52 @@ export function Dashboard() {
   const calendarioAno = hoje.getFullYear();
   const calendarioMes = hoje.getMonth() + 1;
 
+  const contextStatus = resolveConcursoContextStatus({
+    resolved: contextResolved,
+    concursoId: concursoAtivoId,
+    essentialError: contextError || resumoError || proximoError || disciplinasError || blocosError,
+    essentialLoading: resumo === undefined || disciplinas === undefined || blocosRaw === undefined || loadingProximo,
+    disciplinesLoaded: disciplinas !== undefined,
+    disciplinesCount: disciplinas?.length,
+    planLoaded: blocosRaw !== undefined,
+    plannedItemsCount: blocosRaw?.length,
+    actionableItemsCount: proximoEstudo ? 1 : 0,
+  });
+
+  if (contextStatus === "hydrating") {
+    return <PageSkeleton cards={2} rows={3} />;
+  }
+
+  if (contextStatus === "no_contest") {
+    return (
+      <div className="space-y-6 pb-8">
+        <header>
+          <h1 className="text-xl font-semibold tracking-tight text-foreground">Painel</h1>
+          <p className="text-sm text-muted-foreground">Comece escolhendo o contexto dos seus estudos.</p>
+        </header>
+        <BannerSemConcurso />
+      </div>
+    );
+  }
+
+  if (contextStatus === "error") {
+    return <div className="space-y-6 pb-8"><header><h1 className="text-xl font-semibold tracking-tight text-foreground">Painel</h1></header><div role="alert" className="rounded-xl border border-destructive/30 bg-card p-8 text-center"><h2 className="font-semibold">Não foi possível carregar o concurso ativo</h2><p className="mt-1 text-sm text-muted-foreground">Os dados anteriores foram ocultados. Tente novamente.</p><Button className="mt-5" onClick={() => void Promise.all([queryClient.invalidateQueries({ queryKey: ["concursos"] }), refetchResumo(), refetchProximo(), refetchDisciplinas(), refetchBlocos()])}>Tentar novamente</Button></div></div>;
+  }
+
+  if (contextStatus === "no_disciplines") {
+    return <div className="space-y-6 pb-8"><header><h1 className="text-xl font-semibold tracking-tight text-foreground">Painel</h1></header><EmptyState icon={BookOpenCheck} title="Adicione as disciplinas deste concurso" description="O concurso está ativo, mas ainda não possui conteúdo para orientar seu planejamento." action={<Button asChild><Link to="/disciplinas">Adicionar disciplinas</Link></Button>} /></div>;
+  }
+
+  if (contextStatus === "no_plan") {
+    return <div className="space-y-6 pb-8"><header><h1 className="text-xl font-semibold tracking-tight text-foreground">Painel</h1></header><EmptyState icon={Target} title="Configure seu planejamento" description="As disciplinas estão prontas. Agora distribua seus estudos na semana." action={<Button asChild><Link to="/cronograma">Criar cronograma</Link></Button>} /></div>;
+  }
+
+  if (contextStatus === "empty_plan") {
+    return <div className="space-y-6 pb-8"><header><h1 className="text-xl font-semibold tracking-tight text-foreground">Painel</h1></header><EmptyState icon={RefreshCw} title="Seu plano precisa de ajuste" description="Há planejamento cadastrado, mas nenhuma próxima ação disponível." action={<Button asChild><Link to={`/planos/${concursoAtivoId}/replanejar`}>Replanejar</Link></Button>} /></div>;
+  }
+
   return (
     <div className="space-y-6 pb-8">
-      {!concursoAtivoId ? <BannerSemConcurso /> : null}
-
       {concursoAtivoId ? (
         <section className="rounded-2xl border border-primary/25 bg-gradient-to-r from-primary-muted to-card p-5 shadow-sm" aria-labelledby="proximo-estudo-title">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">

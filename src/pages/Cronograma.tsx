@@ -24,6 +24,7 @@ import {
 import { CronogramaSimplificadoModal } from "@/components/cronograma/CronogramaSimplificadoModal";
 import { GerarCronogramaAutoModal } from "@/components/cronograma/GerarCronogramaAutoModal";
 import { RegistroEstudoModal } from "@/components/estudos/RegistroEstudoModal";
+import { BannerSemConcurso } from "@/components/dashboard/BannerSemConcurso";
 import { useConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Button } from "@/components/ui/button";
 import {
@@ -33,6 +34,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { EmptyState } from "@/components/ui/empty-state";
+import { PageSkeleton } from "@/components/ui/page-skeleton";
 import { DIAS, fmtHorasStats } from "@/lib/cronograma/constants";
 import { filtrarDisciplinasDoConcursoAtivo } from "@/lib/cronograma/disciplinasConcurso";
 import type {
@@ -51,7 +53,12 @@ import {
   vigenciaFim12Meses,
 } from "@/lib/cronograma/types";
 import { api } from "@/services/api";
-import { useConcursoAtivoId } from "@/stores/concursoStore";
+import {
+  useConcursoAtivoId,
+  useConcursoContextError,
+  useConcursoContextResolved,
+} from "@/stores/concursoStore";
+import { resolveConcursoContextStatus } from "@/lib/concursos/context";
 
 function apiErrorMessage(err: unknown, fallback: string): string {
   if (isAxiosError(err)) {
@@ -70,12 +77,14 @@ function editTitleForModo(modo: string | undefined): string {
 export function Cronograma() {
   const qc = useQueryClient();
   const concursoAtivoId = useConcursoAtivoId();
+  const contextResolved = useConcursoContextResolved();
+  const contextError = useConcursoContextError();
   const { requestConfirmation, confirmDialog } = useConfirmDialog();
 
   const jsDay = new Date().getDay(); // 0=Sun
   const diaHoje = (["dom", "seg", "ter", "qua", "qui", "sex", "sab"] as Bloco["dia_semana"][])[jsDay];
 
-  const { data: disciplinasCatalog = [], isLoading: loadingDisciplinas } = useQuery({
+  const { data: disciplinasCatalog = [], isLoading: loadingDisciplinas, isError: disciplinasError, refetch: refetchDisciplinas } = useQuery({
     queryKey: ["disciplinas", "catalog", null],
     queryFn: async () => {
       const rows = (await api.get("/disciplinas")).data as Array<{
@@ -95,6 +104,7 @@ export function Cronograma() {
         concurso_ids: r.concurso_ids,
       })) as DisciplinaOption[];
     },
+    enabled: contextResolved && Boolean(concursoAtivoId),
   });
 
   /** Opções de criação e edição pertencentes exclusivamente ao concurso ativo. */
@@ -107,7 +117,7 @@ export function Cronograma() {
     [disciplinasCatalog],
   );
 
-  const { data: blocos, isLoading } = useQuery({
+  const { data: blocos, isLoading, isError: blocosError, refetch: refetchBlocos } = useQuery({
     queryKey: ["cronograma-blocos", concursoAtivoId ?? null],
     queryFn: async () =>
       (
@@ -115,11 +125,14 @@ export function Cronograma() {
           params: concursoAtivoId ? { concurso_id: concursoAtivoId } : {},
         })
       ).data as Bloco[],
+    enabled: contextResolved && Boolean(concursoAtivoId),
   });
 
   const { data: stats } = useQuery({
-    queryKey: ["sessoes-stats", concursoAtivoId ?? null],
+    // O endpoint não aceita concurso_id: estatística histórica do usuário, preservada entre trocas.
+    queryKey: ["sessoes-stats"],
     queryFn: async () => (await api.get("/sessoes-estudo/stats")).data as SessaoStats,
+    enabled: contextResolved && Boolean(concursoAtivoId),
   });
 
   const createMutation = useMutation({
@@ -241,6 +254,17 @@ export function Cronograma() {
   const [openRegistro, setOpenRegistro] = React.useState(false);
   const [agendaHojeOpen, setAgendaHojeOpen] = React.useState(false);
 
+  React.useEffect(() => {
+    setModoSelectorOpen(false);
+    setCreateOpen(false);
+    setAutoOpen(false);
+    setSimplificadaOpen(false);
+    setEditBloco(null);
+    setOpenRegistro(false);
+    setAgendaHojeOpen(false);
+    setRemoveTarget(null);
+  }, [concursoAtivoId]);
+
   function openCriarCronograma() {
     setModoSelectorOpen(true);
   }
@@ -294,6 +318,42 @@ export function Cronograma() {
     today.getMonth() + 1,
     hojeISO(),
   );
+
+  const contextStatus = resolveConcursoContextStatus({
+    resolved: contextResolved,
+    concursoId: concursoAtivoId,
+    essentialError: contextError || disciplinasError || blocosError,
+    essentialLoading: loadingDisciplinas || isLoading,
+    disciplinesLoaded: !loadingDisciplinas,
+    disciplinesCount: disciplinasDoConcursoAtivo.length,
+    planLoaded: !isLoading,
+    plannedItemsCount: blocos?.length,
+    actionableItemsCount: blocos?.length,
+  });
+
+  if (contextStatus === "hydrating") {
+    return <PageSkeleton cards={2} rows={3} />;
+  }
+
+  if (contextStatus === "no_contest") {
+    return (
+      <div className="space-y-6 pb-10">
+        <header>
+          <h1 className="text-xl font-semibold tracking-tight text-foreground">Cronograma</h1>
+          <p className="text-sm text-muted-foreground">Escolha um concurso antes de planejar sua semana.</p>
+        </header>
+        <BannerSemConcurso />
+      </div>
+    );
+  }
+
+  if (contextStatus === "error") {
+    return <div className="space-y-6 pb-10"><header><h1 className="text-xl font-semibold tracking-tight text-foreground">Cronograma</h1></header><div role="alert" className="rounded-xl border border-destructive/30 bg-card p-8 text-center"><h2 className="font-semibold">Não foi possível carregar o cronograma</h2><p className="mt-1 text-sm text-muted-foreground">Os dados anteriores foram ocultados. Tente novamente.</p><Button className="mt-5" onClick={() => void Promise.all([qc.invalidateQueries({ queryKey: ["concursos"] }), refetchDisciplinas(), refetchBlocos()])}>Tentar novamente</Button></div></div>;
+  }
+
+  if (contextStatus === "no_disciplines") {
+    return <div className="space-y-6 pb-10"><header><h1 className="text-xl font-semibold tracking-tight text-foreground">Cronograma</h1></header><EmptyState title="Adicione disciplinas antes de planejar" description="Vincule ao menos uma disciplina ao concurso ativo para criar horários compatíveis." action={<Button asChild><Link to="/disciplinas">Adicionar disciplinas</Link></Button>} /></div>;
+  }
 
   return (
     <div className="space-y-6 pb-10">
@@ -420,7 +480,7 @@ export function Cronograma() {
         open={agendaHojeOpen}
         onClose={() => setAgendaHojeOpen(false)}
         blocos={blocos ?? []}
-        disciplinaNome={(id) => discMap.get(id) ?? "Disciplina"}
+        disciplinaNome={(id) => discMap.get(id) ?? "Conteúdo indisponível"}
         onCriarCronograma={openCriarCronograma}
       />
 

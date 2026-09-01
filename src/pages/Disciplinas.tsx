@@ -18,9 +18,17 @@ import {
 import { getTopicosProgressFromCounts } from "@/components/disciplinas/disciplinaProgress";
 import type { Disciplina, FilterSeg } from "@/lib/disciplinas/types";
 import { api } from "@/services/api";
-import { useConcursoAtivoId } from "@/stores/concursoStore";
+import {
+  useConcursoAtivoId,
+  useConcursoContextError,
+  useConcursoContextResolved,
+} from "@/stores/concursoStore";
 import { useUiStore } from "@/stores/uiStore";
 import { CatalogPagination } from "@/components/editais/CatalogPagination";
+import { BannerSemConcurso } from "@/components/dashboard/BannerSemConcurso";
+import { Button } from "@/components/ui/button";
+import { PageSkeleton } from "@/components/ui/page-skeleton";
+import { resolveConcursoContextStatus } from "@/lib/concursos/context";
 
 type DisciplinaPage = {
   items: Disciplina[];
@@ -39,6 +47,8 @@ export function Disciplinas() {
   const PAGE_SIZE = 9;
   const qc = useQueryClient();
   const concursoAtivoId = useConcursoAtivoId();
+  const contextResolved = useConcursoContextResolved();
+  const contextError = useConcursoContextError();
   const concursoId = concursoAtivoId ?? "";
   const viewMode = useUiStore((s) => s.disciplinasViewMode);
   const setViewMode = useUiStore((s) => s.setDisciplinasViewMode);
@@ -71,12 +81,12 @@ export function Disciplinas() {
           },
         })
       ).data as DisciplinaPage,
-    enabled: viewMode !== "edital",
+    enabled: contextResolved && Boolean(concursoId) && viewMode !== "edital",
   });
   const editalQuery = useQuery({
     queryKey: ["disciplinas", "edital", concursoId || null],
     queryFn: async () => (await api.get("/disciplinas", { params: { include_topicos_stats: true, concurso_id: concursoId } })).data as Disciplina[],
-    enabled: viewMode === "edital" && Boolean(concursoId),
+    enabled: contextResolved && viewMode === "edital" && Boolean(concursoId),
   });
   React.useEffect(() => {
     if (pageQuery.data && pageQuery.data.total_pages > 0 && page > pageQuery.data.total_pages) {
@@ -148,6 +158,28 @@ export function Disciplinas() {
     setModalOpen(false);
     setEditingDisciplina(null);
   };
+
+  const selectedQueryLoading = viewMode === "edital" ? editalQuery.isLoading : pageQuery.isLoading;
+  const essentialError = viewMode === "edital" ? editalQuery.isError : pageQuery.isError;
+  const contextStatus = resolveConcursoContextStatus({
+    resolved: contextResolved,
+    concursoId: concursoAtivoId,
+    essentialError: contextError || essentialError,
+    essentialLoading: selectedQueryLoading,
+    disciplinesLoaded: !selectedQueryLoading,
+    disciplinesCount: viewMode === "edital" ? disciplinas.length : summary.n,
+  });
+
+  if (contextStatus === "hydrating") return <PageSkeleton cards={3} rows={2} />;
+
+  if (contextStatus === "no_contest") {
+    return <div className="space-y-6 pb-10"><header><h1 className="text-xl font-semibold tracking-tight text-foreground">Disciplinas &amp; Tópicos</h1><p className="text-sm text-muted-foreground">Escolha um concurso para organizar o conteúdo correto.</p></header><BannerSemConcurso /></div>;
+  }
+
+  if (contextStatus === "error") {
+    const retry = viewMode === "edital" ? editalQuery.refetch : pageQuery.refetch;
+    return <div className="space-y-6 pb-10"><header><h1 className="text-xl font-semibold tracking-tight text-foreground">Disciplinas &amp; Tópicos</h1></header><div role="alert" className="rounded-xl border border-destructive/30 bg-card p-8 text-center"><h2 className="font-semibold">Não foi possível carregar as disciplinas</h2><p className="mt-1 text-sm text-muted-foreground">O conteúdo anterior foi ocultado. Tente novamente.</p><Button className="mt-5" onClick={() => void Promise.all([qc.invalidateQueries({ queryKey: ["concursos"] }), retry()])}>Tentar novamente</Button></div></div>;
+  }
 
   return (
     <div className="min-h-full space-y-6 pb-10">

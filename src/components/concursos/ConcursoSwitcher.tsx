@@ -6,6 +6,7 @@ import { toast } from "sonner";
 
 import { cn } from "@/lib/utils";
 import { useListboxNavigation } from "@/hooks/useListboxNavigation";
+import { useConcursoContextTransition } from "@/hooks/useConcursoContextTransition";
 import { api } from "@/services/api";
 import { useConcursoStore } from "@/stores/concursoStore";
 
@@ -26,7 +27,7 @@ type ConcursoSwitcherProps = {
 export function ConcursoSwitcher({ collapsed = false, mobileOpen = false, onAfterPick }: ConcursoSwitcherProps) {
   const navigate = useNavigate();
   const concursoAtivoId = useConcursoStore((s) => s.concursoAtivoId);
-  const setConcursoAtivoId = useConcursoStore((s) => s.setConcursoAtivoId);
+  const transitionConcurso = useConcursoContextTransition();
 
   const { data: concursos = [] } = useQuery({
     queryKey: ["concursos"],
@@ -38,13 +39,18 @@ export function ConcursoSwitcher({ collapsed = false, mobileOpen = false, onAfte
   const ativo = concursos.find((c) => c.id === concursoAtivoId) ?? null;
 
   const pickConcurso = React.useCallback(
-    (c: ConcursoRow) => {
-      setConcursoAtivoId(c.id);
+    async (c: ConcursoRow) => {
+      if (c.id === concursoAtivoId) {
+        setOpen(false);
+        onAfterPick?.();
+        return;
+      }
+      await transitionConcurso(c.id, "sidebar");
       setOpen(false);
       toast.success(`Concurso ativo: ${c.orgao}`);
       onAfterPick?.();
     },
-    [setConcursoAtivoId, onAfterPick],
+    [concursoAtivoId, transitionConcurso, onAfterPick],
   );
 
   const { activeIndex, setActiveIndex, onKeyDown: onListboxKeyDown, getOptionId, listboxId, activeId } =

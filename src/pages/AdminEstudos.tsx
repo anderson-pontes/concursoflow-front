@@ -5,6 +5,7 @@ import { toast } from "sonner";
 
 import { CategoriaDeleteDialog } from "@/components/config-estudos/CategoriaDeleteDialog";
 import { CategoriaFormDialog } from "@/components/config-estudos/CategoriaFormDialog";
+import { TelemetryPreferenceCard } from "@/components/config-estudos/TelemetryPreferenceCard";
 import {
   REVISAO_DIAS_PADRAO,
   RevisaoDiasChips,
@@ -246,7 +247,7 @@ export function ConfiguracoesEstudos() {
         <h1 className="text-xl font-semibold tracking-tight text-neutral-900 dark:text-neutral-50">
           Configurações de estudos
         </h1>
-        <p className="text-sm text-muted-foreground">Categorias e ciclo padrão de revisão</p>
+        <p className="text-sm text-muted-foreground">Categorias, ciclo de revisão e privacidade</p>
       </div>
 
       <section className="rounded-xl border border-border bg-card p-4 shadow-sm sm:p-5">
@@ -351,6 +352,8 @@ export function ConfiguracoesEstudos() {
           </button>
         </div>
       </section>
+
+      <TelemetryPreferenceCard />
 
       <CategoriaFormDialog
         open={formOpen}

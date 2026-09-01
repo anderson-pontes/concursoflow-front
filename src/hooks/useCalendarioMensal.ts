@@ -3,11 +3,12 @@ import { useQuery } from "@tanstack/react-query";
 import type { CalendarioDia, CalendarioMesResponse } from "@/lib/calendario/types";
 import { fetchCalendarioMes } from "@/services/calendario";
 
-export function useCalendarioMensal(ano: number, mes: number, concursoId: string | null) {
+export function useCalendarioMensal(ano: number, mes: number, concursoId: string | null, enabled = true) {
   const query = useQuery({
     queryKey: ["calendario", ano, mes, concursoId],
     queryFn: () => fetchCalendarioMes({ ano, mes, concursoId }),
     staleTime: 60_000,
+    enabled: enabled && Boolean(concursoId),
   });
 
   const getDia = (data: string): CalendarioDia | undefined =>

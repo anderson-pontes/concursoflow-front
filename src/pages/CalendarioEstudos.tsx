@@ -1,10 +1,13 @@
 import React from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { isAxiosError } from "axios";
-import { useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 
 import { RegistroEstudoModal } from "@/components/estudos/RegistroEstudoModal";
+import { BannerSemConcurso } from "@/components/dashboard/BannerSemConcurso";
+import { Button } from "@/components/ui/button";
+import { PageSkeleton } from "@/components/ui/page-skeleton";
+import { EmptyState } from "@/components/ui/empty-state";
 import { CalendarioDiaDetalheDialog } from "@/components/calendario/CalendarioDiaDetalheDialog";
 import { CalendarioLegenda } from "@/components/calendario/CalendarioLegenda";
 import { CalendarioMensalGrid } from "@/components/calendario/CalendarioMensalGrid";
@@ -20,45 +23,29 @@ import {
   type SimplificadoEditPayload,
 } from "@/components/cronograma/CronogramaSimplificadoEditModal";
 import { useCalendarioMensal } from "@/hooks/useCalendarioMensal";
+import {
+  apiErrorMessage,
+  buildCalendarioSearch,
+  diaLabelFromISO,
+  editTitleForModo,
+} from "@/lib/calendario/pageHelpers";
 import { parseCalendarioSearchParams } from "@/lib/calendario/urlParams";
-import { diaLabels } from "@/lib/cronograma/constants";
 import type { Bloco, DisciplinaOption, FormState } from "@/lib/cronograma/types";
 import { blocoTopicoIds } from "@/lib/cronograma/types";
 import { api } from "@/services/api";
-import { useConcursoAtivoId } from "@/stores/concursoStore";
+import {
+  useConcursoAtivoId,
+  useConcursoContextError,
+  useConcursoContextResolved,
+} from "@/stores/concursoStore";
+import { resolveConcursoContextStatus } from "@/lib/concursos/context";
 
-function apiErrorMessage(err: unknown, fallback: string): string {
-  if (isAxiosError(err)) {
-    const detail = err.response?.data?.detail;
-    if (typeof detail === "string" && detail.trim()) return detail;
-  }
-  return fallback;
-}
-
-function editTitleForModo(modo: string | undefined): string {
-  if (modo === "automatica") return "Editar horário (Automática)";
-  if (modo === "simplificada") return "Editar horário (Simplificada)";
-  return "Editar horário (Analítica)";
-}
-
-function diaLabelFromISO(iso: string): string {
-  const [y, m, d] = iso.split("-").map(Number);
-  const jsDay = new Date(y, m - 1, d).getDay();
-  const keys = ["dom", "seg", "ter", "qua", "qui", "sex", "sab"] as const;
-  return diaLabels[keys[jsDay]];
-}
-
-function buildSearch(ano: number, mes: number, data: string | null): URLSearchParams {
-  const next = new URLSearchParams();
-  next.set("ano", String(ano));
-  next.set("mes", String(mes));
-  if (data) next.set("data", data);
-  return next;
-}
 
 export function CalendarioEstudos() {
   const qc = useQueryClient();
   const concursoAtivoId = useConcursoAtivoId();
+  const contextResolved = useConcursoContextResolved();
+  const contextError = useConcursoContextError();
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [ano, setAno] = React.useState(() => parseCalendarioSearchParams(searchParams).ano);
@@ -82,7 +69,7 @@ export function CalendarioEstudos() {
 
   const syncUrl = React.useCallback(
     (nextAno: number, nextMes: number, nextData: string | null) => {
-      const desired = buildSearch(nextAno, nextMes, nextData);
+      const desired = buildCalendarioSearch(nextAno, nextMes, nextData);
       if (desired.toString() === searchParams.toString()) return;
       writingUrl.current = true;
       setSearchParams(desired, { replace: true });
@@ -113,9 +100,9 @@ export function CalendarioEstudos() {
     syncUrl(ano, mes, detalheOpen && diaSel ? diaSel : null);
   }, [ano, mes, diaSel, detalheOpen, syncUrl]);
 
-  const { dias, resumo, isLoading, isError } = useCalendarioMensal(ano, mes, concursoAtivoId);
+  const { dias, resumo, isLoading, isError, refetch } = useCalendarioMensal(ano, mes, concursoAtivoId, contextResolved);
 
-  const { data: disciplinasCatalog = [] } = useQuery({
+  const { data: disciplinasCatalog = [], isLoading: disciplinasLoading, isError: disciplinasError, refetch: refetchDisciplinas } = useQuery({
     queryKey: ["disciplinas", "catalog", null],
     queryFn: async () => {
       const rows = (await api.get("/disciplinas")).data as Array<{
@@ -135,6 +122,7 @@ export function CalendarioEstudos() {
         concurso_ids: r.concurso_ids,
       })) as DisciplinaOption[];
     },
+    enabled: contextResolved && Boolean(concursoAtivoId),
   });
 
   const disciplinas = React.useMemo(() => {
@@ -143,8 +131,12 @@ export function CalendarioEstudos() {
     const rest = disciplinasCatalog.filter((d) => !d.concurso_ids?.includes(concursoAtivoId));
     return linked.length > 0 ? [...linked, ...rest] : disciplinasCatalog;
   }, [disciplinasCatalog, concursoAtivoId]);
+  const disciplinasVinculadas = React.useMemo(
+    () => disciplinasCatalog.filter((disciplina) => disciplina.concurso_ids?.includes(concursoAtivoId ?? "")),
+    [disciplinasCatalog, concursoAtivoId],
+  );
 
-  const { data: blocos = [] } = useQuery({
+  const { data: blocos = [], isLoading: blocosLoading, isError: blocosError, refetch: refetchBlocos } = useQuery({
     queryKey: ["cronograma-blocos", concursoAtivoId ?? null],
     queryFn: async () =>
       (
@@ -152,7 +144,17 @@ export function CalendarioEstudos() {
           params: concursoAtivoId ? { concurso_id: concursoAtivoId } : {},
         })
       ).data as Bloco[],
+    enabled: contextResolved && Boolean(concursoAtivoId),
   });
+
+  React.useEffect(() => {
+    setDetalheOpen(false);
+    setDiaSel(null);
+    setRegistroOpen(false);
+    setRegistroData(null);
+    setEditBloco(null);
+    setRemoveTarget(null);
+  }, [concursoAtivoId]);
 
   const blocosById = React.useMemo(() => new Map(blocos.map((b) => [b.id, b])), [blocos]);
 
@@ -262,6 +264,36 @@ export function CalendarioEstudos() {
     });
   };
 
+  const contextStatus = resolveConcursoContextStatus({
+    resolved: contextResolved,
+    concursoId: concursoAtivoId,
+    essentialError: contextError || isError || disciplinasError || blocosError,
+    essentialLoading: isLoading || disciplinasLoading || blocosLoading,
+    disciplinesLoaded: !disciplinasLoading,
+    disciplinesCount: disciplinasVinculadas.length,
+    planLoaded: !isLoading,
+    plannedItemsCount: resumo?.dias_com_planejamento,
+    actionableItemsCount: resumo?.dias_com_planejamento,
+  });
+
+  if (contextStatus === "hydrating") return <PageSkeleton cards={2} rows={3} />;
+
+  if (contextStatus === "no_contest") {
+    return <div className="space-y-6 pb-8"><header><h1 className="text-xl font-semibold tracking-tight text-foreground">Calendário de estudos</h1><p className="text-sm text-muted-foreground">Escolha um concurso antes de acompanhar o planejamento.</p></header><BannerSemConcurso /></div>;
+  }
+
+  if (contextStatus === "error") {
+    return <div className="space-y-6 pb-8"><header><h1 className="text-xl font-semibold tracking-tight text-foreground">Calendário de estudos</h1></header><div role="alert" className="rounded-xl border border-destructive/30 bg-card p-8 text-center"><h2 className="font-semibold">Não foi possível carregar o calendário</h2><p className="mt-1 text-sm text-muted-foreground">Tente novamente sem perder o concurso selecionado.</p><Button className="mt-5" onClick={() => void Promise.all([qc.invalidateQueries({ queryKey: ["concursos"] }), refetch(), refetchDisciplinas(), refetchBlocos()])}>Tentar novamente</Button></div></div>;
+  }
+
+  if (contextStatus === "no_disciplines") {
+    return <div className="space-y-6 pb-8"><header><h1 className="text-xl font-semibold tracking-tight text-foreground">Calendário de estudos</h1></header><EmptyState title="Adicione disciplinas para montar o calendário" description="O calendário será criado a partir do conteúdo vinculado ao concurso ativo." action={<Button asChild><Link to="/disciplinas">Adicionar disciplinas</Link></Button>} /></div>;
+  }
+
+  if (contextStatus === "no_plan") {
+    return <div className="space-y-6 pb-8"><header><h1 className="text-xl font-semibold tracking-tight text-foreground">Calendário de estudos</h1></header><EmptyState title="Seu calendário ainda não tem planejamento" description="Crie um cronograma para distribuir as disciplinas ao longo do mês." action={<Button asChild><Link to="/cronograma">Criar cronograma</Link></Button>} /></div>;
+  }
+
   return (
     <div className="space-y-6 pb-8">
       <div>
@@ -282,8 +314,6 @@ export function CalendarioEstudos() {
       <section className="rounded-xl border border-border bg-card p-4 shadow-sm">
         {isLoading ? (
           <p className="py-12 text-center text-sm text-muted-foreground">Carregando…</p>
-        ) : isError ? (
-          <p className="py-12 text-center text-sm text-destructive">Erro ao carregar calendário.</p>
         ) : (
           <CalendarioMensalGrid ano={ano} mes={mes} dias={dias} onDiaClick={openDia} />
         )}

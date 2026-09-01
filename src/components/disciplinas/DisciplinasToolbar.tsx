@@ -2,9 +2,9 @@ import { BookOpenText, LayoutGrid, List, Plus, Search } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 
 import { cn } from "@/lib/utils";
+import { useConcursoContextTransition } from "@/hooks/useConcursoContextTransition";
 import type { FilterSeg } from "@/lib/disciplinas/types";
 import { api } from "@/services/api";
-import { useConcursoStore } from "@/stores/concursoStore";
 import { SelectField } from "@/components/ui/select-field";
 
 export type DisciplinasSummary = {
@@ -40,7 +40,7 @@ export function DisciplinasToolbar({
   viewMode,
   onViewModeChange,
 }: DisciplinasToolbarProps) {
-  const setConcursoAtivoId = useConcursoStore((s) => s.setConcursoAtivoId);
+  const transitionConcurso = useConcursoContextTransition();
   const { data: concursos = [] } = useQuery({
     queryKey: ["concursos"],
     queryFn: async () =>
@@ -99,7 +99,7 @@ export function DisciplinasToolbar({
               aria-label="Concurso ativo"
               className="min-w-[12rem]"
               value={concursoId}
-              onValueChange={(value) => setConcursoAtivoId(value || null)}
+              onValueChange={(value) => void transitionConcurso(value || null)}
               options={[{ value: "", label: "Concurso ativo…" }, ...concursos.map((c) => ({ value: c.id, label: `${c.orgao} — ${c.cargo ?? c.nome}` }))]}
             />
           ) : null}
