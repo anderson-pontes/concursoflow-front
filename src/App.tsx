@@ -41,7 +41,6 @@ const GestaoUsuarios = lazyNamed(() => import("./pages/admin/GestaoUsuarios"), "
 const UsuarioDetalhe = lazyNamed(() => import("./pages/admin/UsuarioDetalhe"), "UsuarioDetalhe");
 const EditaisCatalogo = lazyNamed(() => import("./pages/admin/EditaisCatalogo"), "EditaisCatalogo");
 const EditalCatalogoEditor = lazyNamed(() => import("./pages/admin/EditalCatalogoEditor"), "EditalCatalogoEditor");
-const AtivarEditalCatalogo = lazyNamed(() => import("./pages/AtivarEditalCatalogo"), "AtivarEditalCatalogo");
 const PlanoGuiado = lazyNamed(() => import("./pages/PlanoGuiado"), "PlanoGuiado");
 const ReplanejarPlano = lazyNamed(() => import("./pages/ReplanejarPlano"), "ReplanejarPlano");
 const Perfil = lazyNamed(() => import("./pages/Perfil"), "Perfil");
@@ -128,11 +127,7 @@ export default function App() {
       <Route path="/concursos/planos/:id" element={<Navigate to="/concursos" replace />} />
       <Route
         path="/concursos/adicionar"
-        element={
-          <Layout requireAuth={!isAuthed}>
-            <LazyPage><AtivarEditalCatalogo /></LazyPage>
-          </Layout>
-        }
+        element={<Navigate to="/planos/novo?origem=catalogo" replace />}
       />
       <Route
         path="/planos/novo"

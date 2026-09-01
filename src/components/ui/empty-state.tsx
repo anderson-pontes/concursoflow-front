@@ -6,10 +6,11 @@ type EmptyStateProps = React.ComponentProps<"div"> & {
   icon?: LucideIcon
   title: string
   description?: string
+  supportingContent?: React.ReactNode
   action?: React.ReactNode
 }
 
-function EmptyState({ icon: Icon, title, description, action, className, ...props }: EmptyStateProps) {
+function EmptyState({ icon: Icon, title, description, supportingContent, action, className, ...props }: EmptyStateProps) {
   return (
     <div
       className={cn(
@@ -25,6 +26,7 @@ function EmptyState({ icon: Icon, title, description, action, className, ...prop
       ) : null}
       <h2 className="text-base font-semibold text-foreground">{title}</h2>
       {description ? <p className="mt-1 max-w-md text-sm text-muted-foreground">{description}</p> : null}
+      {supportingContent ? <div className="mt-5 w-full">{supportingContent}</div> : null}
       {action ? <div className="mt-5">{action}</div> : null}
     </div>
   )

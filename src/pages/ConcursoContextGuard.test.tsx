@@ -61,7 +61,7 @@ describe("isolamento sem concurso ativo", () => {
     renderWithApp(<Dashboard />, queryClient);
 
     expect(screen.getByRole("heading", { level: 1, name: "Painel" })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Escolher edital" })).toHaveAttribute("href", "/planos/novo");
+    expect(screen.getByRole("link", { name: "Escolher edital" })).toHaveAttribute("href", "/planos/novo?origem=catalogo");
     expect(screen.getByRole("link", { name: "Cadastrar manualmente" })).toHaveAttribute(
       "href",
       "/concursos?novo=manual",

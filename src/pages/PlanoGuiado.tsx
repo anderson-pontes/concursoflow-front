@@ -1,10 +1,11 @@
 import React from "react";
-import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, CalendarClock, Check, Plus, Search, Sparkles, Trash2 } from "lucide-react";
+import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, CalendarClock, Check, CircleCheck, Plus, Search, Sparkles, Trash2 } from "lucide-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Checkbox } from "@/components/ui/checkbox";
 import { DatePicker } from "@/components/ui/date-picker";
 import { SelectField } from "@/components/ui/select-field";
@@ -13,6 +14,7 @@ import { CatalogDetailsDialog } from "@/components/editais/CatalogDetailsDialog"
 import { PublicCatalogResults } from "@/components/editais/PublicCatalogResults";
 import { CatalogViewToggle, type CatalogViewMode } from "@/components/editais/CatalogViewToggle";
 import { cn } from "@/lib/utils";
+import { clearOnboardingDraft, readOnboardingDraft, saveOnboardingDraft, type OnboardingDraft } from "@/lib/onboardingDraftStorage";
 import { useConcursoContextTransition } from "@/hooks/useConcursoContextTransition";
 import type { Disciplina } from "@/lib/disciplinas/types";
 import { api } from "@/services/api";
@@ -20,7 +22,8 @@ import { obterEditalPublicado, paginarEditaisPublicados } from "@/services/edita
 import { confirmarPlanoGuiado, previewPlanejamento } from "@/services/planejamento";
 import { createTelemetryJourney, telemetryErrorCode, trackCatalogItemForActivation, trackTelemetry } from "@/services/telemetry";
 import { useConcursoStore } from "@/stores/concursoStore";
-import type { ConfigPlanejamento, DisciplinaPlanoInput, NivelConhecimento, TipoPlanoGuiado } from "@/types/planejamento";
+import { useAuthStore } from "@/stores/authStore";
+import type { ConfigPlanejamento, DisciplinaPlanoInput, NivelConhecimento, PlanoGuiadoResponse, TipoPlanoGuiado } from "@/types/planejamento";
 
 const ETAPAS = ["Origem", "Concurso", "Conteúdo", "Planejamento", "Revisão"];
 const DIAS = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"];
@@ -33,8 +36,10 @@ function uuid() { return crypto?.randomUUID?.() ?? `plano-${Date.now()}-${Math.r
 function isoDate(offset = 0) { const d = new Date(); d.setDate(d.getDate() + offset); return d.toISOString().slice(0, 10); }
 
 export function PlanoGuiado() {
-  const [step, setStep] = React.useState(1);
-  const [tipo, setTipo] = React.useState<TipoPlanoGuiado | null>(null);
+  const [searchParams] = useSearchParams();
+  const catalogEntry = searchParams.get("origem") === "catalogo";
+  const [step, setStep] = React.useState(catalogEntry ? 2 : 1);
+  const [tipo, setTipo] = React.useState<TipoPlanoGuiado | null>(catalogEntry ? "catalogo" : null);
   const [busca, setBusca] = React.useState("");
   const buscaCatalogo = React.useDeferredValue(busca.trim());
   const [catalogPage, setCatalogPage] = React.useState(1);
@@ -48,12 +53,30 @@ export function PlanoGuiado() {
   const [disciplinas, setDisciplinas] = React.useState<DisciplinaPlanoInput[]>([]);
   const [novoNome, setNovoNome] = React.useState(""); const [novosTopicos, setNovosTopicos] = React.useState("");
   const [config, setConfig] = React.useState<ConfigPlanejamento>({ tipo: "ciclo", disponibilidade_minutos: { 0: 60, 1: 60, 2: 60, 3: 60, 4: 60 }, sessao_min_minutos: 25, sessao_max_minutos: 50, data_inicio: isoDate(), data_fim: isoDate(90) });
-  const idempotency = React.useRef(uuid()); const headingRef = React.useRef<HTMLHeadingElement>(null);
+  const [draftCandidate, setDraftCandidate] = React.useState<OnboardingDraft | null>(null);
+  const [draftReady, setDraftReady] = React.useState(false);
+  const [completedPlan, setCompletedPlan] = React.useState<PlanoGuiadoResponse | null>(null);
+  const idempotency = React.useRef<string>(uuid()); const headingRef = React.useRef<HTMLHeadingElement>(null);
+  const restoredVersionId = React.useRef<string | null>(null);
   const telemetryJourney = React.useRef(createTelemetryJourney());
   const activationStarted = React.useRef(false);
   const openedCatalogItems = React.useRef(new Set<string>());
   const lastTrackedSearch = React.useRef("");
   const navigate = useNavigate(); const qc = useQueryClient(); const transitionConcurso = useConcursoContextTransition();
+  const userScope = useAuthStore((state) => state.user?.id ?? "");
+
+  React.useEffect(() => {
+    if (!userScope) return;
+    setDraftCandidate(null);
+    setDraftReady(false);
+    const result = readOnboardingDraft(userScope);
+    if (result.status === "available") {
+      setDraftCandidate(result.draft);
+      return;
+    }
+    if (result.status === "discarded") toast.info("Um rascunho antigo ou inválido foi descartado com segurança.");
+    setDraftReady(true);
+  }, [userScope]);
 
   React.useEffect(() => setCatalogPage(1), [buscaCatalogo]);
   const catalogo = useQuery({ queryKey: ["catalogo-editais", buscaCatalogo, catalogPage], queryFn: () => paginarEditaisPublicados({ search: buscaCatalogo, page: catalogPage, pageSize: 8 }), enabled: tipo === "catalogo" });
@@ -68,6 +91,80 @@ export function PlanoGuiado() {
   const detalhe = useQuery({ queryKey: ["catalogo-edital", editalId], queryFn: () => obterEditalPublicado(editalId!), enabled: Boolean(editalId) });
   const pessoais = useQuery({ queryKey: ["disciplinas", "catalogo-plano"], queryFn: async () => (await api.get<Disciplina[]>("/disciplinas", { params: { include_topicos_stats: true } })).data, enabled: tipo === "personalizado" });
   const edital = detalhe.data ?? catalogo.data?.items.find((item) => item.id === editalId); const versao = edital?.versao_atual; const cargo = versao?.cargos.find((item) => item.id === cargoId);
+
+  const resumeDraft = () => {
+    if (!draftCandidate) return;
+    setStep(draftCandidate.step);
+    setTipo(draftCandidate.tipo);
+    setBusca(draftCandidate.busca);
+    setEditalId(draftCandidate.editalId);
+    setCargoId(draftCandidate.cargoId);
+    setNome(draftCandidate.nome);
+    setOrgao(draftCandidate.orgao);
+    setCargoNome(draftCandidate.cargoNome);
+    setBanca(draftCandidate.banca);
+    setDataProva(draftCandidate.dataProva);
+    setObservacoes(draftCandidate.observacoes);
+    setDisciplinas(draftCandidate.disciplinas);
+    setConfig(draftCandidate.config);
+    idempotency.current = draftCandidate.idempotencyKey;
+    restoredVersionId.current = draftCandidate.versionId;
+    setDraftCandidate(null);
+    setDraftReady(true);
+    activationStarted.current = true;
+    const resumedStep = (["contest", "contest", "subjects", "planning", "planning"] as const)[draftCandidate.step - 1];
+    telemetryJourney.current.track("activation_resumed", {
+      step: resumedStep,
+      step_position: draftCandidate.step,
+    });
+    toast.success("Rascunho retomado. Confira os dados antes de confirmar.");
+  };
+
+  const discardDraft = () => {
+    clearOnboardingDraft(userScope);
+    setDraftCandidate(null);
+    setDraftReady(true);
+    toast.info("Rascunho descartado.");
+  };
+
+  React.useEffect(() => {
+    if (!draftReady || !userScope || completedPlan) return;
+    const hasProgress = Boolean(nome.trim() || editalId || disciplinas.length);
+    if (!hasProgress) return;
+    const timer = window.setTimeout(() => {
+      saveOnboardingDraft(userScope, {
+        idempotencyKey: idempotency.current,
+        step,
+        tipo,
+        busca,
+        editalId,
+        versionId: versao?.id ?? restoredVersionId.current,
+        cargoId,
+        nome,
+        orgao,
+        cargoNome,
+        banca,
+        dataProva,
+        observacoes,
+        disciplinas,
+        config,
+      });
+    }, 250);
+    return () => window.clearTimeout(timer);
+  }, [banca, busca, cargoId, cargoNome, completedPlan, config, dataProva, disciplinas, draftReady, editalId, nome, observacoes, orgao, step, tipo, userScope, versao?.id]);
+
+  React.useEffect(() => {
+    if (!draftReady || !restoredVersionId.current || !detalhe.data) return;
+    const versionIsAvailable = detalhe.data.versao_atual?.id === restoredVersionId.current;
+    const cargoIsAvailable = detalhe.data.versao_atual?.cargos.some((item) => item.id === cargoId);
+    restoredVersionId.current = null;
+    if (versionIsAvailable && cargoIsAvailable) return;
+    setStep(2);
+    setCargoId(null);
+    setDisciplinas([]);
+    telemetryJourney.current.track("activation_failed", { stage: "details", error_code: "unavailable" });
+    toast.warning("A versão ou o cargo do rascunho não está mais disponível. Faça uma nova seleção.");
+  }, [cargoId, detalhe.data, draftReady]);
 
   const preview = useMutation({
     mutationFn: () => previewPlanejamento(disciplinas.filter((d) => d.ativa), config),
@@ -95,8 +192,9 @@ export function PlanoGuiado() {
       });
       await Promise.all([qc.invalidateQueries({ queryKey: ["concursos"] }), qc.invalidateQueries({ queryKey: ["disciplinas"] })]);
       await transitionConcurso(result.concurso_id, tipo === "catalogo" ? "catalog" : "settings");
+      clearOnboardingDraft(userScope);
       toast.success("Plano criado e pronto para estudar.");
-      navigate("/dashboard");
+      setCompletedPlan(result);
     },
     onError: (error) => {
       const errorCode = telemetryErrorCode(error);
@@ -106,7 +204,7 @@ export function PlanoGuiado() {
     },
   });
 
-  React.useEffect(() => { headingRef.current?.focus(); }, [step]);
+  React.useEffect(() => { headingRef.current?.focus(); }, [step, completedPlan]);
   const ensureActivationStarted = (mode: TipoPlanoGuiado) => {
     if (activationStarted.current) return;
     activationStarted.current = true;
@@ -131,7 +229,7 @@ export function PlanoGuiado() {
   };
   const selecionarEdital = (id: string) => { ensureCatalogItemOpened(id); setEditalId(id); setCargoId(null); setDisciplinas([]); };
   const openCatalogDetails = (id: string) => { ensureCatalogItemOpened(id); setDetailsId(id); };
-  const selecionarCargo = (id: string) => { const selected = versao?.cargos.find((item) => item.id === id); if (!selected || !edital) return; setCargoId(id); setNome(edital.nome); setOrgao(edital.orgao); setBanca(edital.banca ?? ""); setCargoNome(selected.nome); setDisciplinas(selected.disciplinas.map((d, ordem) => ({ disciplina_id: d.id, nome: d.nome, sigla: d.sigla, topicos: d.topicos.map((t) => t.descricao), ativa: true, peso: 5, conhecimento: "regular", ordem }))); };
+  const selecionarCargo = (id: string) => { const selected = versao?.cargos.find((item) => item.id === id); if (!selected || !edital) return; setCargoId(id); setNome(edital.nome); setOrgao(edital.orgao); setBanca(edital.banca ?? ""); setCargoNome(selected.nome); setDataProva(versao?.data_prova ?? ""); setDisciplinas(selected.disciplinas.map((d, ordem) => ({ disciplina_id: d.id, nome: d.nome, sigla: d.sigla, topicos: d.topicos.map((t) => t.descricao), ativa: true, peso: 5, conhecimento: "regular", ordem }))); };
   const togglePessoal = (d: Disciplina) => setDisciplinas((items) => items.some((x) => x.disciplina_id === d.id) ? items.filter((x) => x.disciplina_id !== d.id) : [...items, { disciplina_id: d.id, nome: d.nome, sigla: d.sigla, topicos: [], ativa: true, peso: 5, conhecimento: "regular", ordem: items.length }]);
   const adicionarDisciplina = () => { if (!novoNome.trim()) return; setDisciplinas((items) => [...items, { nome: novoNome.trim(), topicos: novosTopicos.split(/\r?\n/).map((x) => x.trim()).filter(Boolean), ativa: true, peso: 5, conhecimento: "regular", ordem: items.length }]); setNovoNome(""); setNovosTopicos(""); };
   const updateDisc = (index: number, patch: Partial<DisciplinaPlanoInput>) => setDisciplinas((items) => items.map((item, i) => i === index ? { ...item, ...patch } : item));
@@ -146,21 +244,55 @@ export function PlanoGuiado() {
     if (step === 4) { preview.mutate(undefined, { onSuccess: () => setStep(5) }); return; }
     setStep((s) => Math.min(5, s + 1));
   };
+  const compactCatalogJourney = tipo === "catalogo" && step >= 2;
+  const visibleSteps = compactCatalogJourney ? ETAPAS.slice(1) : ETAPAS;
+  const visibleStep = compactCatalogJourney ? step - 1 : step;
+
+  if (draftCandidate) {
+    return <div className="mx-auto max-w-3xl space-y-6 pb-8">
+      <header><h1 className="text-2xl font-bold">Continuar configuração</h1><p className="mt-1 text-sm text-muted-foreground">Encontramos um progresso salvo neste dispositivo.</p></header>
+      <Alert className="grid-cols-[auto_1fr] p-5">
+        <Sparkles className="text-primary" />
+        <AlertTitle>Retomar seu plano em andamento?</AlertTitle>
+        <AlertDescription>
+          <p>Você parou na etapa {draftCandidate.step} de 5. O rascunho é exclusivo da sua conta e ainda não criou ou alterou nenhum concurso.</p>
+          <div className="mt-4 flex flex-col gap-2 sm:flex-row">
+            <Button type="button" onClick={resumeDraft}>Retomar rascunho</Button>
+            <Button type="button" variant="outline" onClick={discardDraft}>Descartar e começar novamente</Button>
+          </div>
+        </AlertDescription>
+      </Alert>
+    </div>;
+  }
+
+  if (completedPlan) {
+    return <div className="mx-auto max-w-3xl pb-8">
+      <section className="rounded-2xl border border-success/30 bg-card p-6 text-center shadow-sm sm:p-10" aria-live="polite">
+        <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-success/10 text-success"><CircleCheck className="h-7 w-7" /></span>
+        <h1 ref={headingRef} tabIndex={-1} className="mt-5 text-2xl font-bold outline-none">Seu plano está pronto</h1>
+        <p className="mx-auto mt-2 max-w-xl text-sm text-muted-foreground">Criamos {completedPlan.sessoes_planejadas} sessões com {completedPlan.disciplinas_criadas} disciplinas. Confira sua próxima atividade e comece a estudar.</p>
+        <div className="mt-6 flex flex-col justify-center gap-2 sm:flex-row">
+          <Button type="button" onClick={() => navigate("/dashboard")}>Ver próxima ação <ArrowRight /></Button>
+          <Button asChild variant="outline"><Link to="/cronograma">Revisar cronograma</Link></Button>
+        </div>
+      </section>
+    </div>;
+  }
 
   return <div className="mx-auto max-w-6xl space-y-6 pb-28 sm:pb-8">
-    <header><Link to="/concursos" className="inline-flex min-h-11 items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground"><ArrowLeft className="h-4 w-4" /> Meus concursos</Link><h1 ref={headingRef} tabIndex={-1} className="mt-2 text-2xl font-bold outline-none">Criar plano de estudos</h1><p className="mt-1 text-sm text-muted-foreground">Monte o conteúdo, informe sua rotina e receba um planejamento pronto.</p></header>
-    <ol className="grid grid-cols-5 gap-2" aria-label="Etapas do plano">{ETAPAS.map((label, i) => <li key={label} aria-current={step === i + 1 ? "step" : undefined} className={cn("rounded-lg border px-2 py-3 text-center text-xs font-semibold", step === i + 1 ? "border-primary bg-primary-muted text-primary" : step > i + 1 ? "border-success/40 bg-success/10" : "border-border text-muted-foreground")}><span className="mr-1 hidden sm:inline">{step > i + 1 ? "✓" : i + 1}.</span>{label}</li>)}</ol>
-    <main className="rounded-2xl border border-border bg-card p-4 shadow-sm sm:p-6">
+    <header><Link to="/concursos" className="inline-flex min-h-11 items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground"><ArrowLeft className="h-4 w-4" /> Meus concursos</Link><h1 ref={headingRef} tabIndex={-1} className="mt-2 text-2xl font-bold outline-none">Criar plano de estudos<span className="sr-only"> — etapa {visibleStep}: {visibleSteps[visibleStep - 1]}</span></h1><p className="mt-1 text-sm text-muted-foreground">Monte o conteúdo, informe sua rotina e receba um planejamento pronto.</p></header>
+    <ol className={cn("grid gap-2", compactCatalogJourney ? "grid-cols-4" : "grid-cols-5")} aria-label="Etapas do plano">{visibleSteps.map((label, i) => <li key={label} aria-current={visibleStep === i + 1 ? "step" : undefined} className={cn("rounded-lg border px-2 py-3 text-center text-xs font-semibold", visibleStep === i + 1 ? "border-primary bg-primary-muted text-primary" : visibleStep > i + 1 ? "border-success/40 bg-success/10" : "border-border text-muted-foreground")}><span className="mr-1 hidden sm:inline">{visibleStep > i + 1 ? "✓" : i + 1}.</span>{label}</li>)}</ol>
+    <main className="rounded-2xl border border-border bg-card p-4 shadow-sm sm:p-6" aria-live="polite">
       {step === 1 && <section><StepTitle title="Como você quer começar?" text="Use um edital pronto ou monte um plano personalizado com suas disciplinas." /><div className="mt-5 grid gap-4 sm:grid-cols-2">{([{ id: "catalogo", title: "Escolher edital publicado", text: "Cargo, disciplinas e tópicos já verticalizados." }, { id: "personalizado", title: "Criar plano personalizado", text: "Aproveite disciplinas existentes ou cadastre novas." }] as const).map((option) => <button key={option.id} type="button" aria-pressed={tipo === option.id} onClick={() => selectOrigin(option.id)} className={cn("min-h-32 rounded-xl border p-5 text-left focus-visible:ring-2 focus-visible:ring-ring", tipo === option.id ? "border-primary bg-primary-muted ring-1 ring-primary" : "border-border hover:border-primary/50")}><Sparkles className="h-6 w-6 text-primary" /><strong className="mt-3 block">{option.title}</strong><span className="mt-1 block text-sm text-muted-foreground">{option.text}</span></button>)}</div></section>}
-      {step === 2 && tipo === "catalogo" && <section><div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between"><StepTitle title="Escolha o concurso e o cargo" text="Pesquise no catálogo de versões revisadas e publicadas." /><CatalogViewToggle value={catalogViewMode} onValueChange={setCatalogViewMode} /></div><label className="relative mt-5 block"><Search className="absolute left-3 top-3.5 h-4 w-4 text-muted-foreground" /><span className="sr-only">Buscar edital</span><input value={busca} onChange={(e) => setBusca(e.target.value)} placeholder="Buscar concurso, órgão, banca ou cargo" className="min-h-11 w-full rounded-lg border border-border bg-background pl-9 pr-3" /></label>{catalogo.data?.items.length ? <PublicCatalogResults items={catalogo.data.items} selectedId={editalId} viewMode={catalogViewMode} onSelect={selecionarEdital} onViewDetails={openCatalogDetails} /> : null}{catalogo.isLoading && <p role="status" className="py-8 text-center text-sm text-muted-foreground">Carregando editais…</p>}{catalogo.data?.items.length ? <div className="mt-5"><CatalogPagination page={catalogo.data.page} totalPages={catalogo.data.total_pages} total={catalogo.data.total} onPageChange={setCatalogPage} /></div> : null}{!catalogo.isLoading && !catalogo.data?.items.length ? <p className="py-10 text-center text-sm text-muted-foreground">Nenhum edital corresponde à busca.</p> : null}{editalId && <div className="mt-6"><h3 className="font-semibold">Cargo ou especialidade</h3><div className="mt-3 grid gap-3 sm:grid-cols-2">{versao?.cargos.map((item) => <button type="button" role="radio" aria-checked={cargoId === item.id} key={item.id} onClick={() => selecionarCargo(item.id)} className={cn("rounded-xl border p-4 text-left", cargoId === item.id ? "border-primary bg-primary-muted" : "border-border")}><strong>{item.nome}</strong><span className="mt-1 block text-xs text-muted-foreground">{item.disciplinas.length} disciplinas</span></button>)}</div></div>}</section>}
+      {step === 2 && tipo === "catalogo" && <section><div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between"><StepTitle title="Escolha o concurso e o cargo" text="Pesquise no catálogo de versões revisadas e publicadas." /><CatalogViewToggle value={catalogViewMode} onValueChange={setCatalogViewMode} /></div><label className="relative mt-5 block"><Search className="absolute left-3 top-3.5 h-4 w-4 text-muted-foreground" /><span className="sr-only">Buscar edital</span><input value={busca} onChange={(e) => setBusca(e.target.value)} placeholder="Buscar concurso, órgão, banca ou cargo" className="min-h-11 w-full rounded-lg border border-border bg-background pl-9 pr-3" /></label>{catalogo.data?.items.length ? <PublicCatalogResults items={catalogo.data.items} selectedId={editalId} viewMode={catalogViewMode} onSelect={selecionarEdital} onViewDetails={openCatalogDetails} /> : null}{catalogo.isLoading && <p role="status" className="py-8 text-center text-sm text-muted-foreground">Carregando editais…</p>}{catalogo.isError && <Alert variant="destructive" className="mt-5"><Search /><AlertTitle>Não foi possível carregar o catálogo</AlertTitle><AlertDescription><Button type="button" variant="outline" className="mt-3" onClick={() => void catalogo.refetch()}>Tentar novamente</Button></AlertDescription></Alert>}{catalogo.data?.items.length ? <div className="mt-5"><CatalogPagination page={catalogo.data.page} totalPages={catalogo.data.total_pages} total={catalogo.data.total} onPageChange={setCatalogPage} /></div> : null}{!catalogo.isLoading && !catalogo.isError && !catalogo.data?.items.length ? <div className="py-10 text-center"><p className="text-sm text-muted-foreground">Nenhum edital corresponde à busca.</p><Button asChild variant="outline" className="mt-4"><Link to="/concursos?novo=manual">Cadastrar concurso manualmente</Link></Button></div> : null}{editalId && <div className="mt-6"><h3 className="font-semibold">Cargo ou especialidade</h3><div className="mt-3 grid gap-3 sm:grid-cols-2">{versao?.cargos.map((item) => <button type="button" role="radio" aria-checked={cargoId === item.id} key={item.id} onClick={() => selecionarCargo(item.id)} className={cn("rounded-xl border p-4 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring", cargoId === item.id ? "border-primary bg-primary-muted" : "border-border")}><strong>{item.nome}</strong><span className="mt-1 block text-xs text-muted-foreground">{item.disciplinas.length} disciplinas</span></button>)}</div></div>}</section>}
       {step === 2 && tipo === "personalizado" && <section><StepTitle title="Identifique seu plano" text="Essas informações ajudam a separar seus objetivos e histórico." /><div className="mt-5 grid gap-4 sm:grid-cols-2"><Field label="Nome do concurso ou plano"><input value={nome} onChange={(e) => setNome(e.target.value)} className="input-base" /></Field><Field label="Órgão"><input value={orgao} onChange={(e) => setOrgao(e.target.value)} className="input-base" /></Field><Field label="Cargo (opcional)"><input value={cargoNome} onChange={(e) => setCargoNome(e.target.value)} className="input-base" /></Field><Field label="Banca (opcional)"><input value={banca} onChange={(e) => setBanca(e.target.value)} className="input-base" /></Field><Field label="Data da prova (opcional)"><DatePicker value={dataProva} onValueChange={setDataProva} /></Field><Field label="Observações (opcional)"><textarea value={observacoes} onChange={(e) => setObservacoes(e.target.value)} rows={3} className="input-base" /></Field></div></section>}
       {step === 3 && <section><StepTitle title="Escolha disciplinas e tópicos" text={tipo === "catalogo" ? "O edital trouxe o conteúdo abaixo. Desmarque o que não fará parte deste plano." : "Reaproveite disciplinas ou adicione conteúdo novo."} />{tipo === "catalogo" && <div className="mt-5 grid gap-4 sm:grid-cols-2"><Field label="Data da prova (opcional)"><DatePicker value={dataProva} onValueChange={setDataProva} /></Field><Field label="Observações (opcional)"><textarea value={observacoes} onChange={(e) => setObservacoes(e.target.value)} rows={2} className="input-base" /></Field></div>}{tipo === "personalizado" && <><div className="mt-5 grid gap-2 sm:grid-cols-2">{pessoais.data?.map((d) => <label key={d.id} className="flex min-h-14 cursor-pointer items-center gap-3 rounded-lg border border-border p-3"><Checkbox checked={disciplinas.some((x) => x.disciplina_id === d.id)} onCheckedChange={() => togglePessoal(d)} /><span><strong className="block text-sm">{d.nome}</strong><small className="text-muted-foreground">{d.topicos_total ?? 0} tópicos cadastrados</small></span></label>)}</div><div className="mt-6 rounded-xl border border-dashed border-border p-4"><h3 className="font-semibold">Adicionar nova disciplina</h3><div className="mt-3 grid gap-3 sm:grid-cols-2"><Field label="Nome"><input value={novoNome} onChange={(e) => setNovoNome(e.target.value)} className="input-base" /></Field><Field label="Tópicos (um por linha)"><textarea value={novosTopicos} onChange={(e) => setNovosTopicos(e.target.value)} rows={3} className="input-base" /></Field></div><Button type="button" variant="outline" onClick={adicionarDisciplina} disabled={!novoNome.trim()}><Plus /> Adicionar disciplina</Button></div></>}
         <div className="mt-5 space-y-2">{disciplinas.map((d, i) => <div key={d.disciplina_id ?? `${d.nome}-${i}`} className="flex items-start gap-3 rounded-xl border border-border p-4"><Checkbox className="mt-3" checked={d.ativa} onCheckedChange={(v) => updateDisc(i, { ativa: Boolean(v) })} /><div className="min-w-0 flex-1">{tipo === "personalizado" && !d.disciplina_id ? <><input aria-label="Nome da disciplina" value={d.nome} onChange={(e) => updateDisc(i, { nome: e.target.value })} className="input-base font-semibold" /><textarea aria-label={`Tópicos de ${d.nome}`} value={d.topicos.join("\n")} onChange={(e) => updateDisc(i, { topicos: e.target.value.split(/\r?\n/).map((x) => x.trim()).filter(Boolean) })} rows={2} className="input-base mt-2" /></> : <><strong className="block">{d.nome}</strong><small className="text-muted-foreground">{d.topicos.length ? `${d.topicos.length} tópicos` : "Tópicos já cadastrados"}</small></>}</div><div className="flex shrink-0 gap-1"><Button variant="ghost" size="icon" disabled={i === 0} aria-label={`Mover ${d.nome} para cima`} onClick={() => moverDisc(i, -1)}><ArrowUp /></Button><Button variant="ghost" size="icon" disabled={i === disciplinas.length - 1} aria-label={`Mover ${d.nome} para baixo`} onClick={() => moverDisc(i, 1)}><ArrowDown /></Button>{tipo === "personalizado" && !d.disciplina_id && <Button variant="ghost" size="icon" aria-label={`Remover ${d.nome}`} onClick={() => setDisciplinas((items) => items.filter((_, index) => index !== i).map((item, ordem) => ({ ...item, ordem }))) }><Trash2 /></Button>}</div></div>)}</div></section>}
       {step === 4 && <section><StepTitle title="Como organizar seus estudos?" text="A prioridade considera peso × dificuldade. Quanto menor seu domínio, maior a frequência sugerida." /><div className="mt-5 space-y-3">{disciplinas.filter((d) => d.ativa).map((d) => { const i = disciplinas.indexOf(d); return <div key={d.disciplina_id ?? d.nome} className="grid gap-3 rounded-xl border border-border p-4 sm:grid-cols-[1fr_140px_180px]"><strong className="self-center">{d.nome}</strong><Field label="Peso (1–10)"><input type="number" min={1} max={10} value={d.peso} onChange={(e) => updateDisc(i, { peso: Number(e.target.value) })} className="input-base" /></Field><Field label="Seu conhecimento"><SelectField value={d.conhecimento} onValueChange={(value) => updateDisc(i, { conhecimento: value as NivelConhecimento })} options={CONHECIMENTO} /></Field></div>})}</div><div className="mt-6 grid gap-4 sm:grid-cols-2"><Field label="Formato"><SelectField value={config.tipo} onValueChange={(value) => setConfig({ ...config, tipo: value as "ciclo" | "semanal" })} options={[{ value: "ciclo", label: "Ciclo de estudos" }, { value: "semanal", label: "Grade semanal" }]} /></Field><div /><Field label="Data de início"><DatePicker value={config.data_inicio} onValueChange={(value) => setConfig({ ...config, data_inicio: value })} /></Field><Field label="Planejar até"><DatePicker value={config.data_fim} onValueChange={(value) => setConfig({ ...config, data_fim: value })} /></Field><Field label="Sessão mínima (min)"><input type="number" min={5} max={240} value={config.sessao_min_minutos} onChange={(e) => setConfig({ ...config, sessao_min_minutos: Number(e.target.value) })} className="input-base" /></Field><Field label="Sessão máxima (min)"><input type="number" min={5} max={240} value={config.sessao_max_minutos} onChange={(e) => setConfig({ ...config, sessao_max_minutos: Number(e.target.value) })} className="input-base" /></Field></div><fieldset className="mt-6"><legend className="font-semibold">Disponibilidade por dia</legend><div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-7">{DIAS.map((dia, i) => <Field key={dia} label={dia}><div className="flex items-center gap-1"><input aria-label={`Horas de ${dia}`} type="number" min={0} max={23} value={Math.floor((config.disponibilidade_minutos[i] ?? 0) / 60)} onChange={(e) => setConfig({ ...config, disponibilidade_minutos: { ...config.disponibilidade_minutos, [i]: Number(e.target.value) * 60 + ((config.disponibilidade_minutos[i] ?? 0) % 60) } })} className="input-base px-2" /><span className="text-xs">h</span><input aria-label={`Minutos de ${dia}`} type="number" min={0} max={59} value={(config.disponibilidade_minutos[i] ?? 0) % 60} onChange={(e) => setConfig({ ...config, disponibilidade_minutos: { ...config.disponibilidade_minutos, [i]: Math.floor((config.disponibilidade_minutos[i] ?? 0) / 60) * 60 + Number(e.target.value) } })} className="input-base px-2" /><span className="text-xs">m</span></div></Field>)}</div></fieldset></section>}
-      {step === 5 && <section><StepTitle title="Seu plano está pronto para confirmar" text="Revise a distribuição. Depois você poderá editar o cronograma sem perder sessões já concluídas." />{preview.isPending && <p role="status" className="py-12 text-center">Calculando melhor distribuição…</p>}{preview.data && <><div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-5"><Summary label="Plano" value={nome} /><Summary label="Cargo" value={cargoNome || "Não informado"} /><Summary label="Conteúdo" value={`${disciplinas.filter((d) => d.ativa).length} disciplinas · ${disciplinas.filter((d) => d.ativa).reduce((sum, d) => sum + d.topicos.length, 0)} tópicos`} /><Summary label="Carga semanal" value={`${Math.round(preview.data.carga_semanal_minutos / 60 * 10) / 10} h`} /><Summary label="Período" value={`${preview.data.sessoes.length} sessões · ${Math.round(preview.data.minutos_totais / 60 * 10) / 10} h`} /></div><div className="mt-5 max-h-80 overflow-auto rounded-xl border border-border"><ul className="divide-y divide-border">{preview.data.sessoes.slice(0, 40).map((s, i) => <li key={`${s.data}-${s.ordem}-${i}`} className="flex items-center gap-3 p-3 text-sm"><CalendarClock className="h-4 w-4 text-primary" /><span className="flex-1"><strong>{s.disciplina_nome}</strong><span className="ml-2 text-muted-foreground">{new Date(`${s.data}T12:00:00`).toLocaleDateString("pt-BR")}</span></span><span>{s.duracao_minutos} min</span></li>)}</ul>{preview.data.sessoes.length > 40 && <p className="p-3 text-center text-xs text-muted-foreground">Mais {preview.data.sessoes.length - 40} sessões serão criadas.</p>}</div></>}</section>}
+      {step === 5 && <section><StepTitle title="Seu plano está pronto para confirmar" text="Revise a distribuição. Nenhuma alteração será criada antes da sua confirmação." />{preview.isPending && <p role="status" className="py-12 text-center">Calculando melhor distribuição…</p>}{preview.data && <>{tipo === "catalogo" && edital ? <div className="mt-5 flex flex-col gap-4 rounded-xl border border-border bg-muted/20 p-4 sm:flex-row sm:items-center"><div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-border bg-background">{edital.logo_url ? <img src={edital.logo_url} alt={`Logo de ${edital.orgao}`} className="h-full w-full object-contain p-2" /> : <Sparkles className="h-6 w-6 text-primary" />}</div><div className="min-w-0"><strong className="block text-base">{edital.nome}</strong><p className="mt-1 text-sm text-muted-foreground">{edital.orgao}{edital.banca ? ` · ${edital.banca}` : ""}</p><p className="mt-1 text-xs text-muted-foreground">{cargoNome}{dataProva ? ` · prova em ${new Date(`${dataProva}T12:00:00`).toLocaleDateString("pt-BR")}` : ""}</p></div></div> : null}<div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-5"><Summary label="Plano" value={nome} /><Summary label="Cargo" value={cargoNome || "Não informado"} /><Summary label="Conteúdo" value={`${disciplinas.filter((d) => d.ativa).length} disciplinas · ${disciplinas.filter((d) => d.ativa).reduce((sum, d) => sum + d.topicos.length, 0)} tópicos`} /><Summary label="Carga semanal" value={`${Math.round(preview.data.carga_semanal_minutos / 60 * 10) / 10} h`} /><Summary label="Período" value={`${preview.data.sessoes.length} sessões · ${Math.round(preview.data.minutos_totais / 60 * 10) / 10} h`} /></div><div className="mt-5 max-h-80 overflow-auto rounded-xl border border-border"><ul className="divide-y divide-border">{preview.data.sessoes.slice(0, 40).map((s, i) => <li key={`${s.data}-${s.ordem}-${i}`} className="flex items-center gap-3 p-3 text-sm"><CalendarClock className="h-4 w-4 text-primary" /><span className="flex-1"><strong>{s.disciplina_nome}</strong><span className="ml-2 text-muted-foreground">{new Date(`${s.data}T12:00:00`).toLocaleDateString("pt-BR")}</span></span><span>{s.duracao_minutos} min</span></li>)}</ul>{preview.data.sessoes.length > 40 && <p className="p-3 text-center text-xs text-muted-foreground">Mais {preview.data.sessoes.length - 40} sessões serão criadas.</p>}</div></>}</section>}
     </main>
     <CatalogDetailsDialog editalId={detailsId} scope="public" open={Boolean(detailsId)} onOpenChange={(open) => { if (!open) setDetailsId(null); }} />
-    <footer className="fixed inset-x-0 bottom-0 z-20 border-t border-border bg-background/95 p-3 backdrop-blur sm:static sm:border-0 sm:bg-transparent sm:p-0"><div className="mx-auto flex max-w-6xl justify-between gap-3"><Button variant="outline" disabled={step === 1 || confirm.isPending} onClick={() => setStep((s) => Math.max(1, s - 1))}><ArrowLeft /> Voltar</Button>{step < 5 ? <Button disabled={!canNext || preview.isPending} onClick={next}>Continuar <ArrowRight /></Button> : <Button disabled={confirm.isPending || !preview.data} onClick={() => confirm.mutate()}>{confirm.isPending ? "Criando plano…" : <><Check /> Confirmar e ativar</>}</Button>}</div></footer>
+    <footer className="fixed inset-x-0 bottom-0 z-20 border-t border-border bg-background/95 p-3 backdrop-blur sm:static sm:border-0 sm:bg-transparent sm:p-0"><div className="mx-auto flex max-w-6xl justify-between gap-3"><Button className="min-h-11" variant="outline" disabled={step === 1 || confirm.isPending} onClick={() => setStep((s) => Math.max(1, s - 1))}><ArrowLeft /> Voltar</Button>{step < 5 ? <Button className="min-h-11" disabled={!canNext || preview.isPending} onClick={next}>Continuar <ArrowRight /></Button> : <Button className="min-h-11" disabled={confirm.isPending || !preview.data} onClick={() => confirm.mutate()}>{confirm.isPending ? "Criando plano…" : <><Check /> Confirmar e ativar</>}</Button>}</div></footer>
   </div>;
 }
 

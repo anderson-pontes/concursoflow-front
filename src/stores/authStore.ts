@@ -1,6 +1,8 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
+import { clearOnboardingDraft } from "@/lib/onboardingDraftStorage";
+
 export type AuthUser = {
   id: string;
   name: string;
@@ -60,10 +62,13 @@ export const useAuthStore = create<AuthState>()(
         set({ accessToken, refreshToken }),
       setUser: (user) => set({ user }),
       logout: () =>
-        set({
-          accessToken: null,
-          refreshToken: null,
-          user: null,
+        set((state) => {
+          if (state.user?.id) clearOnboardingDraft(state.user.id);
+          return {
+            accessToken: null,
+            refreshToken: null,
+            user: null,
+          };
         }),
     }),
     {
