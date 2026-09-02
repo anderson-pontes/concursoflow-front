@@ -73,7 +73,7 @@ export function Pomodoro() {
     });
 
     navigate("/pomodoro", { replace: true });
-    toast.success("Sessão do cronograma carregada — clique em Iniciar quando estiver pronto.");
+    toast.success(`${launchParams.source === "dashboard" ? "Próxima ação" : "Sessão do cronograma"} carregada — clique em Iniciar quando estiver pronto.`);
   }, [
     launchParams,
     launchSignature,

@@ -75,6 +75,25 @@ describe("telemetry port", () => {
     expect(JSON.stringify(payload)).not.toMatch(/user_id|contest_id|edital_id|search_term|email/i);
   });
 
+  it("envia o estado da próxima ação sem IDs ou texto livre", async () => {
+    mockedAxios.get.mockResolvedValueOnce({ data: { opted_out: false } });
+    mockedAxios.post.mockResolvedValueOnce({ data: { enabled: false } });
+
+    trackTelemetry("next_action_viewed", { state: "upcoming_exam" });
+
+    await vi.waitFor(() => expect(mockedAxios.post).toHaveBeenCalledOnce());
+    const payload = mockedAxios.post.mock.calls[0][1] as { events: Array<Record<string, unknown>> };
+    expect(payload.events[0]).toMatchObject({
+      event_name: "next_action_viewed",
+      properties: { state: "upcoming_exam" },
+    });
+    expect(payload.events[0]).not.toHaveProperty("journey_id");
+    expect(Object.keys(payload.events[0] as Record<string, unknown>)).not.toEqual(
+      expect.arrayContaining(["contest_id", "topic_id", "discipline_id", "free_text"]),
+    );
+    expect(payload.events[0].properties).toEqual({ state: "upcoming_exam" });
+  });
+
   it("ordena abertura do catálogo antes do início da ativação na mesma jornada", () => {
     const track = vi.fn();
     const journey = { id: "journey-test", track } as unknown as TelemetryJourney;

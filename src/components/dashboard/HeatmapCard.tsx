@@ -21,8 +21,8 @@ export function HeatmapCard({ data }: { data: HeatmapData[] }) {
 
   return (
     <div className="rounded-xl border border-border bg-card p-4 text-card-foreground">
-      <h3 className="text-sm font-medium text-foreground">Heatmap de estudos</h3>
-      <p className="mb-4 text-xs text-muted-foreground">Últimas 16 semanas</p>
+      <h2 className="text-sm font-medium text-foreground">Constância de estudos</h2>
+      <p className="mb-4 text-xs text-muted-foreground">Todos os concursos · últimas 16 semanas</p>
 
       <div
         className="flex gap-[3px] overflow-x-auto"

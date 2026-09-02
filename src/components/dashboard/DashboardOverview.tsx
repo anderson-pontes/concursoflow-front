@@ -20,15 +20,6 @@ type Summary = {
   minutos_realizados_mes?: number;
 };
 
-function fmtHoras(hours: number) {
-  if (hours <= 0) return "0 min";
-  const totalMinutes = Math.round(hours * 60);
-  if (totalMinutes < 60) return `${totalMinutes} min`;
-  const fullHours = Math.floor(totalMinutes / 60);
-  const minutes = totalMinutes % 60;
-  return minutes > 0 ? `${fullHours}h ${minutes}min` : `${fullHours}h`;
-}
-
 const compactNumber = new Intl.NumberFormat("pt-BR", { notation: "compact", maximumFractionDigits: 1 });
 
 export function DashboardWeeklySchedule({
@@ -91,11 +82,8 @@ export function DashboardWeeklySchedule({
 
 export function DashboardKpis({ summary }: { summary?: Summary }) {
   return (
-    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
-      <KpiCard label="Horas hoje" value={fmtHoras(summary?.horas_hoje ?? 0)} sub={`Meta: ${fmtHoras(summary?.meta_horas ?? 4)}`} progress={summary && summary.meta_horas > 0 ? Math.max(0, Math.min(100, Math.round((summary.horas_hoje / summary.meta_horas) * 100))) : 0} badgeVariant="amber" />
-      <KpiCard label="Horas na semana" value={fmtHoras(summary?.horas_semana ?? 0)} sub="Últimos 7 dias" badgeVariant="amber" />
+    <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
       <KpiCard label="Sequência" value={`${summary?.streak_dias ?? 0} dias`} sub="Dias consecutivos" badge={(summary?.streak_dias ?? 0) > 0 ? "Em dia" : "Comece hoje"} badgeVariant={(summary?.streak_dias ?? 0) > 0 ? "green" : "amber"} />
-      <KpiCard label="Sessões" value={`${summary?.sessoes_semana ?? 0}`} sub="Esta semana" badgeVariant="amber" />
       <KpiCard label="Rendimento" value={`${(summary?.rendimento_medio ?? 0).toFixed(1)}%`} sub="Média no período" badgeVariant={(summary?.rendimento_medio ?? 0) > 0 ? "green" : "amber"} />
       <KpiCard label="Flashcards" value={compactNumber.format(summary?.flashcards_para_revisar ?? 0)} sub="Para revisar" badgeVariant={(summary?.flashcards_para_revisar ?? 0) > 0 ? "amber" : "green"} />
       <KpiCard label="Cumprimento mês" value={`${(summary?.taxa_cumprimento_mes ?? 0).toFixed(0)}%`} sub={`${fmtBlocoMinutos(summary?.minutos_realizados_mes ?? 0)} estudadas de ${fmtBlocoMinutos(summary?.minutos_planejados_mes ?? 0)} planejadas`} badgeVariant={(summary?.taxa_cumprimento_mes ?? 0) >= 80 ? "green" : "amber"} />

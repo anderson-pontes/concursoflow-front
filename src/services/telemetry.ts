@@ -53,13 +53,21 @@ type TelemetryProperties = {
     total_minutes: number;
   };
   plan_confirmation_failed: { error_code: TelemetryErrorCode };
+  next_action_viewed: { state: "ready" | "no_plan" | "empty_plan" | "completed" | "overdue" | "upcoming_exam" };
+  next_action_started: { action_type: "study" | "review" | "questions" | "manual"; source: "dashboard" | "calendar" | "schedule" };
+  manual_study_opened: { source: "dashboard" | "history" | "schedule" | "quick_action" };
 };
 
 export type TelemetryErrorCode = "validation" | "conflict" | "unavailable" | "server_error";
 export type TelemetryEventName = keyof TelemetryProperties;
 export type TelemetryJourneyEventName = Exclude<
   TelemetryEventName,
-  "catalog_search_started" | "contest_context_changed" | "context_state_viewed"
+  | "catalog_search_started"
+  | "contest_context_changed"
+  | "context_state_viewed"
+  | "next_action_viewed"
+  | "next_action_started"
+  | "manual_study_opened"
 >;
 export type TelemetryStandaloneEventName = Exclude<TelemetryEventName, TelemetryJourneyEventName>;
 

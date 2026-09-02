@@ -6,12 +6,15 @@ import { clampFocusDuration } from "@/lib/pomodoro/duration";
 import { usePomodoroStore } from "@/stores/pomodoroStore";
 
 export type PomodoroLaunchParams = {
+  source: PomodoroLaunchSource;
   disciplinaId: string;
   topicoId: string | null;
   minutos: number;
 };
 
-const LAUNCH_FROM = "cronograma";
+export type PomodoroLaunchSource = "cronograma" | "dashboard";
+
+const LAUNCH_SOURCES = new Set<PomodoroLaunchSource>(["cronograma", "dashboard"]);
 
 /** AC6: N=1 → topico_id; N=0 ou N>1 → sem topico_id (disciplina + minutos). */
 export function resolvePomodoroTopicoId(
@@ -25,18 +28,32 @@ export function buildPomodoroLaunchUrl(
   bloco: Pick<Bloco, "disciplina_id" | "topico_id" | "topico_ids">,
   minutos: number,
 ): string {
+  return buildPomodoroLaunchUrlFromStudy({
+    source: "cronograma",
+    disciplinaId: bloco.disciplina_id,
+    topicoId: resolvePomodoroTopicoId(bloco),
+    minutos,
+  });
+}
+
+export function buildPomodoroLaunchUrlFromStudy({
+  source,
+  disciplinaId,
+  topicoId,
+  minutos,
+}: PomodoroLaunchParams): string {
   const params = new URLSearchParams({
-    from: LAUNCH_FROM,
-    disciplina_id: bloco.disciplina_id,
+    from: source,
+    disciplina_id: disciplinaId,
     minutos: String(minutos),
   });
-  const topicoId = resolvePomodoroTopicoId(bloco);
   if (topicoId) params.set("topico_id", topicoId);
   return `/pomodoro?${params.toString()}`;
 }
 
 export function parsePomodoroLaunchParams(searchParams: URLSearchParams): PomodoroLaunchParams | null {
-  if (searchParams.get("from") !== LAUNCH_FROM) return null;
+  const source = searchParams.get("from") as PomodoroLaunchSource | null;
+  if (!source || !LAUNCH_SOURCES.has(source)) return null;
   const disciplinaId = searchParams.get("disciplina_id");
   const minutosRaw = searchParams.get("minutos");
   if (!disciplinaId || !minutosRaw) return null;
@@ -44,6 +61,7 @@ export function parsePomodoroLaunchParams(searchParams: URLSearchParams): Pomodo
   if (!Number.isFinite(minutos) || minutos < 1) return null;
   const topicoId = searchParams.get("topico_id");
   return {
+    source,
     disciplinaId,
     topicoId: topicoId || null,
     minutos,
@@ -56,7 +74,7 @@ export function hasPomodoroLaunchParams(searchParams: URLSearchParams): boolean 
 
 /** Chave estável para detectar novo launch (mesmo componente montado). */
 export function pomodoroLaunchSignature(params: PomodoroLaunchParams): string {
-  return `${params.disciplinaId}|${params.topicoId ?? ""}|${params.minutos}`;
+  return `${params.source}|${params.disciplinaId}|${params.topicoId ?? ""}|${params.minutos}`;
 }
 
 export function applyPomodoroLaunchToStore(params: PomodoroLaunchParams): { focusHours: number; focusMinutes: number } {
