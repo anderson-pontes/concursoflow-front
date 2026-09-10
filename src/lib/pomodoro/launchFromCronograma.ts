@@ -10,11 +10,15 @@ export type PomodoroLaunchParams = {
   disciplinaId: string;
   topicoId: string | null;
   minutos: number;
+  revisaoId?: string;
+  revisaoVersao?: number;
+  concursoId?: string;
+  returnTo?: string;
 };
 
-export type PomodoroLaunchSource = "cronograma" | "dashboard";
+export type PomodoroLaunchSource = "cronograma" | "dashboard" | "revisao";
 
-const LAUNCH_SOURCES = new Set<PomodoroLaunchSource>(["cronograma", "dashboard"]);
+const LAUNCH_SOURCES = new Set<PomodoroLaunchSource>(["cronograma", "dashboard", "revisao"]);
 
 /** AC6: N=1 → topico_id; N=0 ou N>1 → sem topico_id (disciplina + minutos). */
 export function resolvePomodoroTopicoId(
@@ -51,6 +55,28 @@ export function buildPomodoroLaunchUrlFromStudy({
   return `/pomodoro?${params.toString()}`;
 }
 
+export function buildPomodoroRevisionLaunchUrl(params: {
+  revisaoId: string;
+  revisaoVersao: number;
+  concursoId: string;
+  disciplinaId: string;
+  topicoId: string;
+  minutos?: number;
+  returnTo: string;
+}) {
+  const search = new URLSearchParams({
+    from: "revisao",
+    revisao_id: params.revisaoId,
+    revisao_versao: String(params.revisaoVersao),
+    concurso_id: params.concursoId,
+    disciplina_id: params.disciplinaId,
+    topico_id: params.topicoId,
+    minutos: String(params.minutos ?? 25),
+    return_to: params.returnTo.startsWith("/revisoes") ? params.returnTo : "/revisoes",
+  });
+  return `/pomodoro?${search.toString()}`;
+}
+
 export function parsePomodoroLaunchParams(searchParams: URLSearchParams): PomodoroLaunchParams | null {
   const source = searchParams.get("from") as PomodoroLaunchSource | null;
   if (!source || !LAUNCH_SOURCES.has(source)) return null;
@@ -60,12 +86,24 @@ export function parsePomodoroLaunchParams(searchParams: URLSearchParams): Pomodo
   const minutos = parseInt(minutosRaw, 10);
   if (!Number.isFinite(minutos) || minutos < 1) return null;
   const topicoId = searchParams.get("topico_id");
-  return {
+  const parsed: PomodoroLaunchParams = {
     source,
     disciplinaId,
     topicoId: topicoId || null,
     minutos,
   };
+  if (source === "revisao") {
+    const revisaoId = searchParams.get("revisao_id");
+    const revisaoVersao = Number(searchParams.get("revisao_versao"));
+    const concursoId = searchParams.get("concurso_id");
+    if (!revisaoId || !Number.isInteger(revisaoVersao) || revisaoVersao < 1 || !concursoId || !topicoId) return null;
+    parsed.revisaoId = revisaoId;
+    parsed.revisaoVersao = revisaoVersao;
+    parsed.concursoId = concursoId;
+    const returnTo = searchParams.get("return_to");
+    parsed.returnTo = returnTo?.startsWith("/revisoes") ? returnTo : "/revisoes";
+  }
+  return parsed;
 }
 
 export function hasPomodoroLaunchParams(searchParams: URLSearchParams): boolean {
@@ -74,7 +112,7 @@ export function hasPomodoroLaunchParams(searchParams: URLSearchParams): boolean 
 
 /** Chave estável para detectar novo launch (mesmo componente montado). */
 export function pomodoroLaunchSignature(params: PomodoroLaunchParams): string {
-  return `${params.source}|${params.disciplinaId}|${params.topicoId ?? ""}|${params.minutos}`;
+  return `${params.source}|${params.disciplinaId}|${params.topicoId ?? ""}|${params.minutos}|${params.revisaoId ?? ""}|${params.revisaoVersao ?? ""}`;
 }
 
 export function applyPomodoroLaunchToStore(params: PomodoroLaunchParams): { focusHours: number; focusMinutes: number } {

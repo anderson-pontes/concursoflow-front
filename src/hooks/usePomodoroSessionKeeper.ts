@@ -1,14 +1,16 @@
 import React from "react";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQueryClient, type QueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 import { invalidateEstudosQueries } from "@/lib/estudos/invalidateQueries";
 import { playBeep, playCompletionSound } from "@/lib/pomodoro/sounds";
 import { getFocusTotalSeconds } from "@/lib/pomodoro/duration";
 import { pauseFocus } from "@/lib/pomodoro/wallClock";
+import { completePomodoroRevision } from "@/lib/revisoes/completePomodoroRevision";
 import { api } from "@/services/api";
 import { usePomodoroStore } from "@/stores/pomodoroStore";
 import { usePomodoroSessionStore } from "@/stores/pomodoroSessionStore";
+import { useRevisaoPomodoroStore } from "@/stores/revisaoPomodoroStore";
 
 let completingPhase = false;
 
@@ -17,7 +19,7 @@ let completingPhase = false;
  * Seguro para chamar fora da página /pomodoro (aba ou rota diferente).
  * @returns true se a fase avançou; false se abortou (ex.: falha no registro).
  */
-export async function completePomodoroCountdownPhase(): Promise<boolean> {
+export async function completePomodoroCountdownPhase(queryClient: QueryClient): Promise<boolean> {
   if (completingPhase) return false;
 
   const session = usePomodoroSessionStore.getState();
@@ -58,19 +60,37 @@ export async function completePomodoroCountdownPhase(): Promise<boolean> {
       if (startMs && config.disciplinaId) {
         const duracaoMinutos = Math.max(1, Math.round(focusSeconds / 60));
         try {
-          await api.post("/sessoes-estudo", {
-            disciplina_id: config.disciplinaId,
-            topico_id: config.topicoId || null,
-            topico_ids: config.topicoId ? [config.topicoId] : [],
-            inicio: new Date(startMs).toISOString(),
-            fim: new Date(endMs).toISOString(),
-            duracao_minutos: duracaoMinutos,
-            tempo_estudo_segundos: focusSeconds,
-            tipo: config.mode === "pomodoro" ? "pomodoro" : "livre",
-            pomodoros_concluidos: config.mode === "pomodoro" ? 1 : 0,
-            anotacoes: null,
-          });
-          toast.success(`Sessão registrada (${duracaoMinutos} min).`);
+          const revisaoContext = useRevisaoPomodoroStore.getState().context;
+          if (revisaoContext) {
+            const result = await completePomodoroRevision(queryClient, {
+              inicio: new Date(startMs).toISOString(),
+              fim: new Date(endMs).toISOString(),
+              tempoEstudoSegundos: focusSeconds,
+            });
+            if (result !== "success") {
+              toast.error(result === "conflict"
+                ? "A revisão foi alterada. Volte à Central para atualizar os dados."
+                : "Erro ao concluir a revisão. Toque em Retomar para tentar novamente.");
+              return false;
+            }
+            toast.success(`Revisão concluída (${duracaoMinutos} min).`);
+            usePomodoroSessionStore.getState().reset();
+            return true;
+          } else {
+            await api.post("/sessoes-estudo", {
+              disciplina_id: config.disciplinaId,
+              topico_id: config.topicoId || null,
+              topico_ids: config.topicoId ? [config.topicoId] : [],
+              inicio: new Date(startMs).toISOString(),
+              fim: new Date(endMs).toISOString(),
+              duracao_minutos: duracaoMinutos,
+              tempo_estudo_segundos: focusSeconds,
+              tipo: config.mode === "pomodoro" ? "pomodoro" : "livre",
+              pomodoros_concluidos: config.mode === "pomodoro" ? 1 : 0,
+              anotacoes: null,
+            });
+            toast.success(`Sessão registrada (${duracaoMinutos} min).`);
+          }
         } catch {
           toast.error("Erro ao registrar sessão. Toque em Retomar para tentar novamente.");
           // Mantém sessão pausada em 00:00 — Retomar dispara novo attempt via deadline
@@ -118,8 +138,10 @@ export function usePomodoroSessionKeeper() {
       bumpTick();
       if (isRunning && timerKind === "countdown" && getDisplayRemaining() <= 0) {
         void (async () => {
-          const advanced = await completePomodoroCountdownPhase();
+          const completingRevision = Boolean(useRevisaoPomodoroStore.getState().context);
+          const advanced = await completePomodoroCountdownPhase(qc);
           if (!advanced) return;
+          if (completingRevision) return;
           invalidateEstudosQueries(qc);
           const disciplinaId = usePomodoroStore.getState().disciplinaId;
           if (disciplinaId) {

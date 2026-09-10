@@ -33,9 +33,19 @@ type PomodoroTimerProps = {
   onActiveChange?: (active: boolean) => void;
   disciplinaNome?: string;
   topicoNome?: string;
+  revisionMode?: boolean;
+  onRevisionFinish?: (session: { inicio: string; fim: string; tempoEstudoSegundos: number }) => Promise<boolean>;
+  onRevisionDiscard?: () => void;
 };
 
-export function PomodoroTimer({ onActiveChange, disciplinaNome, topicoNome }: PomodoroTimerProps) {
+export function PomodoroTimer({
+  onActiveChange,
+  disciplinaNome,
+  topicoNome,
+  revisionMode = false,
+  onRevisionFinish,
+  onRevisionDiscard,
+}: PomodoroTimerProps) {
   const {
     mode,
     focusHours,
@@ -67,10 +77,13 @@ export function PomodoroTimer({ onActiveChange, disciplinaNome, topicoNome }: Po
   const getDisplayRemaining = usePomodoroSessionStore((s) => s.getDisplayRemaining);
   const getDisplayElapsed = usePomodoroSessionStore((s) => s.getDisplayElapsed);
   const getPartialSeconds = usePomodoroSessionStore((s) => s.getPartialSeconds);
+  const getFocusSeconds = usePomodoroSessionStore((s) => s.getFocusSeconds);
+  const sessionStartedAt = usePomodoroSessionStore((s) => s.sessionStartedAt);
 
   const [immersive, setImmersive] = React.useState(false);
   const [registroOpen, setRegistroOpen] = React.useState(false);
   const [registroSnapshot, setRegistroSnapshot] = React.useState<RegistroSnapshot | null>(null);
+  const [finishingRevision, setFinishingRevision] = React.useState(false);
 
   const canStart = Boolean(disciplinaId);
   const isActive = hasSession;
@@ -134,16 +147,39 @@ export function PomodoroTimer({ onActiveChange, disciplinaNome, topicoNome }: Po
   const confirmReset = () => {
     if (!hasSession) return;
     void requestConfirmation({
-      title: "Cancelar sessão atual?",
-      description: "O tempo desta sessão não será salvo automaticamente. Esta ação não pode ser desfeita.",
-      confirmLabel: "Cancelar sessão",
+      title: revisionMode ? "Descartar revisão em andamento?" : "Cancelar sessão atual?",
+      description: revisionMode
+        ? "O tempo desta tentativa não será registrado e a revisão continuará pendente."
+        : "O tempo desta sessão não será salvo automaticamente. Esta ação não pode ser desfeita.",
+      confirmLabel: revisionMode ? "Descartar tentativa" : "Cancelar sessão",
       variant: "destructive",
     }).then((confirmed) => {
       if (!confirmed) return;
       resetSession();
+      onRevisionDiscard?.();
       setImmersive(false);
     });
   };
+
+  const finishRevision = React.useCallback(async () => {
+    if (!revisionMode || !onRevisionFinish || !sessionStartedAt || !hasSession || phase !== "foco") return;
+    const endMs = Date.now();
+    const focusSeconds = getFocusSeconds(endMs);
+    pause();
+    setFinishingRevision(true);
+    try {
+      const success = await onRevisionFinish({
+        inicio: new Date(sessionStartedAt).toISOString(),
+        fim: new Date(endMs).toISOString(),
+        tempoEstudoSegundos: focusSeconds,
+      });
+      if (!success) return;
+      resetSession();
+      setImmersive(false);
+    } finally {
+      setFinishingRevision(false);
+    }
+  }, [getFocusSeconds, hasSession, onRevisionFinish, pause, phase, resetSession, revisionMode, sessionStartedAt]);
 
   const openModalWithSnapshot = React.useCallback(
     (isPartial: boolean) => {
@@ -155,6 +191,32 @@ export function PomodoroTimer({ onActiveChange, disciplinaNome, topicoNome }: Po
     },
     [disciplinaId, hasSession, phase, getPartialSeconds, pause, topicoDefaultList],
   );
+
+  const endBreak = React.useCallback(() => {
+    void requestConfirmation({
+      title: "Encerrar a pausa atual?",
+      description: "O estudo concluído já foi registrado. Esta ação encerra o ciclo atual sem criar outro registro.",
+      confirmLabel: "Encerrar ciclo",
+      variant: "destructive",
+    }).then((confirmed) => {
+      if (!confirmed) return;
+      resetSession();
+      onRevisionDiscard?.();
+      setImmersive(false);
+    });
+  }, [onRevisionDiscard, requestConfirmation, resetSession]);
+
+  const finishCurrentPhase = React.useCallback(() => {
+    if (phase === "pausa") {
+      endBreak();
+      return;
+    }
+    if (revisionMode) {
+      void finishRevision();
+      return;
+    }
+    openModalWithSnapshot(false);
+  }, [endBreak, finishRevision, openModalWithSnapshot, phase, revisionMode]);
 
   const handleModalSaved = React.useCallback(() => {
     setRegistroOpen(false);
@@ -332,25 +394,32 @@ export function PomodoroTimer({ onActiveChange, disciplinaNome, topicoNome }: Po
                 >
                   <Pause className="h-6 w-6" />
                 </button>
+                {!revisionMode ? (
+                  <button
+                    type="button"
+                    title="Salvar parcial"
+                    aria-label="Salvar parcial"
+                    onClick={() => openModalWithSnapshot(true)}
+                    className={cn(
+                      "flex h-12 w-12 items-center justify-center rounded-full border border-white/10 backdrop-blur-sm transition-transform hover:scale-105",
+                      theme.accentSoft,
+                    )}
+                  >
+                    <Save className="h-5 w-5" />
+                  </button>
+                ) : null}
                 <button
                   type="button"
-                  title="Salvar parcial"
-                  aria-label="Salvar parcial"
-                  onClick={() => openModalWithSnapshot(true)}
-                  className={cn(
-                    "flex h-12 w-12 items-center justify-center rounded-full border border-white/10 backdrop-blur-sm transition-transform hover:scale-105",
-                    theme.accentSoft,
-                  )}
-                >
-                  <Save className="h-5 w-5" />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => openModalWithSnapshot(false)}
+                  onClick={finishCurrentPhase}
+                  disabled={finishingRevision}
                   className="flex h-14 items-center gap-2 rounded-full bg-white px-6 text-sm font-bold text-neutral-900 shadow-lg transition-transform hover:scale-105"
                 >
                   <StopCircle className="h-5 w-5" />
-                  Encerrar e salvar
+                  {finishingRevision
+                    ? "Concluindo…"
+                    : phase === "pausa"
+                      ? "Encerrar pausa"
+                      : revisionMode ? "Concluir revisão" : "Encerrar e salvar"}
                 </button>
                 <button
                   type="button"
@@ -375,11 +444,16 @@ export function PomodoroTimer({ onActiveChange, disciplinaNome, topicoNome }: Po
                 </button>
                 <button
                   type="button"
-                  onClick={() => openModalWithSnapshot(false)}
+                  onClick={finishCurrentPhase}
+                  disabled={finishingRevision}
                   className="flex h-12 items-center gap-2 rounded-full border border-white/15 bg-white/10 px-5 text-sm font-semibold text-white backdrop-blur-sm transition-transform hover:scale-105"
                 >
                   <StopCircle className="h-4 w-4" />
-                  Encerrar e salvar
+                  {finishingRevision
+                    ? "Concluindo…"
+                    : phase === "pausa"
+                      ? "Encerrar pausa"
+                      : revisionMode ? "Concluir revisão" : "Encerrar e salvar"}
                 </button>
                 <button
                   type="button"
@@ -400,17 +474,19 @@ export function PomodoroTimer({ onActiveChange, disciplinaNome, topicoNome }: Po
         </div>
       </div>
 
-      <RegistroEstudoModal
-        open={registroOpen}
-        onClose={() => {
-          setRegistroOpen(false);
-          setRegistroSnapshot(null);
-        }}
-        defaultDisciplinaId={disciplinaId}
-        defaultTopicos={registroSnapshot?.topicoDefaultList ?? null}
-        defaultDuracaoSegundos={registroSnapshot?.duracaoSegundos ?? null}
-        onSaved={handleModalSaved}
-      />
+      {!revisionMode ? (
+        <RegistroEstudoModal
+          open={registroOpen}
+          onClose={() => {
+            setRegistroOpen(false);
+            setRegistroSnapshot(null);
+          }}
+          defaultDisciplinaId={disciplinaId}
+          defaultTopicos={registroSnapshot?.topicoDefaultList ?? null}
+          defaultDuracaoSegundos={registroSnapshot?.duracaoSegundos ?? null}
+          onSaved={handleModalSaved}
+        />
+      ) : null}
       {confirmDialog}
     </>
   );

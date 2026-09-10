@@ -41,6 +41,13 @@ export type TodayPlanItem = {
   minutos: number;
 };
 
+export function buildReviewCenterUrl(review: Pick<PendingReview, "dias_atraso">): string {
+  const params = new URLSearchParams({
+    grupo: review.dias_atraso > 0 ? "atrasadas" : "hoje",
+  });
+  return `/revisoes?${params.toString()}`;
+}
+
 function formatHours(hours: number): string {
   const minutes = Math.max(0, Math.round(hours * 60));
   if (minutes < 60) return `${minutes} min`;
@@ -186,14 +193,20 @@ export function WeeklyGoalCard({ hours, goalHours, questions, isError, onRetry }
 }
 
 export function UrgentReviewsCard({ reviews, total, isError, onRetry }: { reviews: PendingReview[]; total: number; isError: boolean; onRetry: () => void }) {
+  const overviewUrl = reviews.some((review) => review.dias_atraso > 0)
+    ? "/revisoes?grupo=atrasadas"
+    : "/revisoes?grupo=hoje";
   return (
     <Card aria-labelledby="urgent-reviews-title">
       <CardHeader>
         <CardTitle className="flex items-center gap-2"><BookOpenCheck className="size-5 text-primary" aria-hidden="true" /><h2 id="urgent-reviews-title">Revisões urgentes</h2></CardTitle>
-        <Badge variant="secondary">{total}</Badge>
+        <div className="flex items-center gap-2">
+          <Badge variant="secondary">{total}</Badge>
+          <Button asChild variant="ghost" size="sm" className="min-h-11"><Link to={overviewUrl}>Ver todas</Link></Button>
+        </div>
       </CardHeader>
       <CardContent>
-        {isError ? <div><p className="text-sm text-muted-foreground">Não foi possível carregar as revisões.</p><Button type="button" variant="outline" size="sm" className="mt-3" onClick={onRetry}>Tentar novamente</Button></div> : reviews.length ? <ul className="divide-y divide-border">{reviews.slice(0, 3).map((review) => <li key={review.topico_id} className="flex items-center gap-3 py-3"><div className="min-w-0 flex-1"><strong className="block truncate text-sm">{review.topico_nome}</strong><span className="text-xs text-muted-foreground">{review.disciplina_nome}{review.dias_atraso > 0 ? ` · ${review.dias_atraso} dia(s) em atraso` : " · revisar hoje"}</span></div><Button asChild size="sm" variant="outline"><Link to={`/disciplinas/${review.disciplina_id}?topico=${review.topico_id}`}>Revisar</Link></Button></li>)}</ul> : <p className="text-sm text-muted-foreground">Nenhuma revisão urgente no concurso ativo.</p>}
+        {isError ? <div><p className="text-sm text-muted-foreground">Não foi possível carregar as revisões.</p><Button type="button" variant="outline" size="sm" className="mt-3 min-h-11" onClick={onRetry}>Tentar novamente</Button></div> : reviews.length ? <ul className="divide-y divide-border">{reviews.slice(0, 3).map((review) => <li key={review.topico_id} className="flex items-center gap-3 py-3"><div className="min-w-0 flex-1"><strong className="block truncate text-sm">{review.topico_nome}</strong><span className="text-xs text-muted-foreground">{review.disciplina_nome}{review.dias_atraso > 0 ? ` · ${review.dias_atraso} dia(s) em atraso` : " · revisar hoje"}</span></div><Button asChild size="sm" variant="outline" className="min-h-11"><Link to={buildReviewCenterUrl(review)}>Revisar</Link></Button></li>)}</ul> : <p className="text-sm text-muted-foreground">Nenhuma revisão urgente no concurso ativo.</p>}
       </CardContent>
     </Card>
   );

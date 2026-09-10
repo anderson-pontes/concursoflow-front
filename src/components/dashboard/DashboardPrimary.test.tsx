@@ -2,7 +2,7 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { describe, expect, it, vi } from "vitest";
 
-import { DashboardContextHeader, NextActionCard, TodayPlanCard } from "@/components/dashboard/DashboardPrimary";
+import { DashboardContextHeader, NextActionCard, TodayPlanCard, UrgentReviewsCard } from "@/components/dashboard/DashboardPrimary";
 
 describe("organismos primários do dashboard", () => {
   it("identifica o concurso com um único h1 e trata data ausente", () => {
@@ -45,5 +45,21 @@ describe("organismos primários do dashboard", () => {
 
     expect(screen.getByText("Nenhum bloco planejado para hoje")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Ver cronograma" })).toHaveAttribute("href", "/cronograma");
+  });
+
+  it("limita revisões urgentes a três e abre o grupo adequado da Central", () => {
+    const reviews = [
+      { disciplina_id: "disc-1", disciplina_nome: "Direito", topico_id: "top-1", topico_nome: "Constituição", dias_atraso: 2 },
+      { disciplina_id: "disc-2", disciplina_nome: "Português", topico_id: "top-2", topico_nome: "Sintaxe", dias_atraso: 0 },
+      { disciplina_id: "disc-3", disciplina_nome: "TI", topico_id: "top-3", topico_nome: "Redes", dias_atraso: 1 },
+      { disciplina_id: "disc-4", disciplina_nome: "RLM", topico_id: "top-4", topico_nome: "Proposições", dias_atraso: 0 },
+    ];
+    render(<MemoryRouter><UrgentReviewsCard reviews={reviews} total={4} isError={false} onRetry={vi.fn()} /></MemoryRouter>);
+
+    expect(screen.getAllByRole("link", { name: "Revisar" })).toHaveLength(3);
+    expect(screen.getAllByRole("link", { name: "Revisar" })[0]).toHaveAttribute("href", "/revisoes?grupo=atrasadas");
+    expect(screen.getAllByRole("link", { name: "Revisar" })[1]).toHaveAttribute("href", "/revisoes?grupo=hoje");
+    expect(screen.getByRole("link", { name: "Ver todas" })).toHaveAttribute("href", "/revisoes?grupo=atrasadas");
+    expect(screen.queryByText("Proposições")).not.toBeInTheDocument();
   });
 });

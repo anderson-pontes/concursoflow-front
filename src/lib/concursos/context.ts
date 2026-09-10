@@ -46,6 +46,7 @@ const CONTEXTUAL_ROOTS = new Set([
   "avisos-concurso",
   "concurso-disciplinas-progress",
   "disciplina-dashboard",
+  "revisoes",
 ]);
 
 /**

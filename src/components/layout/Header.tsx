@@ -45,6 +45,7 @@ export function Header({
       { label: "Cronograma", to: "/cronograma" },
       { label: "Calendário", to: "/estudos/calendario" },
       { label: "Histórico", to: "/estudos/historico" },
+      { label: "Revisões", to: "/revisoes" },
       { label: "Pomodoro", to: "/pomodoro" },
       { label: "Avisos", to: "/avisos" },
       { label: "Flashcards", to: "/flashcards" },

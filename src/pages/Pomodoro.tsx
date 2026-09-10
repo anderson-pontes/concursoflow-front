@@ -1,14 +1,16 @@
 import React from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { BookOpen, Timer } from "lucide-react";
+import { AlertTriangle, BookOpen, Timer } from "lucide-react";
 import { toast } from "sonner";
 
 import { PomodoroConfigPanel } from "@/components/pomodoro/PomodoroConfigPanel";
 import { PomodoroTimer } from "@/components/pomodoro/PomodoroTimer";
 import { RegistroEstudoModal } from "@/components/estudos/RegistroEstudoModal";
 import { Button } from "@/components/ui/button";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { cn } from "@/lib/utils";
+import { completePomodoroRevision } from "@/lib/revisoes/completePomodoroRevision";
 import { usePomodoroConfigSync } from "@/hooks/usePomodoroConfigSync";
 import {
   applyPomodoroLaunchToStore,
@@ -19,6 +21,7 @@ import {
 import { api } from "@/services/api";
 import { useConcursoAtivoId } from "@/stores/concursoStore";
 import { usePomodoroStore } from "@/stores/pomodoroStore";
+import { useRevisaoPomodoroStore } from "@/stores/revisaoPomodoroStore";
 
 type DisciplinaRow = {
   id: string;
@@ -45,6 +48,10 @@ export function Pomodoro() {
   const cyclesTarget = usePomodoroStore((s) => s.cyclesTarget);
   const disciplinaId = usePomodoroStore((s) => s.disciplinaId);
   const topicoId = usePomodoroStore((s) => s.topicoId);
+  const revisaoContext = useRevisaoPomodoroStore((s) => s.context);
+  const revisaoConflict = useRevisaoPomodoroStore((s) => s.conflict);
+  const prepareRevisao = useRevisaoPomodoroStore((s) => s.prepare);
+  const clearRevisao = useRevisaoPomodoroStore((s) => s.clear);
 
   const [openRegistro, setOpenRegistro] = React.useState(false);
   const [timerActive, setTimerActive] = React.useState(false);
@@ -56,6 +63,26 @@ export function Pomodoro() {
     lastAppliedLaunchRef.current = launchSignature;
 
     const { focusHours: h, focusMinutes: m } = applyPomodoroLaunchToStore(launchParams);
+
+    if (
+      launchParams.source === "revisao"
+      && launchParams.revisaoId
+      && launchParams.revisaoVersao
+      && launchParams.concursoId
+      && launchParams.topicoId
+    ) {
+      const current = useRevisaoPomodoroStore.getState().context;
+      if (current?.revisaoId !== launchParams.revisaoId || current.revisaoVersao !== launchParams.revisaoVersao) {
+        prepareRevisao({
+          revisaoId: launchParams.revisaoId,
+          revisaoVersao: launchParams.revisaoVersao,
+          concursoId: launchParams.concursoId,
+          disciplinaId: launchParams.disciplinaId,
+          topicoId: launchParams.topicoId,
+          returnTo: launchParams.returnTo || "/revisoes",
+        });
+      }
+    }
 
     void qc.invalidateQueries({ queryKey: ["pomodoro-topicos"] });
     void qc.invalidateQueries({ queryKey: ["pomodoro-topicos-page"] });
@@ -73,7 +100,10 @@ export function Pomodoro() {
     });
 
     navigate("/pomodoro", { replace: true });
-    toast.success(`${launchParams.source === "dashboard" ? "Próxima ação" : "Sessão do cronograma"} carregada — clique em Iniciar quando estiver pronto.`);
+    const launchLabel = launchParams.source === "revisao"
+      ? "Revisão"
+      : launchParams.source === "dashboard" ? "Próxima ação" : "Sessão do cronograma";
+    toast.success(`${launchLabel} carregada — clique em Iniciar quando estiver pronto.`);
   }, [
     launchParams,
     launchSignature,
@@ -83,6 +113,7 @@ export function Pomodoro() {
     shortBreakMinutes,
     longBreakMinutes,
     cyclesTarget,
+    prepareRevisao,
   ]);
 
   const persistConfig = React.useCallback(() => {
@@ -136,7 +167,25 @@ export function Pomodoro() {
   const disciplinaNome = disciplinas.find((d) => d.id === disciplinaId)?.nome;
   const topicoNome = topicos?.find((t) => t.id === topicoId)?.descricao;
 
-  const pageTitle = mode === "cronometro" ? "Cronômetro" : "Pomodoro";
+  const pageTitle = revisaoContext ? "Revisão" : mode === "cronometro" ? "Cronômetro" : "Pomodoro";
+
+  const finishRevision = React.useCallback(async (session: {
+    inicio: string;
+    fim: string;
+    tempoEstudoSegundos: number;
+  }) => {
+    const returnTo = useRevisaoPomodoroStore.getState().context?.returnTo || "/revisoes";
+    const result = await completePomodoroRevision(qc, session);
+    if (result === "success") {
+      toast.success("Revisão concluída e registrada.");
+      navigate(returnTo);
+      return true;
+    }
+    toast.error(result === "conflict"
+      ? "A revisão foi alterada. Volte à Central e atualize os dados antes de tentar novamente."
+      : "Não foi possível concluir a revisão. Tente novamente sem perder o tempo registrado.");
+    return false;
+  }, [navigate, qc]);
 
   return (
     <div className="mx-auto max-w-5xl space-y-6 pb-10">
@@ -151,16 +200,39 @@ export function Pomodoro() {
             </h1>
             <p className="mt-0.5 text-sm text-muted-foreground">
               {timerActive
-                ? "Foque no estudo — use Encerrar e salvar para registrar."
+                ? revisaoContext
+                  ? "Foque no estudo — use Concluir revisão para registrar."
+                  : "Foque no estudo — use Encerrar e salvar para registrar."
                 : "Configure horas e minutos de foco, inicie o timer e registre seu progresso."}
             </p>
           </div>
         </div>
-        <Button type="button" variant="outline" className="gap-2" onClick={() => setOpenRegistro(true)}>
-          <BookOpen className="h-4 w-4" />
-          Registro manual
-        </Button>
+        {!revisaoContext ? (
+          <Button type="button" variant="outline" className="gap-2" onClick={() => setOpenRegistro(true)}>
+            <BookOpen className="h-4 w-4" />
+            Registro manual
+          </Button>
+        ) : null}
       </div>
+
+      {revisaoContext && revisaoConflict ? (
+        <Alert variant="destructive">
+          <AlertTriangle aria-hidden="true" />
+          <AlertTitle>Esta revisão foi atualizada em outro contexto</AlertTitle>
+          <AlertDescription>
+            O tempo continua preservado localmente. Volte à Central, atualize a revisão e inicie uma nova tentativa com a versão atual.
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="mt-3 block"
+              onClick={() => navigate(revisaoContext.returnTo || "/revisoes")}
+            >
+              Voltar à Central de revisões
+            </Button>
+          </AlertDescription>
+        </Alert>
+      ) : null}
 
       <div className={cn("grid items-start gap-6", !timerActive && "lg:grid-cols-[minmax(0,1.15fr)_minmax(320px,0.85fr)]")}>
         <div className="lg:sticky lg:top-20">
@@ -168,16 +240,23 @@ export function Pomodoro() {
             onActiveChange={setTimerActive}
             disciplinaNome={disciplinaNome}
             topicoNome={topicoNome}
+            revisionMode={Boolean(revisaoContext)}
+            onRevisionFinish={finishRevision}
+            onRevisionDiscard={clearRevisao}
           />
         </div>
 
-        {!timerActive ? (
+        {!timerActive && !revisaoContext ? (
           <PomodoroConfigPanel
             key={`${disciplinaId ?? ""}-${topicoId ?? ""}`}
             disciplinas={disciplinas}
             loadingDisciplinas={isLoading}
             onPersist={persistConfig}
           />
+        ) : revisaoContext ? (
+          <div className="rounded-xl border border-primary/30 bg-primary-muted/60 px-4 py-3 text-sm text-accent-foreground dark:bg-primary/10 dark:text-primary-200">
+            Disciplina e tópico estão vinculados à revisão e não podem ser alterados durante esta sessão.
+          </div>
         ) : (
           <div className="rounded-xl border border-primary/30 bg-primary-muted/60 px-4 py-3 text-sm text-accent-foreground dark:bg-primary/10 dark:text-primary-200">
             Configurações ocultas durante a sessão. Pause ou encerre para alterar duração, modo e disciplina.
@@ -185,12 +264,14 @@ export function Pomodoro() {
         )}
       </div>
 
-      <RegistroEstudoModal
-        open={openRegistro}
-        onClose={() => setOpenRegistro(false)}
-        defaultDisciplinaId={disciplinaId}
-        defaultTopicos={topicoId && topicoNome ? [{ id: topicoId, nome: topicoNome }] : null}
-      />
+      {!revisaoContext ? (
+        <RegistroEstudoModal
+          open={openRegistro}
+          onClose={() => setOpenRegistro(false)}
+          defaultDisciplinaId={disciplinaId}
+          defaultTopicos={topicoId && topicoNome ? [{ id: topicoId, nome: topicoNome }] : null}
+        />
+      ) : null}
     </div>
   );
 }

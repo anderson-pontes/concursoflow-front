@@ -17,6 +17,7 @@
     "test:e2e:context-switch": "node scripts/qa-ev-00-2-context-switch.mjs",
     "test:e2e:onboarding": "node scripts/qa-ev-01-1-onboarding.mjs",
     "test:e2e:dashboard-action": "node scripts/qa-ev-02-1-dashboard.mjs",
+    "test:e2e:revisoes": "node scripts/qa-ev-03-4-revisoes.mjs",
     "audit:data": "node scripts/audit-data-quality.mjs",
     "test:ui": "node --test scripts/qa-ui-contracts.test.mjs",
     "qa:ux-visual": "node scripts/qa-ux-visual.mjs",

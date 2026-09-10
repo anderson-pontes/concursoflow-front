@@ -32,6 +32,7 @@ const CheckoutCancelado = lazyNamed(
 const Cronograma = lazyNamed(() => import("./pages/Cronograma"), "Cronograma");
 const CalendarioEstudos = lazyNamed(() => import("./pages/CalendarioEstudos"), "CalendarioEstudos");
 const HistoricoEstudos = lazyNamed(() => import("./pages/HistoricoEstudos"), "HistoricoEstudos");
+const Revisoes = lazyNamed(() => import("./pages/Revisoes"), "Revisoes");
 const Pomodoro = lazyNamed(() => import("./pages/Pomodoro"), "Pomodoro");
 const Avisos = lazyNamed(() => import("./pages/Avisos"), "Avisos");
 const Flashcards = lazyNamed(() => import("./pages/Flashcards"), "Flashcards");
@@ -189,6 +190,16 @@ export default function App() {
           <Layout requireAuth={!isAuthed}>
             <LazyPage>
               <HistoricoEstudos />
+            </LazyPage>
+          </Layout>
+        }
+      />
+      <Route
+        path="/revisoes"
+        element={
+          <Layout requireAuth={!isAuthed}>
+            <LazyPage>
+              <Revisoes />
             </LazyPage>
           </Layout>
         }

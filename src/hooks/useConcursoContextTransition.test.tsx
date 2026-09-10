@@ -43,6 +43,7 @@ describe("useConcursoContextTransition", () => {
     const queryClient = new QueryClient();
     queryClient.setQueryData(["dashboard-resumo", "a"], { concurso: "a" });
     queryClient.setQueryData(["cronograma-blocos", "b"], [{ concurso: "b" }]);
+    queryClient.setQueryData(["revisoes", "a", "hoje", null, null, null], [{ concurso: "a" }]);
     queryClient.setQueryData(["disciplinas", "catalog", null], [{ id: "global" }]);
     queryClient.setQueryData(["dashboard-heatmap"], [{ date: "2026-08-29" }]);
     const { result } = renderHook(() => useConcursoContextTransition(), { wrapper: wrapperFor(queryClient) });
@@ -52,6 +53,7 @@ describe("useConcursoContextTransition", () => {
     expect(useConcursoStore.getState()).toMatchObject({ concursoAtivoId: "b", contextResolved: true });
     expect(queryClient.getQueryData(["dashboard-resumo", "a"])).toBeUndefined();
     expect(queryClient.getQueryData(["cronograma-blocos", "b"])).toBeUndefined();
+    expect(queryClient.getQueryData(["revisoes", "a", "hoje", null, null, null])).toBeUndefined();
     expect(queryClient.getQueryData(["disciplinas", "catalog", null])).toEqual([{ id: "global" }]);
     expect(queryClient.getQueryData(["dashboard-heatmap"])).toEqual([{ date: "2026-08-29" }]);
   });
