@@ -97,6 +97,21 @@ const preview = {
   },
 };
 
+const comparativo = {
+  versao_contrato: 1,
+  baseline_versao: "cronograma-baseline-v1",
+  baseline_fingerprint: "c".repeat(64),
+  preview_fingerprint: fingerprint,
+  fronteira: { data_inicio: "2026-09-14", data_fim_anterior: null, data_fim_proposta: "2026-09-14" },
+  resumo: { antes_itens: 13, depois_itens: 3, antes_minutos: 780, depois_minutos: 180, adicionados: 1, removidos: 11, movidos: 1, preservados: 1, itens_comparativo: 14 },
+  grupos: {
+    adicionados: [{ comparacao_id: "cmp-added", classificacao: "adicionado", motivo: "NOVA_SESSAO", disciplina_id: disciplinaId, disciplina_nome: "Nova sessão QA", duracao_anterior_minutos: null, duracao_nova_minutos: 60, posicao_anterior: null, posicao_nova: { data: "2026-09-17", ordem_no_dia: 1 }, par_comparacao: null }],
+    removidos: Array.from({ length: 11 }, (_, index) => ({ comparacao_id: `cmp-removed-${index + 1}`, classificacao: "removido", motivo: "FORA_DA_NOVA_PROPOSTA", disciplina_id: disciplinaId, disciplina_nome: `Disciplina removida ${index + 1}`, duracao_anterior_minutos: 60, duracao_nova_minutos: null, posicao_anterior: { data: "2026-09-14", ordem_no_dia: index + 1 }, posicao_nova: null, par_comparacao: null })),
+    movidos: [{ comparacao_id: "cmp-moved", classificacao: "movido", motivo: "DATA_ALTERADA", disciplina_id: disciplinaId, disciplina_nome: "Sessão remanejada QA", duracao_anterior_minutos: 60, duracao_nova_minutos: 60, posicao_anterior: { data: "2026-09-14", ordem_no_dia: 1 }, posicao_nova: { data: "2026-09-16", ordem_no_dia: 1 }, par_comparacao: null }],
+    preservados: [{ comparacao_id: "cmp-1", classificacao: "preservado", motivo: "SEM_ALTERACAO", disciplina_id: disciplinaId, disciplina_nome: "Português", duracao_anterior_minutos: 60, duracao_nova_minutos: 60, posicao_anterior: { data: "2026-09-14", ordem_no_dia: 1 }, posicao_nova: { data: "2026-09-14", ordem_no_dia: 1 }, par_comparacao: null }],
+  },
+};
+
 function json(body, status = 200) {
   return { status, contentType: "application/json", body: JSON.stringify(body) };
 }
@@ -142,10 +157,11 @@ try {
       const url = new URL(request.url());
       if (!url.pathname.startsWith("/api/v1/")) return request.continue();
       if (request.method() === "GET" && url.pathname.endsWith(`/concursos/${concursoId}/planejamento`)) return request.respond(json(planejamento));
-      if (request.method() === "POST" && url.pathname.endsWith("/concursos/planejamento/preview")) return request.respond(json(preview));
+      if (request.method() === "POST" && url.pathname.endsWith(`/concursos/${concursoId}/planejamento/replanejamento/comparar`)) return request.respond(json({ preview, comparativo }));
       if (request.method() === "POST" && url.pathname.endsWith(`/concursos/${concursoId}/planejamento/recalcular`)) {
         recalculations += 1;
-        fingerprints.push(JSON.parse(request.postData() || "{}").preview_fingerprint);
+        const body = JSON.parse(request.postData() || "{}");
+        fingerprints.push(`${body.preview_fingerprint}:${body.baseline_fingerprint}`);
         if (recalculations === 1) return request.respond(json({ detail: { code: "PLANEJAMENTO_PREVIEW_DESATUALIZADO" } }, 409));
         return request.respond(json({ concurso_id: concursoId, criado: false, disciplinas_criadas: 0, topicos_criados: 0, sessoes_planejadas: 1, preview }));
       }
@@ -158,8 +174,14 @@ try {
 
     try {
       await page.goto(`${baseUrl}/planos/${concursoId}/replanejar`, { waitUntil: "networkidle2", timeout: 60000 });
-      await clickButton(page, "Gerar nova prévia");
+      await clickButton(page, "Comparar nova proposta");
       await page.waitForFunction(() => document.body.innerText.includes("Como seu plano foi distribuído"));
+      await page.waitForFunction(() => document.body.innerText.includes("Sessões que sairão (11)"));
+      await clickButton(page, "Mostrar mais 10");
+      await page.waitForFunction(() => document.body.innerText.includes("Disciplina removida 11"));
+      for (const tab of ["Sessões remanejadas (1)", "Novas sessões (1)", "Sessões mantidas (1)"]) {
+        await clickButton(page, tab);
+      }
       const review = await page.evaluate(() => ({
         text: document.querySelector("main")?.textContent ?? "",
         overflow: document.documentElement.scrollWidth > document.documentElement.clientWidth + 1,
@@ -175,7 +197,7 @@ try {
       await clickButton(page, "Confirmar e substituir futuros");
       await page.waitForFunction(() => location.pathname === "/cronograma", { timeout: 15000 });
 
-      if (recalculations !== 2 || fingerprints.some((value) => value !== fingerprint)) {
+      if (recalculations !== 2 || fingerprints.some((value) => value !== `${fingerprint}:${comparativo.baseline_fingerprint}`)) {
         failures.push({ profile: profile.name, stage: "fingerprint", recalculations, fingerprints });
       }
     } catch (error) {

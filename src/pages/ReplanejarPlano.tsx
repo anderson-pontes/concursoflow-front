@@ -5,22 +5,28 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { PlanejamentoCapacidadeAlert, PlanejamentoExplicacao, PlanejamentoPreviewStaleDialog } from "@/components/planejamento/PlanejamentoExplicacao";
+import { ReplanejamentoComparativo } from "@/components/planejamento/ReplanejamentoComparativo";
 import { Checkbox } from "@/components/ui/checkbox";
 import { DatePicker } from "@/components/ui/date-picker";
 import { SelectField } from "@/components/ui/select-field";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { cn } from "@/lib/utils";
-import { isPlanejamentoPreviewDesatualizado, planejamentoCapacidadeDiagnostico } from "@/lib/planejamento/errors";
+import { isPlanejamentoComparativoDesatualizado, planejamentoCapacidadeDiagnostico } from "@/lib/planejamento/errors";
 import {
+  compararReplanejamento,
   obterPlanejamentoAtual,
-  previewPlanejamento,
   recalcularPlano,
 } from "@/services/planejamento";
 import type {
@@ -28,6 +34,7 @@ import type {
   DisciplinaPlanoInput,
   NivelConhecimento,
   PlanejamentoPreview,
+  PlanejamentoComparativo,
 } from "@/types/planejamento";
 
 const DIAS = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"];
@@ -52,6 +59,7 @@ export function ReplanejarPlano() {
   const [disciplinas, setDisciplinas] = React.useState<DisciplinaPlanoInput[]>([]);
   const [config, setConfig] = React.useState<ConfigPlanejamento | null>(null);
   const [preview, setPreview] = React.useState<PlanejamentoPreview | null>(null);
+  const [comparativo, setComparativo] = React.useState<PlanejamentoComparativo | null>(null);
   const [confirmOpen, setConfirmOpen] = React.useState(false);
   const [stalePreviewOpen, setStalePreviewOpen] = React.useState(false);
   const hydratedRef = React.useRef(false);
@@ -59,6 +67,7 @@ export function ReplanejarPlano() {
   const previewConcursoIdRef = React.useRef<string | null>(null);
   concursoIdRef.current = concursoId;
   const currentPreview = previewConcursoIdRef.current === concursoId ? preview : null;
+  const currentComparativo = previewConcursoIdRef.current === concursoId ? comparativo : null;
 
   React.useEffect(() => {
     hydratedRef.current = false;
@@ -66,6 +75,7 @@ export function ReplanejarPlano() {
     setDisciplinas([]);
     setConfig(null);
     setPreview(null);
+    setComparativo(null);
     previewConcursoIdRef.current = null;
     setConfirmOpen(false);
     setStalePreviewOpen(false);
@@ -87,11 +97,12 @@ export function ReplanejarPlano() {
 
   const previewMutation = useMutation({
     mutationFn: (request: { concursoId: string; disciplinas: DisciplinaPlanoInput[]; config: ConfigPlanejamento }) =>
-      previewPlanejamento(request.disciplinas, request.config),
+      compararReplanejamento(request.concursoId, request.disciplinas, request.config),
     onSuccess: (result, request) => {
       if (request.concursoId === concursoIdRef.current) {
         previewConcursoIdRef.current = request.concursoId;
-        setPreview(result);
+        setPreview(result.preview);
+        setComparativo(result.comparativo);
       }
     },
     onError: (error) => {
@@ -114,6 +125,7 @@ export function ReplanejarPlano() {
         planejamento: config!,
         idempotency_key: idempotencyKey.current,
         preview_fingerprint: currentPreview?.preview_fingerprint,
+        baseline_fingerprint: currentComparativo?.baseline_fingerprint,
       }),
     onSuccess: async () => {
       await Promise.all([
@@ -126,9 +138,10 @@ export function ReplanejarPlano() {
       navigate("/cronograma");
     },
     onError: (error) => {
-      if (isPlanejamentoPreviewDesatualizado(error)) {
+      if (isPlanejamentoComparativoDesatualizado(error)) {
         setConfirmOpen(false);
         setPreview(null);
+        setComparativo(null);
         previewConcursoIdRef.current = null;
         setStalePreviewOpen(true);
         return;
@@ -147,6 +160,7 @@ export function ReplanejarPlano() {
   const updateDisciplina = (index: number, patch: Partial<DisciplinaPlanoInput>) => {
     setDisciplinas((items) => items.map((item, itemIndex) => itemIndex === index ? { ...item, ...patch } : item));
     setPreview(null);
+    setComparativo(null);
     previewConcursoIdRef.current = null;
     previewMutation.reset();
   };
@@ -154,6 +168,7 @@ export function ReplanejarPlano() {
   const updateConfig = (patch: Partial<ConfigPlanejamento>) => {
     setConfig((current) => current ? { ...current, ...patch } : current);
     setPreview(null);
+    setComparativo(null);
     previewConcursoIdRef.current = null;
     previewMutation.reset();
   };
@@ -227,22 +242,42 @@ export function ReplanejarPlano() {
       </section>
 
       <div className="flex flex-wrap justify-end gap-3">
-        <Button variant="outline" disabled={!canPreview || previewMutation.isPending} onClick={gerarPreview}><CalendarClock /> {previewMutation.isPending ? "Calculando…" : "Gerar nova prévia"}</Button>
-        <Button disabled={!currentPreview?.explicacao.confirmavel || recalculateMutation.isPending} onClick={() => setConfirmOpen(true)}><RefreshCw /> Aplicar replanejamento</Button>
+        <Button variant="outline" disabled={!canPreview || previewMutation.isPending} onClick={gerarPreview}><CalendarClock /> {previewMutation.isPending ? "Comparando…" : "Comparar nova proposta"}</Button>
+        <Button disabled={!currentPreview?.explicacao.confirmavel || !currentComparativo || recalculateMutation.isPending} onClick={() => setConfirmOpen(true)}><RefreshCw /> Aplicar replanejamento</Button>
       </div>
 
       {capacityDiagnostic ? <PlanejamentoCapacidadeAlert diagnostico={capacityDiagnostic} /> : null}
+      {previewMutation.isPending ? (
+        <section role="status" aria-label="Comparando planejamentos" className="space-y-3 rounded-2xl border border-border p-5">
+          <Skeleton className="h-6 w-64 max-w-full" />
+          <Skeleton className="h-16 w-full" />
+          <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">{Array.from({ length: 4 }, (_, index) => <Skeleton key={index} className="h-24" />)}</div>
+        </section>
+      ) : null}
+      {previewMutation.isError && !capacityDiagnostic ? (
+        <Alert variant="destructive">
+          <AlertTitle>Não foi possível comparar os planejamentos</AlertTitle>
+          <AlertDescription className="space-y-3">
+            <p>Revise os dados ou tente novamente. Nenhuma alteração foi aplicada.</p>
+            <Button type="button" variant="outline" className="min-h-11" onClick={gerarPreview}>Tentar novamente</Button>
+          </AlertDescription>
+        </Alert>
+      ) : null}
       {currentPreview ? <PlanejamentoExplicacao preview={currentPreview} /> : null}
+      {currentComparativo ? <ReplanejamentoComparativo comparativo={currentComparativo} /> : null}
 
-      <Dialog open={confirmOpen} onOpenChange={(open) => !recalculateMutation.isPending && setConfirmOpen(open)}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Confirmar replanejamento?</DialogTitle>
-            <DialogDescription>Os itens futuros deste concurso serão substituídos pela nova distribuição. Sessões de estudo já registradas serão mantidas.</DialogDescription>
-          </DialogHeader>
-          <div className="flex justify-end gap-3"><Button variant="outline" onClick={() => setConfirmOpen(false)} disabled={recalculateMutation.isPending}>Cancelar</Button><Button onClick={() => recalculateMutation.mutate()} disabled={recalculateMutation.isPending}><Check /> {recalculateMutation.isPending ? "Aplicando…" : "Confirmar e substituir futuros"}</Button></div>
-        </DialogContent>
-      </Dialog>
+      <AlertDialog open={confirmOpen} onOpenChange={(open) => !recalculateMutation.isPending && setConfirmOpen(open)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirmar replanejamento?</AlertDialogTitle>
+            <AlertDialogDescription>Você revisou {currentComparativo?.resumo.itens_comparativo ?? 0} impactos. Os itens futuros serão substituídos; sessões realizadas, histórico e revisões serão mantidos.</AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={recalculateMutation.isPending}>Cancelar</AlertDialogCancel>
+            <AlertDialogAction onClick={() => recalculateMutation.mutate()} disabled={recalculateMutation.isPending}><Check /> {recalculateMutation.isPending ? "Aplicando…" : "Confirmar e substituir futuros"}</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
       <PlanejamentoPreviewStaleDialog open={stalePreviewOpen} onOpenChange={setStalePreviewOpen} onReview={() => setStalePreviewOpen(false)} onRegenerate={() => { setStalePreviewOpen(false); gerarPreview(); }} />
     </div>
   );

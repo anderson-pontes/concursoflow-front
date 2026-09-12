@@ -3,6 +3,7 @@ import type {
   ConfigPlanejamento,
   DisciplinaPlanoInput,
   PlanejamentoAtual,
+  PlanejamentoCompararResponse,
   PlanejamentoPreview,
   PlanoGuiadoInput,
   PlanoGuiadoResponse,
@@ -18,6 +19,19 @@ export async function confirmarPlanoGuiado(input: PlanoGuiadoInput) {
 
 export async function obterPlanejamentoAtual(concursoId: string) {
   return (await api.get<PlanejamentoAtual>(`/concursos/${concursoId}/planejamento`)).data;
+}
+
+export async function compararReplanejamento(
+  concursoId: string,
+  disciplinas: DisciplinaPlanoInput[],
+  planejamento: ConfigPlanejamento,
+) {
+  return (
+    await api.post<PlanejamentoCompararResponse>(
+      `/concursos/${concursoId}/planejamento/replanejamento/comparar`,
+      { disciplinas, planejamento },
+    )
+  ).data;
 }
 
 export async function recalcularPlano(concursoId: string, input: PlanoGuiadoInput) {

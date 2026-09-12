@@ -46,3 +46,11 @@ export function isPlanejamentoPreviewDesatualizado(error: unknown): boolean {
   const detail = error.response.data?.detail as ErrorDetail | undefined;
   return detail?.code === "PLANEJAMENTO_PREVIEW_DESATUALIZADO";
 }
+
+
+export function isPlanejamentoComparativoDesatualizado(error: unknown): boolean {
+  if (!isAxiosError(error) || error.response?.status !== 409) return false;
+  const detail = error.response.data?.detail as ErrorDetail | undefined;
+  return detail?.code === "PLANEJAMENTO_PREVIEW_DESATUALIZADO"
+    || detail?.code === "PLANEJAMENTO_BASELINE_DESATUALIZADO";
+}

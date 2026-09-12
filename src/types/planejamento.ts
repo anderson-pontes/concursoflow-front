@@ -34,6 +34,7 @@ export type PlanoGuiadoInput = {
   planejamento: ConfigPlanejamento;
   idempotency_key: string;
   preview_fingerprint?: string | null;
+  baseline_fingerprint?: string | null;
 };
 
 export type SessaoPlanejada = {
@@ -94,6 +95,52 @@ export type PlanoGuiadoResponse = {
   topicos_criados: number;
   sessoes_planejadas: number;
   preview: PlanejamentoPreview;
+  comparativo_aplicado?: PlanejamentoComparativo | null;
+};
+
+export type ClassificacaoComparativo = "adicionado" | "removido" | "movido" | "preservado";
+export type MotivoComparativo = "SEM_ALTERACAO" | "DATA_ALTERADA" | "DURACAO_ALTERADA" | "FORA_DA_NOVA_PROPOSTA" | "NOVA_SESSAO";
+export type PosicaoComparativo = { data: string; ordem_no_dia: number };
+export type ItemComparativo = {
+  comparacao_id: string;
+  classificacao: ClassificacaoComparativo;
+  motivo: MotivoComparativo;
+  disciplina_id: string;
+  disciplina_nome: string;
+  duracao_anterior_minutos: number | null;
+  duracao_nova_minutos: number | null;
+  posicao_anterior: PosicaoComparativo | null;
+  posicao_nova: PosicaoComparativo | null;
+  par_comparacao: string | null;
+};
+export type ResumoComparativo = {
+  antes_itens: number;
+  depois_itens: number;
+  antes_minutos: number;
+  depois_minutos: number;
+  adicionados: number;
+  removidos: number;
+  movidos: number;
+  preservados: number;
+  itens_comparativo: number;
+};
+export type PlanejamentoComparativo = {
+  versao_contrato: 1;
+  baseline_versao: "cronograma-baseline-v1";
+  baseline_fingerprint: string;
+  preview_fingerprint: string;
+  fronteira: { data_inicio: string; data_fim_anterior: string | null; data_fim_proposta: string };
+  resumo: ResumoComparativo;
+  grupos: {
+    adicionados: ItemComparativo[];
+    removidos: ItemComparativo[];
+    movidos: ItemComparativo[];
+    preservados: ItemComparativo[];
+  };
+};
+export type PlanejamentoCompararResponse = {
+  preview: PlanejamentoPreview;
+  comparativo: PlanejamentoComparativo;
 };
 
 export type PlanejamentoAtual = {
