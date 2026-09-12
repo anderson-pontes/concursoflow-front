@@ -33,6 +33,7 @@ export type PlanoGuiadoInput = {
   disciplinas: DisciplinaPlanoInput[];
   planejamento: ConfigPlanejamento;
   idempotency_key: string;
+  preview_fingerprint?: string | null;
 };
 
 export type SessaoPlanejada = {
@@ -49,6 +50,41 @@ export type PlanejamentoPreview = {
   minutos_totais: number;
   carga_semanal_minutos: number;
   prioridades: Record<string, number>;
+  preview_fingerprint: string;
+  explicacao: PlanejamentoExplicacao;
+};
+
+export type PlanejamentoCapacidade = {
+  capacidade_informada_minutos: number;
+  capacidade_planejavel_minutos: number;
+  carga_alocada_minutos: number;
+  saldo_nao_planejavel_minutos: number;
+  dias_disponiveis: number;
+  dias_utilizados: number;
+  encaixe_calendario: "viavel";
+  cobertura_edital: "indeterminada_sem_estimativa_esforco";
+};
+
+export type DisciplinaPlanejamentoExplicada = {
+  disciplina_id: string | null;
+  disciplina_nome: string;
+  peso: number;
+  conhecimento: NivelConhecimento;
+  fator_conhecimento: number;
+  prioridade: number;
+  minutos_alocados: number;
+  sessoes: number;
+  dias_utilizados: number;
+  participacao_bps: number;
+};
+
+export type PlanejamentoExplicacao = {
+  versao_contrato: 1;
+  algoritmo_versao: "planejamento-v1";
+  confirmavel: boolean;
+  capacidade: PlanejamentoCapacidade;
+  disciplinas: DisciplinaPlanejamentoExplicada[];
+  alertas: Array<"COBERTURA_EDITAL_NAO_MENSURAVEL">;
 };
 
 export type PlanoGuiadoResponse = {

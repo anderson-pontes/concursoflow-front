@@ -6,6 +6,7 @@ import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { PlanejamentoCapacidadeAlert, PlanejamentoExplicacao, PlanejamentoPreviewStaleDialog } from "@/components/planejamento/PlanejamentoExplicacao";
 import { Checkbox } from "@/components/ui/checkbox";
 import { DatePicker } from "@/components/ui/date-picker";
 import { SelectField } from "@/components/ui/select-field";
@@ -15,6 +16,7 @@ import { PublicCatalogResults } from "@/components/editais/PublicCatalogResults"
 import { CatalogViewToggle, type CatalogViewMode } from "@/components/editais/CatalogViewToggle";
 import { cn } from "@/lib/utils";
 import { clearOnboardingDraft, readOnboardingDraft, saveOnboardingDraft, type OnboardingDraft } from "@/lib/onboardingDraftStorage";
+import { isPlanejamentoPreviewDesatualizado, planejamentoCapacidadeDiagnostico } from "@/lib/planejamento/errors";
 import { useConcursoContextTransition } from "@/hooks/useConcursoContextTransition";
 import type { Disciplina } from "@/lib/disciplinas/types";
 import { api } from "@/services/api";
@@ -56,6 +58,15 @@ export function PlanoGuiado() {
   const [draftCandidate, setDraftCandidate] = React.useState<OnboardingDraft | null>(null);
   const [draftReady, setDraftReady] = React.useState(false);
   const [completedPlan, setCompletedPlan] = React.useState<PlanoGuiadoResponse | null>(null);
+  const [stalePreviewOpen, setStalePreviewOpen] = React.useState(false);
+  const concursoAtivoId = useConcursoStore((state) => state.concursoAtivoId);
+  const previewInputSignature = React.useMemo(
+    () => JSON.stringify({ concursoAtivoId, disciplinas: disciplinas.filter((item) => item.ativa), config }),
+    [concursoAtivoId, config, disciplinas],
+  );
+  const previewInputSignatureRef = React.useRef<string | null>(null);
+  const currentPreviewInputSignatureRef = React.useRef(previewInputSignature);
+  currentPreviewInputSignatureRef.current = previewInputSignature;
   const idempotency = React.useRef<string>(uuid()); const headingRef = React.useRef<HTMLHeadingElement>(null);
   const restoredVersionId = React.useRef<string | null>(null);
   const telemetryJourney = React.useRef(createTelemetryJourney());
@@ -167,18 +178,25 @@ export function PlanoGuiado() {
   }, [cargoId, detalhe.data, draftReady]);
 
   const preview = useMutation({
-    mutationFn: () => previewPlanejamento(disciplinas.filter((d) => d.ativa), config),
-    onSuccess: (result) => {
+    mutationFn: (_inputSignature: string) => previewPlanejamento(disciplinas.filter((d) => d.ativa), config),
+    onSuccess: (result, inputSignature) => {
+      previewInputSignatureRef.current = inputSignature;
       telemetryJourney.current.track("plan_preview_generated", {
         planning_type: config.tipo === "semanal" ? "weekly" : "cycle",
         block_count: result.sessoes.length,
         total_minutes: result.minutos_totais,
       });
     },
-    onError: () => toast.error("Revise a disponibilidade e as durações das sessões."),
+    onError: (error) => {
+      if (!planejamentoCapacidadeDiagnostico(error)) toast.error("Revise a disponibilidade e as durações das sessões.");
+    },
   });
+  const isPreviewCurrent = Boolean(
+    preview.data
+    && previewInputSignatureRef.current === previewInputSignature,
+  );
   const confirm = useMutation({
-    mutationFn: () => confirmarPlanoGuiado({ tipo_plano: tipo!, nome, orgao, cargo: cargoNome || null, banca: banca || null, data_prova: dataProva || null, observacoes: observacoes || null, catalogo: tipo === "catalogo" ? { edital_id: edital!.id, version_id: versao!.id, cargo_id: cargo!.id } : null, disciplinas: disciplinas.filter((d) => d.ativa), planejamento: config, idempotency_key: idempotency.current }),
+    mutationFn: () => confirmarPlanoGuiado({ tipo_plano: tipo!, nome, orgao, cargo: cargoNome || null, banca: banca || null, data_prova: dataProva || null, observacoes: observacoes || null, catalogo: tipo === "catalogo" ? { edital_id: edital!.id, version_id: versao!.id, cargo_id: cargo!.id } : null, disciplinas: disciplinas.filter((d) => d.ativa), planejamento: config, idempotency_key: idempotency.current, preview_fingerprint: isPreviewCurrent ? preview.data?.preview_fingerprint : undefined }),
     onSuccess: async (result) => {
       telemetryJourney.current.track("plan_confirmed", {
         planning_type: config.tipo === "semanal" ? "weekly" : "cycle",
@@ -200,9 +218,21 @@ export function PlanoGuiado() {
       const errorCode = telemetryErrorCode(error);
       telemetryJourney.current.track("plan_confirmation_failed", { error_code: errorCode });
       telemetryJourney.current.track("activation_failed", { stage: "confirmation", error_code: errorCode });
+      if (isPlanejamentoPreviewDesatualizado(error)) {
+        preview.reset();
+        setStalePreviewOpen(true);
+        return;
+      }
       toast.error("Não foi possível criar o plano. Suas escolhas foram mantidas.");
     },
   });
+
+  const previewDataForInvalidation = preview.data;
+  const resetPreview = preview.reset;
+  React.useEffect(() => {
+    if (previewDataForInvalidation && previewInputSignatureRef.current !== previewInputSignature) resetPreview();
+  }, [previewDataForInvalidation, previewInputSignature, resetPreview]);
+  const capacityDiagnostic = planejamentoCapacidadeDiagnostico(preview.error);
 
   React.useEffect(() => { headingRef.current?.focus(); }, [step, completedPlan]);
   const ensureActivationStarted = (mode: TipoPlanoGuiado) => {
@@ -241,7 +271,14 @@ export function PlanoGuiado() {
     const completedSteps = ["contest", "details", "subjects", "planning"] as const;
     const completed = completedSteps[step - 1];
     if (completed) telemetryJourney.current.track("activation_step_completed", { step: completed, step_position: step, total_steps: 5 });
-    if (step === 4) { preview.mutate(undefined, { onSuccess: () => setStep(5) }); return; }
+    if (step === 4) {
+      preview.mutate(previewInputSignature, {
+        onSuccess: (_result, inputSignature) => {
+          if (inputSignature === currentPreviewInputSignatureRef.current) setStep(5);
+        },
+      });
+      return;
+    }
     setStep((s) => Math.min(5, s + 1));
   };
   const compactCatalogJourney = tipo === "catalogo" && step >= 2;
@@ -289,10 +326,21 @@ export function PlanoGuiado() {
       {step === 3 && <section><StepTitle title="Escolha disciplinas e tópicos" text={tipo === "catalogo" ? "O edital trouxe o conteúdo abaixo. Desmarque o que não fará parte deste plano." : "Reaproveite disciplinas ou adicione conteúdo novo."} />{tipo === "catalogo" && <div className="mt-5 grid gap-4 sm:grid-cols-2"><Field label="Data da prova (opcional)"><DatePicker value={dataProva} onValueChange={setDataProva} /></Field><Field label="Observações (opcional)"><textarea value={observacoes} onChange={(e) => setObservacoes(e.target.value)} rows={2} className="input-base" /></Field></div>}{tipo === "personalizado" && <><div className="mt-5 grid gap-2 sm:grid-cols-2">{pessoais.data?.map((d) => <label key={d.id} className="flex min-h-14 cursor-pointer items-center gap-3 rounded-lg border border-border p-3"><Checkbox checked={disciplinas.some((x) => x.disciplina_id === d.id)} onCheckedChange={() => togglePessoal(d)} /><span><strong className="block text-sm">{d.nome}</strong><small className="text-muted-foreground">{d.topicos_total ?? 0} tópicos cadastrados</small></span></label>)}</div><div className="mt-6 rounded-xl border border-dashed border-border p-4"><h3 className="font-semibold">Adicionar nova disciplina</h3><div className="mt-3 grid gap-3 sm:grid-cols-2"><Field label="Nome"><input value={novoNome} onChange={(e) => setNovoNome(e.target.value)} className="input-base" /></Field><Field label="Tópicos (um por linha)"><textarea value={novosTopicos} onChange={(e) => setNovosTopicos(e.target.value)} rows={3} className="input-base" /></Field></div><Button type="button" variant="outline" onClick={adicionarDisciplina} disabled={!novoNome.trim()}><Plus /> Adicionar disciplina</Button></div></>}
         <div className="mt-5 space-y-2">{disciplinas.map((d, i) => <div key={d.disciplina_id ?? `${d.nome}-${i}`} className="flex items-start gap-3 rounded-xl border border-border p-4"><Checkbox className="mt-3" checked={d.ativa} onCheckedChange={(v) => updateDisc(i, { ativa: Boolean(v) })} /><div className="min-w-0 flex-1">{tipo === "personalizado" && !d.disciplina_id ? <><input aria-label="Nome da disciplina" value={d.nome} onChange={(e) => updateDisc(i, { nome: e.target.value })} className="input-base font-semibold" /><textarea aria-label={`Tópicos de ${d.nome}`} value={d.topicos.join("\n")} onChange={(e) => updateDisc(i, { topicos: e.target.value.split(/\r?\n/).map((x) => x.trim()).filter(Boolean) })} rows={2} className="input-base mt-2" /></> : <><strong className="block">{d.nome}</strong><small className="text-muted-foreground">{d.topicos.length ? `${d.topicos.length} tópicos` : "Tópicos já cadastrados"}</small></>}</div><div className="flex shrink-0 gap-1"><Button variant="ghost" size="icon" disabled={i === 0} aria-label={`Mover ${d.nome} para cima`} onClick={() => moverDisc(i, -1)}><ArrowUp /></Button><Button variant="ghost" size="icon" disabled={i === disciplinas.length - 1} aria-label={`Mover ${d.nome} para baixo`} onClick={() => moverDisc(i, 1)}><ArrowDown /></Button>{tipo === "personalizado" && !d.disciplina_id && <Button variant="ghost" size="icon" aria-label={`Remover ${d.nome}`} onClick={() => setDisciplinas((items) => items.filter((_, index) => index !== i).map((item, ordem) => ({ ...item, ordem }))) }><Trash2 /></Button>}</div></div>)}</div></section>}
       {step === 4 && <section><StepTitle title="Como organizar seus estudos?" text="A prioridade considera peso × dificuldade. Quanto menor seu domínio, maior a frequência sugerida." /><div className="mt-5 space-y-3">{disciplinas.filter((d) => d.ativa).map((d) => { const i = disciplinas.indexOf(d); return <div key={d.disciplina_id ?? d.nome} className="grid gap-3 rounded-xl border border-border p-4 sm:grid-cols-[1fr_140px_180px]"><strong className="self-center">{d.nome}</strong><Field label="Peso (1–10)"><input type="number" min={1} max={10} value={d.peso} onChange={(e) => updateDisc(i, { peso: Number(e.target.value) })} className="input-base" /></Field><Field label="Seu conhecimento"><SelectField value={d.conhecimento} onValueChange={(value) => updateDisc(i, { conhecimento: value as NivelConhecimento })} options={CONHECIMENTO} /></Field></div>})}</div><div className="mt-6 grid gap-4 sm:grid-cols-2"><Field label="Formato"><SelectField value={config.tipo} onValueChange={(value) => setConfig({ ...config, tipo: value as "ciclo" | "semanal" })} options={[{ value: "ciclo", label: "Ciclo de estudos" }, { value: "semanal", label: "Grade semanal" }]} /></Field><div /><Field label="Data de início"><DatePicker value={config.data_inicio} onValueChange={(value) => setConfig({ ...config, data_inicio: value })} /></Field><Field label="Planejar até"><DatePicker value={config.data_fim} onValueChange={(value) => setConfig({ ...config, data_fim: value })} /></Field><Field label="Sessão mínima (min)"><input type="number" min={5} max={240} value={config.sessao_min_minutos} onChange={(e) => setConfig({ ...config, sessao_min_minutos: Number(e.target.value) })} className="input-base" /></Field><Field label="Sessão máxima (min)"><input type="number" min={5} max={240} value={config.sessao_max_minutos} onChange={(e) => setConfig({ ...config, sessao_max_minutos: Number(e.target.value) })} className="input-base" /></Field></div><fieldset className="mt-6"><legend className="font-semibold">Disponibilidade por dia</legend><div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-7">{DIAS.map((dia, i) => <Field key={dia} label={dia}><div className="flex items-center gap-1"><input aria-label={`Horas de ${dia}`} type="number" min={0} max={23} value={Math.floor((config.disponibilidade_minutos[i] ?? 0) / 60)} onChange={(e) => setConfig({ ...config, disponibilidade_minutos: { ...config.disponibilidade_minutos, [i]: Number(e.target.value) * 60 + ((config.disponibilidade_minutos[i] ?? 0) % 60) } })} className="input-base px-2" /><span className="text-xs">h</span><input aria-label={`Minutos de ${dia}`} type="number" min={0} max={59} value={(config.disponibilidade_minutos[i] ?? 0) % 60} onChange={(e) => setConfig({ ...config, disponibilidade_minutos: { ...config.disponibilidade_minutos, [i]: Math.floor((config.disponibilidade_minutos[i] ?? 0) / 60) * 60 + Number(e.target.value) } })} className="input-base px-2" /><span className="text-xs">m</span></div></Field>)}</div></fieldset></section>}
-      {step === 5 && <section><StepTitle title="Seu plano está pronto para confirmar" text="Revise a distribuição. Nenhuma alteração será criada antes da sua confirmação." />{preview.isPending && <p role="status" className="py-12 text-center">Calculando melhor distribuição…</p>}{preview.data && <>{tipo === "catalogo" && edital ? <div className="mt-5 flex flex-col gap-4 rounded-xl border border-border bg-muted/20 p-4 sm:flex-row sm:items-center"><div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-border bg-background">{edital.logo_url ? <img src={edital.logo_url} alt={`Logo de ${edital.orgao}`} className="h-full w-full object-contain p-2" /> : <Sparkles className="h-6 w-6 text-primary" />}</div><div className="min-w-0"><strong className="block text-base">{edital.nome}</strong><p className="mt-1 text-sm text-muted-foreground">{edital.orgao}{edital.banca ? ` · ${edital.banca}` : ""}</p><p className="mt-1 text-xs text-muted-foreground">{cargoNome}{dataProva ? ` · prova em ${new Date(`${dataProva}T12:00:00`).toLocaleDateString("pt-BR")}` : ""}</p></div></div> : null}<div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-5"><Summary label="Plano" value={nome} /><Summary label="Cargo" value={cargoNome || "Não informado"} /><Summary label="Conteúdo" value={`${disciplinas.filter((d) => d.ativa).length} disciplinas · ${disciplinas.filter((d) => d.ativa).reduce((sum, d) => sum + d.topicos.length, 0)} tópicos`} /><Summary label="Carga semanal" value={`${Math.round(preview.data.carga_semanal_minutos / 60 * 10) / 10} h`} /><Summary label="Período" value={`${preview.data.sessoes.length} sessões · ${Math.round(preview.data.minutos_totais / 60 * 10) / 10} h`} /></div><div className="mt-5 max-h-80 overflow-auto rounded-xl border border-border"><ul className="divide-y divide-border">{preview.data.sessoes.slice(0, 40).map((s, i) => <li key={`${s.data}-${s.ordem}-${i}`} className="flex items-center gap-3 p-3 text-sm"><CalendarClock className="h-4 w-4 text-primary" /><span className="flex-1"><strong>{s.disciplina_nome}</strong><span className="ml-2 text-muted-foreground">{new Date(`${s.data}T12:00:00`).toLocaleDateString("pt-BR")}</span></span><span>{s.duracao_minutos} min</span></li>)}</ul>{preview.data.sessoes.length > 40 && <p className="p-3 text-center text-xs text-muted-foreground">Mais {preview.data.sessoes.length - 40} sessões serão criadas.</p>}</div></>}</section>}
+      {step === 5 && <section>
+        <StepTitle title="Seu plano está pronto para confirmar" text="Revise a distribuição. Nenhuma alteração será criada antes da sua confirmação." />
+        {preview.isPending && <p role="status" className="py-12 text-center">Calculando melhor distribuição…</p>}
+        {isPreviewCurrent && preview.data && <>
+          {tipo === "catalogo" && edital ? <div className="mt-5 flex flex-col gap-4 rounded-xl border border-border bg-muted/20 p-4 sm:flex-row sm:items-center"><div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-border bg-background">{edital.logo_url ? <img src={edital.logo_url} alt={`Logo de ${edital.orgao}`} className="h-full w-full object-contain p-2" /> : <Sparkles className="h-6 w-6 text-primary" />}</div><div className="min-w-0"><strong className="block text-base">{edital.nome}</strong><p className="mt-1 text-sm text-muted-foreground">{edital.orgao}{edital.banca ? ` · ${edital.banca}` : ""}</p><p className="mt-1 text-xs text-muted-foreground">{cargoNome}{dataProva ? ` · prova em ${new Date(`${dataProva}T12:00:00`).toLocaleDateString("pt-BR")}` : ""}</p></div></div> : null}
+          <div className="mt-5 grid gap-3 sm:grid-cols-3"><Summary label="Plano" value={nome} /><Summary label="Cargo" value={cargoNome || "Não informado"} /><Summary label="Conteúdo" value={`${disciplinas.filter((d) => d.ativa).length} disciplinas · ${disciplinas.filter((d) => d.ativa).reduce((sum, d) => sum + d.topicos.length, 0)} tópicos`} /></div>
+          <PlanejamentoExplicacao preview={preview.data} />
+          <div className="mt-5 max-h-80 overflow-auto rounded-xl border border-border"><h3 className="border-b border-border px-3 py-2 text-sm font-semibold">Próximas sessões</h3><ul className="divide-y divide-border">{preview.data.sessoes.slice(0, 40).map((s, i) => <li key={`${s.data}-${s.ordem}-${i}`} className="flex items-center gap-3 p-3 text-sm"><CalendarClock className="h-4 w-4 text-primary" /><span className="flex-1"><strong>{s.disciplina_nome}</strong><span className="ml-2 text-muted-foreground">{new Date(`${s.data}T12:00:00`).toLocaleDateString("pt-BR")}</span></span><span>{s.duracao_minutos} min</span></li>)}</ul>{preview.data.sessoes.length > 40 && <p className="p-3 text-center text-xs text-muted-foreground">Mais {preview.data.sessoes.length - 40} sessões serão criadas.</p>}</div>
+        </>}
+      </section>}
+      {step === 4 && capacityDiagnostic ? <PlanejamentoCapacidadeAlert diagnostico={capacityDiagnostic} /> : null}
     </main>
     <CatalogDetailsDialog editalId={detailsId} scope="public" open={Boolean(detailsId)} onOpenChange={(open) => { if (!open) setDetailsId(null); }} />
-    <footer className="fixed inset-x-0 bottom-0 z-20 border-t border-border bg-background/95 p-3 backdrop-blur sm:static sm:border-0 sm:bg-transparent sm:p-0"><div className="mx-auto flex max-w-6xl justify-between gap-3"><Button className="min-h-11" variant="outline" disabled={step === 1 || confirm.isPending} onClick={() => setStep((s) => Math.max(1, s - 1))}><ArrowLeft /> Voltar</Button>{step < 5 ? <Button className="min-h-11" disabled={!canNext || preview.isPending} onClick={next}>Continuar <ArrowRight /></Button> : <Button className="min-h-11" disabled={confirm.isPending || !preview.data} onClick={() => confirm.mutate()}>{confirm.isPending ? "Criando plano…" : <><Check /> Confirmar e ativar</>}</Button>}</div></footer>
+    <PlanejamentoPreviewStaleDialog open={stalePreviewOpen} onOpenChange={setStalePreviewOpen} onReview={() => { setStalePreviewOpen(false); setStep(4); }} onRegenerate={() => { setStalePreviewOpen(false); preview.mutate(previewInputSignature); }} />
+    <footer className="fixed inset-x-0 bottom-0 z-20 border-t border-border bg-background/95 p-3 backdrop-blur sm:static sm:border-0 sm:bg-transparent sm:p-0"><div className="mx-auto flex max-w-6xl justify-between gap-3"><Button className="min-h-11" variant="outline" disabled={step === 1 || confirm.isPending} onClick={() => setStep((s) => Math.max(1, s - 1))}><ArrowLeft /> Voltar</Button>{step < 5 ? <Button className="min-h-11" disabled={!canNext || preview.isPending} onClick={next}>Continuar <ArrowRight /></Button> : <Button className="min-h-11" disabled={confirm.isPending || !isPreviewCurrent || !preview.data?.explicacao.confirmavel} onClick={() => confirm.mutate()}>{confirm.isPending ? "Criando plano…" : <><Check /> Confirmar e ativar</>}</Button>}</div></footer>
   </div>;
 }
 

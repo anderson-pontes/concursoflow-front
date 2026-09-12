@@ -5,6 +5,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
+import { PlanejamentoCapacidadeAlert, PlanejamentoExplicacao, PlanejamentoPreviewStaleDialog } from "@/components/planejamento/PlanejamentoExplicacao";
 import { Checkbox } from "@/components/ui/checkbox";
 import { DatePicker } from "@/components/ui/date-picker";
 import { SelectField } from "@/components/ui/select-field";
@@ -16,6 +17,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
+import { isPlanejamentoPreviewDesatualizado, planejamentoCapacidadeDiagnostico } from "@/lib/planejamento/errors";
 import {
   obterPlanejamentoAtual,
   previewPlanejamento,
@@ -51,7 +53,23 @@ export function ReplanejarPlano() {
   const [config, setConfig] = React.useState<ConfigPlanejamento | null>(null);
   const [preview, setPreview] = React.useState<PlanejamentoPreview | null>(null);
   const [confirmOpen, setConfirmOpen] = React.useState(false);
+  const [stalePreviewOpen, setStalePreviewOpen] = React.useState(false);
   const hydratedRef = React.useRef(false);
+  const concursoIdRef = React.useRef(concursoId);
+  const previewConcursoIdRef = React.useRef<string | null>(null);
+  concursoIdRef.current = concursoId;
+  const currentPreview = previewConcursoIdRef.current === concursoId ? preview : null;
+
+  React.useEffect(() => {
+    hydratedRef.current = false;
+    idempotencyKey.current = newKey();
+    setDisciplinas([]);
+    setConfig(null);
+    setPreview(null);
+    previewConcursoIdRef.current = null;
+    setConfirmOpen(false);
+    setStalePreviewOpen(false);
+  }, [concursoId]);
 
   const planejamento = useQuery({
     queryKey: ["planejamento-atual", concursoId],
@@ -68,9 +86,17 @@ export function ReplanejarPlano() {
   }, [planejamento.data]);
 
   const previewMutation = useMutation({
-    mutationFn: () => previewPlanejamento(disciplinas.filter((item) => item.ativa), config!),
-    onSuccess: setPreview,
-    onError: () => toast.error("Revise as disciplinas, datas e disponibilidade informadas."),
+    mutationFn: (request: { concursoId: string; disciplinas: DisciplinaPlanoInput[]; config: ConfigPlanejamento }) =>
+      previewPlanejamento(request.disciplinas, request.config),
+    onSuccess: (result, request) => {
+      if (request.concursoId === concursoIdRef.current) {
+        previewConcursoIdRef.current = request.concursoId;
+        setPreview(result);
+      }
+    },
+    onError: (error) => {
+      if (!planejamentoCapacidadeDiagnostico(error)) toast.error("Revise as disciplinas, datas e disponibilidade informadas.");
+    },
   });
 
   const recalculateMutation = useMutation({
@@ -87,6 +113,7 @@ export function ReplanejarPlano() {
         disciplinas,
         planejamento: config!,
         idempotency_key: idempotencyKey.current,
+        preview_fingerprint: currentPreview?.preview_fingerprint,
       }),
     onSuccess: async () => {
       await Promise.all([
@@ -98,17 +125,37 @@ export function ReplanejarPlano() {
       toast.success("Planejamento atualizado. Seus registros concluídos foram preservados.");
       navigate("/cronograma");
     },
-    onError: () => toast.error("Não foi possível atualizar o planejamento."),
+    onError: (error) => {
+      if (isPlanejamentoPreviewDesatualizado(error)) {
+        setConfirmOpen(false);
+        setPreview(null);
+        previewConcursoIdRef.current = null;
+        setStalePreviewOpen(true);
+        return;
+      }
+      toast.error("Não foi possível atualizar o planejamento.");
+    },
   });
+
+  const resetPreviewMutation = previewMutation.reset;
+  const resetRecalculateMutation = recalculateMutation.reset;
+  React.useEffect(() => {
+    resetPreviewMutation();
+    resetRecalculateMutation();
+  }, [concursoId, resetPreviewMutation, resetRecalculateMutation]);
 
   const updateDisciplina = (index: number, patch: Partial<DisciplinaPlanoInput>) => {
     setDisciplinas((items) => items.map((item, itemIndex) => itemIndex === index ? { ...item, ...patch } : item));
     setPreview(null);
+    previewConcursoIdRef.current = null;
+    previewMutation.reset();
   };
 
   const updateConfig = (patch: Partial<ConfigPlanejamento>) => {
     setConfig((current) => current ? { ...current, ...patch } : current);
     setPreview(null);
+    previewConcursoIdRef.current = null;
+    previewMutation.reset();
   };
 
   const canPreview = Boolean(
@@ -117,6 +164,12 @@ export function ReplanejarPlano() {
       && Object.values(config.disponibilidade_minutos).some((minutes) => minutes > 0)
       && config.sessao_max_minutos >= config.sessao_min_minutos,
   );
+  const capacityDiagnostic = planejamentoCapacidadeDiagnostico(previewMutation.error);
+  const gerarPreview = () => previewMutation.mutate({
+    concursoId,
+    disciplinas: disciplinas.filter((item) => item.ativa),
+    config: config!,
+  });
 
   if (planejamento.isError) {
     return (
@@ -174,11 +227,12 @@ export function ReplanejarPlano() {
       </section>
 
       <div className="flex flex-wrap justify-end gap-3">
-        <Button variant="outline" disabled={!canPreview || previewMutation.isPending} onClick={() => previewMutation.mutate()}><CalendarClock /> {previewMutation.isPending ? "Calculando…" : "Gerar nova prévia"}</Button>
-        <Button disabled={!preview || recalculateMutation.isPending} onClick={() => setConfirmOpen(true)}><RefreshCw /> Aplicar replanejamento</Button>
+        <Button variant="outline" disabled={!canPreview || previewMutation.isPending} onClick={gerarPreview}><CalendarClock /> {previewMutation.isPending ? "Calculando…" : "Gerar nova prévia"}</Button>
+        <Button disabled={!currentPreview?.explicacao.confirmavel || recalculateMutation.isPending} onClick={() => setConfirmOpen(true)}><RefreshCw /> Aplicar replanejamento</Button>
       </div>
 
-      {preview ? <PreviewSummary preview={preview} /> : null}
+      {capacityDiagnostic ? <PlanejamentoCapacidadeAlert diagnostico={capacityDiagnostic} /> : null}
+      {currentPreview ? <PlanejamentoExplicacao preview={currentPreview} /> : null}
 
       <Dialog open={confirmOpen} onOpenChange={(open) => !recalculateMutation.isPending && setConfirmOpen(open)}>
         <DialogContent>
@@ -189,18 +243,11 @@ export function ReplanejarPlano() {
           <div className="flex justify-end gap-3"><Button variant="outline" onClick={() => setConfirmOpen(false)} disabled={recalculateMutation.isPending}>Cancelar</Button><Button onClick={() => recalculateMutation.mutate()} disabled={recalculateMutation.isPending}><Check /> {recalculateMutation.isPending ? "Aplicando…" : "Confirmar e substituir futuros"}</Button></div>
         </DialogContent>
       </Dialog>
+      <PlanejamentoPreviewStaleDialog open={stalePreviewOpen} onOpenChange={setStalePreviewOpen} onReview={() => setStalePreviewOpen(false)} onRegenerate={() => { setStalePreviewOpen(false); gerarPreview(); }} />
     </div>
   );
 }
 
-function PreviewSummary({ preview }: { preview: PlanejamentoPreview }) {
-  return <section aria-live="polite" className="rounded-2xl border border-primary/25 bg-primary-muted/50 p-5"><h2 className="font-semibold">Resumo da nova distribuição</h2><div className="mt-3 grid gap-3 sm:grid-cols-3"><Summary label="Carga semanal" value={`${Math.round(preview.carga_semanal_minutos / 6) / 10} h`} /><Summary label="Sessões futuras" value={String(preview.sessoes.length)} /><Summary label="Tempo planejado" value={`${Math.round(preview.minutos_totais / 6) / 10} h`} /></div><ul className="mt-4 max-h-64 divide-y divide-border overflow-auto rounded-lg border border-border bg-card">{preview.sessoes.slice(0, 30).map((sessao, index) => <li key={`${sessao.data}-${sessao.ordem}-${index}`} className="flex items-center gap-3 p-3 text-sm"><strong className="flex-1">{sessao.disciplina_nome}</strong><span className="text-muted-foreground">{new Date(`${sessao.data}T12:00:00`).toLocaleDateString("pt-BR")}</span><span>{sessao.duracao_minutos} min</span></li>)}</ul></section>;
-}
-
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return <label className="block text-sm font-medium"><span className="mb-1.5 block">{label}</span>{children}</label>;
-}
-
-function Summary({ label, value }: { label: string; value: string }) {
-  return <div className="rounded-xl border border-border bg-card p-4"><span className="text-xs uppercase tracking-wide text-muted-foreground">{label}</span><strong className="mt-1 block">{value}</strong></div>;
 }

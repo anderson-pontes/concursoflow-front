@@ -68,6 +68,7 @@ async function runViewport(profile) {
   const page = await context.newPage();
   const errors = [];
   let previewAttempts = 0;
+  let confirmedFingerprint = null;
   page.on("pageerror", (error) => errors.push(error.message));
   page.on("console", (message) => {
     if (message.type() === "error" && !message.text().includes("favicon.ico") && !message.text().includes("503 (Service Unavailable)")) errors.push(message.text());
@@ -90,16 +91,48 @@ async function runViewport(profile) {
         minutos_totais: 50,
         carga_semanal_minutos: 300,
         prioridades: { "Qualidade de Software": 5 },
+        preview_fingerprint: "a".repeat(64),
+        explicacao: {
+          versao_contrato: 1,
+          algoritmo_versao: "planejamento-v1",
+          confirmavel: true,
+          capacidade: {
+            capacidade_informada_minutos: 50,
+            capacidade_planejavel_minutos: 50,
+            carga_alocada_minutos: 50,
+            saldo_nao_planejavel_minutos: 0,
+            dias_disponiveis: 1,
+            dias_utilizados: 1,
+            encaixe_calendario: "viavel",
+            cobertura_edital: "indeterminada_sem_estimativa_esforco",
+          },
+          disciplinas: [{
+            disciplina_id: edital.versao_atual.cargos[0].disciplinas[0].id,
+            disciplina_nome: "Qualidade de Software",
+            peso: 5,
+            conhecimento: "regular",
+            fator_conhecimento: 3,
+            prioridade: 15,
+            minutos_alocados: 50,
+            sessoes: 1,
+            dias_utilizados: 1,
+            participacao_bps: 10000,
+          }],
+          alertas: ["COBERTURA_EDITAL_NAO_MENSURAVEL"],
+        },
       }));
     }
-    if (request.method() === "POST" && path.endsWith("/concursos/planejamento/confirmar")) return request.respond(json({
-      concurso_id: concursoId,
-      criado: true,
-      disciplinas_criadas: 1,
-      topicos_criados: 2,
-      sessoes_planejadas: 1,
-      preview: { sessoes: [], minutos_totais: 50, carga_semanal_minutos: 300, prioridades: {} },
-    }));
+    if (request.method() === "POST" && path.endsWith("/concursos/planejamento/confirmar")) {
+      confirmedFingerprint = JSON.parse(request.postData() || "{}").preview_fingerprint;
+      return request.respond(json({
+        concurso_id: concursoId,
+        criado: true,
+        disciplinas_criadas: 1,
+        topicos_criados: 2,
+        sessoes_planejadas: 1,
+        preview: { sessoes: [], minutos_totais: 50, carga_semanal_minutos: 300, prioridades: {} },
+      }));
+    }
     if (request.method() === "GET" && path.endsWith("/concursos")) return request.respond(json([]));
     if (request.method() === "GET" && path.endsWith("/telemetry/preference")) return request.respond(json({ opted_out: true }));
     if (request.method() === "POST" && path.endsWith("/telemetry/events")) return request.respond(json({ accepted: 0 }, 202));
@@ -135,7 +168,7 @@ async function runViewport(profile) {
       hasFirstAction: [...document.querySelectorAll("button")].some((node) => node.textContent?.includes("Ver próxima ação")),
       overflow: document.documentElement.scrollWidth > document.documentElement.clientWidth + 1,
     }));
-    if (!success.hasFirstAction || success.overflow || previewAttempts !== 2) failures.push({ profile: profile.name, stage: "success", success, previewAttempts });
+    if (!success.hasFirstAction || success.overflow || previewAttempts !== 2 || confirmedFingerprint !== "a".repeat(64)) failures.push({ profile: profile.name, stage: "success", success, previewAttempts, confirmedFingerprint });
   } catch (error) {
     failures.push({ profile: profile.name, stage: "exception", error: String(error) });
   } finally {
