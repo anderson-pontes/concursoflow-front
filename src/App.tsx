@@ -43,6 +43,7 @@ const UsuarioDetalhe = lazyNamed(() => import("./pages/admin/UsuarioDetalhe"), "
 const EditaisCatalogo = lazyNamed(() => import("./pages/admin/EditaisCatalogo"), "EditaisCatalogo");
 const EditalCatalogoEditor = lazyNamed(() => import("./pages/admin/EditalCatalogoEditor"), "EditalCatalogoEditor");
 const PlanoGuiado = lazyNamed(() => import("./pages/PlanoGuiado"), "PlanoGuiado");
+const AtivarEditalCatalogo = lazyNamed(() => import("./pages/AtivarEditalCatalogo"), "AtivarEditalCatalogo");
 const ReplanejarPlano = lazyNamed(() => import("./pages/ReplanejarPlano"), "ReplanejarPlano");
 const Perfil = lazyNamed(() => import("./pages/Perfil"), "Perfil");
 
@@ -135,6 +136,14 @@ export default function App() {
         element={
           <Layout requireAuth={!isAuthed}>
             <LazyPage><PlanoGuiado /></LazyPage>
+          </Layout>
+        }
+      />
+      <Route
+        path="/editais/ativar"
+        element={
+          <Layout requireAuth={!isAuthed}>
+            <LazyPage><AtivarEditalCatalogo /></LazyPage>
           </Layout>
         }
       />

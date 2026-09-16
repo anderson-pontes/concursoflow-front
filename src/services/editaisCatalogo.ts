@@ -169,10 +169,11 @@ export async function listarEditaisPublicados(search = ""): Promise<EditalCatalo
   return (await paginarEditaisPublicados({ search, pageSize: 50 })).items;
 }
 
-export async function paginarEditaisPublicados(params: { search?: string; page?: number; pageSize?: number } = {}): Promise<EditalCatalogoPage> {
-  const { search = "", page = 1, pageSize = 12 } = params;
+export async function paginarEditaisPublicados(params: { search?: string; page?: number; pageSize?: number; sort?: "recent"; signal?: AbortSignal } = {}): Promise<EditalCatalogoPage> {
+  const { search = "", page = 1, pageSize = 12, sort = "recent", signal } = params;
   const { data } = await api.get<PageEnvelope<RawEdital> | RawEdital[]>("/catalogo/editais", {
-    params: { search: search || undefined, page, page_size: pageSize },
+    params: { search: search || undefined, page, page_size: pageSize, sort },
+    signal,
   });
   return normalizePage(data, true);
 }

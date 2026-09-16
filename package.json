@@ -19,6 +19,7 @@
     "test:e2e:dashboard-action": "node scripts/qa-ev-02-1-dashboard.mjs",
     "test:e2e:revisoes": "node scripts/qa-ev-03-4-revisoes.mjs",
     "test:e2e:planejamento": "node scripts/qa-ev-04-1-planejamento.mjs",
+    "test:e2e:catalogo": "node scripts/qa-ev-05-1-catalogo.mjs",
     "audit:data": "node scripts/audit-data-quality.mjs",
     "test:ui": "node --test scripts/qa-ui-contracts.test.mjs",
     "qa:ux-visual": "node scripts/qa-ux-visual.mjs",

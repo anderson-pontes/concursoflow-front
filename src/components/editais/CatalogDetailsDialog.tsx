@@ -1,3 +1,4 @@
+import * as React from "react";
 import { BookOpenCheck, ExternalLink } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 
@@ -22,9 +23,11 @@ type CatalogDetailsDialogProps = {
   scope: "admin" | "public";
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onReturnFocus?: () => void;
 };
 
-export function CatalogDetailsDialog({ editalId, scope, open, onOpenChange }: CatalogDetailsDialogProps) {
+export function CatalogDetailsDialog({ editalId, scope, open, onOpenChange, onReturnFocus }: CatalogDetailsDialogProps) {
+  const contentRef = React.useRef<HTMLDivElement>(null);
   const query = useQuery({
     queryKey: [scope === "admin" ? "admin-edital-detalhes" : "catalogo-edital", editalId],
     queryFn: () => scope === "admin" ? obterEditalAdmin(editalId!) : obterEditalPublicado(editalId!),
@@ -38,12 +41,26 @@ export function CatalogDetailsDialog({ editalId, scope, open, onOpenChange }: Ca
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[88vh] max-w-4xl overflow-y-auto p-0">
+      <DialogContent
+        ref={contentRef}
+        className="max-h-[88dvh] max-w-4xl overflow-y-auto p-0"
+        onOpenAutoFocus={(event) => {
+          event.preventDefault();
+          contentRef.current?.querySelector<HTMLElement>("[data-catalog-dialog-title]")?.focus();
+        }}
+        onCloseAutoFocus={(event) => {
+          event.preventDefault();
+          onReturnFocus?.();
+        }}
+      >
+        <DialogTitle data-catalog-dialog-title tabIndex={-1} className="sr-only outline-none">
+          {edital?.nome ?? "Detalhes do edital"}
+        </DialogTitle>
         {query.isLoading ? <div className="space-y-4 p-6" role="status" aria-label="Carregando detalhes do edital"><div className="flex gap-4"><Skeleton className="size-16 rounded-xl" /><div className="flex-1 space-y-2"><Skeleton className="h-5 w-32" /><Skeleton className="h-7 w-3/4" /><Skeleton className="h-4 w-1/2" /></div></div><Skeleton className="h-24 rounded-xl" /><Skeleton className="h-48 rounded-xl" /></div> : null}
         {query.isError ? <Alert variant="destructive" className="m-6 w-auto"><AlertDescription>Não foi possível carregar os detalhes. <button type="button" className="font-semibold underline" onClick={() => void query.refetch()}>Tentar novamente</button></AlertDescription></Alert> : null}
         {edital ? <>
           <DialogHeader className="border-b border-border px-6 py-5 pr-16">
-            <div className="flex items-start gap-4"><CatalogLogo src={edital.logo_url} orgao={edital.orgao} size="lg" /><div className="min-w-0 flex-1"><div className="flex flex-wrap items-center gap-2"><Badge variant="outline" className={cn("capitalize", statusClass[edital.status])}>{edital.status}</Badge>{versao ? <Badge variant="secondary" className="text-primary">Versão {versao.numero}</Badge> : null}</div><DialogTitle className="mt-3 text-xl leading-snug">{edital.nome}</DialogTitle><DialogDescription className="mt-1">{edital.orgao}{edital.banca ? ` · ${edital.banca}` : ""}</DialogDescription></div></div>
+            <div className="flex items-start gap-4"><CatalogLogo src={edital.logo_url} orgao={edital.orgao} size="lg" /><div className="min-w-0 flex-1"><div className="flex flex-wrap items-center gap-2"><Badge variant="outline" className={cn("capitalize", statusClass[edital.status])}>{edital.status}</Badge>{versao ? <Badge variant="secondary" className="text-primary">Versão {versao.numero}</Badge> : null}</div><h2 className="mt-3 text-xl font-semibold leading-snug">{edital.nome}</h2><DialogDescription className="mt-1">{edital.orgao}{edital.banca ? ` · ${edital.banca}` : ""}</DialogDescription></div></div>
           </DialogHeader>
 
           <div className="space-y-6 px-6 pb-6">
