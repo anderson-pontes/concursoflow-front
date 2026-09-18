@@ -50,7 +50,16 @@ const items = Array.from({ length: 9 }, (_, index) => {
       numero: 1,
       status: "publicado",
       data_prova: "2026-12-01",
-      published_at: "2026-09-15T12:00:00Z",
+    published_at: "2026-09-15T12:00:00Z",
+      classificacao: {
+        esfera: { id: "a1000000-0000-4000-8000-000000000001", chave: "federal", nome: "Federal", ordem: 10, ativo: true },
+        areas: [{ id: "a2000000-0000-4000-8000-000000000001", chave: "juridica", nome: "Jurídica", ordem: 10, ativo: true }],
+        ano_edital: 2026,
+        revision: 1,
+        fonte_tipo: "edital",
+        fonte_ref: "Edital oficial 01/2026",
+        updated_at: "2026-09-15T12:00:00Z",
+      },
       cargos: [{
         id: cargoId,
         nome: "Analista",
@@ -75,13 +84,13 @@ function json(body, status = 200) {
 
 async function clickButton(page, label, exact = false) {
   await page.waitForFunction(
-    (text, useExact) => [...document.querySelectorAll("button")].some((node) => (useExact ? node.textContent?.trim() === text : node.textContent?.includes(text)) && !node.disabled),
+    (text, useExact) => [...document.querySelectorAll("button")].some((node) => (useExact ? node.textContent?.trim() === text : node.textContent?.includes(text)) && !node.disabled && Boolean(node.offsetWidth || node.offsetHeight)),
     { timeout: 15000 },
     label,
     exact,
   );
   await page.evaluate(
-    (text, useExact) => [...document.querySelectorAll("button")].find((node) => (useExact ? node.textContent?.trim() === text : node.textContent?.includes(text)) && !node.disabled)?.click(),
+    (text, useExact) => [...document.querySelectorAll("button")].find((node) => (useExact ? node.textContent?.trim() === text : node.textContent?.includes(text)) && !node.disabled && Boolean(node.offsetWidth || node.offsetHeight))?.click(),
     label,
     exact,
   );
@@ -116,6 +125,13 @@ try {
       page.on("request", async (request) => {
         const url = new URL(request.url());
         if (!url.pathname.startsWith("/api/v1/")) return request.continue();
+        if (request.method() === "GET" && url.pathname.endsWith("/catalogo/editais/filtros")) {
+          return request.respond(json({
+            esferas: [{ chave: "federal", nome: "Federal", count: 9, ativo: true }, { chave: "estadual", nome: "Estadual", count: 0, ativo: true }],
+            areas: [{ chave: "juridica", nome: "Jurídica", count: 9, ativo: true }],
+            anos: [{ chave: 2026, nome: "2026", count: 9, ativo: true }],
+          }));
+        }
         if (request.method() === "GET" && url.pathname.endsWith("/catalogo/editais")) {
           catalogRequests.push(url.search);
           const search = (url.searchParams.get("search") || "").normalize("NFC");
@@ -124,6 +140,11 @@ try {
           const pageSize = Number(url.searchParams.get("page_size") || 8);
           const start = (pageNumber - 1) * pageSize;
           return request.respond(json({ items: filtered.slice(start, start + pageSize), page: pageNumber, page_size: pageSize, total: filtered.length, total_pages: Math.ceil(filtered.length / pageSize) }));
+        }
+        if (request.method() === "POST" && url.pathname.endsWith("/catalogo/editais/selecao/validar")) {
+          const body = JSON.parse(request.postData() || "{}");
+          const item = items.find((candidate) => candidate.id === body.edital_id);
+          return request.respond(json({ eligible: Boolean(item && item.versoes[0].id === body.version_id), published_version_id: item?.versoes[0].id ?? null }));
         }
         const detailId = url.pathname.match(/\/catalogo\/editais\/([^/]+)$/)?.[1];
         if (request.method() === "GET" && detailId) {
@@ -150,6 +171,21 @@ try {
           hasRange: document.body.innerText.includes("Exibindo 1–8 de 9 editais"),
         }));
         if (initial.overflow || !initial.hasRange) failures.push({ profile: profile.name, entry: entry.name, stage: "initial", initial });
+
+        currentStage = "apply-filter";
+        await clickButton(page, profile.name === "mobile" ? "Filtros" : "Esfera", true);
+        await page.waitForFunction(() => [...document.querySelectorAll("label")].some((node) => node.textContent?.includes("Federal")));
+        await page.evaluate(() => {
+          const label = [...document.querySelectorAll("label")].find((node) => node.textContent?.includes("Federal"));
+          label?.querySelector("button")?.click();
+        });
+        await clickButton(page, profile.name === "mobile" ? "Aplicar filtros" : "Aplicar", true);
+        await page.waitForFunction(() => new URL(location.href).searchParams.get("esfera") === "federal");
+        await page.waitForSelector('[aria-label="1 filtros ativos"]');
+        const filterRequestOk = catalogRequests.some((query) => new URLSearchParams(query).get("esfera") === "federal");
+        if (!filterRequestOk) failures.push({ profile: profile.name, entry: entry.name, stage: "filter-request" });
+        await clickButton(page, "Limpar filtros", true);
+        await page.waitForFunction(() => !new URL(location.href).searchParams.has("esfera"));
 
         currentStage = "open-details";
         await clickButton(page, "Ver detalhes");
@@ -190,10 +226,10 @@ try {
         await clickButton(page, "Buscar");
         await page.waitForFunction(() => new URL(location.href).searchParams.get("search") === "TRT 8");
         await page.waitForFunction(() => document.body.innerText.includes("Exibindo 1–1 de 1 edital"));
-        const selectionCleared = await page.evaluate(() => !document.querySelector("[data-catalog-selection-summary]"));
-        if (!selectionCleared) failures.push({ profile: profile.name, entry: entry.name, stage: "search-selection" });
+        const selectionPreservedAfterValidation = await page.evaluate(() => Boolean(document.querySelector("[data-catalog-selection-summary]")));
+        if (!selectionPreservedAfterValidation) failures.push({ profile: profile.name, entry: entry.name, stage: "search-selection" });
 
-        const sensitiveTelemetry = telemetryBodies.some((body) => /TRT|50000000|Cebraspe|Órgão/i.test(body));
+        const sensitiveTelemetry = telemetryBodies.some((body) => /TRT|50000000|Cebraspe|Órgão|federal|jurídica/i.test(body));
         if (sensitiveTelemetry) failures.push({ profile: profile.name, entry: entry.name, stage: "telemetry-privacy", telemetryBodies });
       } catch (error) {
         const diagnostics = await page.evaluate(() => ({

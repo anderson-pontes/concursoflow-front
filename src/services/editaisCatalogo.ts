@@ -1,6 +1,10 @@
 import { api } from "@/services/api";
 import type {
   AtivacaoEditalResponse,
+  CatalogClassification,
+  CatalogClassificationOption,
+  CatalogFacets,
+  CatalogFilters,
   EditalCatalogo,
   EditalCatalogoInput,
   EditalCatalogoInitialInput,
@@ -30,6 +34,7 @@ function normalize(raw: RawEdital, publicOnly = false): EditalCatalogo {
     ...versao,
     numero: String(versao.numero),
     publicada_em: versao.publicada_em ?? versao.published_at ?? null,
+    classificacao: { ...emptyClassification(), ...(versao.classificacao ?? {}) },
     cargos: (versao.cargos ?? []).map((cargo) => ({
       ...cargo,
       disciplinas: (cargo.disciplinas ?? []).map((disciplina) => ({
@@ -43,6 +48,16 @@ function normalize(raw: RawEdital, publicOnly = false): EditalCatalogo {
     : versoes.find((item) => item.status === "rascunho") ?? versoes.find((item) => item.status === "publicado") ?? versoes[0]) ?? null;
   const status = raw.status ?? versaoAtual?.status ?? "rascunho";
   return { ...raw, atualizado_em: raw.atualizado_em ?? raw.updated_at, logo_url: raw.logo_url ?? null, status, url_oficial: raw.url_oficial ?? raw.edital_url ?? null, versoes, versao_atual: versaoAtual };
+}
+
+function emptyClassification(): CatalogClassification {
+  return { esfera: null, areas: [], ano_edital: null, revision: 0, fonte_tipo: null, fonte_ref: null, updated_at: null };
+}
+
+function appendFilters(params: URLSearchParams, filters?: Partial<CatalogFilters>) {
+  for (const value of filters?.esfera ?? []) params.append("esfera", value);
+  for (const value of filters?.area ?? []) params.append("area", value);
+  for (const value of filters?.anoEdital ?? []) params.append("ano_edital", String(value));
 }
 
 function normalizePage(data: PageEnvelope<RawEdital> | RawEdital[], publicOnly = false): EditalCatalogoPage {
@@ -169,13 +184,70 @@ export async function listarEditaisPublicados(search = ""): Promise<EditalCatalo
   return (await paginarEditaisPublicados({ search, pageSize: 50 })).items;
 }
 
-export async function paginarEditaisPublicados(params: { search?: string; page?: number; pageSize?: number; sort?: "recent"; signal?: AbortSignal } = {}): Promise<EditalCatalogoPage> {
+export async function paginarEditaisPublicados(params: { search?: string; page?: number; pageSize?: number; sort?: "recent"; signal?: AbortSignal } & Partial<CatalogFilters> = {}): Promise<EditalCatalogoPage> {
   const { search = "", page = 1, pageSize = 12, sort = "recent", signal } = params;
+  const query = new URLSearchParams();
+  if (search) query.set("search", search);
+  appendFilters(query, params);
+  query.set("page", String(page));
+  query.set("page_size", String(pageSize));
+  query.set("sort", sort);
   const { data } = await api.get<PageEnvelope<RawEdital> | RawEdital[]>("/catalogo/editais", {
-    params: { search: search || undefined, page, page_size: pageSize, sort },
+    params: query,
     signal,
   });
   return normalizePage(data, true);
+}
+
+export async function obterFiltrosCatalogo(params: { search?: string; signal?: AbortSignal } & Partial<CatalogFilters> = {}): Promise<CatalogFacets> {
+  const query = new URLSearchParams();
+  if (params.search) query.set("search", params.search);
+  appendFilters(query, params);
+  return (await api.get<CatalogFacets>("/catalogo/editais/filtros", { params: query, signal: params.signal })).data;
+}
+
+export async function validarSelecaoCatalogo(input: {
+  editalId: string;
+  versionId: string;
+  search?: string;
+  filters: CatalogFilters;
+  signal?: AbortSignal;
+}) {
+  const { data } = await api.post<{ eligible: boolean; published_version_id: string | null }>(
+    "/catalogo/editais/selecao/validar",
+    {
+      edital_id: input.editalId,
+      version_id: input.versionId,
+      query: {
+        search: input.search || null,
+        esfera: input.filters.esfera,
+        area: input.filters.area,
+        ano_edital: input.filters.anoEdital,
+      },
+    },
+    { signal: input.signal },
+  );
+  return data;
+}
+
+export async function listarClassificacoesAdmin(dimensao: "esfera" | "area"): Promise<CatalogClassificationOption[]> {
+  return (await api.get<CatalogClassificationOption[]>("/admin/catalogo/classificacoes", { params: { dimensao } })).data;
+}
+
+export async function criarClassificacaoAdmin(input: { dimensao: "esfera" | "area"; chave: string; nome: string; ordem?: number }): Promise<CatalogClassificationOption> {
+  return (await api.post<CatalogClassificationOption>("/admin/catalogo/classificacoes", { ...input, ordem: input.ordem ?? 0 })).data;
+}
+
+export async function atualizarClassificacaoAdmin(id: string, input: { nome?: string; ordem?: number; ativo?: boolean }): Promise<CatalogClassificationOption> {
+  return (await api.patch<CatalogClassificationOption>(`/admin/catalogo/classificacoes/${id}`, input)).data;
+}
+
+export async function salvarClassificacaoVersao(
+  editalId: string,
+  versaoId: string,
+  input: { esfera_chave: string | null; area_chaves: string[]; ano_edital: number | null; fonte_tipo: string | null; fonte_ref: string | null; expected_revision: number },
+): Promise<void> {
+  await api.put(`/admin/editais/${editalId}/versoes/${versaoId}/classificacao`, input);
 }
 
 export async function obterEditalPublicado(id: string): Promise<EditalCatalogo> {

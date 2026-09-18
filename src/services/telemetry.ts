@@ -9,7 +9,7 @@ const MAX_DELIVERY_ATTEMPTS = 2;
 const DUPLICATE_WINDOW_MS = 1_000;
 
 type TelemetryProperties = {
-  catalog_search_started: { has_filters: boolean; result_count: number };
+  catalog_search_started: { has_filters: boolean; filter_count: number; result_count: number };
   contest_context_changed: {
     source: "sidebar" | "catalog" | "settings";
     previous_state: "none" | "active";

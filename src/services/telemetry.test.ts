@@ -41,7 +41,7 @@ describe("telemetry port", () => {
   it("descarta silenciosamente quando a preferência não pode ser confirmada", async () => {
     mockedAxios.get.mockRejectedValueOnce(new Error("offline"));
 
-    expect(() => trackTelemetry("catalog_search_started", { has_filters: true, result_count: 3 })).not.toThrow();
+    expect(() => trackTelemetry("catalog_search_started", { has_filters: true, filter_count: 2, result_count: 3 })).not.toThrow();
 
     await vi.waitFor(() => expect(mockedAxios.get).toHaveBeenCalledOnce());
     expect(mockedAxios.post).not.toHaveBeenCalled();

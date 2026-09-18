@@ -1,8 +1,11 @@
 import * as React from "react";
+import { isAxiosError } from "axios";
 import { BookOpenCheck, Search, X } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 
 import { CatalogDetailsDialog } from "@/components/editais/CatalogDetailsDialog";
+import { CatalogFilters } from "@/components/editais/CatalogFilters";
 import { CatalogLogo } from "@/components/editais/CatalogLogo";
 import { CatalogPagination } from "@/components/editais/CatalogPagination";
 import { PublicCatalogResults } from "@/components/editais/PublicCatalogResults";
@@ -21,8 +24,9 @@ type CatalogDiscoveryProps = {
   onSelect: (id: string) => void;
   onSelectionInvalidated: () => void;
   onItemOpened?: (id: string) => void;
-  onSearchResult?: (total: number) => void;
+  onSearchResult?: (total: number, context: { hasFilters: boolean; filterCount: number }) => void;
   onAppliedSearchChange?: (search: string) => void;
+  onSelectionValidationChange?: (status: "idle" | "validating" | "valid" | "error") => void;
   selectionAlert?: string | null;
 };
 
@@ -34,6 +38,7 @@ export function CatalogDiscovery({
   onItemOpened,
   onSearchResult,
   onAppliedSearchChange,
+  onSelectionValidationChange,
   selectionAlert,
 }: CatalogDiscoveryProps) {
   const discovery = useCatalogDiscovery(onSelectionInvalidated);
@@ -41,19 +46,39 @@ export function CatalogDiscovery({
   const [detailsId, setDetailsId] = React.useState<string | null>(null);
   const resultsRef = React.useRef<HTMLHeadingElement>(null);
   const previousPage = React.useRef(discovery.query.page);
-  const trackedSearch = React.useRef("");
+  const trackedQuery = React.useRef("");
   const detailsTrigger = React.useRef<HTMLButtonElement | null>(null);
   const data = discovery.result.data;
+  const selectedVersionId = selectedEdital?.versao_atual?.id ?? null;
+  const selectionValidity = useQuery({
+    queryKey: ["catalogo-edital", "public", "selection-validity", selectedId, selectedVersionId, discovery.query],
+    queryFn: ({ signal }) => discovery.validateSelection(selectedId!, selectedVersionId!, signal),
+    enabled: Boolean(selectedId && selectedVersionId),
+    retry: 1,
+  });
+
+  React.useEffect(() => {
+    if (selectionValidity.data && !selectionValidity.data.eligible) onSelectionInvalidated();
+    if (selectionValidity.error && isAxiosError(selectionValidity.error) && selectionValidity.error.response?.status === 404) onSelectionInvalidated();
+  }, [onSelectionInvalidated, selectionValidity.data, selectionValidity.error]);
+
+  React.useEffect(() => {
+    if (!selectedId || !selectedVersionId) onSelectionValidationChange?.("idle");
+    else if (selectionValidity.isFetching) onSelectionValidationChange?.("validating");
+    else if (selectionValidity.isError) onSelectionValidationChange?.("error");
+    else if (selectionValidity.data?.eligible) onSelectionValidationChange?.("valid");
+  }, [onSelectionValidationChange, selectedId, selectedVersionId, selectionValidity.data, selectionValidity.isError, selectionValidity.isFetching]);
 
   React.useEffect(() => {
     onAppliedSearchChange?.(discovery.query.search);
   }, [discovery.query.search, onAppliedSearchChange]);
 
   React.useEffect(() => {
-    if (!data || !discovery.query.search || trackedSearch.current === discovery.query.search) return;
-    trackedSearch.current = discovery.query.search;
-    onSearchResult?.(data.total);
-  }, [data, discovery.query.search, onSearchResult]);
+    const signature = `${discovery.query.search}|${discovery.query.esfera.join(",")}|${discovery.query.area.join(",")}|${discovery.query.anoEdital.join(",")}`;
+    if (!data || (!discovery.query.search && !discovery.filterCount) || trackedQuery.current === signature) return;
+    trackedQuery.current = signature;
+    onSearchResult?.(data.total, { hasFilters: discovery.filterCount > 0, filterCount: discovery.filterCount });
+  }, [data, discovery.filterCount, discovery.query, onSearchResult]);
 
   React.useEffect(() => {
     if (!data || previousPage.current === discovery.query.page) return;
@@ -102,6 +127,14 @@ export function CatalogDiscovery({
         <Button type="submit" className="min-h-11 sm:min-w-28">Buscar</Button>
       </form>
 
+      <CatalogFilters
+        value={{ esfera: discovery.query.esfera, area: discovery.query.area, anoEdital: discovery.query.anoEdital }}
+        facets={discovery.facets.data}
+        loading={discovery.facets.isPending}
+        onApply={discovery.applyFilters}
+        onClear={discovery.clearFilters}
+      />
+
       {discovery.query.search ? (
         <div className="mt-3 flex flex-wrap items-center gap-2">
           <Badge variant="secondary" className="min-h-9 max-w-full gap-2 px-3">
@@ -128,6 +161,8 @@ export function CatalogDiscovery({
             <span className="text-xs font-semibold uppercase tracking-wide text-primary">Seleção atual</span>
             <strong className="mt-1 block">{selectedEdital.nome}</strong>
             <span className="text-sm text-muted-foreground">{selectedEdital.orgao} · Versão {selectedEdital.versao_atual?.numero ?? "publicada"}</span>
+            {selectionValidity.isFetching ? <span className="mt-1 block text-xs text-muted-foreground" role="status">Confirmando disponibilidade…</span> : null}
+            {selectionValidity.isError && !(isAxiosError(selectionValidity.error) && selectionValidity.error.response?.status === 404) ? <button type="button" className="mt-1 block text-xs font-medium text-destructive underline" onClick={() => void selectionValidity.refetch()}>Não foi possível confirmar. Tentar novamente</button> : null}
           </div>
           <Button type="button" variant="outline" className="min-h-11" onClick={onSelectionInvalidated}>Remover seleção</Button>
         </div>
@@ -161,8 +196,9 @@ export function CatalogDiscovery({
       {data && !data.items.length && !discovery.result.isError ? (
         <div className="py-12 text-center">
           <BookOpenCheck className="mx-auto h-10 w-10 text-muted-foreground" aria-hidden />
-          <h3 className="mt-3 font-semibold">{discovery.query.search ? `Nenhum edital encontrado para “${discovery.query.search}”.` : "O catálogo ainda não possui editais publicados."}</h3>
+          <h3 className="mt-3 font-semibold">{discovery.filterCount ? "Nenhum edital corresponde a esta combinação de filtros." : discovery.query.search ? `Nenhum edital encontrado para “${discovery.query.search}”.` : "O catálogo ainda não possui editais publicados."}</h3>
           <div className="mt-4 flex flex-col justify-center gap-2 sm:flex-row">
+            {discovery.filterCount ? <Button type="button" onClick={discovery.clearFilters}>Limpar filtros</Button> : null}
             {discovery.query.search ? <Button type="button" onClick={discovery.clearSearch}>Limpar busca</Button> : null}
             <Button asChild variant="outline"><Link to="/concursos?novo=manual">Cadastrar concurso manualmente</Link></Button>
           </div>

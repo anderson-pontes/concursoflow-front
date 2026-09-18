@@ -26,6 +26,7 @@ export function AtivarEditalCatalogo() {
   const [cargoId, setCargoId] = React.useState<string | null>(null);
   const [disciplinas, setDisciplinas] = React.useState<string[]>([]);
   const [selectionAlert, setSelectionAlert] = React.useState<string | null>(null);
+  const [selectionValidation, setSelectionValidation] = React.useState<"idle" | "validating" | "valid" | "error">("idle");
   const idempotencyKey = React.useRef(makeIdempotencyKey());
   const telemetryJourney = React.useRef(createTelemetryJourney());
   const activationStarted = React.useRef(false);
@@ -92,7 +93,7 @@ export function AtivarEditalCatalogo() {
     setSelectionAlert("Este edital não está mais disponível. Escolha outro edital para continuar.");
   }, [detailQuery.error, detailQuery.isError, editalId]);
   const selectCargo = (next: EditalCargoCatalogo) => { setCargoId(next.id); setDisciplinas(next.disciplinas.map((item) => item.id)); };
-  const canContinue = step === 1 ? Boolean(edital && versao) : step === 2 ? Boolean(cargoId) : step === 3 ? disciplinas.length > 0 : true;
+  const canContinue = step === 1 ? Boolean(edital && versao && selectionValidation === "valid") : step === 2 ? Boolean(cargoId) : step === 3 ? disciplinas.length > 0 : true;
   const advanceStep = () => {
     ensureActivationStarted();
     const completedSteps = ["contest", "details", "subjects"] as const;
@@ -113,7 +114,7 @@ export function AtivarEditalCatalogo() {
       <AtivacaoStepper current={step} />
 
       <main className="rounded-2xl border border-border bg-card p-4 shadow-sm sm:p-6">
-        {step === 1 ? <section aria-labelledby="step-title"><h2 id="step-title" className="text-lg font-semibold">Qual edital você está estudando?</h2><p className="mt-1 text-sm text-muted-foreground">Consulte versões revisadas e publicadas pelo ClickEdital.</p><CatalogDiscovery selectedId={editalId} selectedEdital={edital} selectionAlert={selectionAlert ?? (detailQuery.isError ? "Não foi possível validar este edital agora. Tente selecionar novamente." : null)} onSelect={selectEdital} onSelectionInvalidated={clearCatalogSelection} onItemOpened={ensureCatalogItemOpened} onSearchResult={(total) => trackTelemetry("catalog_search_started", { has_filters: true, result_count: total })} /></section> : null}
+        {step === 1 ? <section aria-labelledby="step-title"><h2 id="step-title" className="text-lg font-semibold">Qual edital você está estudando?</h2><p className="mt-1 text-sm text-muted-foreground">Consulte versões revisadas e publicadas pelo ClickEdital.</p><CatalogDiscovery selectedId={editalId} selectedEdital={edital} selectionAlert={selectionAlert ?? (detailQuery.isError ? "Não foi possível validar este edital agora. Tente selecionar novamente." : null)} onSelect={selectEdital} onSelectionInvalidated={clearCatalogSelection} onSelectionValidationChange={setSelectionValidation} onItemOpened={ensureCatalogItemOpened} onSearchResult={(total, context) => trackTelemetry("catalog_search_started", { has_filters: context.hasFilters, filter_count: context.filterCount, result_count: total })} /></section> : null}
 
         {step === 2 ? <section aria-labelledby="step-title"><h2 id="step-title" className="text-lg font-semibold">Escolha seu cargo ou especialidade</h2><p className="mt-1 text-sm text-muted-foreground">{edital?.nome}</p>{detailQuery.isLoading ? <p className="py-16 text-center text-sm text-muted-foreground" role="status">Carregando cargos…</p> : null}{detailQuery.isError ? <p role="alert" className="mt-4 rounded-lg bg-destructive/10 p-4 text-sm text-destructive">Não foi possível carregar os cargos.</p> : null}<div className="mt-5 grid gap-3 sm:grid-cols-2" role="radiogroup" aria-label="Cargo do edital">{versao?.cargos.map((item) => <button key={item.id} type="button" role="radio" aria-checked={cargoId === item.id} onClick={() => selectCargo(item)} className={cn("min-h-24 rounded-xl border p-4 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring", cargoId === item.id ? "border-primary bg-primary-muted ring-1 ring-primary" : "border-border hover:border-primary/50")}><strong className="block">{item.nome}</strong><span className="mt-2 block text-sm text-muted-foreground">{item.disciplinas.length} disciplinas · {item.disciplinas.reduce((sum, disc) => sum + (disc.topicos_total ?? disc.topicos.length), 0)} tópicos</span></button>)}</div></section> : null}
 

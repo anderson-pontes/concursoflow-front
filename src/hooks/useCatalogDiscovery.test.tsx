@@ -11,6 +11,8 @@ vi.mock("@/services/editaisCatalogo", () => ({
   paginarEditaisPublicados: vi.fn(async ({ page = 1, pageSize = 8 }) => ({
     items: [], page, page_size: pageSize, total: 40, total_pages: 5,
   })),
+  obterFiltrosCatalogo: vi.fn(async () => ({ esferas: [], areas: [], anos: [] })),
+  validarSelecaoCatalogo: vi.fn(async () => ({ eligible: true, published_version_id: null })),
 }));
 
 function Harness({ onInvalidated = () => undefined }: { onInvalidated?: () => void }) {
@@ -21,6 +23,8 @@ function Harness({ onInvalidated = () => undefined }: { onInvalidated?: () => vo
     <input aria-label="Busca" value={discovery.draftSearch} onChange={(event) => discovery.setDraftSearch(event.target.value)} />
     <button type="submit">Buscar</button>
     <button type="button" onClick={() => discovery.setPage(2)}>Página 2</button>
+    <button type="button" onClick={() => discovery.applyFilters({ esfera: ["federal"], area: ["juridica"], anoEdital: [2026] })}>Aplicar filtros</button>
+    <button type="button" onClick={discovery.clearFilters}>Limpar filtros</button>
     <button type="button" onClick={() => navigate(-1)}>Voltar</button>
     <output aria-label="URL">{location.search}</output>
     <output aria-label="Total">{discovery.result.data?.total ?? "carregando"}</output>
@@ -36,7 +40,7 @@ describe("useCatalogDiscovery", () => {
   it("normaliza NFC e whitespace e aplica defaults seguros", () => {
     expect(normalizeCatalogSearch("  O\u0301rgão\t Federal ")).toBe("Órgão Federal");
     expect(parseCatalogQuery(new URLSearchParams("page=0&page_size=99&sort=other"))).toEqual({
-      search: "", page: 1, pageSize: 8, sort: "recent",
+      search: "", esfera: [], area: [], anoEdital: [], page: 1, pageSize: 8, sort: "recent",
     });
   });
 
@@ -64,7 +68,7 @@ describe("useCatalogDiscovery", () => {
 
     await user.click(screen.getByRole("button", { name: "Buscar" }));
     await waitFor(() => expect(screen.getByLabelText("URL")).toHaveTextContent("origem=catalogo&search=TRT+8"));
-    expect(onInvalidated).toHaveBeenCalledTimes(1);
+    expect(onInvalidated).not.toHaveBeenCalled();
   });
 
   it("restaura a query da URL e pagina sem remover a seleção", async () => {
@@ -88,11 +92,11 @@ describe("useCatalogDiscovery", () => {
     await user.type(input, "receita");
     await user.click(screen.getByRole("button", { name: "Buscar" }));
     await waitFor(() => expect(screen.getByLabelText("URL")).toHaveTextContent("search=receita"));
-    expect(onInvalidated).toHaveBeenCalledTimes(1);
+    expect(onInvalidated).not.toHaveBeenCalled();
 
     await user.click(screen.getByRole("button", { name: "Voltar" }));
     await waitFor(() => expect(input).toHaveValue("tribunal"));
-    expect(onInvalidated).toHaveBeenCalledTimes(2);
+    expect(onInvalidated).not.toHaveBeenCalled();
   });
 
   it("corrige página acima do total sem criar uma nova entrada no histórico", async () => {
@@ -102,5 +106,19 @@ describe("useCatalogDiscovery", () => {
     renderHarness("/editais/ativar?page=99");
 
     await waitFor(() => expect(screen.getByLabelText("URL")).toHaveTextContent("?page=3"));
+  });
+
+  it("deduplica, ordena e serializa filtros repetíveis na ordem canônica", async () => {
+    renderHarness("/editais/ativar?area=tecnologia&esfera=municipal&area=juridica&esfera=federal&ano_edital=2026&ano_edital=2025&page=3");
+    await waitFor(() => expect(screen.getByLabelText("URL")).toHaveTextContent("?esfera=federal&esfera=municipal&area=juridica&area=tecnologia&ano_edital=2025&ano_edital=2026&page=3"));
+  });
+
+  it("aplica e limpa somente os filtros preservando a busca", async () => {
+    const user = userEvent.setup();
+    renderHarness("/editais/ativar?search=tribunal&page=2");
+    await user.click(screen.getByRole("button", { name: "Aplicar filtros" }));
+    await waitFor(() => expect(screen.getByLabelText("URL")).toHaveTextContent("search=tribunal&esfera=federal&area=juridica&ano_edital=2026"));
+    await user.click(screen.getByRole("button", { name: "Limpar filtros" }));
+    await waitFor(() => expect(screen.getByLabelText("URL")).toHaveTextContent("?search=tribunal"));
   });
 });

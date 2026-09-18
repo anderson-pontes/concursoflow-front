@@ -34,7 +34,45 @@ export type EditalVersaoCatalogo = {
   publicada_em: string | null;
   published_at?: string | null;
   data_prova?: string | null;
+  classificacao: CatalogClassification;
   cargos: EditalCargoCatalogo[];
+};
+
+export type CatalogClassificationOption = {
+  id: string;
+  chave: string;
+  nome: string;
+  ordem: number;
+  ativo: boolean;
+};
+
+export type CatalogClassification = {
+  esfera: CatalogClassificationOption | null;
+  areas: CatalogClassificationOption[];
+  ano_edital: number | null;
+  revision: number;
+  fonte_tipo: string | null;
+  fonte_ref: string | null;
+  updated_at: string | null;
+};
+
+export type CatalogFacetOption = {
+  chave: string | number;
+  nome: string;
+  count: number;
+  ativo: boolean;
+};
+
+export type CatalogFacets = {
+  esferas: CatalogFacetOption[];
+  areas: CatalogFacetOption[];
+  anos: CatalogFacetOption[];
+};
+
+export type CatalogFilters = {
+  esfera: string[];
+  area: string[];
+  anoEdital: number[];
 };
 
 export type EditalCatalogo = {
