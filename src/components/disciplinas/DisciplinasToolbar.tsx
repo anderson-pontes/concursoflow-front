@@ -80,7 +80,7 @@ export function DisciplinasToolbar({
 
       <div className="flex flex-col gap-3">
         <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
-          <div className="relative w-full sm:max-w-xs sm:flex-1">
+          {viewMode !== "edital" ? <div className="relative w-full sm:max-w-xs sm:flex-1">
             <Search
               className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
               aria-hidden
@@ -93,7 +93,7 @@ export function DisciplinasToolbar({
               aria-label="Buscar disciplina"
               className="min-h-10 w-full rounded-lg border border-border bg-card py-2 pl-9 pr-3 text-sm text-foreground outline-none placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring"
             />
-          </div>
+          </div> : null}
           {concursos.length > 0 ? (
             <SelectField
               aria-label="Concurso ativo"
@@ -106,7 +106,7 @@ export function DisciplinasToolbar({
         </div>
 
         <div className="flex flex-wrap items-center justify-between gap-2">
-          {concursoId ? (
+          {concursoId && viewMode !== "edital" ? (
             <div
               className="inline-flex max-w-full overflow-x-auto rounded-lg border border-border bg-muted/40 p-0.5"
               role="group"
@@ -191,7 +191,7 @@ export function DisciplinasToolbar({
         </div>
       </div>
 
-      <p className="text-sm text-muted-foreground tabular-nums">{metaParts.join(" · ")}</p>
+      <p className={cn("text-sm text-muted-foreground tabular-nums", viewMode === "edital" && "hidden")}>{metaParts.join(" · ")}</p>
 
       {!concursoId && concursos.length === 0 ? (
         <div className="rounded-lg border border-amber-200 bg-amber-50/80 px-4 py-3 text-sm text-amber-900 dark:border-amber-900/40 dark:bg-amber-950/30 dark:text-amber-200">

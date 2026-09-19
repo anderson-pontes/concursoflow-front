@@ -1,6 +1,6 @@
 import React from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Link, useParams, useSearchParams } from "react-router-dom";
+import { Link, useLocation, useParams, useSearchParams } from "react-router-dom";
 import {
   ArrowLeft,
   BookOpen,
@@ -22,6 +22,8 @@ import type { DisciplinaDashboardResponse } from "@/types/disciplinaDashboard";
 
 export function DisciplinaDashboard() {
   const { disciplinaId } = useParams<{ disciplinaId: string }>();
+  const location = useLocation();
+  const editalNavigation = location.state as { editalReturnTo?: string; editalReturnState?: Record<string, unknown> } | null;
   const [searchParams, setSearchParams] = useSearchParams();
   const qc = useQueryClient();
   const isDemoMode = useDisciplinaDashboardDemoMode();
@@ -216,7 +218,8 @@ export function DisciplinaDashboard() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <Link
-            to="/disciplinas"
+            to={editalNavigation?.editalReturnTo ?? "/disciplinas"}
+            state={editalNavigation?.editalReturnState}
             className="mb-2 inline-flex items-center gap-1 text-sm font-medium text-primary-600 hover:underline dark:text-primary-400"
           >
             <ArrowLeft className="h-4 w-4" />

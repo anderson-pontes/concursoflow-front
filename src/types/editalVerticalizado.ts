@@ -1,0 +1,7 @@
+export type EditalSort = "ordem_edital" | "atencao" | "prioridade_desc" | "dominio_asc" | "ultima_atividade_desc" | "proxima_revisao_asc";
+export type TopicoStatus = "nao_iniciado" | "em_andamento" | "revisao" | "dominado";
+export type EditalConsulta = { search?: string; disciplina_ids: string[]; status: TopicoStatus[]; dominios: number[]; nunca_estudado?: boolean; revisao_atrasada?: boolean; sort: EditalSort; limit: number };
+export type ProgressoEdital = { dominados: number; total: number; percentual: number; texto: string };
+export type DisciplinaEditalResumo = { id: string; nome: string; ordem: number; progresso: ProgressoEdital; resultados: number };
+export type TopicoEditalItem = { id: string; disciplina_id: string; disciplina_nome: string; descricao: string; status: TopicoStatus; numero_ordem: number; peso: number; dominio: number; prioridade: number; ultima_atividade_em: string | null; proxima_revisao_id: string | null; proxima_revisao_em: string | null; revisao_atrasada: boolean; dias_atraso: number; nunca_estudado: boolean; razoes_atencao: Array<"REVISAO_ATRASADA" | "NUNCA_ESTUDADO" | "PESO_DOMINIO"> };
+export type EditalVerticalizadoPage = { contract_version: "1"; concurso: { id: string; status: string }; as_of: { local_date: string; timezone: string }; progresso_global: ProgressoEdital; disciplinas: DisciplinaEditalResumo[]; items: TopicoEditalItem[]; page: { next_cursor: string | null; has_more: boolean; limit: number; result_count: number } };
