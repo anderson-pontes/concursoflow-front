@@ -4,6 +4,7 @@ import { format, isValid, parseISO } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { BookCheck, RefreshCw } from "lucide-react";
 import { Link, useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import { toast } from "sonner";
 
 import { RevisaoActionDialogs, type RevisaoDialogAction } from "@/components/revisoes/RevisaoActionDialogs";
 import { RevisaoCard } from "@/components/revisoes/RevisaoCard";
@@ -14,7 +15,9 @@ import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useRevisoes } from "@/hooks/useRevisoes";
+import { usePomodoroConfigSync } from "@/hooks/usePomodoroConfigSync";
 import { buildPomodoroRevisionLaunchUrl } from "@/lib/pomodoro/launchFromCronograma";
+import { resolvePersistedFocusMinutes } from "@/lib/pomodoro/duration";
 import { api } from "@/services/api";
 import {
   useConcursoAtivoId,
@@ -66,6 +69,7 @@ export function Revisoes() {
   const [conflicts, setConflicts] = React.useState<Set<string>>(() => new Set());
   const revisaoPomodoroContext = useRevisaoPomodoroStore((state) => state.context);
   const revisaoPomodoroConflict = useRevisaoPomodoroStore((state) => state.conflict);
+  const { query: pomodoroConfig } = usePomodoroConfigSync();
   const grupo = readGroup(searchParams.get("grupo"));
   const filters: RevisoesFilterValues = {
     disciplinaId: searchParams.get("disciplina") || "",
@@ -117,6 +121,13 @@ export function Revisoes() {
     setSearchParams(next, { replace: true });
   };
   const startReview = (item: RevisaoItem) => {
+    const minutos = pomodoroConfig.data
+      ? resolvePersistedFocusMinutes(pomodoroConfig.data.focus_hours, pomodoroConfig.data.focus_minutes)
+      : null;
+    if (!minutos) {
+      toast.error("Configure uma duração do Pomodoro entre 1 e 480 minutos antes de revisar.");
+      return;
+    }
     const returnTo = `${location.pathname}${location.search}`;
     const context = {
       revisaoId: item.id,
@@ -127,7 +138,7 @@ export function Revisoes() {
       returnTo,
     };
     useRevisaoPomodoroStore.getState().prepare(context);
-    navigate(buildPomodoroRevisionLaunchUrl(context));
+    navigate(buildPomodoroRevisionLaunchUrl({ ...context, minutos }));
   };
   const markConflict = (itemId: string) => {
     setConflicts((current) => new Set(current).add(itemId));

@@ -20,6 +20,7 @@ import {
 } from "@/lib/pomodoro/launchFromCronograma";
 import { api } from "@/services/api";
 import { useConcursoAtivoId } from "@/stores/concursoStore";
+import { usePomodoroSessionStore } from "@/stores/pomodoroSessionStore";
 import { usePomodoroStore } from "@/stores/pomodoroStore";
 import { useRevisaoPomodoroStore } from "@/stores/revisaoPomodoroStore";
 
@@ -46,6 +47,7 @@ export function Pomodoro() {
   const shortBreakMinutes = usePomodoroStore((s) => s.shortBreakMinutes);
   const longBreakMinutes = usePomodoroStore((s) => s.longBreakMinutes);
   const cyclesTarget = usePomodoroStore((s) => s.cyclesTarget);
+  const hasPersistedSession = usePomodoroSessionStore((s) => s.hasSession);
   const disciplinaId = usePomodoroStore((s) => s.disciplinaId);
   const topicoId = usePomodoroStore((s) => s.topicoId);
   const revisaoContext = useRevisaoPomodoroStore((s) => s.context);
@@ -61,6 +63,12 @@ export function Pomodoro() {
     if (!launchParams || !launchSignature) return;
     if (lastAppliedLaunchRef.current === launchSignature) return;
     lastAppliedLaunchRef.current = launchSignature;
+
+    if (hasPersistedSession) {
+      navigate("/pomodoro", { replace: true });
+      toast.info("A sessão atual foi preservada. Finalize ou descarte-a antes de carregar outro estudo.");
+      return;
+    }
 
     const { focusHours: h, focusMinutes: m } = applyPomodoroLaunchToStore(launchParams);
 
@@ -102,7 +110,9 @@ export function Pomodoro() {
     navigate("/pomodoro", { replace: true });
     const launchLabel = launchParams.source === "revisao"
       ? "Revisão"
-      : launchParams.source === "dashboard" ? "Próxima ação" : "Sessão do cronograma";
+      : launchParams.source === "dashboard"
+        ? "Próxima ação"
+        : launchParams.source === "edital" ? "Tópico do edital" : "Sessão do cronograma";
     toast.success(`${launchLabel} carregada — clique em Iniciar quando estiver pronto.`);
   }, [
     launchParams,
@@ -113,6 +123,7 @@ export function Pomodoro() {
     shortBreakMinutes,
     longBreakMinutes,
     cyclesTarget,
+    hasPersistedSession,
     prepareRevisao,
   ]);
 
@@ -174,11 +185,13 @@ export function Pomodoro() {
     fim: string;
     tempoEstudoSegundos: number;
   }) => {
-    const returnTo = useRevisaoPomodoroStore.getState().context?.returnTo || "/revisoes";
+    const storedContext = useRevisaoPomodoroStore.getState().context;
+    const returnTo = storedContext?.returnTo || "/revisoes";
+    const returnState = storedContext?.returnState;
     const result = await completePomodoroRevision(qc, session);
     if (result === "success") {
       toast.success("Revisão concluída e registrada.");
-      navigate(returnTo);
+      navigate(returnTo, { state: returnState });
       return true;
     }
     toast.error(result === "conflict"
@@ -226,9 +239,9 @@ export function Pomodoro() {
               variant="outline"
               size="sm"
               className="mt-3 block"
-              onClick={() => navigate(revisaoContext.returnTo || "/revisoes")}
+              onClick={() => navigate(revisaoContext.returnTo || "/revisoes", { state: revisaoContext.returnState })}
             >
-              Voltar à Central de revisões
+              {revisaoContext.returnTo.startsWith("/disciplinas") ? "Voltar ao edital" : "Voltar à Central de revisões"}
             </Button>
           </AlertDescription>
         </Alert>

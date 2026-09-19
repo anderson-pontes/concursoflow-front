@@ -32,7 +32,7 @@ export async function completePomodoroRevision(
   } catch (error) {
     if (isAxiosError(error) && error.response?.status === 409) {
       state.markConflict();
-      await queryClient.invalidateQueries({ queryKey: ["revisoes", context.concursoId] });
+      await invalidateRevisaoContext(queryClient, context.concursoId);
       return "conflict";
     }
     return "error";

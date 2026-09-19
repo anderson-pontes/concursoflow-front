@@ -9,6 +9,7 @@ export type RevisaoPomodoroContext = {
   topicoId: string;
   idempotencyKey: string;
   returnTo: string;
+  returnState?: unknown;
 };
 
 type RevisaoPomodoroState = {

@@ -1,4 +1,5 @@
 import { render, screen, waitFor } from "@testing-library/react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { MemoryRouter, useLocation } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -6,6 +7,12 @@ import { EditalVerticalizadoOverview } from "@/components/disciplinas/EditalVert
 import { useEditalVerticalizado } from "@/hooks/useEditalVerticalizado";
 
 vi.mock("@/hooks/useEditalVerticalizado", () => ({ useEditalVerticalizado: vi.fn() }));
+vi.mock("@/hooks/usePomodoroConfigSync", () => ({
+  usePomodoroConfigSync: () => ({
+    query: { data: { focus_hours: 0, focus_minutes: 25 } },
+    saveMutation: { mutate: vi.fn() },
+  }),
+}));
 vi.stubGlobal("matchMedia", vi.fn().mockImplementation(() => ({
   matches: false,
   addEventListener: vi.fn(),
@@ -33,6 +40,7 @@ function NavigationStateProbe() {
 }
 
 describe("EditalVerticalizadoOverview", () => {
+  const createClient = () => new QueryClient({ defaultOptions: { queries: { retry: false } } });
   beforeEach(() => {
     vi.clearAllMocks();
     vi.mocked(useEditalVerticalizado).mockReturnValue({
@@ -48,14 +56,16 @@ describe("EditalVerticalizadoOverview", () => {
 
   it("descarta filtros e busca do concurso anterior antes da primeira consulta", async () => {
     render(
-      <MemoryRouter initialEntries={[{
-        pathname: "/disciplinas",
-        search: "?view=edital&disciplina=disciplina-antiga&expandida=topico-antigo",
-        state: { editalContestId: "concurso-antigo", editalSearch: "busca antiga" },
-      }]}>
-        <EditalVerticalizadoOverview concursoId="concurso-novo" />
-        <LocationProbe />
-      </MemoryRouter>,
+      <QueryClientProvider client={createClient()}>
+        <MemoryRouter initialEntries={[{
+          pathname: "/disciplinas",
+          search: "?view=edital&disciplina=disciplina-antiga&expandida=topico-antigo",
+          state: { editalContestId: "concurso-antigo", editalSearch: "busca antiga" },
+        }]}>
+          <EditalVerticalizadoOverview concursoId="concurso-novo" />
+          <LocationProbe />
+        </MemoryRouter>
+      </QueryClientProvider>,
     );
 
     expect(useEditalVerticalizado).toHaveBeenNthCalledWith(
@@ -87,14 +97,17 @@ describe("EditalVerticalizadoOverview", () => {
     } as never);
 
     render(
-      <MemoryRouter initialEntries={[{ pathname: "/disciplinas", search: "?view=edital", state: { editalContestId: "concurso-novo", editalSearch: "constitucional" } }]}>
-        <EditalVerticalizadoOverview concursoId="concurso-novo" />
-        <NavigationStateProbe />
-      </MemoryRouter>,
+      <QueryClientProvider client={createClient()}>
+        <MemoryRouter initialEntries={[{ pathname: "/disciplinas", search: "?view=edital", state: { editalContestId: "concurso-novo", editalSearch: "constitucional" } }]}>
+          <EditalVerticalizadoOverview concursoId="concurso-novo" />
+          <NavigationStateProbe />
+        </MemoryRouter>
+      </QueryClientProvider>,
     );
 
     await user.click(screen.getByRole("button", { name: /Constituicao/ }));
-    await user.click(screen.getByRole("link", { name: "Abrir tópico" }));
+    await user.click(screen.getByRole("button", { name: "Mais ações para Constituicao" }));
+    await user.click(screen.getByRole("menuitem", { name: "Abrir tópico" }));
     const navigation = screen.getByTestId("navigation-state").textContent ?? "";
     expect(navigation).toContain('"pathname":"/disciplinas/disciplina-1"');
     expect(navigation).toContain('"editalReturnTo":"/disciplinas?view=edital&expandida=topico-1"');

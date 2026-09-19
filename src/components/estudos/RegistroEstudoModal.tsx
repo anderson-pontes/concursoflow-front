@@ -72,6 +72,9 @@ export function RegistroEstudoModal({
     .map((t) => `${t.id}:${t.nome}`)
     .sort()
     .join(";");
+  const defaultTopicosRef = React.useRef(defaultTopicos);
+  const prefillDisciplinaTargetRef = React.useRef<string | null>(null);
+  defaultTopicosRef.current = defaultTopicos;
 
   React.useEffect(() => {
     if (!open) return;
@@ -80,7 +83,9 @@ export function RegistroEstudoModal({
     setHours(Math.floor(totalSeg / 3600));
     setMinutes(totalSeg > 0 ? Math.floor((totalSeg % 3600) / 60) : 25);
     setSeconds(totalSeg > 0 ? totalSeg % 60 : 0);
-    setSelectedTopicos(dedupeTopicosPorId(defaultTopicos ?? []));
+    const nextDisciplinaId = defaultDisciplinaId ?? "";
+    prefillDisciplinaTargetRef.current = nextDisciplinaId;
+    setSelectedTopicos(dedupeTopicosPorId(defaultTopicosRef.current ?? []));
     setTopicoBusca("");
     setMaterial("");
     setComentarios("");
@@ -93,7 +98,7 @@ export function RegistroEstudoModal({
     setBranco(defaultBranco ?? 0);
     setPaginas([{ inicio: "", fim: "" }]);
     setSaveAndNew(false);
-    setDisciplinaId(defaultDisciplinaId ?? "");
+    setDisciplinaId(nextDisciplinaId);
     if (defaultDataReferencia) {
       setDateKind("outro");
       setDateCustom(defaultDataReferencia);
@@ -105,7 +110,6 @@ export function RegistroEstudoModal({
     open,
     sessaoId,
     defaultDisciplinaId,
-    defaultTopicos,
     defaultTopicosSignature,
     defaultDuracaoSegundos,
     defaultAcertos,
@@ -229,9 +233,14 @@ export function RegistroEstudoModal({
   }, [revisoesCfg]);
 
   React.useEffect(() => {
+    if (!open) return;
+    if (prefillDisciplinaTargetRef.current !== null) {
+      if (disciplinaId === prefillDisciplinaTargetRef.current) prefillDisciplinaTargetRef.current = null;
+      return;
+    }
     setSelectedTopicos([]);
     setTopicoBusca("");
-  }, [disciplinaId]);
+  }, [disciplinaId, open]);
 
   const listaTopicosCheckbox = React.useMemo(() => {
     const list = topicos ?? [];

@@ -3,6 +3,14 @@ export const MAX_FOCUS_MINUTES = 59;
 export const MIN_FOCUS_TOTAL_SECONDS = 60;
 export const MAX_FOCUS_TOTAL_SECONDS = MAX_FOCUS_HOURS * 3600;
 
+export function resolvePersistedFocusMinutes(hours: number, minutes: number): number | null {
+  if (!Number.isInteger(hours) || !Number.isInteger(minutes) || hours < 0 || minutes < 0 || minutes > 59) {
+    return null;
+  }
+  const total = hours * 60 + minutes;
+  return total >= 1 && total <= 480 ? total : null;
+}
+
 export function getFocusTotalSeconds(hours: number, minutes: number): number {
   return Math.max(0, hours) * 3600 + Math.max(0, minutes) * 60;
 }

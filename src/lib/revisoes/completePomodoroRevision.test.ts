@@ -53,7 +53,6 @@ describe("completePomodoroRevision", () => {
   it("preserva o contexto e sinaliza conflito quando a versão mudou", async () => {
     vi.mocked(concluirRevisao).mockRejectedValue({ isAxiosError: true, response: { status: 409 } });
     const queryClient = new QueryClient();
-    const invalidate = vi.spyOn(queryClient, "invalidateQueries");
 
     await expect(completePomodoroRevision(queryClient, {
       inicio: "2026-09-08T12:00:00.000Z",
@@ -62,7 +61,6 @@ describe("completePomodoroRevision", () => {
     })).resolves.toBe("conflict");
 
     expect(useRevisaoPomodoroStore.getState()).toEqual(expect.objectContaining({ context, conflict: true }));
-    expect(invalidate).toHaveBeenCalledWith({ queryKey: ["revisoes", "concurso-1"] });
-    expect(invalidateRevisaoContext).not.toHaveBeenCalled();
+    expect(invalidateRevisaoContext).toHaveBeenCalledWith(queryClient, "concurso-1");
   });
 });

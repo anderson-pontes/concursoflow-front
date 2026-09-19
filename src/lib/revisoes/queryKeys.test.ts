@@ -25,13 +25,15 @@ describe("revisoes query keys", () => {
     expect(isConcursoContextQueryKey(revisoesKeys.context("concurso-a"))).toBe(true);
   });
 
-  it("invalida somente Central, dashboard e histórico do concurso afetado", async () => {
+  it("invalida somente Central, edital, dashboard e histórico do concurso afetado", async () => {
     const queryClient = new QueryClient();
     const keys = {
       revisaoA: revisoesKeys.list("concurso-a", { grupo: "hoje" }),
       revisaoB: revisoesKeys.list("concurso-b", { grupo: "hoje" }),
       dashboardA: ["dashboard", "revisoes-pendentes", "concurso-a"] as const,
       dashboardB: ["dashboard", "revisoes-pendentes", "concurso-b"] as const,
+      editalA: ["edital-verticalizado", "concurso-a"] as const,
+      editalB: ["edital-verticalizado", "concurso-b"] as const,
       historicoA: ["historico-sessoes", { concursoId: "concurso-a" }] as const,
       historicoB: ["historico-sessoes", { concursoId: "concurso-b" }] as const,
     };
@@ -41,9 +43,11 @@ describe("revisoes query keys", () => {
 
     expect(queryClient.getQueryState(keys.revisaoA)?.isInvalidated).toBe(true);
     expect(queryClient.getQueryState(keys.dashboardA)?.isInvalidated).toBe(true);
+    expect(queryClient.getQueryState(keys.editalA)?.isInvalidated).toBe(true);
     expect(queryClient.getQueryState(keys.historicoA)?.isInvalidated).toBe(true);
     expect(queryClient.getQueryState(keys.revisaoB)?.isInvalidated).toBe(false);
     expect(queryClient.getQueryState(keys.dashboardB)?.isInvalidated).toBe(false);
+    expect(queryClient.getQueryState(keys.editalB)?.isInvalidated).toBe(false);
     expect(queryClient.getQueryState(keys.historicoB)?.isInvalidated).toBe(false);
   });
 });

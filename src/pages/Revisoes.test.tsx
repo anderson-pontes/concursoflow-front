@@ -64,6 +64,7 @@ describe("Revisoes", () => {
     useRevisaoPomodoroStore.setState({ context: null, conflict: false });
     useConcursoStore.setState({ concursoAtivoId: "concurso-a", contextResolved: true, contextError: false });
     vi.mocked(api.get).mockImplementation(((url: string) => {
+      if (url === "/pomodoro-config") return Promise.resolve({ data: { mode: "pomodoro", focus_hours: 0, focus_minutes: 25, short_break_minutes: 5, long_break_minutes: 15, cycles_target: 4, last_disciplina_id: null, last_topico_id: null } });
       if (url === "/disciplinas") return Promise.resolve({ data: [{ id: "disciplina-1", nome: "Direito Constitucional" }] });
       if (url === "/concursos") return Promise.resolve({ data: [{ id: "concurso-a", nome: "TRT 8ª Região" }] });
       return Promise.resolve({ data: page() });
@@ -96,6 +97,7 @@ describe("Revisoes", () => {
 
   it("apresenta erro recuperável sem manter conteúdo anterior", async () => {
     vi.mocked(api.get).mockImplementation(((url: string) => {
+      if (url === "/pomodoro-config") return Promise.resolve({ data: { mode: "pomodoro", focus_hours: 0, focus_minutes: 25, short_break_minutes: 5, long_break_minutes: 15, cycles_target: 4, last_disciplina_id: null, last_topico_id: null } });
       if (url === "/disciplinas") return Promise.resolve({ data: [] });
       if (url === "/concursos") return Promise.resolve({ data: [{ id: "concurso-a", nome: "TRT 8ª Região" }] });
       return Promise.reject(new Error("rede"));
@@ -110,6 +112,7 @@ describe("Revisoes", () => {
   it("carrega a próxima página a partir do cursor", async () => {
     const user = userEvent.setup();
     vi.mocked(api.get).mockImplementation((url, config) => {
+      if (url === "/pomodoro-config") return Promise.resolve({ data: { mode: "pomodoro", focus_hours: 0, focus_minutes: 25, short_break_minutes: 5, long_break_minutes: 15, cycles_target: 4, last_disciplina_id: null, last_topico_id: null } }) as never;
       if (url === "/disciplinas") return Promise.resolve({ data: [] }) as never;
       if (url === "/concursos") return Promise.resolve({ data: [{ id: "concurso-a", nome: "TRT 8ª Região" }] }) as never;
       const cursor = (config?.params as { cursor?: string } | undefined)?.cursor;

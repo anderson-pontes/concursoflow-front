@@ -29,6 +29,7 @@ export async function invalidateRevisaoContext(queryClient: QueryClient, concurs
     queryClient.invalidateQueries({ queryKey: revisoesKeys.context(concursoId) }),
     queryClient.invalidateQueries({ queryKey: ["dashboard", "revisoes-pendentes", concursoId] }),
     queryClient.invalidateQueries({ queryKey: ["dashboard-resumo", concursoId] }),
+    queryClient.invalidateQueries({ queryKey: ["edital-verticalizado", concursoId] }),
     queryClient.invalidateQueries({
       predicate: (query) => {
         const [root, params] = query.queryKey;
