@@ -1,41 +1,19 @@
 import React from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { isAxiosError } from "axios";
-import { BookOpen, Clock, ListChecks, Plus, Trash2, BarChart3, Calendar, RefreshCw, MoreHorizontal } from "lucide-react";
-import { Link } from "react-router-dom";
 import { toast } from "sonner";
 
-import { CronogramaAgendaHojeDialog } from "@/components/cronograma/CronogramaAgendaHojeDialog";
-import { BlocoFormModal } from "@/components/cronograma/BlocoFormModal";
-import { CronogramaWeekGrid } from "@/components/cronograma/CronogramaWeekGrid";
+import { CronogramaContent } from "@/components/cronograma/CronogramaContent";
+import { CronogramaContextState } from "@/components/cronograma/CronogramaContextState";
+import { CronogramaDialogs } from "@/components/cronograma/CronogramaDialogs";
+import type { CronogramaModo } from "@/components/cronograma/CronogramaModoSelectorModal";
 import {
-  CronogramaModoSelectorModal,
-  type CronogramaModo,
-} from "@/components/cronograma/CronogramaModoSelectorModal";
-import {
-  CronogramaRemoverDialog,
   nextOccurrenceISO,
   type RemoverScope,
 } from "@/components/cronograma/CronogramaRemoverDialog";
-import {
-  CronogramaSimplificadoEditModal,
-  type SimplificadoEditPayload,
-} from "@/components/cronograma/CronogramaSimplificadoEditModal";
-import { CronogramaSimplificadoModal } from "@/components/cronograma/CronogramaSimplificadoModal";
-import { GerarCronogramaAutoModal } from "@/components/cronograma/GerarCronogramaAutoModal";
-import { RegistroEstudoModal } from "@/components/estudos/RegistroEstudoModal";
-import { BannerSemConcurso } from "@/components/dashboard/BannerSemConcurso";
+import type { SimplificadoEditPayload } from "@/components/cronograma/CronogramaSimplificadoEditModal";
 import { useConfirmDialog } from "@/components/ui/confirm-dialog";
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { EmptyState } from "@/components/ui/empty-state";
-import { PageSkeleton } from "@/components/ui/page-skeleton";
-import { DIAS, fmtHorasStats } from "@/lib/cronograma/constants";
+import { DIAS } from "@/lib/cronograma/constants";
 import { filtrarDisciplinasDoConcursoAtivo } from "@/lib/cronograma/disciplinasConcurso";
 import type {
   Bloco,
@@ -46,7 +24,6 @@ import type {
 } from "@/lib/cronograma/types";
 import { calendarioHref } from "@/lib/calendario/urlParams";
 import {
-  blocoTopicoIds,
   fmtDateBR,
   hojeISO,
   previewEstenderFim,
@@ -66,12 +43,6 @@ function apiErrorMessage(err: unknown, fallback: string): string {
     if (typeof detail === "string" && detail.trim()) return detail;
   }
   return fallback;
-}
-
-function editTitleForModo(modo: string | undefined): string {
-  if (modo === "automatica") return "Editar horário (Automática)";
-  if (modo === "simplificada") return "Editar horário (Simplificada)";
-  return "Editar horário (Analítica)";
 }
 
 export function Cronograma() {
@@ -331,137 +302,48 @@ export function Cronograma() {
     actionableItemsCount: blocos?.length,
   });
 
-  if (contextStatus === "hydrating") {
-    return <PageSkeleton cards={2} rows={3} />;
-  }
-
-  if (contextStatus === "no_contest") {
+  if (contextStatus === "hydrating" || contextStatus === "no_contest" || contextStatus === "no_disciplines" || contextStatus === "error") {
     return (
-      <div className="space-y-6 pb-10">
-        <header>
-          <h1 className="text-xl font-semibold tracking-tight text-foreground">Cronograma</h1>
-          <p className="text-sm text-muted-foreground">Escolha um concurso antes de planejar sua semana.</p>
-        </header>
-        <BannerSemConcurso />
-      </div>
+      <CronogramaContextState
+        status={contextStatus}
+        onRetry={() => {
+          void Promise.all([
+            qc.invalidateQueries({ queryKey: ["concursos"] }),
+            refetchDisciplinas(),
+            refetchBlocos(),
+          ]);
+        }}
+      />
     );
-  }
-
-  if (contextStatus === "error") {
-    return <div className="space-y-6 pb-10"><header><h1 className="text-xl font-semibold tracking-tight text-foreground">Cronograma</h1></header><div role="alert" className="rounded-xl border border-destructive/30 bg-card p-8 text-center"><h2 className="font-semibold">Não foi possível carregar o cronograma</h2><p className="mt-1 text-sm text-muted-foreground">Os dados anteriores foram ocultados. Tente novamente.</p><Button className="mt-5" onClick={() => void Promise.all([qc.invalidateQueries({ queryKey: ["concursos"] }), refetchDisciplinas(), refetchBlocos()])}>Tentar novamente</Button></div></div>;
-  }
-
-  if (contextStatus === "no_disciplines") {
-    return <div className="space-y-6 pb-10"><header><h1 className="text-xl font-semibold tracking-tight text-foreground">Cronograma</h1></header><EmptyState title="Adicione disciplinas antes de planejar" description="Vincule ao menos uma disciplina ao concurso ativo para criar horários compatíveis." action={<Button asChild><Link to="/disciplinas">Adicionar disciplinas</Link></Button>} /></div>;
   }
 
   return (
     <div className="space-y-6 pb-10">
-      <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
-        <div className="min-w-0">
-          <h1 className="text-xl font-semibold tracking-tight text-foreground">Cronograma</h1>
-          <p className="text-sm text-muted-foreground">Planejamento semanal de estudos</p>
-        </div>
-        <div className="flex flex-wrap gap-2 lg:max-w-[min(100%,42rem)] lg:justify-end">
-          {concursoAtivoId ? (
-            <Button asChild variant="outline" title="Replanejar concurso ativo">
-              <Link to={`/planos/${concursoAtivoId}/replanejar`}>
-                <RefreshCw />
-                <span className="hidden sm:inline">Replanejar</span>
-              </Link>
-            </Button>
-          ) : null}
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => setAgendaHojeOpen(true)}
-            title="Ver o que está agendado para estudar na semana"
-            aria-label="Ver o que está agendado para estudar na semana"
-          >
-            <ListChecks className="h-4 w-4 shrink-0" />
-            <span className="hidden sm:inline">Agendado</span>
-          </Button>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button type="button" variant="outline" aria-label="Mais ações do cronograma">
-                <MoreHorizontal />
-                <span className="hidden sm:inline">Mais ações</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="min-w-52">
-              <DropdownMenuItem asChild className="min-h-10">
-                <Link to={calendarioMensalHref}><Calendar />Calendário mensal</Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem className="min-h-10" onSelect={() => setOpenRegistro(true)}>
-                <BookOpen />Novo registro
-              </DropdownMenuItem>
-              {totalBlocos > 0 ? (
-                <DropdownMenuItem
-                  className="min-h-10"
-                  variant="destructive"
-                  disabled={limparMutation.isPending}
-                  onSelect={() => {
-                    void requestConfirmation({
-                      title: "Limpar cronograma?",
-                      description: "Isso remove todos os blocos do cronograma semanal e os itens gerados automaticamente. Esta ação não pode ser desfeita.",
-                      confirmLabel: "Limpar cronograma",
-                      variant: "destructive",
-                    }).then((confirmed) => {
-                      if (confirmed) limparMutation.mutate();
-                    });
-                  }}
-                >
-                  <Trash2 />{limparMutation.isPending ? "Limpando…" : "Limpar cronograma"}
-                </DropdownMenuItem>
-              ) : null}
-            </DropdownMenuContent>
-          </DropdownMenu>
-          {totalBlocos > 0 ? (
-            <Button type="button" onClick={openCriarCronograma}>
-              <Plus />Criar cronograma
-            </Button>
-          ) : null}
-        </div>
-      </div>
-
-      {!isLoading && totalBlocos === 0 ? (
-        <EmptyState
-          icon={Calendar}
-          title="Nenhum horário no cronograma"
-          description="Escolha um modo: automático com IA, analítico com tópicos ou simplificado por disciplina."
-          action={<Button type="button" onClick={openCriarCronograma}><Plus />Criar cronograma</Button>}
-        />
-      ) : null}
-
-      {stats && totalBlocos > 0 ? (
-        <div className="grid grid-cols-2 gap-2 sm:gap-3 xl:grid-cols-4">
-          {[
-            { label: "Tempo total", value: fmtHorasStats(stats.tempo_total_horas), icon: Clock },
-            { label: "Sessões", value: stats.sessoes_count != null ? String(stats.sessoes_count) : "—", icon: BarChart3 },
-            { label: "Média diária", value: fmtHorasStats(stats.media_diaria_horas), icon: Calendar },
-            { label: "Blocos", value: String(totalBlocos), icon: Calendar },
-          ].map(({ label, value, icon: Icon }) => (
-            <div key={label} className="flex min-w-0 items-center gap-2.5 rounded-xl border border-border bg-card p-3 shadow-sm sm:gap-3 sm:p-4">
-              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary-50 text-primary-600 dark:bg-primary-900/30 dark:text-primary-400 sm:h-9 sm:w-9">
-                <Icon className="h-4 w-4" />
-              </span>
-              <div className="min-w-0">
-                <p className="truncate text-xs font-semibold uppercase tracking-wide text-muted-foreground">{label}</p>
-                <p className="truncate text-sm font-semibold tabular-nums text-card-foreground sm:text-base">{value}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      ) : null}
-
-      <CronogramaWeekGrid
-        isLoading={isLoading}
+      <CronogramaContent
+        concursoAtivoId={concursoAtivoId}
+        calendarioMensalHref={calendarioMensalHref}
         totalBlocos={totalBlocos}
+        isLoading={isLoading}
+        stats={stats}
         diaHoje={diaHoje}
         grouped={groupedPorDisciplina}
         disciplinaNome={(id) => discMap.get(id) ?? "—"}
+        clearPending={limparMutation.isPending}
         deletePending={removerMutation.isPending}
         extendPending={estenderMutation.isPending}
+        onAgenda={() => setAgendaHojeOpen(true)}
+        onRegistro={() => setOpenRegistro(true)}
+        onClear={() => {
+          void requestConfirmation({
+            title: "Limpar cronograma?",
+            description: "Isso remove todos os blocos do cronograma semanal e os itens gerados automaticamente. Esta ação não pode ser desfeita.",
+            confirmLabel: "Limpar cronograma",
+            variant: "destructive",
+          }).then((confirmed) => {
+            if (confirmed) limparMutation.mutate();
+          });
+        }}
+        onCreate={openCriarCronograma}
         onEdit={setEditBloco}
         onRemove={(bloco, diaLabel) => setRemoveTarget({ bloco, dataAlvo: nextOccurrenceISO(bloco.dia_semana), diaLabel })}
         onExtend={(bloco) => {
@@ -476,100 +358,40 @@ export function Cronograma() {
         }}
       />
 
-      <CronogramaAgendaHojeDialog
-        open={agendaHojeOpen}
-        onClose={() => setAgendaHojeOpen(false)}
+      <CronogramaDialogs
         blocos={blocos ?? []}
-        disciplinaNome={(id) => discMap.get(id) ?? "Conteúdo indisponível"}
-        onCriarCronograma={openCriarCronograma}
-      />
-
-      <CronogramaModoSelectorModal
-        open={modoSelectorOpen}
-        onClose={() => setModoSelectorOpen(false)}
-        onSelect={handleModoSelect}
-      />
-
-      <BlocoFormModal
-        open={createOpen}
-        onClose={() => setCreateOpen(false)}
-        onSave={(form) => createMutation.mutate(form)}
-        disciplinas={disciplinasDoConcursoAtivo}
-        title="Novo horário (Analítica)"
-        isSaving={createMutation.isPending}
-      />
-
-      {editBloco && editBloco.modo_criacao === "simplificada" ? (
-        <CronogramaSimplificadoEditModal
-          open
-          onClose={() => setEditBloco(null)}
-          onSave={(payload) => updateMutation.mutate({ id: editBloco.id, payload })}
-          bloco={editBloco}
-          disciplinas={disciplinasDoConcursoAtivo}
-          isSaving={updateMutation.isPending}
-        />
-      ) : null}
-
-      {editBloco && editBloco.modo_criacao !== "simplificada" ? (
-        <BlocoFormModal
-          open
-          onClose={() => setEditBloco(null)}
-          onSave={(form) => updateMutation.mutate({ id: editBloco.id, payload: form })}
-          disciplinas={disciplinasDoConcursoAtivo}
-          initialValues={{
-            disciplina_id: editBloco.disciplina_id,
-            dia_semana: editBloco.dia_semana,
-            hora_inicio: editBloco.hora_inicio.slice(0, 5),
-            hora_fim: editBloco.hora_fim.slice(0, 5),
-            tipo: editBloco.tipo,
-            ativo: editBloco.ativo,
-            topico_ids: blocoTopicoIds(editBloco),
-          }}
-          title={editTitleForModo(editBloco.modo_criacao)}
-          isSaving={updateMutation.isPending}
-        />
-      ) : null}
-
-      <GerarCronogramaAutoModal
-        open={autoOpen}
-        onClose={() => setAutoOpen(false)}
         disciplinas={disciplinasDoConcursoAtivo}
         hasConcursoAtivo={Boolean(concursoAtivoId)}
-        onSaved={() => {
+        disciplinaNome={(id) => discMap.get(id) ?? "Conteúdo indisponível"}
+        agendaHojeOpen={agendaHojeOpen}
+        modoSelectorOpen={modoSelectorOpen}
+        createOpen={createOpen}
+        autoOpen={autoOpen}
+        simplificadaOpen={simplificadaOpen}
+        editBloco={editBloco}
+        removeTarget={removeTarget}
+        openRegistro={openRegistro}
+        createPending={createMutation.isPending}
+        updatePending={updateMutation.isPending}
+        simplifiedPending={simplificadaMutation.isPending}
+        removePending={removerMutation.isPending}
+        onCloseAgenda={() => setAgendaHojeOpen(false)}
+        onCreateCronograma={openCriarCronograma}
+        onCloseModoSelector={() => setModoSelectorOpen(false)}
+        onModoSelect={handleModoSelect}
+        onCloseCreate={() => setCreateOpen(false)}
+        onCreate={(form) => createMutation.mutate(form)}
+        onCloseEdit={() => setEditBloco(null)}
+        onUpdate={(id, payload) => updateMutation.mutate({ id, payload })}
+        onCloseAuto={() => setAutoOpen(false)}
+        onAutoSaved={() => {
           qc.invalidateQueries({ queryKey: ["cronograma-blocos", concursoAtivoId ?? null] });
         }}
-      />
-
-      <CronogramaSimplificadoModal
-        open={simplificadaOpen}
-        onClose={() => setSimplificadaOpen(false)}
-        onSave={(form) => simplificadaMutation.mutate(form)}
-        disciplinas={disciplinasDoConcursoAtivo}
-        isSaving={simplificadaMutation.isPending}
-      />
-
-      {removeTarget ? (
-        <CronogramaRemoverDialog
-          open
-          onClose={() => setRemoveTarget(null)}
-          bloco={removeTarget.bloco}
-          dataAlvo={removeTarget.dataAlvo}
-          diaLabel={removeTarget.diaLabel}
-          isPending={removerMutation.isPending}
-          onConfirm={(scope) =>
-            removerMutation.mutate({
-              id: removeTarget.bloco.id,
-              scope,
-              data: removeTarget.dataAlvo,
-            })
-          }
-        />
-      ) : null}
-
-      <RegistroEstudoModal
-        open={openRegistro}
-        onClose={() => setOpenRegistro(false)}
-        defaultDisciplinaId={null}
+        onCloseSimplificada={() => setSimplificadaOpen(false)}
+        onCreateSimplificada={(form) => simplificadaMutation.mutate(form)}
+        onCloseRemove={() => setRemoveTarget(null)}
+        onRemove={(id, scope, data) => removerMutation.mutate({ id, scope, data })}
+        onCloseRegistro={() => setOpenRegistro(false)}
       />
       {confirmDialog}
     </div>

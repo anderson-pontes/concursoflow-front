@@ -29,6 +29,7 @@
     "optimize:brand-assets": "node scripts/optimize-brand-assets.mjs",
     "lh:dashboard": "node scripts/lighthouse-dashboard.mjs",
     "lh:login": "node scripts/lighthouse-login.mjs",
+    "lh:public": "node scripts/lighthouse-public.mjs",
     "fix-utf8:registro-modal": "node scripts/fix-registro-modal-utf8.mjs"
   },
   "dependencies": {

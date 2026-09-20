@@ -14,6 +14,10 @@ export type DisciplinaPalette = {
   muted: string;
   /** Fundo do item selecionado na lista de pré-visualização (ex.: modal de tópicos) */
   selectionHighlight: string;
+  /** Bloco compacto usado no calendário mensal */
+  calendarItem: string;
+  /** Texto auxiliar do bloco no calendário mensal */
+  calendarMuted: string;
 };
 
 export const DISCIPLINA_PALETTES: DisciplinaPalette[] = [
@@ -25,6 +29,8 @@ export const DISCIPLINA_PALETTES: DisciplinaPalette[] = [
     progressTrack: "bg-sky-100 dark:bg-sky-950/50",
     muted: "text-sky-900/70 dark:text-sky-200/70",
     selectionHighlight: "bg-sky-200/60 dark:bg-sky-900/40",
+    calendarItem: "border-sky-200 bg-sky-100/90 text-sky-950 dark:border-sky-800 dark:bg-sky-950/70 dark:text-sky-100",
+    calendarMuted: "text-sky-700 dark:text-sky-300",
   },
   {
     cardBg: "bg-gradient-to-br from-violet-50 to-white dark:from-violet-950/40 dark:to-card",
@@ -34,6 +40,8 @@ export const DISCIPLINA_PALETTES: DisciplinaPalette[] = [
     progressTrack: "bg-violet-100 dark:bg-violet-950/50",
     muted: "text-violet-900/70 dark:text-violet-200/70",
     selectionHighlight: "bg-violet-200/60 dark:bg-violet-900/40",
+    calendarItem: "border-violet-200 bg-violet-100/90 text-violet-950 dark:border-violet-800 dark:bg-violet-950/70 dark:text-violet-100",
+    calendarMuted: "text-violet-700 dark:text-violet-300",
   },
   {
     cardBg: "bg-gradient-to-br from-emerald-50 to-white dark:from-emerald-950/35 dark:to-card",
@@ -43,6 +51,8 @@ export const DISCIPLINA_PALETTES: DisciplinaPalette[] = [
     progressTrack: "bg-emerald-100 dark:bg-emerald-950/50",
     muted: "text-emerald-900/70 dark:text-emerald-200/70",
     selectionHighlight: "bg-emerald-200/60 dark:bg-emerald-900/40",
+    calendarItem: "border-emerald-200 bg-emerald-100/90 text-emerald-950 dark:border-emerald-800 dark:bg-emerald-950/70 dark:text-emerald-100",
+    calendarMuted: "text-emerald-700 dark:text-emerald-300",
   },
   {
     cardBg: "bg-gradient-to-br from-amber-50 to-white dark:from-amber-950/35 dark:to-card",
@@ -52,6 +62,8 @@ export const DISCIPLINA_PALETTES: DisciplinaPalette[] = [
     progressTrack: "bg-amber-100 dark:bg-amber-950/50",
     muted: "text-amber-900/70 dark:text-amber-200/70",
     selectionHighlight: "bg-amber-200/60 dark:bg-amber-900/40",
+    calendarItem: "border-amber-200 bg-amber-100/90 text-amber-950 dark:border-amber-800 dark:bg-amber-950/70 dark:text-amber-100",
+    calendarMuted: "text-amber-800 dark:text-amber-300",
   },
   {
     cardBg: "bg-gradient-to-br from-rose-50 to-white dark:from-rose-950/35 dark:to-card",
@@ -61,6 +73,8 @@ export const DISCIPLINA_PALETTES: DisciplinaPalette[] = [
     progressTrack: "bg-rose-100 dark:bg-rose-950/50",
     muted: "text-rose-900/70 dark:text-rose-200/70",
     selectionHighlight: "bg-rose-200/60 dark:bg-rose-900/40",
+    calendarItem: "border-rose-200 bg-rose-100/90 text-rose-950 dark:border-rose-800 dark:bg-rose-950/70 dark:text-rose-100",
+    calendarMuted: "text-rose-700 dark:text-rose-300",
   },
   {
     cardBg: "bg-gradient-to-br from-cyan-50 to-white dark:from-cyan-950/35 dark:to-card",
@@ -70,6 +84,8 @@ export const DISCIPLINA_PALETTES: DisciplinaPalette[] = [
     progressTrack: "bg-cyan-100 dark:bg-cyan-950/50",
     muted: "text-cyan-900/70 dark:text-cyan-200/70",
     selectionHighlight: "bg-cyan-200/60 dark:bg-cyan-900/40",
+    calendarItem: "border-cyan-200 bg-cyan-100/90 text-cyan-950 dark:border-cyan-800 dark:bg-cyan-950/70 dark:text-cyan-100",
+    calendarMuted: "text-cyan-700 dark:text-cyan-300",
   },
   {
     cardBg: "bg-gradient-to-br from-fuchsia-50 to-white dark:from-fuchsia-950/35 dark:to-card",
@@ -79,6 +95,8 @@ export const DISCIPLINA_PALETTES: DisciplinaPalette[] = [
     progressTrack: "bg-fuchsia-100 dark:bg-fuchsia-950/50",
     muted: "text-fuchsia-900/70 dark:text-fuchsia-200/70",
     selectionHighlight: "bg-fuchsia-200/60 dark:bg-fuchsia-900/40",
+    calendarItem: "border-fuchsia-200 bg-fuchsia-100/90 text-fuchsia-950 dark:border-fuchsia-800 dark:bg-fuchsia-950/70 dark:text-fuchsia-100",
+    calendarMuted: "text-fuchsia-700 dark:text-fuchsia-300",
   },
   {
     cardBg: "bg-gradient-to-br from-indigo-50 to-white dark:from-indigo-950/40 dark:to-card",
@@ -88,6 +106,8 @@ export const DISCIPLINA_PALETTES: DisciplinaPalette[] = [
     progressTrack: "bg-indigo-100 dark:bg-indigo-950/50",
     muted: "text-indigo-900/70 dark:text-indigo-200/70",
     selectionHighlight: "bg-indigo-200/60 dark:bg-indigo-900/40",
+    calendarItem: "border-indigo-200 bg-indigo-100/90 text-indigo-950 dark:border-indigo-800 dark:bg-indigo-950/70 dark:text-indigo-100",
+    calendarMuted: "text-indigo-700 dark:text-indigo-300",
   },
 ];
 
@@ -103,4 +123,8 @@ export function getDisciplinaPaletteIndex(id: string): number {
   const n = DISCIPLINA_PALETTES.length;
   if (n === 0) return 0;
   return stableHashUuid(id) % n;
+}
+
+export function getDisciplinaPalette(id: string): DisciplinaPalette {
+  return DISCIPLINA_PALETTES[getDisciplinaPaletteIndex(id)] ?? DISCIPLINA_PALETTES[0]!;
 }

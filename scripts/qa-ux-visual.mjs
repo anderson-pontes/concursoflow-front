@@ -11,7 +11,7 @@ const email = process.env.QA_EMAIL || "seed@example.com";
 const password = process.env.QA_PASSWORD || "Seed@2026";
 const adminEmail = process.env.QA_ADMIN_EMAIL;
 const adminPassword = process.env.QA_ADMIN_PASSWORD;
-const routes = ["/dashboard", "/cronograma", "/pomodoro", "/estudos/historico", "/concursos", "/disciplinas", "/mapas-mentais", "/flashcards", "/configuracoes/estudos"];
+const routes = ["/dashboard", "/cronograma", "/pomodoro", "/estudos/calendario", "/estudos/historico", "/concursos", "/disciplinas", "/mapas-mentais", "/flashcards", "/configuracoes/estudos"];
 const adminRoutes = ["/admin/usuarios"];
 const viewports = [
   { name: "desktop", width: 1440, height: 900 },

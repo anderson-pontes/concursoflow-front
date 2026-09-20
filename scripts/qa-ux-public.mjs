@@ -72,7 +72,7 @@ try {
 }
 
 report.passed = report.results.every((item) =>
-  item.h1Count === 1 && !item.horizontalOverflow && !item.formHasOwnScroll && !(item.viewport === "mobile" && item.route === "/" && item.accentTouchesText)
+  item.h1Count === 1 && !item.horizontalOverflow && !item.formHasOwnScroll && !(item.route === "/" && item.accentTouchesText)
 );
 writeFileSync(join(outputDir, "public-report.json"), JSON.stringify(report, null, 2));
 console.log(JSON.stringify(report, null, 2));

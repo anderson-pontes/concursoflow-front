@@ -15,6 +15,7 @@ import {
   resolvePomodoroTopicoId,
 } from "@/lib/pomodoro/launchFromCronograma";
 import { cn } from "@/lib/utils";
+import { getDisciplinaPalette } from "@/components/disciplinas/disciplinaPalettes";
 
 export type CronogramaBlocoCardProps = {
   bloco: Bloco;
@@ -39,6 +40,7 @@ export function CronogramaBlocoCard({
 }: CronogramaBlocoCardProps) {
   const navigate = useNavigate();
   const minutos = blocoDurationMinutes(bloco.hora_inicio, bloco.hora_fim);
+  const palette = getDisciplinaPalette(bloco.disciplina_id);
   const badge = getTipo(bloco.tipo);
   const topicoIds = blocoTopicoIds(bloco);
   const topicoResumo =
@@ -62,8 +64,10 @@ export function CronogramaBlocoCard({
   return (
     <div
       className={cn(
-        "group relative min-w-0 overflow-hidden rounded-lg border bg-white p-2 shadow-sm dark:bg-neutral-900 sm:p-2.5",
-        expirado ? "border-amber-300/80 opacity-90 dark:border-amber-700/60" : "border-border",
+        "group relative min-w-0 overflow-hidden rounded-lg border p-2 shadow-sm sm:p-2.5",
+        palette.cardBg,
+        palette.cardBorder,
+        expirado && "border-amber-300/80 opacity-90 dark:border-amber-700/60",
       )}
     >
       <div className="flex items-center gap-1.5">
@@ -81,7 +85,7 @@ export function CronogramaBlocoCard({
         </p>
       ) : null}
       <p
-        className="mt-1 truncate pl-3.5 text-[11px] font-bold tabular-nums text-primary-700 dark:text-primary-300 sm:text-xs"
+        className={cn("mt-1 truncate pl-3.5 text-[11px] font-bold tabular-nums sm:text-xs", palette.accent)}
         title={`${bloco.hora_inicio}–${bloco.hora_fim} · ${fmtBlocoMinutos(minutos)}`}
       >
         <span className="sm:hidden">

@@ -1,0 +1,25 @@
+{
+  "fetchedAt": "2026-09-20T01:59:39.928Z",
+  "results": [
+    {
+      "route": "/",
+      "url": "http://127.0.0.1:4173/",
+      "scores": {
+        "performance": 79,
+        "accessibility": 96,
+        "best-practices": 100,
+        "seo": 92
+      }
+    },
+    {
+      "route": "/login",
+      "url": "http://127.0.0.1:4173/login",
+      "scores": {
+        "performance": 89,
+        "accessibility": 90,
+        "best-practices": 100,
+        "seo": 91
+      }
+    }
+  ]
+}

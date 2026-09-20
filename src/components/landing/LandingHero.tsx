@@ -26,10 +26,10 @@ export function LandingHero() {
             </span>
             <HandDrawnAccent
               variant="swoop"
-              className="pointer-events-none absolute -bottom-4 left-0 z-0 h-4 w-full overflow-visible text-yellow-400 sm:-left-10 sm:bottom-auto sm:top-[49%] sm:h-[43%] sm:w-[calc(100%+5rem)]"
+              className="pointer-events-none absolute left-0 top-[calc(100%+0.35rem)] z-0 h-8 w-full overflow-visible text-yellow-400 sm:-left-10 sm:h-10 sm:w-[calc(100%+5rem)]"
             />
           </h1>
-          <p className="mt-6 max-w-xl text-base leading-relaxed text-muted-foreground motion-safe:animate-[landing-fade-up_0.55s_ease-out_0.16s_both] sm:text-lg">
+          <p className="mt-14 max-w-xl text-base leading-relaxed text-muted-foreground motion-safe:animate-[landing-fade-up_0.55s_ease-out_0.16s_both] sm:mt-16 sm:text-lg">
             Cadastre as disciplinas e os tópicos do seu edital, organize suas prioridades e acompanhe horas estudadas, revisões, questões e evolução em um único lugar.
           </p>
           <div className="mt-9 flex flex-col gap-3 motion-safe:animate-[landing-fade-up_0.55s_ease-out_0.24s_both] sm:flex-row sm:items-center">

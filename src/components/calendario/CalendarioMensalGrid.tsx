@@ -41,31 +41,36 @@ export function CalendarioMensalGrid({ ano, mes, dias, onDiaClick }: Props) {
   const cells = React.useMemo(() => buildGridCells(ano, mes, dias), [ano, mes, dias]);
 
   return (
-    <div className="overflow-x-auto">
-      <div className="min-w-[560px]">
-      <div className="mb-1.5 grid grid-cols-7 gap-1.5">
-        {DIAS_SEMANA_PT.map((label) => (
-          <div key={label} className="py-1.5 text-center text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-            {label}
-          </div>
-        ))}
-      </div>
-      <div className="grid grid-cols-7 gap-1.5">
-        {cells.map((cell) =>
-          cell.isCurrentMonth && cell.data ? (
-            <CalendarioDiaCell
-              key={cell.key}
-              dia={cell.dia}
-              diaNumero={cell.diaNumero}
-              isCurrentMonth
-              isToday={cell.data === today}
-              onClick={() => onDiaClick?.(cell.data!)}
-            />
-          ) : (
-            <div key={cell.key} className="min-h-[88px] sm:min-h-[104px]" aria-hidden />
-          ),
-        )}
-      </div>
+    <div
+      className="overflow-x-auto rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+      role="region"
+      aria-label="Calendário mensal de estudos"
+      tabIndex={0}
+    >
+      <div className="min-w-[700px]">
+        <div className="mb-1.5 grid grid-cols-7 gap-1.5">
+          {DIAS_SEMANA_PT.map((label) => (
+            <div key={label} className="py-1.5 text-center text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              {label}
+            </div>
+          ))}
+        </div>
+        <div className="grid grid-cols-7 gap-1.5">
+          {cells.map((cell) =>
+            cell.isCurrentMonth && cell.data ? (
+              <CalendarioDiaCell
+                key={cell.key}
+                dia={cell.dia}
+                diaNumero={cell.diaNumero}
+                isCurrentMonth
+                isToday={cell.data === today}
+                onClick={() => onDiaClick?.(cell.data!)}
+              />
+            ) : (
+              <div key={cell.key} className="min-h-[132px] sm:min-h-[160px]" aria-hidden />
+            ),
+          )}
+        </div>
       </div>
     </div>
   );

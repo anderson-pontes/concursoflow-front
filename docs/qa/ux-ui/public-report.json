@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-18T02:01:14.596Z",
+  "generatedAt": "2026-09-19T21:26:58.901Z",
   "baseUrl": "http://localhost:3000",
   "results": [
     {
@@ -11,7 +11,7 @@
       "horizontalOverflow": false,
       "scrollContainers": [],
       "formHasOwnScroll": false,
-      "accentTouchesText": true
+      "accentTouchesText": false
     },
     {
       "viewport": "desktop",

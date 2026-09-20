@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-30T01:16:16.243Z",
+  "generatedAt": "2026-09-20T02:22:58.605Z",
   "baseUrl": "http://localhost:3000",
   "configurationErrors": [
     "Defina QA_ADMIN_EMAIL e QA_ADMIN_PASSWORD para auditar rotas administrativas."
@@ -10,7 +10,9 @@
       "viewport": "desktop",
       "route": "/dashboard",
       "screenshot": "desktop-dashboard.png",
-      "scrollScreenshots": [],
+      "scrollScreenshots": [
+        "desktop-dashboard-scroll-1.png"
+      ],
       "pageErrors": [],
       "consoleErrors": [],
       "failures": [],
@@ -23,7 +25,13 @@
       "errorBoundary": false,
       "unnamedSamples": [],
       "undersizedSamples": [],
-      "scrollContainers": [],
+      "scrollContainers": [
+        {
+          "index": 0,
+          "scrollHeight": 681,
+          "clientHeight": 646
+        }
+      ],
       "bodyText": "Pular para o conteúdo\nClick Edital\n🏆\nCONCURSO ATIVO\nBACEN — Analista\nPRINCIPAL\nDashboard\nMeus Concursos\nDisciplinas\nCronograma\nESTUDO\nPomodoro\nCalendário\nHistó"
     },
     {
@@ -31,7 +39,9 @@
       "viewport": "desktop",
       "route": "/cronograma",
       "screenshot": "desktop-cronograma.png",
-      "scrollScreenshots": [],
+      "scrollScreenshots": [
+        "desktop-cronograma-scroll-1.png"
+      ],
       "pageErrors": [],
       "consoleErrors": [],
       "failures": [],
@@ -44,7 +54,13 @@
       "errorBoundary": false,
       "unnamedSamples": [],
       "undersizedSamples": [],
-      "scrollContainers": [],
+      "scrollContainers": [
+        {
+          "index": 0,
+          "scrollHeight": 681,
+          "clientHeight": 646
+        }
+      ],
       "bodyText": "Pular para o conteúdo\nClick Edital\n🏆\nCONCURSO ATIVO\nBACEN — Analista\nPRINCIPAL\nDashboard\nMeus Concursos\nDisciplinas\nCronograma\nESTUDO\nPomodoro\nCalendário\nHistó"
     },
     {
@@ -52,7 +68,9 @@
       "viewport": "desktop",
       "route": "/pomodoro",
       "screenshot": "desktop-pomodoro.png",
-      "scrollScreenshots": [],
+      "scrollScreenshots": [
+        "desktop-pomodoro-scroll-1.png"
+      ],
       "pageErrors": [],
       "consoleErrors": [],
       "failures": [],
@@ -65,7 +83,42 @@
       "errorBoundary": false,
       "unnamedSamples": [],
       "undersizedSamples": [],
-      "scrollContainers": [],
+      "scrollContainers": [
+        {
+          "index": 0,
+          "scrollHeight": 681,
+          "clientHeight": 646
+        }
+      ],
+      "bodyText": "Pular para o conteúdo\nClick Edital\n🏆\nCONCURSO ATIVO\nBACEN — Analista\nPRINCIPAL\nDashboard\nMeus Concursos\nDisciplinas\nCronograma\nESTUDO\nPomodoro\nCalendário\nHistó"
+    },
+    {
+      "profile": "user",
+      "viewport": "desktop",
+      "route": "/estudos/calendario",
+      "screenshot": "desktop-estudos-calendario.png",
+      "scrollScreenshots": [
+        "desktop-estudos-calendario-scroll-1.png"
+      ],
+      "pageErrors": [],
+      "consoleErrors": [],
+      "failures": [],
+      "pathname": "/estudos/calendario",
+      "title": "Click Edital",
+      "h1Count": 1,
+      "horizontalOverflow": false,
+      "unnamedControls": 0,
+      "undersizedTargets": 0,
+      "errorBoundary": false,
+      "unnamedSamples": [],
+      "undersizedSamples": [],
+      "scrollContainers": [
+        {
+          "index": 0,
+          "scrollHeight": 681,
+          "clientHeight": 646
+        }
+      ],
       "bodyText": "Pular para o conteúdo\nClick Edital\n🏆\nCONCURSO ATIVO\nBACEN — Analista\nPRINCIPAL\nDashboard\nMeus Concursos\nDisciplinas\nCronograma\nESTUDO\nPomodoro\nCalendário\nHistó"
     },
     {
@@ -74,7 +127,8 @@
       "route": "/estudos/historico",
       "screenshot": "desktop-estudos-historico.png",
       "scrollScreenshots": [
-        "desktop-estudos-historico-scroll-1.png"
+        "desktop-estudos-historico-scroll-1.png",
+        "desktop-estudos-historico-scroll-2.png"
       ],
       "pageErrors": [],
       "consoleErrors": [],
@@ -122,7 +176,12 @@
       "scrollContainers": [
         {
           "index": 0,
-          "scrollHeight": 1068,
+          "scrollHeight": 681,
+          "clientHeight": 646
+        },
+        {
+          "index": 1,
+          "scrollHeight": 1113,
           "clientHeight": 835
         }
       ],
@@ -133,7 +192,9 @@
       "viewport": "desktop",
       "route": "/concursos",
       "screenshot": "desktop-concursos.png",
-      "scrollScreenshots": [],
+      "scrollScreenshots": [
+        "desktop-concursos-scroll-1.png"
+      ],
       "pageErrors": [],
       "consoleErrors": [],
       "failures": [],
@@ -146,7 +207,13 @@
       "errorBoundary": false,
       "unnamedSamples": [],
       "undersizedSamples": [],
-      "scrollContainers": [],
+      "scrollContainers": [
+        {
+          "index": 0,
+          "scrollHeight": 681,
+          "clientHeight": 646
+        }
+      ],
       "bodyText": "Pular para o conteúdo\nClick Edital\n🏆\nCONCURSO ATIVO\nBACEN — Analista\nPRINCIPAL\nDashboard\nMeus Concursos\nDisciplinas\nCronograma\nESTUDO\nPomodoro\nCalendário\nHistó"
     },
     {
@@ -154,7 +221,9 @@
       "viewport": "desktop",
       "route": "/disciplinas",
       "screenshot": "desktop-disciplinas.png",
-      "scrollScreenshots": [],
+      "scrollScreenshots": [
+        "desktop-disciplinas-scroll-1.png"
+      ],
       "pageErrors": [],
       "consoleErrors": [],
       "failures": [],
@@ -167,7 +236,13 @@
       "errorBoundary": false,
       "unnamedSamples": [],
       "undersizedSamples": [],
-      "scrollContainers": [],
+      "scrollContainers": [
+        {
+          "index": 0,
+          "scrollHeight": 681,
+          "clientHeight": 646
+        }
+      ],
       "bodyText": "Pular para o conteúdo\nClick Edital\n🏆\nCONCURSO ATIVO\nBACEN — Analista\nPRINCIPAL\nDashboard\nMeus Concursos\nDisciplinas\nCronograma\nESTUDO\nPomodoro\nCalendário\nHistó"
     },
     {
@@ -176,7 +251,8 @@
       "route": "/mapas-mentais",
       "screenshot": "desktop-mapas-mentais.png",
       "scrollScreenshots": [
-        "desktop-mapas-mentais-scroll-1.png"
+        "desktop-mapas-mentais-scroll-1.png",
+        "desktop-mapas-mentais-scroll-2.png"
       ],
       "pageErrors": [],
       "consoleErrors": [],
@@ -193,6 +269,11 @@
       "scrollContainers": [
         {
           "index": 0,
+          "scrollHeight": 681,
+          "clientHeight": 646
+        },
+        {
+          "index": 1,
           "scrollHeight": 1576,
           "clientHeight": 835
         }
@@ -204,7 +285,9 @@
       "viewport": "desktop",
       "route": "/flashcards",
       "screenshot": "desktop-flashcards.png",
-      "scrollScreenshots": [],
+      "scrollScreenshots": [
+        "desktop-flashcards-scroll-1.png"
+      ],
       "pageErrors": [],
       "consoleErrors": [],
       "failures": [],
@@ -217,7 +300,13 @@
       "errorBoundary": false,
       "unnamedSamples": [],
       "undersizedSamples": [],
-      "scrollContainers": [],
+      "scrollContainers": [
+        {
+          "index": 0,
+          "scrollHeight": 681,
+          "clientHeight": 646
+        }
+      ],
       "bodyText": "Pular para o conteúdo\nClick Edital\n🏆\nCONCURSO ATIVO\nBACEN — Analista\nPRINCIPAL\nDashboard\nMeus Concursos\nDisciplinas\nCronograma\nESTUDO\nPomodoro\nCalendário\nHistó"
     },
     {
@@ -225,7 +314,10 @@
       "viewport": "desktop",
       "route": "/configuracoes/estudos",
       "screenshot": "desktop-configuracoes-estudos.png",
-      "scrollScreenshots": [],
+      "scrollScreenshots": [
+        "desktop-configuracoes-estudos-scroll-1.png",
+        "desktop-configuracoes-estudos-scroll-2.png"
+      ],
       "pageErrors": [],
       "consoleErrors": [],
       "failures": [],
@@ -234,11 +326,28 @@
       "h1Count": 1,
       "horizontalOverflow": false,
       "unnamedControls": 0,
-      "undersizedTargets": 0,
+      "undersizedTargets": 1,
       "errorBoundary": false,
       "unnamedSamples": [],
-      "undersizedSamples": [],
-      "scrollContainers": [],
+      "undersizedSamples": [
+        {
+          "width": 44,
+          "height": 24,
+          "html": "<button type=\"button\" role=\"switch\" aria-checked=\"true\" data-state=\"checked\" value=\"on\" class=\"peer inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full border-2 "
+        }
+      ],
+      "scrollContainers": [
+        {
+          "index": 0,
+          "scrollHeight": 681,
+          "clientHeight": 646
+        },
+        {
+          "index": 1,
+          "scrollHeight": 1012,
+          "clientHeight": 835
+        }
+      ],
       "bodyText": "Pular para o conteúdo\nClick Edital\n🏆\nCONCURSO ATIVO\nBACEN — Analista\nPRINCIPAL\nDashboard\nMeus Concursos\nDisciplinas\nCronograma\nESTUDO\nPomodoro\nCalendário\nHistó"
     },
     {
@@ -264,7 +373,7 @@
       "scrollContainers": [
         {
           "index": 0,
-          "scrollHeight": 635,
+          "scrollHeight": 681,
           "clientHeight": 590
         }
       ],
@@ -293,7 +402,7 @@
       "scrollContainers": [
         {
           "index": 0,
-          "scrollHeight": 635,
+          "scrollHeight": 681,
           "clientHeight": 590
         }
       ],
@@ -323,13 +432,42 @@
       "scrollContainers": [
         {
           "index": 0,
-          "scrollHeight": 635,
+          "scrollHeight": 681,
           "clientHeight": 590
         },
         {
           "index": 1,
           "scrollHeight": 1448,
           "clientHeight": 787
+        }
+      ],
+      "bodyText": "Pular para o conteúdo\nClick Edital\n🏆\nCONCURSO ATIVO\nBACEN — Analista\nPRINCIPAL\nDashboard\nMeus Concursos\nDisciplinas\nCronograma\nESTUDO\nPomodoro\nCalendário\nHistó"
+    },
+    {
+      "profile": "user",
+      "viewport": "mobile",
+      "route": "/estudos/calendario",
+      "screenshot": "mobile-estudos-calendario.png",
+      "scrollScreenshots": [
+        "mobile-estudos-calendario-scroll-1.png"
+      ],
+      "pageErrors": [],
+      "consoleErrors": [],
+      "failures": [],
+      "pathname": "/estudos/calendario",
+      "title": "Click Edital",
+      "h1Count": 1,
+      "horizontalOverflow": false,
+      "unnamedControls": 0,
+      "undersizedTargets": 0,
+      "errorBoundary": false,
+      "unnamedSamples": [],
+      "undersizedSamples": [],
+      "scrollContainers": [
+        {
+          "index": 0,
+          "scrollHeight": 681,
+          "clientHeight": 590
         }
       ],
       "bodyText": "Pular para o conteúdo\nClick Edital\n🏆\nCONCURSO ATIVO\nBACEN — Analista\nPRINCIPAL\nDashboard\nMeus Concursos\nDisciplinas\nCronograma\nESTUDO\nPomodoro\nCalendário\nHistó"
@@ -358,12 +496,12 @@
       "scrollContainers": [
         {
           "index": 0,
-          "scrollHeight": 635,
+          "scrollHeight": 681,
           "clientHeight": 590
         },
         {
           "index": 1,
-          "scrollHeight": 1388,
+          "scrollHeight": 1543,
           "clientHeight": 787
         }
       ],
@@ -392,7 +530,7 @@
       "scrollContainers": [
         {
           "index": 0,
-          "scrollHeight": 635,
+          "scrollHeight": 681,
           "clientHeight": 590
         }
       ],
@@ -421,7 +559,7 @@
       "scrollContainers": [
         {
           "index": 0,
-          "scrollHeight": 635,
+          "scrollHeight": 681,
           "clientHeight": 590
         }
       ],
@@ -451,7 +589,7 @@
       "scrollContainers": [
         {
           "index": 0,
-          "scrollHeight": 635,
+          "scrollHeight": 681,
           "clientHeight": 590
         },
         {
@@ -486,7 +624,7 @@
       "scrollContainers": [
         {
           "index": 0,
-          "scrollHeight": 635,
+          "scrollHeight": 681,
           "clientHeight": 590
         },
         {
@@ -514,19 +652,25 @@
       "h1Count": 1,
       "horizontalOverflow": false,
       "unnamedControls": 0,
-      "undersizedTargets": 0,
+      "undersizedTargets": 1,
       "errorBoundary": false,
       "unnamedSamples": [],
-      "undersizedSamples": [],
+      "undersizedSamples": [
+        {
+          "width": 44,
+          "height": 24,
+          "html": "<button type=\"button\" role=\"switch\" aria-checked=\"true\" data-state=\"checked\" value=\"on\" class=\"peer inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full border-2 "
+        }
+      ],
       "scrollContainers": [
         {
           "index": 0,
-          "scrollHeight": 635,
+          "scrollHeight": 681,
           "clientHeight": 590
         },
         {
           "index": 1,
-          "scrollHeight": 886,
+          "scrollHeight": 1362,
           "clientHeight": 787
         }
       ],
