@@ -1,6 +1,12 @@
-import { BarChart3, Pencil, Play, Trash2 } from "lucide-react";
+import { BarChart3, CalendarPlus, MoreHorizontal, Pencil, Play, Trash2 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   blocoDurationMinutes,
   fmtBlocoMinutos,
@@ -63,8 +69,10 @@ export function CronogramaBlocoCard({
 
   return (
     <div
+      role="article"
+      aria-label={`Bloco de estudo: ${disciplinaNome}`}
       className={cn(
-        "group relative min-w-0 overflow-hidden rounded-lg border p-2 shadow-sm sm:p-2.5",
+        "relative min-w-0 overflow-hidden rounded-lg border p-2 shadow-sm sm:p-2.5",
         palette.cardBg,
         palette.cardBorder,
         expirado && "border-amber-300/80 opacity-90 dark:border-amber-700/60",
@@ -127,65 +135,57 @@ export function CronogramaBlocoCard({
         </p>
       ) : null}
 
-      <div className="mt-2 flex flex-wrap items-center gap-1">
+      <div className="mt-2 flex items-center gap-1.5">
         <button
           type="button"
           title={minutos >= 1 ? `Estudar no Pomodoro (${fmtBlocoMinutos(minutos)})` : "Duração inválida"}
           aria-label={minutos >= 1 ? `Play Pomodoro ${diaLabel}` : "Duração inválida"}
           disabled={minutos < 1}
           onClick={() => launchPomodoroFromBloco(navigate, bloco, minutos)}
-          className="inline-flex min-h-10 items-center gap-1.5 rounded-md border border-primary-300 bg-primary-50 px-2.5 text-xs font-semibold text-primary-700 transition hover:bg-primary-100 disabled:cursor-not-allowed disabled:opacity-50 dark:border-primary-700 dark:bg-primary-950/40 dark:text-primary-300 dark:hover:bg-primary-900/50"
+          className="inline-flex min-h-10 min-w-0 flex-1 items-center justify-center gap-1.5 rounded-md border border-primary-300 bg-primary-50 px-2.5 text-xs font-semibold text-primary-700 transition hover:bg-primary-100 disabled:cursor-not-allowed disabled:opacity-50 dark:border-primary-700 dark:bg-primary-950/40 dark:text-primary-300 dark:hover:bg-primary-900/50"
         >
           <Play className="h-3.5 w-3.5 fill-current" />
-          <span className="sr-only sm:not-sr-only">Play</span>
+          <span>Estudar</span>
         </button>
-        <Link
-          to={buildDisciplinaDashboardUrl(bloco.disciplina_id, launchTopicoId)}
-          title="Abrir dashboard da disciplina"
-          aria-label={`Dashboard ${disciplinaNome}`}
-          className="inline-flex min-h-10 items-center gap-1.5 rounded-md border border-border px-2.5 text-xs font-medium text-muted-foreground transition hover:bg-muted hover:text-foreground"
-        >
-          <BarChart3 className="h-3.5 w-3.5 shrink-0" />
-          <span className="sr-only xl:not-sr-only">Disciplina</span>
-        </Link>
-        {canEstender ? (
-          <button
-            type="button"
-            disabled={estenderPending}
-            title="Estender vigência por mais 12 meses"
-            onClick={onEstender}
-            className={cn(
-              "inline-flex min-h-10 items-center rounded-md border px-2.5 text-xs font-semibold transition disabled:opacity-50",
-              expirado
-                ? "border-amber-400 bg-amber-50 text-amber-900 hover:bg-amber-100 dark:border-amber-600 dark:bg-amber-950/40 dark:text-amber-100"
-                : "border-border font-medium text-muted-foreground hover:bg-muted hover:text-foreground",
-            )}
-          >
-            <span className="xl:hidden">+12m</span>
-            <span className="hidden xl:inline">Estender 12 meses</span>
-          </button>
-        ) : null}
-        <div className="ml-auto flex gap-1 opacity-100 transition-opacity 2xl:opacity-0 2xl:group-hover:opacity-100 2xl:group-focus-within:opacity-100">
-          <button
-            type="button"
-            title="Editar bloco"
-            aria-label={`Editar ${disciplinaNome}`}
-            onClick={onEdit}
-            className="flex h-10 w-10 items-center justify-center rounded-md border border-border text-muted-foreground hover:bg-muted"
-          >
-            <Pencil className="h-3.5 w-3.5" />
-          </button>
-          <button
-            type="button"
-            title="Excluir bloco"
-            aria-label={`Remover ${disciplinaNome}`}
-            disabled={deletePending}
-            onClick={onDelete}
-            className="flex h-10 w-10 items-center justify-center rounded-md border border-border text-danger-500 hover:bg-danger-50 dark:hover:bg-danger-950/30"
-          >
-            <Trash2 className="h-3.5 w-3.5" />
-          </button>
-        </div>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button
+              type="button"
+              title="Mais ações"
+              aria-label={`Mais ações de ${disciplinaNome}`}
+              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md border border-border bg-background/70 text-muted-foreground transition hover:bg-muted hover:text-foreground"
+            >
+              <MoreHorizontal className="h-4 w-4" />
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-52">
+            <DropdownMenuItem asChild className="min-h-10 gap-2">
+              <Link to={buildDisciplinaDashboardUrl(bloco.disciplina_id, launchTopicoId)}>
+                <BarChart3 /> Abrir disciplina
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem className="min-h-10 gap-2" onSelect={onEdit}>
+              <Pencil /> Editar bloco
+            </DropdownMenuItem>
+            {canEstender ? (
+              <DropdownMenuItem
+                className="min-h-10 gap-2"
+                disabled={estenderPending}
+                onSelect={onEstender}
+              >
+                <CalendarPlus /> Estender por 12 meses
+              </DropdownMenuItem>
+            ) : null}
+            <DropdownMenuItem
+              variant="destructive"
+              className="min-h-10 gap-2"
+              disabled={deletePending}
+              onSelect={onDelete}
+            >
+              <Trash2 /> Remover bloco
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </div>
   );
