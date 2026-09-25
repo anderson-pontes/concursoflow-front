@@ -6,7 +6,7 @@ Interface web do **Aprovingo**: gestão de planos de estudo, disciplinas, quest�
 
 - **React 18** + **TypeScript**
 - **Vite 5** (dev server e build)
-- **React Router v6**
+- **React Router v7**
 - **TanStack Query (React Query)** — cache e sincronização com a API
 - **Zustand** — estado global (auth, plano ativo, Pomodoro, etc.)
 - **Axios** — cliente HTTP (`/api/v1` com interceptors de token)

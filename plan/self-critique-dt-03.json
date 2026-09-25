@@ -1,0 +1,32 @@
+{
+  "subtaskId": "DT-03",
+  "critiquedAt": "2026-09-23T22:42:00-03:00",
+  "step5_5": {
+    "predictedBugs": [
+      "Guards poderiam avaliar a sessão antes da hidratação do Zustand e redirecionar um usuário autenticado para /login.",
+      "A remoção ou manutenção incorreta dos future flags poderia alterar rotas relativas e produzir warnings no React Router 7.",
+      "Redirects legados poderiam perder replace ou a query ?origem=catalogo durante a troca de major.",
+      "O lockfile poderia introduzir uma segunda cópia de react-router ou upgrades laterais não relacionados."
+    ],
+    "edgeCases": [
+      "Visitante, usuário comum e administrador acessando a mesma rota administrativa.",
+      "Rota inexistente com e sem sessão, incluindo reload direto do SPA.",
+      "location.state ausente em deep link e presente durante navegação SPA.",
+      "Viewport desktop e mobile de 375 px com backend local indisponível."
+    ],
+    "errorHandling": true,
+    "securityCheck": true,
+    "passed": true
+  },
+  "step6_5": {
+    "followsPatterns": true,
+    "noHardcoded": true,
+    "testsAdded": true,
+    "docsUpdated": true,
+    "noConsoleLogs": true,
+    "passed": true
+  },
+  "overallVerdict": "PASSED",
+  "skipped": false,
+  "skipWarning": null
+}
