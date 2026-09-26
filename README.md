@@ -126,20 +126,24 @@ Rotas autenticadas usam `Layout` com `requireAuth` conforme o estado do `authSto
 | `npm run preview` | Preview do build (porta 3000) |
 | `npm run preview:lh` | Preview para Lighthouse (porta 4173) |
 | `npm run typecheck` | Apenas `tsc -b` |
-| `npm run check:design-tokens` | Gate de tokens/hex/Inter (bloqueante em CI) |
+| `npm run check:design-tokens` | Gate de tokens/hex/Inter (bloqueante no gate local) |
 | `npm run lh:login` | Lighthouse mobile em `/login` |
 | `npm run lh:dashboard` | Lighthouse mobile em `/dashboard` (requer backend + seed) |
 | `node scripts/qa-staging-smoke.mjs` | Smoke automatizado dos fluxos críticos |
 
 ## Release QA (gates EPIC-10)
 
-**CI bloqueante** (GitHub Actions `Frontend CI`): em cada PR/push que altera `front/concursoflow-front/`:
+**Gate bloqueante local:** o projeto ainda não possui um workflow geral `Frontend CI` no GitHub Actions. A DT-04 mantém a automação remota diferida e executa estes comandos pelo entrypoint full-stack local versionado no backend:
 
-1. `npm run typecheck`
-2. `npm run check:design-tokens`
-3. `npm run build`
+1. `npm ci`
+2. `npm audit --omit=dev --audit-level=high`
+3. `npm run lint`
+4. `npm run check:design-tokens`
+5. `npm run typecheck`
+6. `npm test`
+7. `npm run build`
 
-**Local — antes de abrir PR:**
+**Execução manual no frontend:**
 
 ```bash
 cd front/concursoflow-front
