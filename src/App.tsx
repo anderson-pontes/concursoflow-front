@@ -4,6 +4,7 @@ import { useAuthStore } from "./stores/authStore";
 import { Layout } from "./components/layout/Layout";
 import { AdminRoute } from "./components/layout/AdminRoute";
 import { PageSkeleton } from "./components/ui/page-skeleton";
+import { CheckoutRedirect } from "./components/commercial/CheckoutRedirect";
 
 function PageLoader() {
   return <PageSkeleton className="min-h-[50vh]" />;
@@ -22,13 +23,7 @@ const Dashboard = lazyNamed(() => import("./pages/Dashboard"), "Dashboard");
 const Concursos = lazyNamed(() => import("./pages/Concursos"), "Concursos");
 const Disciplinas = lazyNamed(() => import("./pages/Disciplinas"), "Disciplinas");
 const DisciplinaDashboard = lazyNamed(() => import("./pages/DisciplinaDashboard"), "DisciplinaDashboard");
-const Register = lazyNamed(() => import("./pages/Auth/Register"), "Register");
 const ResetPassword = lazyNamed(() => import("./pages/Auth/ResetPassword"), "ResetPassword");
-const CheckoutSucesso = lazyNamed(() => import("./pages/Assinatura/CheckoutSucesso"), "CheckoutSucesso");
-const CheckoutCancelado = lazyNamed(
-  () => import("./pages/Assinatura/CheckoutCancelado"),
-  "CheckoutCancelado",
-);
 const Cronograma = lazyNamed(() => import("./pages/Cronograma"), "Cronograma");
 const CalendarioEstudos = lazyNamed(() => import("./pages/CalendarioEstudos"), "CalendarioEstudos");
 const HistoricoEstudos = lazyNamed(() => import("./pages/HistoricoEstudos"), "HistoricoEstudos");
@@ -68,11 +63,7 @@ export default function App() {
       <Route path="/login" element={<LazyPage><Login /></LazyPage>} />
       <Route
         path="/register"
-        element={
-          <LazyPage>
-            <Register />
-          </LazyPage>
-        }
+        element={<CheckoutRedirect />}
       />
       <Route
         path="/reset-password"
@@ -82,23 +73,6 @@ export default function App() {
           </LazyPage>
         }
       />
-      <Route
-        path="/assinatura/sucesso"
-        element={
-          <LazyPage>
-            <CheckoutSucesso />
-          </LazyPage>
-        }
-      />
-      <Route
-        path="/assinatura/cancelado"
-        element={
-          <LazyPage>
-            <CheckoutCancelado />
-          </LazyPage>
-        }
-      />
-
       <Route
         path="/dashboard"
         element={

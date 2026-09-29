@@ -4,6 +4,7 @@ import { Menu, X } from "lucide-react";
 
 import { LandingLogo } from "@/components/landing/LandingLogo";
 import { cn } from "@/lib/utils";
+import { KIWIFY_CHECKOUT_URL } from "@/lib/commercial";
 
 const navLinks = [
   { href: "#como-funciona", label: "Como funciona" },
@@ -68,22 +69,22 @@ export function LandingHeader() {
           >
             Entrar
           </Link>
-          <Link
-            to="/register"
+          <a
+            href={KIWIFY_CHECKOUT_URL}
             className="inline-flex min-h-10 items-center justify-center rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground outline-none transition hover:bg-primary-500 focus-visible:ring-2 focus-visible:ring-ring"
           >
             Organizar meus estudos
-          </Link>
+          </a>
         </nav>
 
         <div className="flex items-center gap-2 md:hidden">
-          <Link
-            to="/register"
+          <a
+            href={KIWIFY_CHECKOUT_URL}
             aria-label="Organizar meus estudos"
             className="inline-flex min-h-10 items-center justify-center rounded-lg bg-primary px-3 text-sm font-semibold text-primary-foreground"
           >
             Organizar
-          </Link>
+          </a>
           <button
             type="button"
             className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-border text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring"
@@ -122,13 +123,13 @@ export function LandingHeader() {
             >
               Entrar
             </Link>
-            <Link
-              to="/register"
+            <a
+              href={KIWIFY_CHECKOUT_URL}
               className="rounded-lg px-3 py-3 text-sm font-medium text-foreground hover:bg-muted"
               onClick={() => setMenuOpen(false)}
             >
               Organizar meus estudos
-            </Link>
+            </a>
           </nav>
         </div>
       ) : null}

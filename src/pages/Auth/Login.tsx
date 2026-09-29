@@ -14,7 +14,6 @@ import {
 } from "@/components/auth/AuthFields";
 import { AuthShell } from "@/components/auth/AuthShell";
 import { api } from "@/services/api";
-import { startCheckout } from "@/services/billing";
 import { fetchCurrentUser } from "@/services/currentUser";
 import { useAuthStore } from "@/stores/authStore";
 import { cn } from "@/lib/utils";
@@ -49,7 +48,6 @@ export function Login() {
   const [authMode, setAuthMode] = React.useState<"login" | "forgot">("login");
   const [shakeLogin, setShakeLogin] = React.useState(false);
   const [forgotSent, setForgotSent] = React.useState(false);
-  const [paywall, setPaywall] = React.useState<{ message: string } | null>(null);
 
   const form = useForm<LoginForm>({
     resolver: zodResolver(loginSchema),
@@ -90,21 +88,7 @@ export function Login() {
     onError: (err) => {
       setShakeLogin(true);
       window.setTimeout(() => setShakeLogin(false), 450);
-      if (axios.isAxiosError(err) && err.response?.status === 403) {
-        setPaywall({ message: loginErrorMessage(err) });
-      } else {
-        setPaywall(null);
-      }
-    },
-  });
-
-  const checkoutMutation = useMutation({
-    mutationFn: async () => {
-      const { email, password } = form.getValues();
-      return startCheckout(email, password);
-    },
-    onSuccess: (url) => {
-      window.location.href = url;
+      void err;
     },
   });
 
@@ -211,31 +195,12 @@ export function Login() {
               </AuthPrimaryButton>
             </div>
 
-            {mutation.isError && !paywall ? (
+            {mutation.isError ? (
               <div className="text-sm text-destructive" role="alert">
                 {loginErrorMessage(mutation.error)}
               </div>
             ) : null}
 
-            {paywall ? (
-              <div className="rounded-xl border border-warning/40 bg-warning/10 p-4" role="alert">
-                <p className="text-sm font-semibold text-warning-800 dark:text-warning">{paywall.message}</p>
-                <p className="mt-1 text-xs text-muted-foreground">
-                  Conclua o pagamento da assinatura para liberar seu acesso.
-                </p>
-                <button
-                  type="button"
-                  onClick={() => checkoutMutation.mutate()}
-                  disabled={checkoutMutation.isPending}
-                  className="mt-3 flex min-h-11 w-full items-center justify-center rounded-xl bg-primary text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary-700 disabled:opacity-60"
-                >
-                  {checkoutMutation.isPending ? "Redirecionando..." : "Assinar / renovar agora"}
-                </button>
-                {checkoutMutation.isError ? (
-                  <p className="mt-2 text-xs text-destructive">{loginErrorMessage(checkoutMutation.error)}</p>
-                ) : null}
-              </div>
-            ) : null}
           </form>
         </>
       )}

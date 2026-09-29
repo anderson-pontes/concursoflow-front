@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { KIWIFY_CHECKOUT_URL } from "@/lib/commercial";
 
 export function LandingFinalCta() {
   return (
@@ -21,12 +22,12 @@ export function LandingFinalCta() {
           Cadastre seu concurso, organize prioridades e acompanhe o que você estuda em um único lugar.
         </p>
         <div className="mt-9 flex flex-col items-center gap-3">
-          <Link
-            to="/register"
+          <a
+            href={KIWIFY_CHECKOUT_URL}
             className="inline-flex min-h-12 items-center justify-center rounded-lg bg-primary px-6 text-sm font-semibold text-primary-foreground outline-none transition hover:bg-primary-500 focus-visible:ring-2 focus-visible:ring-ring"
           >
             Quero organizar meus estudos
-          </Link>
+          </a>
           <Link
             to="/login"
             className="text-sm font-medium text-primary outline-none hover:underline focus-visible:ring-2 focus-visible:ring-ring"

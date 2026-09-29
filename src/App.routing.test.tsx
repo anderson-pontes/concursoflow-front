@@ -30,10 +30,8 @@ vi.mock("@/components/layout/Layout", async () => {
 
 vi.mock("@/pages/Landing", () => ({ LandingPage: () => <div>page:landing</div> }));
 vi.mock("@/pages/Auth/Login", () => ({ Login: () => <div>page:login</div> }));
-vi.mock("@/pages/Auth/Register", () => ({ Register: () => <div>page:register</div> }));
+vi.mock("@/components/commercial/CheckoutRedirect", () => ({ CheckoutRedirect: () => <div>page:checkout-kiwify</div> }));
 vi.mock("@/pages/Auth/ResetPassword", () => ({ ResetPassword: () => <div>page:reset-password</div> }));
-vi.mock("@/pages/Assinatura/CheckoutSucesso", () => ({ CheckoutSucesso: () => <div>page:checkout-success</div> }));
-vi.mock("@/pages/Assinatura/CheckoutCancelado", () => ({ CheckoutCancelado: () => <div>page:checkout-cancelled</div> }));
 vi.mock("@/pages/Dashboard", () => ({ Dashboard: () => <div>page:dashboard</div> }));
 vi.mock("@/pages/Concursos", () => ({ Concursos: () => <div>page:concursos</div> }));
 vi.mock("@/pages/Disciplinas", () => ({ Disciplinas: () => <div>page:disciplinas</div> }));
@@ -116,10 +114,10 @@ describe("contrato de rotas da aplicação", () => {
     useAuthStore.setState({ accessToken: null, refreshToken: null, user: null });
   });
 
-  it("mantém as rotas públicas acessíveis para visitante", async () => {
+  it("mantém /register apenas como redirecionador comercial", async () => {
     renderApp(["/register"]);
 
-    expect(await screen.findByText("page:register")).toBeInTheDocument();
+    expect(await screen.findByText("page:checkout-kiwify")).toBeInTheDocument();
     await expectLocation("/register");
   });
 

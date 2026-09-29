@@ -11,7 +11,6 @@ export type ListUsersParams = {
   page_size?: number;
   search?: string;
   status?: string;
-  subscription_status?: string;
   study_goal?: string;
   created_from?: string;
   created_to?: string;

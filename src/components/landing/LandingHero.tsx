@@ -1,10 +1,10 @@
 import { ArrowRight, CheckCircle2, Clock3, Flame } from "lucide-react";
-import { Link } from "react-router-dom";
 
 import dashboardSrc from "@/assets/dashboard.png";
 import { HandDrawnAccent } from "@/components/landing/HandDrawnAccent";
 import { LandingLogo } from "@/components/landing/LandingLogo";
 import { LandingShot } from "@/components/landing/LandingShot";
+import { KIWIFY_CHECKOUT_URL } from "@/lib/commercial";
 
 export function LandingHero() {
   return (
@@ -33,7 +33,7 @@ export function LandingHero() {
             Cadastre as disciplinas e os tópicos do seu edital, organize suas prioridades e acompanhe horas estudadas, revisões, questões e evolução em um único lugar.
           </p>
           <div className="mt-9 flex flex-col gap-3 motion-safe:animate-[landing-fade-up_0.55s_ease-out_0.24s_both] sm:flex-row sm:items-center">
-            <Link to="/register" className="group inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-primary px-6 text-sm font-bold text-primary-foreground shadow-lg shadow-primary/25 outline-none transition hover:-translate-y-0.5 hover:bg-primary-500 hover:shadow-xl focus-visible:ring-2 focus-visible:ring-ring">Organizar meus estudos <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" aria-hidden /></Link>
+            <a href={KIWIFY_CHECKOUT_URL} className="group inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-primary px-6 text-sm font-bold text-primary-foreground shadow-lg shadow-primary/25 outline-none transition hover:-translate-y-0.5 hover:bg-primary-500 hover:shadow-xl focus-visible:ring-2 focus-visible:ring-ring">Organizar meus estudos <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" aria-hidden /></a>
             <a href="#como-funciona" className="inline-flex min-h-12 items-center justify-center rounded-xl border border-primary/15 bg-white/80 px-6 text-sm font-semibold text-foreground shadow-sm outline-none transition hover:-translate-y-0.5 hover:border-primary/30 hover:bg-white focus-visible:ring-2 focus-visible:ring-ring">Ver como funciona</a>
           </div>
           <ul className="mt-6 list-none space-y-2 text-sm text-muted-foreground motion-safe:animate-[landing-fade-up_0.55s_ease-out_0.3s_both]">

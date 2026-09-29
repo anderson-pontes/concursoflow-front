@@ -193,7 +193,7 @@ export function MentalMaps() {
         <div className="relative grid items-center gap-8 lg:grid-cols-[minmax(0,1fr)_18rem]">
           <div className="max-w-3xl">
           <p className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-xs font-bold">
-            <Gift className="h-3.5 w-3.5" aria-hidden /> Bônus da sua assinatura ClickEdital
+            <Gift className="h-3.5 w-3.5" aria-hidden /> Bônus do seu acesso ClickEdital
           </p>
           <h1 className="mt-4 text-3xl font-bold tracking-tight sm:text-4xl">Mapas Mentais de TI</h1>
           <p className="mt-3 max-w-2xl text-sm leading-relaxed text-violet-100 sm:text-base">

@@ -1,7 +1,7 @@
 import { BookOpenCheck, ClipboardList, ListTodo, TrendingUp } from "lucide-react";
-import { Link } from "react-router-dom";
 
 import { HandDrawnAccent } from "@/components/landing/HandDrawnAccent";
+import { KIWIFY_CHECKOUT_URL } from "@/lib/commercial";
 
 const steps = [
   { n: "01", icon: ClipboardList, title: "Cadastre seu concurso", body: "Informe o concurso que está estudando e cadastre as disciplinas e os tópicos previstos no edital." },
@@ -35,7 +35,7 @@ export function LandingSteps() {
             </li>
           ))}
         </ol>
-        <div className="mt-12 flex justify-center"><Link to="/register" className="inline-flex min-h-12 items-center justify-center rounded-xl bg-primary px-6 text-sm font-bold text-primary-foreground shadow-lg shadow-primary/20 outline-none transition hover:-translate-y-0.5 hover:bg-primary-500 focus-visible:ring-2 focus-visible:ring-ring">Começar a organizar meu edital</Link></div>
+        <div className="mt-12 flex justify-center"><a href={KIWIFY_CHECKOUT_URL} className="inline-flex min-h-12 items-center justify-center rounded-xl bg-primary px-6 text-sm font-bold text-primary-foreground shadow-lg shadow-primary/20 outline-none transition hover:-translate-y-0.5 hover:bg-primary-500 focus-visible:ring-2 focus-visible:ring-ring">Começar a organizar meu edital</a></div>
       </div>
     </section>
   );

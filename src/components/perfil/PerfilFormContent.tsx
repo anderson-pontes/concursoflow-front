@@ -6,7 +6,6 @@ import { toast } from "sonner";
 import { isAxiosError } from "axios";
 
 import { Button } from "@/components/ui/button";
-import { MinhaAssinatura } from "@/components/perfil/MinhaAssinatura";
 import { FormSection } from "@/components/ui/FormSection";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -243,7 +242,6 @@ export function PerfilFormContent({ serverMe, onCancel }: PerfilFormContentProps
         </div>
       </FormSection>
 
-      <MinhaAssinatura />
 
       <div className="flex flex-wrap justify-end gap-2 border-t border-border pt-6">
         <Button type="button" variant="outline" onClick={handleCancelClick} disabled={mutation.isPending}>

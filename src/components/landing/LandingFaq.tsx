@@ -42,7 +42,7 @@ const faqs = [
   },
   {
     q: "O que acontece depois que eu concluo a assinatura?",
-    a: "Após a confirmação do pagamento, o acesso anual é liberado para a conta cadastrada. Você entra com seu e-mail e senha, cadastra o concurso e começa a organizar disciplinas, tópicos e cronograma.",
+    a: "Após a confirmação da compra na Kiwify, nossa equipe cria sua conta no ClickEdital e envia as instruções de acesso. Então você entra com seu e-mail e senha e começa a organizar seus estudos.",
   },
   {
     q: "O que está incluído no bônus de Mapas de TI?",

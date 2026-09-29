@@ -1,249 +1,46 @@
-import React from "react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { ArrowLeft } from "lucide-react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { toast } from "sonner";
 
-import {
-  approveUser,
-  blockUser,
-  deleteUser,
-  fetchUserAudit,
-  fetchUserDetail,
-  rejectUser,
-  resendUserEmail,
-  resetUserPassword,
-  unblockUser,
-} from "@/services/adminUsers";
-import {
-  STATUS_BADGE_CLASS,
-  statusLabel,
-  studyGoalLabel,
-  subscriptionStatusLabel,
-  type UserStatus,
-} from "@/types/userManagement";
+import { UserActionsMenu } from "@/components/admin/UserActionsMenu";
+import { Button } from "@/components/ui/button";
+import { EmptyState } from "@/components/ui/empty-state";
+import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
+import { fetchUserAudit, fetchUserDetail } from "@/services/adminUsers";
+import { STATUS_BADGE_CLASS, statusLabel, studyGoalLabel, type UserStatus } from "@/types/userManagement";
 
 export function UsuarioDetalhe() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const qc = useQueryClient();
-  const [reason, setReason] = React.useState("");
-  const [newPassword, setNewPassword] = React.useState("");
-
-  const { data: user, isLoading } = useQuery({
-    queryKey: ["admin-user", id],
-    queryFn: () => fetchUserDetail(id!),
-    enabled: Boolean(id),
-  });
-
-  const { data: audit = [] } = useQuery({
-    queryKey: ["admin-user-audit", id],
-    queryFn: () => fetchUserAudit(id!),
-    enabled: Boolean(id),
-  });
-
-  const invalidate = () => {
-    qc.invalidateQueries({ queryKey: ["admin-user", id] });
-    qc.invalidateQueries({ queryKey: ["admin-user-audit", id] });
-    qc.invalidateQueries({ queryKey: ["admin-users"] });
-    qc.invalidateQueries({ queryKey: ["admin-users-dashboard"] });
+  const queryClient = useQueryClient();
+  const userQuery = useQuery({ queryKey: ["admin-user", id], queryFn: () => fetchUserDetail(id!), enabled: Boolean(id) });
+  const auditQuery = useQuery({ queryKey: ["admin-user-audit", id], queryFn: () => fetchUserAudit(id!), enabled: Boolean(id) });
+  const refresh = () => {
+    queryClient.invalidateQueries({ queryKey: ["admin-user", id] });
+    queryClient.invalidateQueries({ queryKey: ["admin-user-audit", id] });
+    queryClient.invalidateQueries({ queryKey: ["admin-users"] });
+    queryClient.invalidateQueries({ queryKey: ["admin-users-dashboard"] });
   };
 
-  const approveMut = useMutation({
-    mutationFn: () => approveUser(id!),
-    onSuccess: () => {
-      toast.success("Usuário aprovado");
-      invalidate();
-    },
-  });
+  if (userQuery.isLoading) return <div className="space-y-4"><Skeleton className="h-10 w-72" /><Skeleton className="h-64" /></div>;
+  if (userQuery.isError || !userQuery.data) return <EmptyState title="Usuário não encontrado" description="A conta pode ter sido removida ou você não possui acesso." action={<Button asChild variant="outline"><Link to="/admin/usuarios">Voltar à gestão</Link></Button>} />;
+  const user = userQuery.data;
 
-  const rejectMut = useMutation({
-    mutationFn: () => rejectUser(id!, reason),
-    onSuccess: () => {
-      toast.success("Usuário reprovado");
-      invalidate();
-    },
-  });
-
-  const blockMut = useMutation({
-    mutationFn: () => blockUser(id!, reason),
-    onSuccess: () => {
-      toast.success("Usuário bloqueado");
-      invalidate();
-    },
-  });
-
-  const unblockMut = useMutation({
-    mutationFn: () => unblockUser(id!),
-    onSuccess: () => {
-      toast.success("Usuário desbloqueado");
-      invalidate();
-    },
-  });
-
-  const deleteMut = useMutation({
-    mutationFn: () => deleteUser(id!),
-    onSuccess: () => {
-      toast.success("Usuário removido");
-      navigate("/admin/usuarios");
-    },
-  });
-
-  const resetMut = useMutation({
-    mutationFn: () => resetUserPassword(id!, newPassword),
-    onSuccess: () => {
-      toast.success("Senha redefinida");
-      setNewPassword("");
-    },
-  });
-
-  const resendMut = useMutation({
-    mutationFn: () => resendUserEmail(id!),
-    onSuccess: () => toast.success("E-mail reenviado"),
-  });
-
-  if (isLoading || !user) {
-    return <div className="text-sm text-muted-foreground">Carregando...</div>;
-  }
-
-  return (
-    <div className="space-y-6">
-      <div className="flex flex-wrap items-center gap-3">
-        <Link to="/admin/usuarios" className="inline-flex min-h-11 items-center text-sm text-primary hover:underline">
-          ← Voltar
-        </Link>
-        <h2 className="text-lg font-semibold">{user.name}</h2>
-        <span className={cn("rounded px-2 py-0.5 text-xs font-medium", STATUS_BADGE_CLASS[user.status as UserStatus])}>
-          {statusLabel(user.status)}
-        </span>
-      </div>
-
-      <div className="grid gap-4 lg:grid-cols-2">
-        <section className="rounded-xl border border-border bg-card p-4 shadow-sm sm:p-5">
-          <h3 className="text-sm font-semibold">Dados pessoais</h3>
-          <dl className="mt-3 space-y-2 text-sm">
-            <div><dt className="text-muted-foreground">E-mail</dt><dd>{user.email}</dd></div>
-            <div><dt className="text-muted-foreground">CPF</dt><dd>{user.cpf ?? "—"}</dd></div>
-            <div><dt className="text-muted-foreground">Telefone</dt><dd>{user.phone ?? "—"}</dd></div>
-            <div><dt className="text-muted-foreground">WhatsApp</dt><dd>{user.whatsapp ?? "—"}</dd></div>
-            <div><dt className="text-muted-foreground">Perfil</dt><dd>{user.role}</dd></div>
-          </dl>
-        </section>
-
-        <section className="rounded-xl border border-border bg-card p-4 shadow-sm sm:p-5">
-          <h3 className="text-sm font-semibold">Dados de estudo</h3>
-          <dl className="mt-3 space-y-2 text-sm">
-            <div><dt className="text-muted-foreground">Objetivo</dt><dd>{studyGoalLabel(user.study_goal)}</dd></div>
-            <div><dt className="text-muted-foreground">Concurso alvo</dt><dd>{user.target_contest ?? "—"}</dd></div>
-            <div><dt className="text-muted-foreground">Cargo</dt><dd>{user.desired_role ?? "—"}</dd></div>
-            <div><dt className="text-muted-foreground">Sessões</dt><dd>{user.sessoes_count}</dd></div>
-          </dl>
-        </section>
-
-        <section className="rounded-xl border border-border bg-card p-4 shadow-sm sm:p-5">
-          <h3 className="text-sm font-semibold">Acesso</h3>
-          <dl className="mt-3 space-y-2 text-sm">
-            <div><dt className="text-muted-foreground">Cadastro</dt><dd>{new Date(user.created_at).toLocaleString("pt-BR")}</dd></div>
-            <div><dt className="text-muted-foreground">Último login</dt><dd>{user.last_login_at ? new Date(user.last_login_at).toLocaleString("pt-BR") : "—"}</dd></div>
-            <div><dt className="text-muted-foreground">IP último acesso</dt><dd>{user.last_login_ip ?? "—"}</dd></div>
-            <div><dt className="text-muted-foreground">Observações</dt><dd>{user.admin_notes ?? "—"}</dd></div>
-          </dl>
-        </section>
-
-        <section className="rounded-xl border border-border bg-card p-4 shadow-sm sm:p-5">
-          <h3 className="text-sm font-semibold">Assinatura</h3>
-          <dl className="mt-3 space-y-2 text-sm">
-            <div>
-              <dt className="text-muted-foreground">Status</dt>
-              <dd>{subscriptionStatusLabel(user.subscription_status)}</dd>
-            </div>
-            <div>
-              <dt className="text-muted-foreground">
-                {user.subscription_cancel_at_period_end ? "Acesso até" : "Vencimento"}
-              </dt>
-              <dd>
-                {user.subscription_current_period_end
-                  ? new Date(user.subscription_current_period_end).toLocaleDateString("pt-BR")
-                  : "—"}
-              </dd>
-            </div>
-            <div>
-              <dt className="text-muted-foreground">Renovação automática</dt>
-              <dd>{user.subscription_cancel_at_period_end ? "Cancelada" : "Ativa"}</dd>
-            </div>
-          </dl>
-        </section>
-
-        <section className="rounded-xl border border-border bg-card p-4 shadow-sm sm:p-5">
-          <h3 className="text-sm font-semibold">Ações</h3>
-          <textarea
-            className="mt-2 min-h-11 w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
-            placeholder="Motivo (reprovação/bloqueio)"
-            value={reason}
-            onChange={(e) => setReason(e.target.value)}
-            rows={2}
-          />
-          <div className="mt-3 flex flex-wrap gap-2">
-            {user.status === "pendente" ? (
-              <button type="button" className="min-h-11 rounded-lg bg-success px-4 py-2.5 text-sm font-semibold text-white transition hover:opacity-90" onClick={() => approveMut.mutate()}>
-                Aprovar
-              </button>
-            ) : null}
-            {user.status === "pendente" ? (
-              <button type="button" className="min-h-11 rounded-lg bg-muted px-4 py-2.5 text-sm font-semibold text-muted-foreground transition hover:bg-muted/80" onClick={() => rejectMut.mutate()}>
-                Reprovar
-              </button>
-            ) : null}
-            {user.status !== "bloqueado" ? (
-              <button type="button" className="min-h-11 rounded-lg bg-destructive px-4 py-2.5 text-sm font-semibold text-destructive-foreground transition hover:opacity-90" onClick={() => blockMut.mutate()}>
-                Bloquear
-              </button>
-            ) : (
-              <button type="button" className="min-h-11 rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground transition hover:bg-primary-700" onClick={() => unblockMut.mutate()}>
-                Desbloquear
-              </button>
-            )}
-            <button type="button" className="min-h-11 rounded-lg border border-border px-4 py-2.5 text-sm font-medium transition hover:bg-muted" onClick={() => resendMut.mutate()}>
-              Reenviar e-mail
-            </button>
-            <button type="button" className="min-h-11 rounded-lg border border-destructive/30 px-4 py-2.5 text-sm font-medium text-destructive transition hover:bg-destructive/10" onClick={() => deleteMut.mutate()}>
-              Excluir
-            </button>
-          </div>
-          <div className="mt-4 flex flex-col gap-2 sm:flex-row">
-            <input
-              type="password"
-              className="min-h-11 flex-1 rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
-              placeholder="Nova senha forte"
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-            />
-            <button type="button" className="min-h-11 shrink-0 rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground transition hover:bg-primary-700" onClick={() => resetMut.mutate()}>
-              Resetar senha
-            </button>
-          </div>
-        </section>
-      </div>
-
-      <section className="rounded-xl border border-border bg-card p-4 shadow-sm sm:p-5">
-        <h3 className="text-sm font-semibold">Histórico de auditoria</h3>
-        <div className="mt-3 space-y-2">
-          {audit.length === 0 ? (
-            <p className="text-sm text-muted-foreground">Sem registros.</p>
-          ) : (
-            audit.map((a) => (
-              <div key={a.id} className="rounded-lg border border-border px-3 py-2 text-sm">
-                <div className="font-medium">{a.action}</div>
-                <div className="text-xs text-muted-foreground">
-                  {new Date(a.created_at).toLocaleString("pt-BR")}
-                  {a.ip_address ? ` · IP ${a.ip_address}` : ""}
-                </div>
-                {a.details ? <pre className="mt-1 whitespace-pre-wrap text-xs">{a.details}</pre> : null}
-              </div>
-            ))
-          )}
-        </div>
-      </section>
+  return <div className="space-y-6">
+    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex min-w-0 items-center gap-3"><Button asChild variant="ghost" size="icon"><Link to="/admin/usuarios" aria-label="Voltar"><ArrowLeft /></Link></Button><div className="min-w-0"><h1 className="truncate text-2xl font-semibold">{user.name}</h1><p className="truncate text-sm text-muted-foreground">{user.email}</p></div></div>
+      <div className="flex items-center gap-2"><span className={cn("rounded-full px-2.5 py-1 text-xs font-medium", STATUS_BADGE_CLASS[user.status as UserStatus])}>{statusLabel(user.status)}</span><UserActionsMenu user={user} onChanged={() => { refresh(); if (!userQuery.data) navigate("/admin/usuarios"); }} /></div>
     </div>
-  );
+    <div className="grid gap-4 lg:grid-cols-3">
+      <InfoCard title="Dados da conta" items={[["E-mail", user.email], ["CPF", user.cpf], ["Telefone", user.phone], ["WhatsApp", user.whatsapp], ["Perfil", user.role === "admin" ? "Administrador" : "Usuário"]]} />
+      <InfoCard title="Estudos" items={[["Objetivo", studyGoalLabel(user.study_goal)], ["Concurso alvo", user.target_contest], ["Cargo", user.desired_role], ["Nível", user.study_level], ["Sessões", String(user.sessoes_count)]]} />
+      <InfoCard title="Acesso" items={[["Cadastro", new Date(user.created_at).toLocaleString("pt-BR")], ["Último login", user.last_login_at ? new Date(user.last_login_at).toLocaleString("pt-BR") : null], ["IP do último acesso", user.last_login_ip], ["Observações", user.admin_notes]]} />
+    </div>
+    <section className="rounded-xl border border-border bg-card p-5 shadow-sm"><h2 className="font-semibold">Histórico de auditoria</h2>{auditQuery.isLoading ? <div className="mt-4 space-y-2"><Skeleton className="h-14" /><Skeleton className="h-14" /></div> : (auditQuery.data ?? []).length === 0 ? <p className="mt-3 text-sm text-muted-foreground">Sem registros de alteração.</p> : <div className="mt-4 space-y-2">{(auditQuery.data ?? []).map((entry) => <article key={entry.id} className="rounded-lg border border-border p-3 text-sm"><p className="font-medium">{entry.action}</p><p className="text-xs text-muted-foreground">{new Date(entry.created_at).toLocaleString("pt-BR")}{entry.ip_address ? ` · IP ${entry.ip_address}` : ""}</p>{entry.details ? <pre className="mt-2 whitespace-pre-wrap text-xs text-muted-foreground">{entry.details}</pre> : null}</article>)}</div>}</section>
+  </div>;
+}
+
+function InfoCard({ title, items }: { title: string; items: Array<[string, string | null | undefined]> }) {
+  return <section className="rounded-xl border border-border bg-card p-5 shadow-sm"><h2 className="font-semibold">{title}</h2><dl className="mt-4 space-y-3 text-sm">{items.map(([label, value]) => <div key={label}><dt className="text-xs text-muted-foreground">{label}</dt><dd className="mt-0.5 break-words">{value || "—"}</dd></div>)}</dl></section>;
 }

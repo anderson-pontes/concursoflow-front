@@ -47,21 +47,6 @@ export const STATUS_BADGE_CLASS: Record<UserStatus, string> = {
   inativo: "bg-slate-100 text-slate-600",
 };
 
-export const SUBSCRIPTION_STATUS_LABEL: Record<string, string> = {
-  active: "Ativa",
-  trialing: "Teste",
-  past_due: "Pgto. pendente",
-  canceled: "Cancelada",
-  unpaid: "Não paga",
-  incomplete: "Incompleta",
-  incomplete_expired: "Expirada",
-};
-
-export function subscriptionStatusLabel(status: string | null | undefined): string {
-  if (!status) return "—";
-  return SUBSCRIPTION_STATUS_LABEL[status] ?? status;
-}
-
 export function statusLabel(status: string): string {
   return USER_STATUS_OPTIONS.find((s) => s.value === status)?.label ?? status;
 }
@@ -83,9 +68,6 @@ export type AdminUserListItem = {
   created_at: string;
   last_login_at: string | null;
   sessoes_count: number;
-  subscription_status: string | null;
-  subscription_current_period_end: string | null;
-  subscription_cancel_at_period_end: boolean;
 };
 
 export type AdminUserDetail = AdminUserListItem & {

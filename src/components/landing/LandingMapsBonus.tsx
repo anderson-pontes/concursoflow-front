@@ -9,7 +9,7 @@ import {
   Sparkles,
   Workflow,
 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { KIWIFY_CHECKOUT_URL } from "@/lib/commercial";
 
 const modules = [
   {
@@ -88,12 +88,12 @@ export function LandingMapsBonus() {
               ))}
             </div>
 
-            <Link
-              to="/register"
+            <a
+              href={KIWIFY_CHECKOUT_URL}
               className="mt-8 inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-white px-6 text-sm font-bold text-slate-950 outline-none transition hover:-translate-y-0.5 hover:bg-violet-50 focus-visible:ring-2 focus-visible:ring-violet-300"
             >
               <Check className="h-4 w-4 text-primary" aria-hidden /> Quero organizar meus estudos
-            </Link>
+            </a>
           </div>
 
           <div className="relative">

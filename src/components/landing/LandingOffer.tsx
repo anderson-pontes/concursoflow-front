@@ -1,7 +1,7 @@
-import { Link } from "react-router-dom";
 import { Check, ShieldCheck } from "lucide-react";
 
 import { HandDrawnAccent } from "@/components/landing/HandDrawnAccent";
+import { KIWIFY_CHECKOUT_URL } from "@/lib/commercial";
 
 const bullets = [
   "12 meses de acesso à plataforma",
@@ -51,7 +51,7 @@ export function LandingOffer() {
               </span>
             </p>
             <p className="mt-2 text-xs text-muted-foreground">
-              Pagamento seguro · acesso após confirmação · bônus sem custo adicional
+              Pagamento seguro · acesso enviado pela equipe · bônus sem custo adicional
             </p>
           </div>
 
@@ -68,12 +68,12 @@ export function LandingOffer() {
             </li>
           </ul>
 
-          <Link
-            to="/register"
+          <a
+            href={KIWIFY_CHECKOUT_URL}
             className="mt-8 inline-flex min-h-12 w-full items-center justify-center rounded-lg bg-primary px-5 text-sm font-semibold text-primary-foreground outline-none transition hover:bg-primary-500 focus-visible:ring-2 focus-visible:ring-ring"
           >
             Quero organizar meus estudos
-          </Link>
+          </a>
         </div>
       </div>
     </section>

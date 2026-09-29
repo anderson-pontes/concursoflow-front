@@ -20,6 +20,22 @@ test("rotas lazy exibem skeleton estrutural acessível", () => {
   assert.match(skeleton, /aria-live="polite"/);
 });
 
+test("CTAs comerciais não retornam ao cadastro público", () => {
+  const commercialFiles = [
+    "src/components/landing/LandingHeader.tsx",
+    "src/components/landing/LandingHero.tsx",
+    "src/components/landing/LandingSteps.tsx",
+    "src/components/landing/LandingOffer.tsx",
+    "src/components/landing/LandingMapsBonus.tsx",
+    "src/components/landing/LandingFinalCta.tsx",
+  ];
+  for (const file of commercialFiles) {
+    const content = read(file);
+    assert.match(content, /KIWIFY_CHECKOUT_URL/);
+    assert.doesNotMatch(content, /to=["']\/register["']/);
+  }
+});
+
 test("heatmap possui um resumo acessível e oculta células decorativas", () => {
   const heatmap = read("src/components/dashboard/HeatmapCard.tsx");
   assert.match(heatmap, /role="img"/);
@@ -57,7 +73,6 @@ test("dashboard e cronograma não forçam grades semanais horizontais", () => {
 test("dívidas visuais auditadas possuem proteções estruturais", () => {
   const landing = read("src/components/landing/LandingHero.tsx");
   const authShell = read("src/components/auth/AuthShell.tsx");
-  const register = read("src/pages/Auth/Register.tsx");
   const cronograma = read("src/pages/Cronograma.tsx");
   const cronogramaContent = read("src/components/cronograma/CronogramaContent.tsx");
   const cronogramaGrid = read("src/components/cronograma/CronogramaWeekGrid.tsx");
@@ -68,7 +83,7 @@ test("dívidas visuais auditadas possuem proteções estruturais", () => {
   assert.match(landing, /top-\[calc\(100%\+0\.35rem\)\][^\n]+h-8/);
   assert.match(landing, /mt-14[^\n]+sm:mt-16/);
   assert.match(authShell, /justify-start[^\n]+md:justify-center/);
-  assert.doesNotMatch(register, /max-h-\[min\(70vh,640px\)\]|overflow-y-auto/);
+  assert.equal(fs.existsSync(path.join(root, "src/pages/Auth/Register.tsx")), false);
   assert.match(cronograma, /<CronogramaContent/);
   assert.match(cronogramaContent, /stats && totalBlocos > 0/);
   assert.match(cronogramaContent, /<CronogramaWeekGrid/);
