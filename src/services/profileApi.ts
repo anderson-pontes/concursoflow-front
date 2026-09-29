@@ -29,14 +29,6 @@ export type UserProfileUpdatePayload = {
   daily_goal_hours?: number;
   cpf?: string | null;
   phone?: string | null;
-  birth_date?: string | null;
-  address_cep?: string | null;
-  address_street?: string | null;
-  address_number?: string | null;
-  address_complement?: string | null;
-  address_neighborhood?: string | null;
-  address_city?: string | null;
-  address_state?: string | null;
 };
 
 export async function getMeApi(): Promise<MeApiResponse> {
