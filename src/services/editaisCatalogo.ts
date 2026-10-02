@@ -21,11 +21,11 @@ type PageEnvelope<T> = {
   total_pages: number;
 };
 
-type RawEdital = Omit<EditalCatalogo, "status" | "versao_atual" | "url_oficial"> & {
+type RawEdital = Omit<EditalCatalogo, "status" | "versao_atual" | "url_oficial" | "edital_url"> & {
   status?: EditalCatalogo["status"];
   versao_atual?: EditalCatalogo["versao_atual"];
-  edital_url?: string | null;
   url_oficial?: string | null;
+  edital_url?: string | null;
   updated_at?: string;
 };
 
@@ -47,7 +47,7 @@ function normalize(raw: RawEdital, publicOnly = false): EditalCatalogo {
     ? versoes.find((item) => item.status === "publicado")
     : versoes.find((item) => item.status === "rascunho") ?? versoes.find((item) => item.status === "publicado") ?? versoes[0]) ?? null;
   const status = raw.status ?? versaoAtual?.status ?? "rascunho";
-  return { ...raw, atualizado_em: raw.atualizado_em ?? raw.updated_at, logo_url: raw.logo_url ?? null, status, url_oficial: raw.url_oficial ?? raw.edital_url ?? null, versoes, versao_atual: versaoAtual };
+  return { ...raw, atualizado_em: raw.atualizado_em ?? raw.updated_at, logo_url: raw.logo_url ?? null, status, url_oficial: raw.url_oficial ?? null, edital_url: raw.edital_url ?? null, versoes, versao_atual: versaoAtual };
 }
 
 function emptyClassification(): CatalogClassification {
@@ -67,10 +67,10 @@ function normalizePage(data: PageEnvelope<RawEdital> | RawEdital[], publicOnly =
   return { ...data, items: data.items.map((item) => normalize(item, publicOnly)) };
 }
 
-export async function paginarEditaisAdmin(params: { search?: string; status?: string; page?: number; pageSize?: number } = {}): Promise<EditalCatalogoPage> {
-  const { search = "", status = "", page = 1, pageSize = 12 } = params;
+export async function paginarEditaisAdmin(params: { search?: string; orgao?: string; cargo?: string; ano?: number | null; status?: string; page?: number; pageSize?: number } = {}): Promise<EditalCatalogoPage> {
+  const { search = "", orgao = "", cargo = "", ano = null, status = "", page = 1, pageSize = 12 } = params;
   const { data } = await api.get<PageEnvelope<RawEdital> | RawEdital[]>("/admin/editais", {
-    params: { search: search || undefined, status: status || undefined, page, page_size: pageSize },
+    params: { search: search || undefined, orgao: orgao || undefined, cargo: cargo || undefined, ano: ano ?? undefined, status: status || undefined, page, page_size: pageSize },
   });
   return normalizePage(data);
 }
@@ -89,7 +89,7 @@ export async function criarEditalAdmin(input: EditalCatalogoInitialInput): Promi
   form.append("orgao", input.orgao.trim());
   form.append("cargo_nome", input.cargo_nome.trim());
   if (input.banca?.trim()) form.append("banca", input.banca.trim());
-  if (input.url_oficial?.trim()) form.append("edital_url", input.url_oficial.trim());
+  if (input.url_oficial?.trim()) form.append("url_oficial", input.url_oficial.trim());
   if (input.arquivo) form.append("file", input.arquivo);
   if (input.logo) form.append("logo", input.logo);
   const created = (await api.post<RawEdital>("/admin/editais/inicializar", form, {
@@ -99,7 +99,7 @@ export async function criarEditalAdmin(input: EditalCatalogoInitialInput): Promi
 }
 
 export async function atualizarEditalAdmin(id: string, input: EditalCatalogoInput): Promise<EditalCatalogo> {
-  const payload = { nome: input.nome, orgao: input.orgao, banca: input.banca, edital_url: input.url_oficial };
+  const payload = { nome: input.nome, orgao: input.orgao, banca: input.banca, url_oficial: input.url_oficial };
   return normalize((await api.put<RawEdital>(`/admin/editais/${id}`, payload)).data);
 }
 
@@ -109,6 +109,10 @@ export async function uploadEditalAdmin(id: string, file: File): Promise<EditalC
   return normalize((await api.post<RawEdital>(`/admin/editais/${id}/upload-edital`, form, {
     headers: { "Content-Type": "multipart/form-data" },
   })).data);
+}
+
+export async function removerEditalAdmin(id: string): Promise<EditalCatalogo> {
+  return normalize((await api.delete<RawEdital>(`/admin/editais/${id}/edital`)).data);
 }
 
 export async function uploadLogoAdmin(id: string, logo: File): Promise<EditalCatalogo> {

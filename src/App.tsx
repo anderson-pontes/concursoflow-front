@@ -37,6 +37,7 @@ const GestaoUsuarios = lazyNamed(() => import("./pages/admin/GestaoUsuarios"), "
 const UsuarioDetalhe = lazyNamed(() => import("./pages/admin/UsuarioDetalhe"), "UsuarioDetalhe");
 const EditaisCatalogo = lazyNamed(() => import("./pages/admin/EditaisCatalogo"), "EditaisCatalogo");
 const EditalCatalogoEditor = lazyNamed(() => import("./pages/admin/EditalCatalogoEditor"), "EditalCatalogoEditor");
+const NovoEditalCatalogo = lazyNamed(() => import("./pages/admin/NovoEditalCatalogo"), "NovoEditalCatalogo");
 const PlanoGuiado = lazyNamed(() => import("./pages/PlanoGuiado"), "PlanoGuiado");
 const AtivarEditalCatalogo = lazyNamed(() => import("./pages/AtivarEditalCatalogo"), "AtivarEditalCatalogo");
 const ReplanejarPlano = lazyNamed(() => import("./pages/ReplanejarPlano"), "ReplanejarPlano");
@@ -255,6 +256,22 @@ export default function App() {
         element={
           <Layout requireAuth={!isAuthed}>
             <AdminRoute><LazyPage><EditaisCatalogo /></LazyPage></AdminRoute>
+          </Layout>
+        }
+      />
+      <Route
+        path="/admin/editais/novo"
+        element={
+          <Layout requireAuth={!isAuthed}>
+            <AdminRoute><LazyPage><NovoEditalCatalogo /></LazyPage></AdminRoute>
+          </Layout>
+        }
+      />
+      <Route
+        path="/admin/editais/:id/editar"
+        element={
+          <Layout requireAuth={!isAuthed}>
+            <AdminRoute><LazyPage><EditalCatalogoEditor /></LazyPage></AdminRoute>
           </Layout>
         }
       />

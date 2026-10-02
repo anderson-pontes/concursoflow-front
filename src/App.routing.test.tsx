@@ -49,6 +49,7 @@ vi.mock("@/pages/admin/GestaoUsuarios", () => ({ GestaoUsuarios: () => <div>page
 vi.mock("@/pages/admin/UsuarioDetalhe", () => ({ UsuarioDetalhe: () => <div>page:admin-usuario</div> }));
 vi.mock("@/pages/admin/EditaisCatalogo", () => ({ EditaisCatalogo: () => <div>page:admin-editais</div> }));
 vi.mock("@/pages/admin/EditalCatalogoEditor", () => ({ EditalCatalogoEditor: () => <div>page:admin-edital</div> }));
+vi.mock("@/pages/admin/NovoEditalCatalogo", () => ({ NovoEditalCatalogo: () => <div>page:admin-edital-novo</div> }));
 vi.mock("@/pages/PlanoGuiado", () => ({ PlanoGuiado: () => <div>page:plano-guiado</div> }));
 vi.mock("@/pages/AtivarEditalCatalogo", () => ({ AtivarEditalCatalogo: () => <div>page:ativar-edital</div> }));
 vi.mock("@/pages/ReplanejarPlano", () => ({ ReplanejarPlano: () => <div>page:replanejar</div> }));
@@ -153,6 +154,16 @@ describe("contrato de rotas da aplicação", () => {
 
     expect(await screen.findByText("page:admin-edital")).toBeInTheDocument();
     await expectLocation("/admin/editais/edital-7");
+  });
+
+  it.each([
+    ["/admin/editais/novo", "page:admin-edital-novo"],
+    ["/admin/editais/edital-7/editar?tab=conteudo", "page:admin-edital"],
+  ])("expõe o fluxo administrativo dedicado em %s", async (path, page) => {
+    useAuthStore.setState({ accessToken: "token-admin", user: { ...baseUser, role: "admin" } });
+    renderApp([path]);
+
+    expect(await screen.findByText(page)).toBeInTheDocument();
   });
 
   it.each([

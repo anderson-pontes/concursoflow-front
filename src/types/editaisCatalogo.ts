@@ -81,6 +81,7 @@ export type EditalCatalogo = {
   orgao: string;
   banca: string | null;
   url_oficial: string | null;
+  edital_url: string | null;
   logo_url: string | null;
   status: EditalStatus;
   versao_atual: EditalVersaoCatalogo | null;
