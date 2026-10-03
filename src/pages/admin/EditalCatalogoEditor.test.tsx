@@ -16,6 +16,7 @@ const services = vi.hoisted(() => ({
   publicarVersao: vi.fn(),
   removerEditalAdmin: vi.fn(),
   salvarEstruturaVersao: vi.fn(),
+  salvarCronogramaVersao: vi.fn(),
   salvarClassificacaoVersao: vi.fn(),
   listarClassificacoesAdmin: vi.fn(),
   uploadEditalAdmin: vi.fn(),
@@ -92,6 +93,25 @@ function renderEditor(path = "/admin/editais/edital-1/editar?tab=conteudo") {
 }
 
 describe("Editor administrativo de edital", () => {
+  it("salva somente o cronograma publicado com confirmação e sem alterar conteúdo", async () => {
+    const user = userEvent.setup();
+    const version = { ...edital.versoes![0], status: "publicado" as const, data_prova: "2026-12-01" };
+    const published = { ...edital, status: "publicado" as const, versao_atual: version, versoes: [version] };
+    services.obterEditalAdmin.mockResolvedValue(published);
+    services.salvarCronogramaVersao.mockResolvedValue({ ...version, data_prova: null });
+    renderEditor("/admin/editais/edital-1/editar?tab=geral");
+    await user.click(await screen.findByRole("button", { name: "Limpar data da prova" }));
+    await user.click(screen.getByRole("button", { name: "Salvar cronograma" }));
+    const dialog = await screen.findByRole("alertdialog");
+    expect(dialog).toHaveTextContent(/avisos manuais não serão alterados/i);
+    services.obterEditalAdmin.mockResolvedValue({ ...published, versao_atual: { ...version, data_prova: null }, versoes: [{ ...version, data_prova: null }] });
+    await user.click(within(dialog).getByRole("button", { name: "Salvar cronograma" }));
+    await waitFor(() => expect(services.salvarCronogramaVersao).toHaveBeenCalledWith("edital-1", "versao-1", { inicio_inscricoes: null, encerramento_inscricoes: null, limite_pagamento: null, data_prova: null }));
+    expect(services.salvarEstruturaVersao).not.toHaveBeenCalled();
+    expect(services.atualizarEditalAdmin).not.toHaveBeenCalled();
+    await waitFor(() => expect(screen.getByRole("button", { name: "Data da prova" })).toHaveTextContent("Selecione uma data"));
+  });
+
   beforeEach(() => {
     vi.clearAllMocks();
     services.obterEditalAdmin.mockResolvedValue(edital);

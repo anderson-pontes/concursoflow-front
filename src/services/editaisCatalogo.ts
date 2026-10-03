@@ -9,6 +9,7 @@ import type {
   EditalCatalogoInput,
   EditalCatalogoInitialInput,
   EditalCatalogoPage,
+  EditalCronograma,
   EditalCargoCatalogo,
   ImportacaoResumo,
 } from "@/types/editaisCatalogo";
@@ -42,11 +43,11 @@ function normalize(raw: RawEdital, publicOnly = false): EditalCatalogo {
         topicos: (disciplina.topicos ?? []).map((topico) => ({ ...topico, ordem: topico.ordem ?? topico.numero_ordem ?? 0 })),
       })),
     })),
-  }));
-  const versaoAtual = raw.versao_atual ?? (publicOnly
-    ? versoes.find((item) => item.status === "publicado")
-    : versoes.find((item) => item.status === "rascunho") ?? versoes.find((item) => item.status === "publicado") ?? versoes[0]) ?? null;
-  const status = raw.status ?? versaoAtual?.status ?? "rascunho";
+  })).sort((left, right) => Number(right.numero) - Number(left.numero));
+  const versaoAtual = (publicOnly
+    ? versoes.find((item) => item.status === "publicado") ?? (raw.versao_atual?.status === "publicado" ? raw.versao_atual : null)
+    : raw.versao_atual ?? versoes.find((item) => item.status === "rascunho") ?? versoes.find((item) => item.status === "publicado") ?? versoes[0]) ?? null;
+  const status = versoes.some((item) => item.status === "publicado") ? "publicado" : raw.status ?? versaoAtual?.status ?? "rascunho";
   return { ...raw, atualizado_em: raw.atualizado_em ?? raw.updated_at, logo_url: raw.logo_url ?? null, status, url_oficial: raw.url_oficial ?? null, edital_url: raw.edital_url ?? null, versoes, versao_atual: versaoAtual };
 }
 
@@ -92,6 +93,9 @@ export async function criarEditalAdmin(input: EditalCatalogoInitialInput): Promi
   if (input.url_oficial?.trim()) form.append("url_oficial", input.url_oficial.trim());
   if (input.arquivo) form.append("file", input.arquivo);
   if (input.logo) form.append("logo", input.logo);
+  for (const field of ["inicio_inscricoes", "encerramento_inscricoes", "limite_pagamento", "data_prova"] as const) {
+    if (input[field]) form.append(field, input[field]);
+  }
   const created = (await api.post<RawEdital>("/admin/editais/inicializar", form, {
     headers: { "Content-Type": "multipart/form-data" },
   })).data;
@@ -126,7 +130,10 @@ export async function uploadLogoAdmin(id: string, logo: File): Promise<EditalCat
 export async function criarVersaoRascunho(editalId: string): Promise<EditalCatalogo> {
   const edital = await obterEditalAdmin(editalId);
   const numero = Math.max(0, ...(edital.versoes ?? []).map((item) => Number(item.numero) || 0)) + 1;
-  await api.post(`/admin/editais/${editalId}/versoes`, { numero, data_prova: null });
+  const source = edital.versoes?.find((item) => item.status === "publicado") ?? edital.versao_atual;
+  await api.post(`/admin/editais/${editalId}/versoes`, { numero,
+    inicio_inscricoes: source?.inicio_inscricoes ?? null, encerramento_inscricoes: source?.encerramento_inscricoes ?? null,
+    limite_pagamento: source?.limite_pagamento ?? null, data_prova: source?.data_prova ?? null });
   return obterEditalAdmin(editalId);
 }
 
@@ -156,6 +163,13 @@ export async function salvarEstruturaVersao(
     })),
   };
   return (await api.put<EditalCatalogo>(`/admin/editais/${editalId}/versoes/${versaoId}/estrutura`, payload)).data;
+}
+
+export async function salvarCronogramaVersao(editalId: string, versaoId: string, dates: EditalCronograma) {
+  return (await api.put(`/admin/editais/${editalId}/versoes/${versaoId}/cronograma`, {
+    inicio_inscricoes: dates.inicio_inscricoes ?? null, encerramento_inscricoes: dates.encerramento_inscricoes ?? null,
+    limite_pagamento: dates.limite_pagamento ?? null, data_prova: dates.data_prova ?? null,
+  })).data;
 }
 
 export async function publicarVersao(editalId: string, versaoId: string): Promise<EditalCatalogo> {

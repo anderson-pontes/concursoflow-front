@@ -8,6 +8,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { criarEditalAdmin } from "@/services/editaisCatalogo";
+import { EditalScheduleSection, scheduleIssue } from "./EditalScheduleSection";
 import type { EditalCatalogo, EditalCatalogoInitialInput } from "@/types/editaisCatalogo";
 
 const EMPTY: EditalCatalogoInitialInput = { nome: "", orgao: "", banca: null, url_oficial: null, cargo_nome: "", arquivo: null, logo: null };
@@ -23,7 +24,7 @@ export function EditalCreateForm({ onCancel, onCreated }: { onCancel: () => void
   const mutation = useMutation({ mutationFn: criarEditalAdmin, onSuccess: onCreated });
 
   return (
-    <form className="space-y-6" onSubmit={(event) => { event.preventDefault(); mutation.mutate(values); }}>
+    <form className="space-y-6" onSubmit={(event) => { event.preventDefault(); if (!scheduleIssue(values)) mutation.mutate(values); }}>
       <section className="space-y-4" aria-labelledby="novo-edital-dados">
         <div>
           <h2 id="novo-edital-dados" className="font-semibold">Informações do concurso</h2>
@@ -37,6 +38,7 @@ export function EditalCreateForm({ onCancel, onCreated }: { onCancel: () => void
         </div>
       </section>
 
+      <EditalScheduleSection value={values} onChange={(dates) => setValues((current) => ({ ...current, ...dates }))} disabled={mutation.isPending} />
       <section className="grid gap-4 lg:grid-cols-2" aria-label="Arquivos do edital">
         <FileDropZone id="catalogo-logo-file" label="Logo do órgão" description="Selecionar logo" accept=".png,.jpg,.jpeg,.webp" file={values.logo} onFileChange={(logo) => setValues((state) => ({ ...state, logo }))} icon={ImageIcon} variant="aprov" hint="PNG, JPG ou WEBP · até 2 MB" />
         <FileDropZone id="catalogo-edital-file" label="Arquivo do edital" description="Anexar edital" accept=".pdf,.docx,.png,.jpg,.jpeg" file={values.arquivo} onFileChange={(arquivo) => setValues((state) => ({ ...state, arquivo }))} icon={FileText} variant="aprov" hint="PDF, DOCX, PNG ou JPG · até 10 MB" />

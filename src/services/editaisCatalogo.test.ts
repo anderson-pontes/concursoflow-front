@@ -6,6 +6,9 @@ import {
   criarEditalAdmin,
   obterEditalAdmin,
   removerEditalAdmin,
+  paginarEditaisAdmin,
+  paginarEditaisPublicados,
+  salvarCronogramaVersao,
 } from "@/services/editaisCatalogo";
 
 vi.mock("@/services/api", () => ({
@@ -33,6 +36,29 @@ const rawEdital = {
 
 describe("contrato do catálogo administrativo", () => {
   beforeEach(() => vi.clearAllMocks());
+
+  it("mantém publicado o edital com rascunho e seleciona a versão publicada no catálogo público", async () => {
+    const classification = { esfera: null, areas: [], ano_edital: null, revision: 0, fonte_tipo: null, updated_at: null };
+    const published = { id: "published", numero: 1, status: "publicado", classificacao: classification, cargos: [], data_prova: "2026-12-01" };
+    const draft = { ...published, id: "draft", numero: 2, status: "rascunho" };
+    vi.mocked(api.get).mockResolvedValue({ data: [{ ...rawEdital, versoes: [published, draft] }] });
+    const admin = await paginarEditaisAdmin({ status: "publicado" });
+    expect(admin.items[0].status).toBe("publicado");
+    expect(admin.items[0].versao_atual?.id).toBe("draft");
+    const publicPage = await paginarEditaisPublicados();
+    expect(publicPage.items[0].versao_atual?.id).toBe("published");
+  });
+
+  it("envia as datas no cadastro e null explícito para limpar o cronograma", async () => {
+    vi.mocked(api.post).mockResolvedValue({ data: rawEdital });
+    vi.mocked(api.put).mockResolvedValue({ data: {} });
+    await criarEditalAdmin({ nome: "Edital", orgao: "QA", banca: null, url_oficial: null, cargo_nome: "Analista", arquivo: null, logo: null, data_prova: "2026-12-01", inicio_inscricoes: "2026-10-01" });
+    const form = vi.mocked(api.post).mock.calls[0][1] as FormData;
+    expect(form.get("data_prova")).toBe("2026-12-01");
+    expect(form.has("limite_pagamento")).toBe(false);
+    await salvarCronogramaVersao("edital-1", "version-1", {});
+    expect(api.put).toHaveBeenCalledWith("/admin/editais/edital-1/versoes/version-1/cronograma", { inicio_inscricoes: null, encerramento_inscricoes: null, limite_pagamento: null, data_prova: null });
+  });
 
   it("mantém URL oficial e documento em campos independentes ao consultar", async () => {
     vi.mocked(api.get).mockResolvedValue({ data: rawEdital });

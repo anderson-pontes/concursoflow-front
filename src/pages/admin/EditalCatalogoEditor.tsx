@@ -7,6 +7,8 @@ import { toast } from "sonner";
 
 import { EditalImportDialog } from "@/components/admin/editais/EditalImportDialog";
 import { EditalClassificationSection } from "@/components/admin/editais/EditalClassificationSection";
+import { EditalScheduleSection, scheduleIssue } from "@/components/admin/editais/EditalScheduleSection";
+import { salvarCronogramaVersao } from "@/services/editaisCatalogo";
 import { FileDropZone } from "@/components/concursos/FileDropZone";
 import { CatalogLogo } from "@/components/editais/CatalogLogo";
 import { Button } from "@/components/ui/button";
@@ -17,7 +19,7 @@ import { classificationDraft, classificationInput, classificationIssue } from "@
 import type { ClassificationDraft } from "@/lib/adminEditalClassification";
 import { resolvePublicUrl } from "@/lib/publicUrl";
 import { atualizarEditalAdmin, criarVersaoRascunho, obterEditalAdmin, publicarVersao, removerEditalAdmin, salvarClassificacaoVersao, salvarEstruturaVersao, uploadEditalAdmin, uploadLogoAdmin } from "@/services/editaisCatalogo";
-import type { EditalCargoCatalogo, EditalCatalogoInput } from "@/types/editaisCatalogo";
+import type { EditalCargoCatalogo, EditalCatalogoInput, EditalCronograma } from "@/types/editaisCatalogo";
 
 const inputClass = "min-h-11 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-60";
 const newId = () => `novo-${Date.now()}-${Math.random().toString(36).slice(2)}`;
@@ -66,6 +68,7 @@ export function EditalCatalogoEditor() {
   const [pendingLogoFile, setPendingLogoFile] = React.useState<File | null>(null);
   const [meta, setMeta] = React.useState<EditalCatalogoInput>({ nome: "", orgao: "", banca: null, url_oficial: null });
   const [cargos, setCargos] = React.useState<EditalCargoCatalogo[]>([]);
+  const [scheduleDraft, setScheduleDraft] = React.useState<{ versionId: string; value: EditalCronograma } | null>(null);
   const [classification, setClassification] = React.useState<{ versionId: string; value: ClassificationDraft; dirty: boolean } | null>(null);
 
   const query = useQuery({ queryKey: ["admin-edital", id], queryFn: () => obterEditalAdmin(id), enabled: Boolean(id) });
@@ -73,6 +76,18 @@ export function EditalCatalogoEditor() {
   const versao = edital?.versoes?.find((item) => item.status === "rascunho") ?? edital?.versao_atual ?? null;
   const editable = versao?.status === "rascunho";
   const metadataEditable = Boolean(editable && !edital?.versoes?.some((item) => item.status === "publicado"));
+  const schedule: EditalCronograma = scheduleDraft && scheduleDraft.versionId === versao?.id ? scheduleDraft.value : {
+    inicio_inscricoes: versao?.inicio_inscricoes ?? null,
+    encerramento_inscricoes: versao?.encerramento_inscricoes ?? null,
+    limite_pagamento: versao?.limite_pagamento ?? null,
+    data_prova: versao?.data_prova ?? null,
+  };
+  const saveSchedule = async () => {
+    if (!versao || scheduleDraft?.versionId !== versao.id) return;
+    const issue = scheduleIssue(schedule);
+    if (issue) throw new Error(issue);
+    await salvarCronogramaVersao(id, versao.id, schedule);
+  };
   // Preserve unsaved edits and an acknowledged revision until refetch catches up.
   // Once the server is current, its canonical fields become the clean baseline.
   const classificationValue = versao ? (
@@ -101,33 +116,39 @@ export function EditalCatalogoEditor() {
   const saveMutation = useMutation({
     mutationFn: async () => {
       if (!versao) throw new Error("Versão não encontrada");
+      const dateIssue = scheduleIssue(schedule);
+      if (dateIssue) throw new Error(dateIssue);
       if (classificationDirty && classificationValue) {
         const issue = classificationIssue(classificationValue);
         if (issue) throw new Error(issue);
       }
       if (metadataEditable) await atualizarEditalAdmin(id, meta);
-      await salvarEstruturaVersao(id, versao.id, cargos);
+      if (editable) await salvarEstruturaVersao(id, versao.id, cargos);
+      await saveSchedule();
       if (pendingEditalFile) await uploadEditalAdmin(id, pendingEditalFile);
       await saveClassification();
       return obterEditalAdmin(id);
     },
-    onSuccess: () => { setPendingEditalFile(null); void qc.invalidateQueries({ queryKey: ["admin-edital", id] }); void qc.invalidateQueries({ queryKey: ["admin-editais"] }); toast.success("Rascunho salvo."); },
+    onSuccess: (updated) => { setPendingEditalFile(null); setScheduleDraft(null); qc.setQueryData(["admin-edital", id], updated); void qc.invalidateQueries({ queryKey: ["admin-editais"] }); void qc.invalidateQueries({ queryKey: ["catalogo-editais", "public"] }); void qc.invalidateQueries({ queryKey: ["avisos"] }); toast.success(editable ? "Rascunho salvo." : "Cronograma atualizado."); },
     onError: (error) => toast.error(apiErrorMessage(error, "Não foi possível salvar o rascunho.")),
   });
   const publishMutation = useMutation({
     mutationFn: async () => {
       if (!versao) throw new Error("Versão não encontrada");
+      const dateIssue = scheduleIssue(schedule);
+      if (dateIssue) throw new Error(dateIssue);
       if (classificationDirty && classificationValue) {
         const issue = classificationIssue(classificationValue);
         if (issue) throw new Error(issue);
       }
       if (metadataEditable) await atualizarEditalAdmin(id, meta);
       await salvarEstruturaVersao(id, versao.id, cargos);
+      await saveSchedule();
       if (pendingEditalFile) await uploadEditalAdmin(id, pendingEditalFile);
       await saveClassification();
       return publicarVersao(id, versao.id);
     },
-    onSuccess: () => { setPendingEditalFile(null); void qc.invalidateQueries({ queryKey: ["admin-edital", id] }); void qc.invalidateQueries({ queryKey: ["admin-editais"] }); toast.success("Versão publicada no catálogo."); },
+    onSuccess: () => { setPendingEditalFile(null); setScheduleDraft(null); void qc.invalidateQueries({ queryKey: ["admin-edital", id] }); void qc.invalidateQueries({ queryKey: ["admin-editais"] }); void qc.invalidateQueries({ queryKey: ["catalogo-editais", "public"] }); void qc.invalidateQueries({ queryKey: ["catalogo-edital", "public"] }); void qc.invalidateQueries({ queryKey: ["avisos"] }); toast.success("Versão publicada no catálogo."); },
     onError: (error) => toast.error(apiErrorMessage(error, "Não foi possível salvar e publicar esta versão.")),
   });
   const draftMutation = useMutation({
@@ -220,9 +241,10 @@ export function EditalCatalogoEditor() {
       <header className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
         <div><Link to="/admin/editais" className="mb-2 inline-flex min-h-11 items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground"><ArrowLeft className="h-4 w-4" /> Voltar ao catálogo</Link><div className="flex items-center gap-3"><CatalogLogo src={edital.logo_url} orgao={edital.orgao} /><div><h1 className="text-2xl font-bold tracking-tight">{edital.nome}</h1><p className="mt-1 text-sm text-muted-foreground">Versão {versao.numero} · <span className="capitalize">{versao.status}</span></p></div></div></div>
         <div className="flex flex-wrap gap-2">{editable ? <><Button variant="outline" className="min-h-11 gap-2" onClick={() => setImportOpen(true)}><FileSpreadsheet className="h-4 w-4" /> Importar planilha</Button><Button variant="outline" className="min-h-11 gap-2" disabled={saveMutation.isPending || publishMutation.isPending || editalFileMutation.isPending || removeEditalMutation.isPending} onClick={() => { const issue = structureIssue(cargos); if (issue) toast.error(issue); else saveMutation.mutate(); }}><Save className="h-4 w-4" /> {saveMutation.isPending ? "Salvando…" : "Salvar rascunho"}</Button><Button className="min-h-11 gap-2" disabled={publishMutation.isPending || saveMutation.isPending || editalFileMutation.isPending || removeEditalMutation.isPending} onClick={() => { const issue = structureIssue(cargos, true); if (issue) { toast.error(issue); return; } void requestConfirmation({ title: "Publicar esta versão?", description: "O rascunho será salvo e disponibilizado no catálogo. Depois da publicação, esta versão ficará somente para leitura.", confirmLabel: "Salvar e publicar" }).then((confirmed) => { if (confirmed) publishMutation.mutate(); }); }}><Send className="h-4 w-4" /> {publishMutation.isPending ? "Salvando e publicando…" : "Publicar"}</Button></> : <Button className="min-h-11" disabled={draftMutation.isPending} onClick={() => draftMutation.mutate()}>{draftMutation.isPending ? "Criando…" : "Criar nova versão"}</Button>}</div>
+        {!editable && versao.status === "publicado" ? <Button className="min-h-11 gap-2" disabled={!scheduleDraft || saveMutation.isPending || draftMutation.isPending || Boolean(scheduleIssue(schedule))} onClick={() => void requestConfirmation({ title: "Atualizar cronograma publicado?", description: "Os avisos automáticos dos concursos associados serão sincronizados com estas datas. Avisos manuais não serão alterados.", confirmLabel: "Salvar cronograma" }).then((confirmed) => { if (confirmed) saveMutation.mutate(); })}><Save className="h-4 w-4" />{saveMutation.isPending ? "Salvando…" : "Salvar cronograma"}</Button> : null}
       </header>
 
-      {!editable ? <div className="rounded-xl border border-primary/30 bg-primary-muted p-4 text-sm text-foreground"><strong>Versão somente leitura.</strong> Crie uma nova versão para alterar o conteúdo publicado.</div> : null}
+      {!editable ? <div className="rounded-xl border border-primary/30 bg-primary-muted p-4 text-sm text-foreground"><strong>Conteúdo somente leitura.</strong> Crie uma nova versão para alterar disciplinas e tópicos publicados. {versao.status === "publicado" ? "As datas podem ser atualizadas nas Informações gerais, sem alterar o conteúdo do aluno." : null}</div> : null}
 
       <nav className="flex gap-1 rounded-xl bg-muted p-1" aria-label="Seções do editor">
         <button type="button" className={cn("min-h-11 flex-1 rounded-lg px-4 text-sm font-semibold transition", activeTab === "geral" ? "bg-card text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground")} aria-current={activeTab === "geral" ? "page" : undefined} onClick={() => setSearchParams({ tab: "geral" }, { replace: true })}>Informações gerais</button>
@@ -230,6 +252,7 @@ export function EditalCatalogoEditor() {
       </nav>
 
       {activeTab === "geral" ? <>
+      <div className="rounded-xl border border-border bg-card p-5 shadow-sm"><EditalScheduleSection value={schedule} onChange={(value) => setScheduleDraft({ versionId: versao.id, value })} disabled={versao.status === "arquivado" || saveMutation.isPending || publishMutation.isPending} published={versao.status === "publicado"} /></div>
       <section className="rounded-xl border border-border bg-card p-5 shadow-sm"><div className="mb-4"><h2 className="font-semibold">Identidade do órgão</h2><p className="mt-1 text-xs text-muted-foreground">A logo facilita o reconhecimento do edital na busca e pode ser atualizada sem alterar a versão publicada.</p></div><div className="grid gap-4 lg:grid-cols-[220px_minmax(0,1fr)]"><div className="flex items-center gap-3 rounded-xl border border-border bg-muted/20 p-4"><CatalogLogo src={edital.logo_url} orgao={edital.orgao} size="lg" /><div className="min-w-0"><strong className="block truncate text-sm">{edital.orgao}</strong><span className="text-xs text-muted-foreground">Prévia no catálogo</span></div></div><div><FileDropZone id="edit-catalogo-logo-file" label={edital.logo_url ? "Substituir logo" : "Logo do órgão"} description="Selecionar imagem" accept=".png,.jpg,.jpeg,.webp" file={pendingLogoFile} onFileChange={setPendingLogoFile} icon={ImageIcon} variant="aprov" hint="PNG, JPG ou WEBP · até 2 MB · prefira imagem quadrada" />{pendingLogoFile ? <div className="mt-3 flex justify-end"><Button className="min-h-11" disabled={logoMutation.isPending} onClick={() => logoMutation.mutate()}>{logoMutation.isPending ? "Salvando logo…" : "Salvar logo"}</Button></div> : null}</div></div></section>
 
       <section className="rounded-xl border border-border bg-card p-5 shadow-sm"><div className="mb-4"><h2 className="font-semibold">1. Dados do concurso</h2><p className="mt-1 text-xs text-muted-foreground">Estas informações ajudam o aluno a encontrar o concurso no catálogo.</p></div><div className="grid gap-4 md:grid-cols-2"><label className="text-sm font-medium">Nome *<input className={`${inputClass} mt-1.5`} disabled={!metadataEditable} value={meta.nome} onChange={(e) => setMeta((s) => ({ ...s, nome: e.target.value }))} /></label><label className="text-sm font-medium">Órgão *<input className={`${inputClass} mt-1.5`} disabled={!metadataEditable} value={meta.orgao} onChange={(e) => setMeta((s) => ({ ...s, orgao: e.target.value }))} /></label><label className="text-sm font-medium">Banca<input className={`${inputClass} mt-1.5`} disabled={!metadataEditable} value={meta.banca ?? ""} onChange={(e) => setMeta((s) => ({ ...s, banca: e.target.value || null }))} /></label><label className="text-sm font-medium">URL oficial<div className="mt-1.5 flex gap-2"><input type="url" className={inputClass} disabled={!metadataEditable} value={meta.url_oficial ?? ""} onChange={(e) => setMeta((s) => ({ ...s, url_oficial: e.target.value || null }))} placeholder="https://..." />{meta.url_oficial ? <Button asChild type="button" variant="outline" size="icon-lg" aria-label="Abrir URL oficial"><a href={meta.url_oficial} target="_blank" rel="noreferrer"><ExternalLink /></a></Button> : null}</div></label></div>{editable && !metadataEditable ? <p className="mt-3 text-xs text-muted-foreground">Os dados gerais permanecem vinculados ao concurso já publicado. Nesta nova versão, altere apenas cargos, disciplinas e tópicos.</p> : null}</section>

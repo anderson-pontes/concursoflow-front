@@ -34,6 +34,9 @@ export type EditalVersaoCatalogo = {
   publicada_em: string | null;
   published_at?: string | null;
   data_prova?: string | null;
+  inicio_inscricoes?: string | null;
+  encerramento_inscricoes?: string | null;
+  limite_pagamento?: string | null;
   classificacao: CatalogClassification;
   cargos: EditalCargoCatalogo[];
 };
@@ -97,7 +100,9 @@ export type EditalCatalogoInitialInput = EditalCatalogoInput & {
   cargo_nome: string;
   arquivo: File | null;
   logo: File | null;
-};
+} & EditalCronograma;
+
+export type EditalCronograma = Partial<Record<"inicio_inscricoes" | "encerramento_inscricoes" | "limite_pagamento" | "data_prova", string | null>>;
 
 export type EditalCatalogoPage = {
   items: EditalCatalogo[];
