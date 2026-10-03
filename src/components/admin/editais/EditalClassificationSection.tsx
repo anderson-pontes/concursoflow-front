@@ -13,46 +13,22 @@ import { Label } from "@/components/ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import { atualizarClassificacaoAdmin, criarClassificacaoAdmin, listarClassificacoesAdmin, salvarClassificacaoVersao } from "@/services/editaisCatalogo";
-import type { EditalVersaoCatalogo } from "@/types/editaisCatalogo";
+import { atualizarClassificacaoAdmin, criarClassificacaoAdmin, listarClassificacoesAdmin } from "@/services/editaisCatalogo";
+import type { ClassificationDraft } from "@/lib/adminEditalClassification";
 
-type Props = { editalId: string; version: EditalVersaoCatalogo; editable: boolean };
+type Props = { value: ClassificationDraft; onChange: (value: ClassificationDraft) => void; editable: boolean };
 
-export function EditalClassificationSection({ editalId, version, editable }: Props) {
-  const qc = useQueryClient();
+export function EditalClassificationSection({ value, onChange, editable }: Props) {
   const spheres = useQuery({ queryKey: ["admin-catalogo-classificacoes", "esfera"], queryFn: () => listarClassificacoesAdmin("esfera") });
   const areas = useQuery({ queryKey: ["admin-catalogo-classificacoes", "area"], queryFn: () => listarClassificacoesAdmin("area") });
-  const [sphere, setSphere] = React.useState(version.classificacao.esfera?.chave ?? "none");
-  const [selectedAreas, setSelectedAreas] = React.useState(version.classificacao.areas.map((item) => item.chave));
-  const [year, setYear] = React.useState(version.classificacao.ano_edital?.toString() ?? "");
-  const [source, setSource] = React.useState(version.classificacao.fonte_tipo ?? "manual_validado");
-  const [sourceRef, setSourceRef] = React.useState(version.classificacao.fonte_ref ?? "");
+  const { sphere, selectedAreas, year, source, sourceRef } = value;
+  const setSphere = (sphere: string) => onChange({ ...value, sphere });
+  const setSelectedAreas = (update: (current: string[]) => string[]) => onChange({ ...value, selectedAreas: update(selectedAreas) });
+  const setYear = (year: string) => onChange({ ...value, year });
+  const setSource = (source: string) => onChange({ ...value, source });
+  const setSourceRef = (sourceRef: string) => onChange({ ...value, sourceRef });
   const [managerOpen, setManagerOpen] = React.useState(false);
 
-  React.useEffect(() => {
-    setSphere(version.classificacao.esfera?.chave ?? "none");
-    setSelectedAreas(version.classificacao.areas.map((item) => item.chave));
-    setYear(version.classificacao.ano_edital?.toString() ?? "");
-    setSource(version.classificacao.fonte_tipo ?? "manual_validado");
-    setSourceRef(version.classificacao.fonte_ref ?? "");
-  }, [version]);
-
-  const save = useMutation({
-    mutationFn: () => salvarClassificacaoVersao(editalId, version.id, {
-      esfera_chave: sphere === "none" ? null : sphere,
-      area_chaves: selectedAreas,
-      ano_edital: year ? Number(year) : null,
-      fonte_tipo: sphere !== "none" || selectedAreas.length || year ? source : null,
-      fonte_ref: sourceRef.trim() || null,
-      expected_revision: version.classificacao.revision,
-    }),
-    onSuccess: () => {
-      void qc.invalidateQueries({ queryKey: ["admin-edital", editalId] });
-      void qc.invalidateQueries({ queryKey: ["catalogo-editais", "public"] });
-      toast.success("Classificação do catálogo salva.");
-    },
-    onError: () => toast.error("Não foi possível salvar. Atualize a página e tente novamente."),
-  });
   const hasClassification = sphere !== "none" || selectedAreas.length > 0 || Boolean(year);
 
   return <section className="rounded-xl border border-border bg-card p-5 shadow-sm" aria-labelledby="catalog-classification-title">
@@ -65,7 +41,7 @@ export function EditalClassificationSection({ editalId, version, editable }: Pro
       <div className="space-y-1.5"><Label htmlFor="catalog-source">Fonte da classificação</Label><Select value={source} onValueChange={setSource} disabled={!editable || !hasClassification}><SelectTrigger id="catalog-source" className="min-h-11"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="manual_validado">Validação administrativa</SelectItem><SelectItem value="edital">Edital oficial</SelectItem><SelectItem value="ato_oficial">Ato oficial</SelectItem><SelectItem value="importacao_validada">Importação validada</SelectItem></SelectContent></Select></div>
       <div className="space-y-1.5 md:col-span-2"><Label htmlFor="catalog-source-ref">Referência da fonte {hasClassification ? <span aria-hidden="true" className="text-destructive">*</span> : null}</Label><Input id="catalog-source-ref" maxLength={500} required={hasClassification} aria-describedby={hasClassification && !sourceRef.trim() ? "catalog-source-ref-help" : undefined} aria-invalid={hasClassification && !sourceRef.trim()} value={sourceRef} disabled={!editable || !hasClassification} onChange={(event) => setSourceRef(event.target.value)} placeholder="Ex.: Edital oficial nº 01/2026" />{hasClassification && !sourceRef.trim() ? <p id="catalog-source-ref-help" className="text-xs text-destructive">Informe a referência usada para validar a classificação.</p> : null}</div>
     </div>
-    {editable ? <div className="mt-4 flex justify-end"><Button type="button" className="min-h-11 gap-2" disabled={save.isPending || (hasClassification && !sourceRef.trim()) || (Boolean(year) && (Number(year) < 1900 || Number(year) > new Date().getFullYear() + 2))} onClick={() => save.mutate()}><Save className="h-4 w-4" />{save.isPending ? "Salvando…" : "Salvar classificação"}</Button></div> : <p className="mt-4 text-xs text-muted-foreground">Para alterar estes metadados, crie uma nova versão em rascunho.</p>}
+    <p className="mt-4 text-xs text-muted-foreground">{editable ? "As alterações desta seção serão incluídas ao salvar o rascunho ou publicar pelo botão principal." : "Para alterar estes metadados, crie uma nova versão em rascunho."}</p>
     <TaxonomyManager open={managerOpen} onOpenChange={setManagerOpen} />
   </section>;
 }

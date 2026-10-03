@@ -1,6 +1,6 @@
 import React from "react";
 import { isAxiosError } from "axios";
-import { ArrowDown, ArrowLeft, ArrowUp, BookOpen, Check, ChevronDown, ExternalLink, FileCheck2, FileSpreadsheet, FileText, ImageIcon, ListPlus, Pencil, Plus, Save, Send, Trash2, X } from "lucide-react";
+import { ArrowLeft, BookOpen, ExternalLink, FileCheck2, FileSpreadsheet, FileText, ImageIcon, Plus, Save, Send, Trash2 } from "lucide-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
@@ -10,14 +10,14 @@ import { EditalClassificationSection } from "@/components/admin/editais/EditalCl
 import { FileDropZone } from "@/components/concursos/FileDropZone";
 import { CatalogLogo } from "@/components/editais/CatalogLogo";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
 import { useConfirmDialog } from "@/components/ui/confirm-dialog";
 import { cn } from "@/lib/utils";
-import { parseBulkTopics, reorderCatalogItems } from "@/lib/adminEditalEditor";
+import { CargoContentEditor } from "@/components/admin/editais/CargoContentEditor";
+import { classificationDraft, classificationInput, classificationIssue } from "@/lib/adminEditalClassification";
+import type { ClassificationDraft } from "@/lib/adminEditalClassification";
 import { resolvePublicUrl } from "@/lib/publicUrl";
-import { atualizarEditalAdmin, criarVersaoRascunho, obterEditalAdmin, publicarVersao, removerEditalAdmin, salvarEstruturaVersao, uploadEditalAdmin, uploadLogoAdmin } from "@/services/editaisCatalogo";
-import type { EditalCargoCatalogo, EditalCatalogoInput, EditalDisciplinaCatalogo } from "@/types/editaisCatalogo";
+import { atualizarEditalAdmin, criarVersaoRascunho, obterEditalAdmin, publicarVersao, removerEditalAdmin, salvarClassificacaoVersao, salvarEstruturaVersao, uploadEditalAdmin, uploadLogoAdmin } from "@/services/editaisCatalogo";
+import type { EditalCargoCatalogo, EditalCatalogoInput } from "@/types/editaisCatalogo";
 
 const inputClass = "min-h-11 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-60";
 const newId = () => `novo-${Date.now()}-${Math.random().toString(36).slice(2)}`;
@@ -66,12 +66,30 @@ export function EditalCatalogoEditor() {
   const [pendingLogoFile, setPendingLogoFile] = React.useState<File | null>(null);
   const [meta, setMeta] = React.useState<EditalCatalogoInput>({ nome: "", orgao: "", banca: null, url_oficial: null });
   const [cargos, setCargos] = React.useState<EditalCargoCatalogo[]>([]);
+  const [classification, setClassification] = React.useState<{ versionId: string; value: ClassificationDraft; dirty: boolean } | null>(null);
 
   const query = useQuery({ queryKey: ["admin-edital", id], queryFn: () => obterEditalAdmin(id), enabled: Boolean(id) });
   const edital = query.data;
   const versao = edital?.versoes?.find((item) => item.status === "rascunho") ?? edital?.versao_atual ?? null;
   const editable = versao?.status === "rascunho";
   const metadataEditable = Boolean(editable && !edital?.versoes?.some((item) => item.status === "publicado"));
+  // Preserve unsaved edits and an acknowledged revision until refetch catches up.
+  // Once the server is current, its canonical fields become the clean baseline.
+  const classificationValue = versao ? (
+    classification?.versionId === versao.id && (classification.dirty || classification.value.revision > versao.classificacao.revision)
+      ? classification.value
+      : classificationDraft(versao)
+  ) : null;
+  const classificationDirty = classification?.versionId === versao?.id && classification?.dirty;
+  const saveClassification = async () => {
+    if (!versao || !classificationValue || !classificationDirty) return;
+    const issue = classificationIssue(classificationValue);
+    if (issue) throw new Error(issue);
+    await salvarClassificacaoVersao(id, versao.id, classificationInput(classificationValue));
+    // A later upload/publication failure must not replay the old revision.
+    setClassification({ versionId: versao.id, value: { ...classificationValue, revision: classificationValue.revision + 1 }, dirty: false });
+    void qc.invalidateQueries({ queryKey: ["catalogo-editais", "public"] });
+  };
 
   React.useEffect(() => {
     if (!edital || !versao) return;
@@ -83,9 +101,14 @@ export function EditalCatalogoEditor() {
   const saveMutation = useMutation({
     mutationFn: async () => {
       if (!versao) throw new Error("Versão não encontrada");
+      if (classificationDirty && classificationValue) {
+        const issue = classificationIssue(classificationValue);
+        if (issue) throw new Error(issue);
+      }
       if (metadataEditable) await atualizarEditalAdmin(id, meta);
       await salvarEstruturaVersao(id, versao.id, cargos);
-      if (pendingEditalFile) return uploadEditalAdmin(id, pendingEditalFile);
+      if (pendingEditalFile) await uploadEditalAdmin(id, pendingEditalFile);
+      await saveClassification();
       return obterEditalAdmin(id);
     },
     onSuccess: () => { setPendingEditalFile(null); void qc.invalidateQueries({ queryKey: ["admin-edital", id] }); void qc.invalidateQueries({ queryKey: ["admin-editais"] }); toast.success("Rascunho salvo."); },
@@ -94,9 +117,14 @@ export function EditalCatalogoEditor() {
   const publishMutation = useMutation({
     mutationFn: async () => {
       if (!versao) throw new Error("Versão não encontrada");
+      if (classificationDirty && classificationValue) {
+        const issue = classificationIssue(classificationValue);
+        if (issue) throw new Error(issue);
+      }
       if (metadataEditable) await atualizarEditalAdmin(id, meta);
       await salvarEstruturaVersao(id, versao.id, cargos);
       if (pendingEditalFile) await uploadEditalAdmin(id, pendingEditalFile);
+      await saveClassification();
       return publicarVersao(id, versao.id);
     },
     onSuccess: () => { setPendingEditalFile(null); void qc.invalidateQueries({ queryKey: ["admin-edital", id] }); void qc.invalidateQueries({ queryKey: ["admin-editais"] }); toast.success("Versão publicada no catálogo."); },
@@ -176,12 +204,14 @@ export function EditalCatalogoEditor() {
     }).then((confirmed) => {
       if (!confirmed) return;
       setCargos((items) => items.filter((item) => item.id !== cargoId).map((item, index) => ({ ...item, ordem: index + 1 })));
-      setSelectedCargoId((current) => current === cargoId ? null : current);
+      setSelectedCargoId((current) => current === cargoId ? cargos.find((item) => item.id !== cargoId)?.id ?? null : current);
     });
   };
 
   if (query.isLoading) return <div className="py-20 text-center text-sm text-muted-foreground" role="status">Carregando editor…</div>;
   if (query.isError || !edital || !versao) return <div role="alert" className="rounded-xl border border-destructive/30 bg-destructive/10 p-5 text-sm text-destructive">Não foi possível abrir este edital. <button className="font-semibold underline" onClick={() => void query.refetch()}>Tentar novamente</button></div>;
+  const totalDisciplines = cargos.reduce((total, cargo) => total + cargo.disciplinas.length, 0);
+  const totalTopics = cargos.reduce((total, cargo) => total + cargo.disciplinas.reduce((sum, disciplina) => sum + disciplina.topicos.length, 0), 0);
   const editalDocumentUrl = resolvePublicUrl(edital.edital_url);
   const editalDocumentName = edital.edital_url?.split("/").pop()?.split("?")[0] || "Documento do edital";
 
@@ -210,12 +240,12 @@ export function EditalCatalogoEditor() {
         {editalFileMutation.isError || removeEditalMutation.isError ? <p role="alert" className="mt-3 text-sm text-destructive">Não foi possível concluir a operação. O estado anterior foi preservado.</p> : null}
       </section>
 
-      <EditalClassificationSection editalId={id} version={versao} editable={editable} />
+      {classificationValue ? <EditalClassificationSection value={classificationValue} onChange={(value) => setClassification({ versionId: versao.id, value, dirty: true })} editable={editable && !saveMutation.isPending && !publishMutation.isPending} /> : null}
       </> : null}
 
       {activeTab === "conteudo" ? <section className="overflow-hidden rounded-xl border border-border bg-card shadow-sm">
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border p-4"><div><h2 className="font-semibold">Disciplinas e conteúdo</h2><p className="text-xs text-muted-foreground">{cargos.reduce((sum, cargo) => sum + cargo.disciplinas.length, 0)} disciplinas · {cargos.reduce((sum, cargo) => sum + cargo.disciplinas.reduce((subtotal, disciplina) => subtotal + disciplina.topicos.length, 0), 0)} tópicos</p></div>{editable ? <Button variant="outline" className="min-h-11 gap-2" onClick={addCargo}><Plus /> Adicionar cargo</Button> : null}</div>
-        {cargos.length > 1 ? <div className="grid min-h-[420px] lg:grid-cols-[280px_minmax(0,1fr)]"><nav className="border-b border-border bg-muted/30 p-3 lg:border-b-0 lg:border-r" aria-label="Cargos do concurso"><div className="flex gap-2 overflow-x-auto lg:block lg:space-y-1">{cargos.map((cargo) => <button key={cargo.id} type="button" onClick={() => setSelectedCargoId(cargo.id)} className={cn("min-h-11 min-w-[220px] rounded-lg px-3 py-2 text-left text-sm transition lg:w-full lg:min-w-0", selectedCargoId === cargo.id ? "bg-card font-semibold text-primary shadow-sm ring-1 ring-border" : "text-muted-foreground hover:bg-card hover:text-foreground")}><span className="block truncate">{cargo.nome}</span><span className="text-xs font-normal">{cargo.disciplinas.length} disciplinas</span></button>)}</div></nav><div className="min-w-0 p-4 sm:p-5">{selectedCargo ? <CargoEditor cargo={selectedCargo} disciplineSuggestions={disciplineSuggestions} editable={editable} allowRemove onChange={updateCargo} onRemove={() => removeCargo(selectedCargo.id)} requestConfirmation={requestConfirmation} /> : null}</div></div> : <div className="min-h-[320px] p-4 sm:p-5">{selectedCargo ? <CargoEditor cargo={selectedCargo} disciplineSuggestions={disciplineSuggestions} editable={editable} allowRemove={false} onChange={updateCargo} onRemove={() => removeCargo(selectedCargo.id)} requestConfirmation={requestConfirmation} /> : <div className="flex h-full min-h-[280px] flex-col items-center justify-center text-center"><BookOpen className="h-10 w-10 text-muted-foreground" /><p className="mt-3 font-medium">Nenhuma disciplina adicionada</p><p className="mt-1 max-w-md text-sm text-muted-foreground">Adicione as disciplinas que fazem parte do conteúdo programático deste edital.</p>{editable ? <Button className="mt-4 min-h-11" onClick={addCargo}><Plus /> Adicionar cargo principal</Button> : null}</div>}</div>}
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border p-4"><div><h2 className="font-semibold">Disciplinas e conteúdo</h2><p className="text-xs text-muted-foreground">{totalDisciplines} {totalDisciplines === 1 ? "disciplina" : "disciplinas"} · {totalTopics} {totalTopics === 1 ? "tópico" : "tópicos"}</p></div>{editable ? <Button variant="outline" className="min-h-11 gap-2" onClick={addCargo}><Plus /> Adicionar cargo</Button> : null}</div>
+        {cargos.length > 1 ? <div className="grid min-h-[420px] grid-cols-1 xl:grid-cols-[240px_minmax(0,1fr)]"><nav className="min-w-0 border-b border-border bg-muted/30 p-3 xl:border-b-0 xl:border-r" aria-label="Cargos do concurso"><div className="flex gap-2 overflow-x-auto xl:block xl:space-y-1">{cargos.map((cargo) => <button key={cargo.id} type="button" onClick={() => setSelectedCargoId(cargo.id)} aria-current={selectedCargoId === cargo.id ? "true" : undefined} title={cargo.nome} className={cn("min-h-11 min-w-[220px] rounded-lg px-3 py-2 text-left text-sm transition xl:w-full xl:min-w-0", selectedCargoId === cargo.id ? "bg-card font-semibold text-primary shadow-sm ring-1 ring-border" : "text-muted-foreground hover:bg-card hover:text-foreground")}><span className="block truncate">{cargo.nome}</span><span className="text-xs font-normal">{cargo.disciplinas.length} disciplinas</span></button>)}</div></nav><div className="min-w-0 p-4 sm:p-6">{selectedCargo ? <CargoContentEditor key={selectedCargo.id} cargo={selectedCargo} disciplineSuggestions={disciplineSuggestions} editable={editable && !saveMutation.isPending && !publishMutation.isPending} allowRemove onChange={updateCargo} onRemove={() => removeCargo(selectedCargo.id)} requestConfirmation={requestConfirmation} /> : null}</div></div> : <div className="min-h-[320px] p-4 sm:p-5">{selectedCargo ? <CargoContentEditor key={selectedCargo.id} cargo={selectedCargo} disciplineSuggestions={disciplineSuggestions} editable={editable && !saveMutation.isPending && !publishMutation.isPending} allowRemove={false} onChange={updateCargo} onRemove={() => removeCargo(selectedCargo.id)} requestConfirmation={requestConfirmation} /> : <div className="flex h-full min-h-[280px] flex-col items-center justify-center text-center"><BookOpen className="h-10 w-10 text-muted-foreground" /><p className="mt-3 font-medium">Nenhuma disciplina adicionada</p><p className="mt-1 max-w-md text-sm text-muted-foreground">Adicione as disciplinas que fazem parte do conteúdo programático deste edital.</p>{editable ? <Button className="mt-4 min-h-11" onClick={addCargo}><Plus /> Adicionar cargo principal</Button> : null}</div>}</div>}
       </section>
       : null}
 
@@ -223,76 +253,4 @@ export function EditalCatalogoEditor() {
       {confirmDialog}
     </div>
   );
-}
-
-type ConfirmRequest = ReturnType<typeof useConfirmDialog>["requestConfirmation"];
-
-function CargoEditor({ cargo, disciplineSuggestions, editable, allowRemove, onChange, onRemove, requestConfirmation }: { cargo: EditalCargoCatalogo; disciplineSuggestions: string[]; editable: boolean; allowRemove: boolean; onChange: (cargo: EditalCargoCatalogo) => void; onRemove: () => void; requestConfirmation: ConfirmRequest }) {
-  const [adding, setAdding] = React.useState(false);
-  const [name, setName] = React.useState("");
-  const updateDisciplina = (next: EditalDisciplinaCatalogo) => onChange({ ...cargo, disciplinas: cargo.disciplinas.map((item) => item.id === next.id ? next : item) });
-  const addDisciplina = () => {
-    const normalized = name.trim();
-    if (!normalized) return;
-    if (cargo.disciplinas.some((item) => item.nome.trim().toLocaleLowerCase("pt-BR") === normalized.toLocaleLowerCase("pt-BR"))) { toast.error("Esta disciplina já está neste cargo."); return; }
-    onChange({ ...cargo, disciplinas: [...cargo.disciplinas, { id: newId(), nome: normalized, sigla: null, ordem: cargo.disciplinas.length + 1, topicos: [] }] });
-    setName("");
-    toast.success("Disciplina adicionada.");
-  };
-  const removeDisciplina = (disciplina: EditalDisciplinaCatalogo) => void requestConfirmation({ title: "Remover disciplina?", description: `A disciplina “${disciplina.nome}” e seus ${disciplina.topicos.length} tópicos serão removidos deste edital.`, confirmLabel: "Remover disciplina", variant: "destructive" }).then((confirmed) => {
-    if (!confirmed) return;
-    onChange({ ...cargo, disciplinas: cargo.disciplinas.filter((item) => item.id !== disciplina.id).map((item, index) => ({ ...item, ordem: index + 1 })) });
-    toast.success("Disciplina removida.");
-  });
-  const normalizedSearch = name.trim().toLocaleLowerCase("pt-BR");
-  const currentNames = new Set(cargo.disciplinas.map((item) => item.nome.trim().toLocaleLowerCase("pt-BR")));
-  const matchingSuggestions = disciplineSuggestions
-    .filter((suggestion) => !currentNames.has(suggestion.toLocaleLowerCase("pt-BR")))
-    .filter((suggestion) => !normalizedSearch || suggestion.toLocaleLowerCase("pt-BR").includes(normalizedSearch))
-    .slice(0, 6);
-  return <div className="space-y-5">
-    <div className="flex flex-col gap-3 sm:flex-row sm:items-end"><label className="min-w-0 flex-1 text-sm font-medium">Cargo<Input className="mt-1.5" disabled={!editable} value={cargo.nome} onChange={(event) => onChange({ ...cargo, nome: event.target.value })} /></label>{editable && allowRemove ? <Button variant="ghost" className="min-h-11 text-destructive" onClick={onRemove}><Trash2 /> Remover cargo</Button> : null}</div>
-    <div className="flex flex-wrap items-center justify-between gap-3"><div><h3 className="font-semibold">Disciplinas</h3><p className="text-xs text-muted-foreground">Expanda uma disciplina para gerenciar seus conteúdos.</p></div>{editable ? <Button className="min-h-11" onClick={() => setAdding(true)}><Plus /> Adicionar disciplina</Button> : null}</div>
-    {adding ? <div className="rounded-xl border border-primary/30 bg-primary-muted/30 p-3"><label className="text-xs font-medium">Buscar ou criar disciplina<div className="mt-1.5 flex flex-col gap-2 sm:flex-row"><Input autoFocus role="combobox" aria-expanded={matchingSuggestions.length > 0} aria-controls="discipline-suggestions" value={name} onChange={(event) => setName(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") { event.preventDefault(); addDisciplina(); } }} placeholder="Ex.: Direito Administrativo" /><Button disabled={!name.trim()} onClick={addDisciplina}><Check /> Adicionar</Button><Button variant="ghost" onClick={() => { setAdding(false); setName(""); }}><X /> Cancelar</Button></div></label><p className="mt-2 text-xs text-muted-foreground">Selecione um nome já usado neste edital ou crie uma nova disciplina sem sair do editor.</p>{matchingSuggestions.length ? <div id="discipline-suggestions" role="listbox" aria-label="Disciplinas existentes" className="mt-2 flex flex-wrap gap-1">{matchingSuggestions.map((suggestion) => <Button key={suggestion} type="button" variant="outline" size="sm" role="option" onClick={() => setName(suggestion)}>{suggestion}</Button>)}</div> : null}{normalizedSearch && currentNames.has(normalizedSearch) ? <Badge className="mt-2" variant="outline">Já cadastrada neste cargo</Badge> : null}</div> : null}
-    <div className="space-y-3">{cargo.disciplinas.map((disciplina, index) => <DisciplinaEditor key={disciplina.id} disciplina={disciplina} editable={editable} onChange={updateDisciplina} onRemove={() => removeDisciplina(disciplina)} onMoveUp={() => onChange({ ...cargo, disciplinas: reorderCatalogItems(cargo.disciplinas, index, index - 1) })} onMoveDown={() => onChange({ ...cargo, disciplinas: reorderCatalogItems(cargo.disciplinas, index, index + 1) })} first={index === 0} last={index === cargo.disciplinas.length - 1} requestConfirmation={requestConfirmation} />)}
-      {!cargo.disciplinas.length ? <div className="rounded-lg border border-dashed border-border p-8 text-center"><BookOpen className="mx-auto h-8 w-8 text-primary" /><p className="mt-2 text-sm font-medium">Nenhuma disciplina adicionada</p><p className="mt-1 text-xs text-muted-foreground">Adicione as disciplinas que fazem parte do conteúdo programático deste edital.</p>{editable ? <Button variant="outline" className="mt-4 min-h-11" onClick={() => setAdding(true)}><Plus /> Adicionar disciplina</Button> : null}</div> : null}
-    </div>
-  </div>;
-}
-
-function DisciplinaEditor({ disciplina, editable, onChange, onRemove, onMoveUp, onMoveDown, first, last, requestConfirmation }: { disciplina: EditalDisciplinaCatalogo; editable: boolean; onChange: (disciplina: EditalDisciplinaCatalogo) => void; onRemove: () => void; onMoveUp: () => void; onMoveDown: () => void; first: boolean; last: boolean; requestConfirmation: ConfirmRequest }) {
-  const [open, setOpen] = React.useState(true);
-  const [editingName, setEditingName] = React.useState(false);
-  const [quickTopic, setQuickTopic] = React.useState("");
-  const [bulkOpen, setBulkOpen] = React.useState(false);
-  const [bulkText, setBulkText] = React.useState("");
-  const [bulkDraft, setBulkDraft] = React.useState<string[] | null>(null);
-  const addQuickTopic = () => {
-    const description = quickTopic.trim();
-    if (!description) return;
-    if (disciplina.topicos.some((item) => item.descricao.trim().toLocaleLowerCase("pt-BR") === description.toLocaleLowerCase("pt-BR"))) { toast.error("Este tópico já foi adicionado."); return; }
-    onChange({ ...disciplina, topicos: [...disciplina.topicos, { id: newId(), descricao: description, ordem: disciplina.topicos.length + 1, peso: 1 }] });
-    setQuickTopic("");
-  };
-  const removeTopic = (index: number) => void requestConfirmation({ title: "Remover conteúdo?", description: `O tópico “${disciplina.topicos[index].descricao}” será removido desta disciplina.`, confirmLabel: "Remover conteúdo", variant: "destructive" }).then((confirmed) => {
-    if (!confirmed) return;
-    onChange({ ...disciplina, topicos: disciplina.topicos.filter((_, itemIndex) => itemIndex !== index).map((item, itemIndex) => ({ ...item, ordem: itemIndex + 1 })) });
-    toast.success("Conteúdo removido.");
-  });
-  const prepareBulk = () => setBulkDraft(parseBulkTopics(bulkText, disciplina.topicos.map((item) => item.descricao)));
-  const addBulkTopics = () => {
-    const topics = (bulkDraft ?? []).map((item) => item.trim()).filter(Boolean);
-    if (!topics.length) return;
-    onChange({ ...disciplina, topicos: [...disciplina.topicos, ...topics.map((descricao, index) => ({ id: newId(), descricao, ordem: disciplina.topicos.length + index + 1, peso: 1 }))] });
-    setBulkText(""); setBulkDraft(null); setBulkOpen(false); toast.success(`${topics.length} conteúdos adicionados.`);
-  };
-  return <article className="rounded-xl border border-border bg-background/40">
-    <div className="flex items-center gap-1 p-3"><button type="button" className="flex min-h-11 min-w-0 flex-1 items-center gap-2 text-left" aria-expanded={open} onClick={() => setOpen((value) => !value)}><ChevronDown className={cn("h-4 w-4 shrink-0 transition", !open && "-rotate-90")} /><span className="min-w-0"><strong className="block truncate">{disciplina.nome}</strong><span className="text-xs text-muted-foreground">{disciplina.topicos.length} tópicos</span></span></button>{editable ? <><Button variant="ghost" size="icon-lg" disabled={first} aria-label={`Mover ${disciplina.nome} para cima`} onClick={onMoveUp}><ArrowUp /></Button><Button variant="ghost" size="icon-lg" disabled={last} aria-label={`Mover ${disciplina.nome} para baixo`} onClick={onMoveDown}><ArrowDown /></Button><Button variant="ghost" size="icon-lg" aria-label={`Editar nome de ${disciplina.nome}`} onClick={() => { setOpen(true); setEditingName(true); }}><Pencil /></Button><Button variant="ghost" size="icon-lg" aria-label={`Remover ${disciplina.nome}`} onClick={onRemove}><Trash2 className="text-destructive" /></Button></> : null}</div>
-    {open ? <div className="space-y-4 border-t border-border p-4">
-      {editingName ? <div className="grid gap-3 sm:grid-cols-[1fr_120px_auto]"><label className="text-xs font-medium">Nome<Input autoFocus className="mt-1" value={disciplina.nome} onChange={(event) => onChange({ ...disciplina, nome: event.target.value })} /></label><label className="text-xs font-medium">Sigla<Input className="mt-1" value={disciplina.sigla ?? ""} onChange={(event) => onChange({ ...disciplina, sigla: event.target.value || null })} /></label><Button variant="outline" className="self-end" onClick={() => setEditingName(false)}><Check /> Concluir</Button></div> : null}
-      {disciplina.topicos.length ? <div className="space-y-2">{disciplina.topicos.map((topico, index) => <div key={topico.id} className="grid gap-2 rounded-lg border border-border p-2 sm:grid-cols-[32px_minmax(0,1fr)_72px_132px] sm:items-center sm:border-0 sm:p-0"><span className="hidden text-center text-xs text-muted-foreground sm:block">{index + 1}</span><Input aria-label={`Tópico ${index + 1}`} disabled={!editable} value={topico.descricao} onChange={(event) => onChange({ ...disciplina, topicos: disciplina.topicos.map((item) => item.id === topico.id ? { ...item, descricao: event.target.value } : item) })} /><Input aria-label={`Peso do tópico ${index + 1}`} type="number" min={1} disabled={!editable} value={topico.peso} onChange={(event) => onChange({ ...disciplina, topicos: disciplina.topicos.map((item) => item.id === topico.id ? { ...item, peso: Math.max(1, Number(event.target.value) || 1) } : item) })} />{editable ? <div className="flex justify-end"><Button variant="ghost" size="icon-lg" disabled={index === 0} aria-label={`Mover tópico ${index + 1} para cima`} onClick={() => onChange({ ...disciplina, topicos: reorderCatalogItems(disciplina.topicos, index, index - 1) })}><ArrowUp /></Button><Button variant="ghost" size="icon-lg" disabled={index === disciplina.topicos.length - 1} aria-label={`Mover tópico ${index + 1} para baixo`} onClick={() => onChange({ ...disciplina, topicos: reorderCatalogItems(disciplina.topicos, index, index + 1) })}><ArrowDown /></Button><Button variant="ghost" size="icon-lg" aria-label={`Remover tópico ${index + 1}`} onClick={() => removeTopic(index)}><Trash2 className="text-destructive" /></Button></div> : null}</div>)}</div> : <div className="rounded-lg border border-dashed border-border p-5 text-center"><p className="text-sm font-medium">Nenhum conteúdo cadastrado nesta disciplina.</p><p className="mt-1 text-xs text-muted-foreground">Digite o primeiro tópico abaixo ou adicione vários em lote.</p></div>}
-      {editable ? <><label className="block text-xs font-medium">Adicionar tópico rapidamente<div className="mt-1.5 flex gap-2"><Input value={quickTopic} onChange={(event) => setQuickTopic(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") { event.preventDefault(); addQuickTopic(); } }} placeholder="Digite o conteúdo e pressione Enter" /><Button variant="outline" disabled={!quickTopic.trim()} onClick={addQuickTopic}><Plus /> Adicionar</Button></div><span className="mt-1 block font-normal text-muted-foreground">Após adicionar, o campo permanece pronto para o próximo tópico.</span></label><Button variant="ghost" className="min-h-11" aria-expanded={bulkOpen} onClick={() => { setBulkOpen((value) => !value); setBulkDraft(null); }}><ListPlus /> Adicionar conteúdo em lote</Button>
-        {bulkOpen ? <div className="space-y-3 rounded-xl border border-primary/20 bg-primary-muted/30 p-4"><label className="block text-xs font-medium">Cole um tópico por linha<textarea autoFocus rows={6} className="mt-1.5 w-full resize-y rounded-lg border border-border bg-background px-3 py-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring" value={bulkText} onChange={(event) => { setBulkText(event.target.value); setBulkDraft(null); }} placeholder={"1 Redes de computadores\n1.1 Modelo OSI\n1.2 TCP/IP"} /></label>{bulkDraft ? <div className="space-y-2"><p className="text-sm font-semibold">{bulkDraft.length} tópicos identificados</p>{bulkDraft.map((item, index) => <div key={`${index}-${item}`} className="flex gap-2"><Input aria-label={`Conteúdo em lote ${index + 1}`} value={item} onChange={(event) => setBulkDraft((current) => current?.map((value, itemIndex) => itemIndex === index ? event.target.value : value) ?? null)} /><Button variant="ghost" size="icon-lg" aria-label={`Excluir conteúdo em lote ${index + 1}`} onClick={() => setBulkDraft((current) => current?.filter((_, itemIndex) => itemIndex !== index) ?? null)}><Trash2 /></Button></div>)}</div> : null}<div className="flex flex-wrap justify-end gap-2"><Button variant="ghost" onClick={() => { setBulkOpen(false); setBulkText(""); setBulkDraft(null); }}>Cancelar</Button>{bulkDraft ? <Button disabled={!bulkDraft.some((item) => item.trim())} onClick={addBulkTopics}>Confirmar {bulkDraft.filter((item) => item.trim()).length} tópicos</Button> : <Button disabled={!bulkText.trim()} onClick={prepareBulk}>Revisar tópicos</Button>}</div></div> : null}</> : null}
-    </div> : null}
-  </article>;
 }
