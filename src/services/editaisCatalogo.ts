@@ -1,4 +1,5 @@
 import { api } from "@/services/api";
+import type { DraftDelta, DraftDeltaAck } from "@/lib/catalogDraftDelta";
 import type {
   AtivacaoEditalResponse,
   CatalogClassification,
@@ -82,6 +83,10 @@ export async function listarEditaisAdmin(search = "", status = ""): Promise<Edit
 
 export async function obterEditalAdmin(id: string): Promise<EditalCatalogo> {
   return normalize((await api.get<RawEdital>(`/admin/editais/${id}`)).data);
+}
+
+export async function salvarDeltaEstrutura(editalId: string, versaoId: string, delta: DraftDelta): Promise<DraftDeltaAck> {
+  return (await api.patch<DraftDeltaAck>(`/admin/editais/${editalId}/versoes/${versaoId}/estrutura`, delta)).data;
 }
 
 export async function criarEditalAdmin(input: EditalCatalogoInitialInput): Promise<EditalCatalogo> {

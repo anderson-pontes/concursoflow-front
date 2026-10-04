@@ -29,6 +29,7 @@ export type EditalCargoCatalogo = {
 
 export type EditalVersaoCatalogo = {
   id: string;
+  estrutura_revision?: number;
   numero: string;
   status: EditalStatus;
   publicada_em: string | null;

@@ -107,7 +107,7 @@ try {
     await choose(page, "Cargo de origem", "Analista");
   };
   const save = async () => {
-    const saved = page.waitForResponse((r) => r.url().endsWith("/estrutura") && r.request().method() === "PUT");
+    const saved = page.waitForResponse((r) => r.url().endsWith("/estrutura") && r.request().method() === "PATCH");
     await clickText(page, "Salvar rascunho");
     assert.equal((await saved).status(), 200);
     await page.waitForFunction(() => [...document.querySelectorAll("button")].some((n) => n.textContent.trim() === "Salvar rascunho" && !n.disabled));

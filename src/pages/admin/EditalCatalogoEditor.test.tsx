@@ -16,6 +16,7 @@ const services = vi.hoisted(() => ({
   publicarVersao: vi.fn(),
   removerEditalAdmin: vi.fn(),
   salvarEstruturaVersao: vi.fn(),
+  salvarDeltaEstrutura: vi.fn(),
   salvarCronogramaVersao: vi.fn(),
   salvarClassificacaoVersao: vi.fn(),
   listarClassificacoesAdmin: vi.fn(),
@@ -93,6 +94,40 @@ function renderEditor(path = "/admin/editais/edital-1/editar?tab=conteudo") {
 }
 
 describe("Editor administrativo de edital", () => {
+  it("salva um tópico por delta sem metadados limpos, PUT integral ou GET após sucesso", async () => {
+    const user = userEvent.setup(); renderEditor();
+    await user.type(await screen.findByRole("textbox", { name: "Tópico 1" }), " editado");
+    await user.click(screen.getByRole("button", { name: "Salvar rascunho" }));
+    await waitFor(() => expect(toast.success).toHaveBeenCalledWith("Rascunho salvo."));
+    expect(services.salvarDeltaEstrutura).toHaveBeenCalledWith("edital-1", "versao-1", expect.objectContaining({ operations: [expect.objectContaining({ entity: "topico", id: "topico-1" })] }));
+    expect(services.salvarEstruturaVersao).not.toHaveBeenCalled(); expect(services.atualizarEditalAdmin).not.toHaveBeenCalled(); expect(services.obterEditalAdmin).toHaveBeenCalledTimes(1);
+  });
+  it("refetch não substitui um tópico local nem avança a revisão de base", async () => {
+    const user = userEvent.setup(); const { queryClient } = renderEditor();
+    await user.type(await screen.findByRole("textbox", { name: "Tópico 1" }), " local");
+    await act(async () => { queryClient.setQueryData(["admin-edital", "edital-1"], { ...edital, versoes: [{ ...edital.versoes![0], estrutura_revision: 9 }] }); });
+    expect(screen.getByRole("textbox", { name: "Tópico 1" })).toHaveValue("Interpretação de textos local");
+    await user.click(screen.getByRole("button", { name: "Salvar rascunho" }));
+    await waitFor(() => expect(services.salvarDeltaEstrutura).toHaveBeenCalledWith("edital-1", "versao-1", expect.objectContaining({ expected_revision: 0 })));
+  });
+  it("mantém dados e mutation após erro e não usa fallback integral", async () => {
+    const user = userEvent.setup(); services.salvarDeltaEstrutura.mockRejectedValueOnce(new Error("Falha de rede")); renderEditor();
+    await user.type(await screen.findByRole("textbox", { name: "Tópico 1" }), " local");
+    await user.click(screen.getByRole("button", { name: "Salvar rascunho" }));
+    await waitFor(() => expect(toast.error).toHaveBeenCalledWith("Falha de rede"));
+    expect(screen.getByRole("textbox", { name: "Tópico 1" })).toHaveValue("Interpretação de textos local");
+    await user.click(screen.getByRole("button", { name: "Salvar rascunho" }));
+    await waitFor(() => expect(services.salvarDeltaEstrutura).toHaveBeenCalledTimes(2));
+    expect(services.salvarDeltaEstrutura.mock.calls[0][2]).toBe(services.salvarDeltaEstrutura.mock.calls[1][2]);
+    expect(services.salvarEstruturaVersao).not.toHaveBeenCalled();
+  });
+  it("409 mostra conflito sem apagar dados locais ou reenviar a árvore", async () => {
+    const user = userEvent.setup(); services.salvarDeltaEstrutura.mockRejectedValueOnce({ isAxiosError: true, response: { status: 409, data: { detail: "structure_conflict" } } }); renderEditor();
+    await user.type(await screen.findByRole("textbox", { name: "Tópico 1" }), " local");
+    await user.click(screen.getByRole("button", { name: "Salvar rascunho" }));
+    expect(await screen.findByRole("alert")).toHaveTextContent("alterações locais foram preservadas");
+    expect(screen.getByRole("textbox", { name: "Tópico 1" })).toHaveValue("Interpretação de textos local"); expect(services.salvarEstruturaVersao).not.toHaveBeenCalled();
+  });
   it("salva somente o cronograma publicado com confirmação e sem alterar conteúdo", async () => {
     const user = userEvent.setup();
     const version = { ...edital.versoes![0], status: "publicado" as const, data_prova: "2026-12-01" };
@@ -118,6 +153,7 @@ describe("Editor administrativo de edital", () => {
     services.atualizarEditalAdmin.mockResolvedValue(edital);
     services.removerEditalAdmin.mockResolvedValue({ ...edital, edital_url: null });
     services.salvarEstruturaVersao.mockResolvedValue(edital.versoes?.[0]);
+    services.salvarDeltaEstrutura.mockImplementation(async (_editalId, _versionId, delta) => ({ revision: delta.expected_revision + 1, id_map: Object.fromEntries(delta.operations.filter((op: { id: string }) => op.id.startsWith("novo-")).map((op: { id: string }) => [op.id, crypto.randomUUID()])) }));
     services.listarClassificacoesAdmin.mockResolvedValue([]);
     services.salvarClassificacaoVersao.mockResolvedValue(undefined);
   });
@@ -260,11 +296,13 @@ describe("Editor administrativo de edital", () => {
     await user.click(card.getByRole("button", { name: /mover tópico 3 para cima/i }));
     await user.click(screen.getByRole("button", { name: /salvar rascunho/i }));
 
-    await waitFor(() => expect(services.salvarEstruturaVersao).toHaveBeenCalledTimes(1));
-    const [, , cargos] = services.salvarEstruturaVersao.mock.calls[0];
-    const savedDiscipline = cargos[0].disciplinas.find((item: { nome: string }) => item.nome === "Banco de Dados e SQL");
-    expect(savedDiscipline.topicos.map((item: { descricao: string }) => item.descricao)).toEqual(["SQL", "Normalização", "Modelagem de dados"]);
-    expect(savedDiscipline.topicos.map((item: { ordem: number }) => item.ordem)).toEqual([1, 2, 3]);
+    await waitFor(() => expect(services.salvarDeltaEstrutura).toHaveBeenCalledTimes(1));
+    const [, , delta] = services.salvarDeltaEstrutura.mock.calls[0];
+    expect(delta.operations.find((op: { entity: string }) => op.entity === "disciplina").data.nome).toBe("Banco de Dados e SQL");
+    const topics = delta.operations.filter((op: { entity: string }) => op.entity === "topico").sort((a: { data: { numero_ordem: number } }, b: { data: { numero_ordem: number } }) => a.data.numero_ordem - b.data.numero_ordem);
+    expect(topics.map((op: { data: { descricao: string } }) => op.data.descricao)).toEqual(["SQL", "Normalização", "Modelagem de dados"]);
+    expect(topics.map((op: { data: { numero_ordem: number } }) => op.data.numero_ordem)).toEqual([1, 2, 3]);
+    expect(services.salvarEstruturaVersao).not.toHaveBeenCalled();
   }, 10_000);
 
   it("confirma a remoção sem usar confirmação nativa", async () => {
@@ -296,10 +334,8 @@ describe("Editor administrativo de edital", () => {
     await user.click(screen.getByRole("button", { name: "Limpar busca" }));
     expect(screen.getByRole("textbox", { name: "Tópico 1" })).toHaveValue("Interpretação de textos e compreensão de\ntextos longos");
     await user.click(screen.getByRole("button", { name: /salvar rascunho/i }));
-    await waitFor(() => expect(services.salvarEstruturaVersao).toHaveBeenCalledWith(
-      "edital-1", "versao-1", expect.arrayContaining([expect.objectContaining({ disciplinas: expect.arrayContaining([
-        expect.objectContaining({ topicos: expect.arrayContaining([expect.objectContaining({ descricao: "Interpretação de textos e compreensão de\ntextos longos" })]) }),
-      ]) })]),
+    await waitFor(() => expect(services.salvarDeltaEstrutura).toHaveBeenCalledWith(
+      "edital-1", "versao-1", expect.objectContaining({ operations: [expect.objectContaining({ entity: "topico", data: expect.objectContaining({ descricao: "Interpretação de textos e compreensão de\ntextos longos" }) })] }),
     ));
   });
 
@@ -319,20 +355,21 @@ describe("Editor administrativo de edital", () => {
   it("bloqueia formulários de disciplina já abertos durante o salvamento", async () => {
     const user = userEvent.setup();
     let finishSave!: (value: unknown) => void;
-    services.salvarEstruturaVersao.mockImplementationOnce(() => new Promise((resolve) => { finishSave = resolve; }));
+    services.salvarDeltaEstrutura.mockImplementationOnce(() => new Promise((resolve) => { finishSave = resolve; }));
     renderEditor();
     await screen.findByRole("textbox", { name: "Tópico 1" });
+    await user.type(screen.getByRole("textbox", { name: "Tópico 1" }), " editado");
     await user.click(screen.getByRole("button", { name: "Editar nome de Português" }));
     await user.click(screen.getByRole("button", { name: "Adicionar disciplina" }));
     const disciplineInput = screen.getByRole("combobox");
     await user.type(disciplineInput, "Direito");
     await user.click(screen.getByRole("button", { name: /salvar rascunho/i }));
-    await waitFor(() => expect(services.salvarEstruturaVersao).toHaveBeenCalled());
+    await waitFor(() => expect(services.salvarDeltaEstrutura).toHaveBeenCalled());
     expect(disciplineInput).toBeDisabled();
     expect(screen.getByLabelText("Nome", { exact: true })).toBeDisabled();
     expect(screen.getByLabelText("Sigla")).toBeDisabled();
     expect(screen.getByRole("button", { name: "Adicionar" })).toBeDisabled();
-    await act(async () => { finishSave(edital.versoes![0]); });
+    await act(async () => { finishSave({ revision: 1, id_map: {} }); });
     await waitFor(() => expect(disciplineInput).toBeEnabled());
   });
 
