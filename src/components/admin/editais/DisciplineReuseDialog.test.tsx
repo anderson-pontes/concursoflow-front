@@ -1,5 +1,5 @@
 import React from "react";
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeAll, describe, expect, it, vi } from "vitest";
 import { DisciplineReuseDialog } from "@/components/admin/editais/DisciplineReuseDialog";
@@ -31,6 +31,29 @@ async function open(cargo = target, sources = [source, cargo]) {
 }
 
 describe("DisciplineReuseDialog", () => {
+  it("isola a lista longa rolável dos controles de origem e do rodapé", async () => {
+    const longSource = { ...source, disciplinas: Array.from({ length: 40 }, (_, i) => ({
+      ...source.disciplinas[0], id: `subject-${i}`, nome: `Matéria ${i + 1}`, ordem: i + 1,
+    })) };
+    const onChange = await open(target, [longSource, target]);
+    const dialog = screen.getByRole("dialog");
+    const list = screen.getByRole("region", { name: "Seleção de matérias" });
+    expect(dialog).toHaveClass("flex", "flex-col", "max-h-[90dvh]", "overflow-hidden");
+    expect(list).toHaveClass("min-h-0", "flex-1", "overflow-y-auto");
+    expect(within(list).getAllByRole("checkbox")).toHaveLength(40);
+    expect(list).toContainElement(screen.getByRole("button", { name: "Selecionar todas" }));
+    expect(list).not.toContainElement(screen.getByRole("combobox", { name: "Cargo de origem" }));
+    expect(list).not.toContainElement(screen.getByRole("combobox", { name: "O que copiar?" }));
+    const footer = screen.getByRole("button", { name: "Adicionar selecionadas" }).parentElement!.parentElement!;
+    expect(footer).toHaveClass("shrink-0");
+    expect(footer).toContainElement(screen.getByRole("status"));
+    expect(list).not.toContainElement(footer);
+    expect(dialog.querySelector("fieldset")).toBeNull();
+    await userEvent.click(screen.getByRole("checkbox", { name: "Matéria 40" }));
+    expect(screen.getByRole("status")).toHaveTextContent("1 matéria selecionada");
+    await userEvent.click(screen.getByRole("button", { name: "Adicionar selecionadas" }));
+    expect(onChange.mock.calls[0][0].disciplinas[0].nome).toBe("Matéria 40");
+  });
   it("não pré-seleciona e adiciona apenas a matéria escolhida com conteúdo", async () => {
     const onChange = await open();
     expect(screen.getByRole("button", { name: "Adicionar selecionadas" })).toBeDisabled();

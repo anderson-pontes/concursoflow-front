@@ -47,27 +47,32 @@ export function DisciplineReuseDialog({ cargo, sourceCargos, editable, onChange 
   return <div className="min-w-0">
     <Dialog open={open} onOpenChange={changeOpen}>
       <DialogTrigger asChild><Button type="button" variant="outline" disabled={!sources.length} className="h-auto min-h-11 w-full whitespace-normal sm:w-auto"><Copy aria-hidden="true" /> Adicionar matérias de outro cargo</Button></DialogTrigger>
-      <DialogContent className="flex max-h-[90dvh] w-[calc(100%-2rem)] max-w-xl flex-col overflow-hidden rounded-xl p-4 sm:p-6">
-        <DialogHeader className="shrink-0 pr-10 text-left">
-          <DialogTitle>Adicionar matérias de outro cargo</DialogTitle>
-          <DialogDescription>Copie matérias para {cargo.nome || "este cargo"}. As cópias são independentes e não alteram o cargo de origem.</DialogDescription>
-        </DialogHeader>
-        <fieldset disabled={!editable} className="min-h-0 min-w-0 space-y-4 overflow-y-auto pr-1">
-          <div className="space-y-2">
-            <label htmlFor={`${labelId}-source`} className="text-sm font-medium">Cargo de origem</label>
-            <Select value={sourceId} onValueChange={(id) => { setSourceId(id); setSelected(new Set()); }}>
-              <SelectTrigger id={`${labelId}-source`}><SelectValue placeholder="Selecione outro cargo" /></SelectTrigger>
-              <SelectContent>{sources.map((item) => <SelectItem key={item.id} value={item.id} className="min-h-11">{item.nome || "Cargo sem nome"}</SelectItem>)}</SelectContent>
-            </Select>
+      <DialogContent className="flex max-h-[90dvh] min-h-0 w-[calc(100%-2rem)] max-w-xl flex-col gap-3 overflow-hidden rounded-xl p-4 sm:p-6">
+        <div className="shrink-0 space-y-2">
+          <DialogHeader className="pr-10 text-left">
+            <DialogTitle>Adicionar matérias de outro cargo</DialogTitle>
+            <DialogDescription>Cópias independentes para {cargo.nome || "este cargo"}, sem alterar o cargo de origem.</DialogDescription>
+          </DialogHeader>
+          <div className="grid min-w-0 gap-2 sm:grid-cols-2">
+            <div className="space-y-1">
+              <label htmlFor={`${labelId}-source`} className="text-sm font-medium">Cargo de origem</label>
+              <Select value={sourceId} onValueChange={(id) => { setSourceId(id); setSelected(new Set()); }}>
+                <SelectTrigger id={`${labelId}-source`}><SelectValue placeholder="Selecione outro cargo" /></SelectTrigger>
+                <SelectContent>{sources.map((item) => <SelectItem key={item.id} value={item.id} className="min-h-11">{item.nome || "Cargo sem nome"}</SelectItem>)}</SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-1">
+              <label htmlFor={`${labelId}-scope`} className="text-sm font-medium">O que copiar?</label>
+              <Select value={includeTopics ? "content" : "subjects"} onValueChange={(value) => setIncludeTopics(value === "content")}>
+                <SelectTrigger id={`${labelId}-scope`}><SelectValue /></SelectTrigger>
+                <SelectContent><SelectItem value="content" className="min-h-11">Matérias + conteúdo programático</SelectItem><SelectItem value="subjects" className="min-h-11">Somente matérias</SelectItem></SelectContent>
+              </Select>
+            </div>
           </div>
-          <div className="space-y-2">
-            <label htmlFor={`${labelId}-scope`} className="text-sm font-medium">O que copiar?</label>
-            <Select value={includeTopics ? "content" : "subjects"} onValueChange={(value) => setIncludeTopics(value === "content")}>
-              <SelectTrigger id={`${labelId}-scope`}><SelectValue /></SelectTrigger>
-              <SelectContent><SelectItem value="content" className="min-h-11">Matérias + conteúdo programático</SelectItem><SelectItem value="subjects" className="min-h-11">Somente matérias</SelectItem></SelectContent>
-            </Select>
-            <p className="text-xs text-muted-foreground">{includeTopics ? "Inclui todos os tópicos e subtópicos cadastrados, preservando texto e pesos." : "Adiciona as matérias sem tópicos, para cadastrar um conteúdo próprio."}</p>
-          </div>
+          <p className="text-xs text-muted-foreground">{includeTopics ? "Inclui tópicos e subtópicos, preservando textos e pesos." : "Adiciona matérias sem tópicos para criar seu próprio conteúdo."}</p>
+        </div>
+        {/* A fieldset's intrinsic content box can overflow its flex allocation. */}
+        <div data-reuse-list role="region" aria-label="Seleção de matérias" tabIndex={0} className="min-h-0 min-w-0 flex-1 overflow-y-auto overscroll-contain rounded-lg pb-1 pr-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset">
           {!source ? <p className="rounded-lg border border-dashed border-border p-4 text-sm text-muted-foreground">Escolha um cargo para visualizar suas matérias.</p> : !source.disciplinas.length ? <p role="status" className="rounded-lg border border-dashed border-border p-4 text-sm text-muted-foreground">Este cargo ainda não possui matérias cadastradas.</p> : <section aria-label="Matérias disponíveis" className="space-y-2">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <h3 className="text-sm font-semibold">Selecione as matérias</h3>
@@ -81,10 +86,10 @@ export function DisciplineReuseDialog({ cargo, sourceCargos, editable, onChange 
               </label>;
             })}
           </section>}
-        </fieldset>
-        <div className="shrink-0 space-y-3 border-t border-border pt-3">
-          <p role="status" aria-live="polite" className="text-xs text-muted-foreground">{count} {count === 1 ? "matéria selecionada" : "matérias selecionadas"}. As alterações serão adicionadas ao rascunho; use o botão principal para salvar.</p>
-          <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end"><Button type="button" variant="outline" className="min-h-11" onClick={() => setOpen(false)}>Cancelar</Button><Button type="button" className="min-h-11" disabled={!editable || !count} onClick={confirm}>Adicionar selecionadas</Button></div>
+        </div>
+        <div className="shrink-0 space-y-2 border-t border-border pt-3">
+          <p role="status" aria-live="polite" className="text-xs text-muted-foreground">{count} {count === 1 ? "matéria selecionada" : "matérias selecionadas"}. Adicione ao rascunho e salve pelo botão principal.</p>
+          <div className="grid grid-cols-[auto_minmax(0,1fr)] gap-2 sm:flex sm:justify-end"><Button type="button" variant="outline" className="min-h-11" onClick={() => setOpen(false)}>Cancelar</Button><Button type="button" className="h-auto min-h-11 whitespace-normal" disabled={!editable || !count} onClick={confirm}>Adicionar selecionadas</Button></div>
         </div>
       </DialogContent>
     </Dialog>

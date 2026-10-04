@@ -180,8 +180,58 @@ try {
   assert.equal(loaded.cargos[1].disciplinas[1].nome, "Direito");
   assert.equal(loaded.cargos[1].disciplinas[1].topicos.length, 0);
   assert.deepEqual(structure(loaded).cargos[0], original);
+  // Long real database list: catch intrinsic fieldset sizing/overflow into the footer.
+  const longStructure = structure(loaded);
+  longStructure.cargos[0].disciplinas.push(...Array.from({ length: 38 }, (_, i) => ({
+    nome: `Matéria ${i + 3} — Legislação e conhecimentos específicos da administração pública`,
+    ordem: i + 3,
+    topicos: Array.from({ length: 15 }, (_, j) => ({ descricao: `Conteúdo programático ${j + 1}`, numero_ordem: j + 1, peso: 1 })),
+  })));
+  await api(page, endpoint, "PUT", longStructure);
+  const longListViewports = [[1440, 900], [1280, 600], [375, 812], [375, 667], [360, 640], [900, 500]];
+  for (const [width, height] of longListViewports) {
+    await page.setViewport({ width, height });
+    await loadTarget();
+    await openSource();
+    const measure = () => page.evaluate(() => {
+      const dialog = document.querySelector('[role="dialog"]');
+      const list = dialog.querySelector('[data-reuse-list]') ?? dialog.querySelector('fieldset');
+      const action = [...dialog.querySelectorAll('button')].find((n) => n.textContent.trim() === 'Adicionar selecionadas');
+      const footer = action.parentElement.parentElement;
+      const bounds = (el) => { const r = el.getBoundingClientRect(); return { top: r.top, bottom: r.bottom }; };
+      const scrollAreas = [...dialog.querySelectorAll('*')].filter((n) => ['auto', 'scroll'].includes(getComputedStyle(n).overflowY) && n.scrollHeight > n.clientHeight + 1);
+      return { dialog: bounds(dialog), list: bounds(list), footer: bounds(footer), action: bounds(action),
+        source: bounds(dialog.querySelector('[role="combobox"]')), last: bounds(list.querySelector('section > label:last-child')),
+        scrollAreas: scrollAreas.length, scrollHeight: list.scrollHeight, clientHeight: list.clientHeight,
+        horizontalOverflow: dialog.scrollWidth > dialog.clientWidth + 1, viewportHeight: innerHeight };
+    });
+    const before = await measure();
+    console.log(JSON.stringify({ longListViewport: [width, height], geometry: before }));
+    await page.screenshot({ path: resolve(artifacts, `long-list-${width}-${height}-top.png`) });
+    assert(before.dialog.top >= 0 && before.dialog.bottom <= height + 1, 'Dialog must fit viewport');
+    assert(before.list.bottom <= before.footer.top + 1, 'List must not extend into footer');
+    assert(before.clientHeight > 0 && before.scrollHeight > before.clientHeight, 'List must scroll');
+    assert.equal(before.scrollAreas, 1, 'Only the list may scroll');
+    assert.equal(before.horizontalOverflow, false);
+    await page.evaluate(() => { const d = document.querySelector('[role="dialog"]'); const list = d.querySelector('[data-reuse-list]') ?? d.querySelector('fieldset'); list.scrollTop = list.scrollHeight; });
+    const after = await measure();
+    assert.equal(after.footer.top, before.footer.top, 'Footer position must remain fixed');
+    assert.equal(after.source.top, before.source.top, 'Origin controls must remain fixed');
+    assert(after.last.bottom <= after.list.bottom + 1 && after.last.top >= after.list.top - 1, 'Last complete card must be reachable');
+    assert(after.action.bottom <= height && after.action.top >= after.footer.top, 'CTA always visible');
+    await page.screenshot({ path: resolve(artifacts, `long-list-${width}-${height}-bottom.png`) });
+    await clickText(page, 'Selecionar todas', '[role="dialog"]');
+    await page.waitForFunction(() => document.querySelectorAll('[role="dialog"] [role="checkbox"][data-state="checked"]').length === 38);
+    assert(await page.$eval('[role="dialog"] [aria-live="polite"]', (n) => n.textContent.startsWith('38 matérias selecionadas')));
+    await page.evaluate(() => { const list = document.querySelector('[data-reuse-list]'); list.scrollTop = list.scrollHeight; });
+    const selectedGeometry = await measure();
+    assert(selectedGeometry.list.bottom <= selectedGeometry.footer.top && selectedGeometry.action.bottom <= height, 'Selected counter must not overlap cards or buttons');
+    await page.screenshot({ path: resolve(artifacts, `long-list-${width}-${height}-selected.png`) });
+    await clickText(page, 'Cancelar', '[role="dialog"]');
+    assert.equal((await api(page, `/admin/editais/${root.id}`)).versoes[0].cargos[1].disciplinas.length, 2);
+  }
   assert.deepEqual(errors, []);
-  console.log(JSON.stringify({ passed: true, auth: "real login/JWT", database: "disposable local PostgreSQL", fixtures: false, widths: [1440,375,360], flows: ["selection", "cancel", "draft-not-autosaved", "save-reload", "independent-IDs", "duplicates", "edit-isolation", "confirm-remove-isolation", "reimport-subject-only"], screenshots: "workspace/.aiox/qa/story-29-7" }));
+  console.log(JSON.stringify({ passed: true, auth: "real login/JWT", database: "disposable local PostgreSQL", fixtures: false, widths: [1440,375,360], longListViewports, flows: ["selection", "cancel", "draft-not-autosaved", "save-reload", "independent-IDs", "duplicates", "edit-isolation", "confirm-remove-isolation", "reimport-subject-only", "long-list-single-scroll", "fixed-header-footer", "last-card-reachable", "selected-count-visible"], screenshots: "workspace/.aiox/qa/story-29-7" }));
 } finally {
   await browser?.close();
   await new Promise((done) => server.close(done));
