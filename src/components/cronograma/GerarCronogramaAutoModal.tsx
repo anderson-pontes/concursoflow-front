@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { DatePicker } from "@/components/ui/date-picker";
 import { useConfirmDialog } from "@/components/ui/confirm-dialog";
+import { useConcursoAtivoId } from "@/stores/concursoStore";
 import { api } from "@/services/api";
 import { createTelemetryJourney, telemetryErrorCode } from "@/services/telemetry";
 
@@ -77,6 +78,7 @@ export function GerarCronogramaAutoModal({
   hasConcursoAtivo,
   onSaved,
 }: GerarCronogramaAutoModalProps) {
+  const concursoAtivoId = useConcursoAtivoId();
   const { requestConfirmation, confirmDialog } = useConfirmDialog();
   const telemetryJourney = React.useRef(createTelemetryJourney());
   const [sessoesPorDia, setSessoesPorDia] = React.useState<Record<number, number>>({
@@ -154,6 +156,7 @@ export function GerarCronogramaAutoModal({
     data_fim: dataFim,
     disciplina_ids: includedRows.map((r) => r.disciplina_id),
     salvar,
+    concurso_id: concursoAtivoId,
   });
 
   const gerarMutation = useMutation({

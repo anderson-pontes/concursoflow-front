@@ -74,7 +74,6 @@ test("dívidas visuais auditadas possuem proteções estruturais", () => {
   const landing = read("src/components/landing/LandingHero.tsx");
   const authShell = read("src/components/auth/AuthShell.tsx");
   const cronograma = read("src/pages/Cronograma.tsx");
-  const cronogramaContent = read("src/components/cronograma/CronogramaContent.tsx");
   const cronogramaGrid = read("src/components/cronograma/CronogramaWeekGrid.tsx");
   const historico = read("src/pages/HistoricoEstudos.tsx");
   const dashboard = read("src/components/dashboard/DashboardOverview.tsx");
@@ -84,10 +83,12 @@ test("dívidas visuais auditadas possuem proteções estruturais", () => {
   assert.match(landing, /mt-14[^\n]+sm:mt-16/);
   assert.match(authShell, /justify-start[^\n]+md:justify-center/);
   assert.equal(fs.existsSync(path.join(root, "src/pages/Auth/Register.tsx")), false);
-  assert.match(cronograma, /<CronogramaContent/);
-  assert.match(cronogramaContent, /stats && totalBlocos > 0/);
-  assert.match(cronogramaContent, /<CronogramaWeekGrid/);
-  assert.match(cronogramaGrid, /if \(totalBlocos === 0\) return null/);
+  assert.match(cronograma, /<PlanejamentoDisciplinas/);
+  assert.match(cronograma, /Seu cronograma está pronto!/);
+  assert.match(cronograma, /minutos_planejados_semana/);
+  assert.match(cronograma, /minutos_estudados_semana/);
+  assert.match(cronograma, /<CronogramaWeekGrid/);
+  assert.match(cronogramaGrid, /if \(totalBlocos === 0 && !onAdd\) return null/);
   assert.match(historico, /Nenhuma sessão registrada/);
   assert.match(historico, /Link to="\/pomodoro"/);
   assert.match(dashboard, /totalScheduled === 0/);

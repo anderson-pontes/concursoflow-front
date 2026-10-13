@@ -27,6 +27,7 @@ function AuthenticatedLayout({ children }: { children: React.ReactNode }) {
 
   React.useEffect(() => {
     initThemeFromStorage();
+
   }, []);
 
   React.useEffect(() => {
@@ -79,7 +80,7 @@ function AuthenticatedLayout({ children }: { children: React.ReactNode }) {
       >
         <Header mobileSidebarOpen={mobileSidebarOpen} onOpenSidebar={() => setMobileSidebarOpen(true)} />
         <PomodoroSessionBadge />
-        <main id="main-content" className="min-w-0 flex-1 overflow-x-hidden overflow-y-auto p-4 md:p-6 lg:p-8">
+        <main id="main-content" className="min-w-0 flex-1 overflow-x-hidden overflow-y-auto p-4 md:p-6">
           {children}
         </main>
       </div>

@@ -8,6 +8,8 @@ export type RegistroEstudoModalProps = {
   onClose: () => void;
   defaultDisciplinaId?: string | null;
   defaultConcursoId?: string | null;
+  defaultBlocoId?: string | null;
+  defaultCronogramaItemId?: string | null;
   defaultTopicos?: RegistroDefaultTopico[] | null;
   defaultDuracaoSegundos?: number | null;
   defaultAcertos?: number | null;
@@ -24,6 +26,9 @@ export type SessaoEstudoApi = {
   topico_id: string | null;
   topico_ids: string[];
   plano_id: string | null;
+  bloco_cronograma_id?: string | null;
+  cronograma_item_id?: string | null;
+  atividade_concluida?: boolean;
   concurso_id: string | null;
   modalidade: "teoria" | "questoes" | "revisao" | null;
   categoria_id: string | null;

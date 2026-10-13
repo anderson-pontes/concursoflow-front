@@ -113,7 +113,7 @@ export function DisciplinasDataTable({
               className={cn(
                 "inline-flex rounded-full px-2 py-0.5 text-[10px] font-semibold",
                 st.kind === "concluida"
-                  ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300"
+                  ? "bg-emerald-100 text-success-foreground dark:bg-emerald-900/40 dark:text-emerald-300"
                   : st.kind === "em_progresso"
                     ? "bg-primary-100 text-primary-700 dark:bg-primary-900/40 dark:text-primary-300"
                     : "bg-muted text-muted-foreground",
@@ -169,7 +169,7 @@ export function DisciplinasDataTable({
                     if (confirmed) void onConfirmDelete(d);
                   });
                 }}
-                className="rounded-md p-1.5 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30"
+                className="rounded-md p-1.5 text-destructive hover:bg-rose-50 dark:hover:bg-rose-950/30"
               >
                 <Trash2 className="h-3.5 w-3.5" />
               </button>

@@ -30,6 +30,7 @@ type RegistroSnapshot = {
 };
 
 type PomodoroTimerProps = {
+  compact?: boolean;
   onActiveChange?: (active: boolean) => void;
   disciplinaNome?: string;
   topicoNome?: string;
@@ -39,6 +40,7 @@ type PomodoroTimerProps = {
 };
 
 export function PomodoroTimer({
+  compact = false,
   onActiveChange,
   disciplinaNome,
   topicoNome,
@@ -62,6 +64,7 @@ export function PomodoroTimer({
   const timerKind = isCronometro ? "stopwatch" : "countdown";
 
   const qc = useQueryClient();
+  const activityContext = usePomodoroStore(s => s.activityContext);
   const { requestConfirmation, confirmDialog } = useConfirmDialog();
 
   const hasSession = usePomodoroSessionStore((s) => s.hasSession);
@@ -98,8 +101,8 @@ export function PomodoroTimer({
   }, [isActive, onActiveChange]);
 
   React.useEffect(() => {
-    if (isActive) setImmersive(true);
-  }, [isActive]);
+    if (isActive && !compact) setImmersive(true);
+  }, [isActive, compact]);
 
   const { data: topicos } = useQuery({
     queryKey: ["pomodoro-topicos-timer", disciplinaId],
@@ -273,6 +276,15 @@ export function PomodoroTimer({
 
   return (
     <>
+      {compact ? <div className="rounded-xl border border-border bg-card p-4 text-card-foreground">
+        <h2 className="text-base font-semibold">Cronômetro de estudo</h2>
+        <p className="mt-1 text-xs text-muted-foreground">{MODE_LABELS[mode]} · Mesma sessão do Pomodoro</p>
+        <div className="relative mx-auto my-4 size-48"><CircularArc progress={isActive ? arcProgress : 0} size={192} stroke={9} className="stroke-primary" /><div className="absolute inset-0 flex flex-col items-center justify-center"><span className="text-3xl font-semibold tabular-nums">{isActive ? displayTime : idleTime}</span><span className="mt-1 text-xs text-muted-foreground">{isActive ? isRunning ? "Estudando" : "Pausado" : "Pronto para iniciar"}</span></div></div>
+        <p className="mb-3 break-words text-center text-sm">{contextLabel || "Selecione uma atividade para estudar"}</p>
+        <div className="flex flex-wrap justify-center gap-2">
+          {!hasSession ? <Button disabled={!canStart} onClick={start}><Play />Iniciar</Button> : <><Button variant="outline" onClick={isRunning ? pause : resume}>{isRunning ? <Pause /> : <Play />}{isRunning ? "Pausar" : "Retomar"}</Button><Button onClick={finishCurrentPhase}>{phase === "pausa" ? "Encerrar pausa" : "Encerrar e salvar"}</Button><Button variant="ghost" onClick={confirmReset}>Cancelar</Button></>}
+        </div>
+      </div> : <>
       <div
         className={cn(
           "relative overflow-hidden rounded-3xl border transition-all duration-300",
@@ -473,6 +485,7 @@ export function PomodoroTimer({
           ) : null}
         </div>
       </div>
+      </>}
 
       {!revisionMode ? (
         <RegistroEstudoModal
@@ -481,6 +494,10 @@ export function PomodoroTimer({
             setRegistroOpen(false);
             setRegistroSnapshot(null);
           }}
+          defaultConcursoId={activityContext?.concursoId}
+          defaultBlocoId={activityContext?.blocoId}
+          defaultCronogramaItemId={activityContext?.itemId}
+          defaultDataReferencia={activityContext?.dataReferencia}
           defaultDisciplinaId={disciplinaId}
           defaultTopicos={registroSnapshot?.topicoDefaultList ?? null}
           defaultDuracaoSegundos={registroSnapshot?.duracaoSegundos ?? null}

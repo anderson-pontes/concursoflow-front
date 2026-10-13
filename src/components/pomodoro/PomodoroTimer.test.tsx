@@ -20,13 +20,13 @@ vi.mock("@/services/api", () => ({
   },
 }));
 
-function renderTimer() {
+function renderTimer(compact = false) {
   const queryClient = new QueryClient({
     defaultOptions: { queries: { retry: false } },
   });
   return render(
     <QueryClientProvider client={queryClient}>
-      <PomodoroTimer disciplinaNome="Direito" topicoNome="Constituição" />
+      <PomodoroTimer compact={compact} disciplinaNome="Direito" topicoNome="Constituição" />
     </QueryClientProvider>,
   );
 }
@@ -57,6 +57,19 @@ describe("PomodoroTimer durante a pausa", () => {
       partialClock: { accumulatedMs: 0, runningSince: null },
       sessionStartedAt: null,
     });
+  });
+
+  it("preserva sessão e vínculo ao alternar entre cronograma compacto e Pomodoro", () => {
+    const context = { disciplinaId: "disciplina-1", concursoId: "concurso-1", itemId: "atividade-1", dataReferencia: "2026-10-11" };
+    usePomodoroStore.setState({ activityContext: context });
+    const deadline = usePomodoroSessionStore.getState().countdown.deadlineAt;
+    const first = renderTimer(true);
+    expect(screen.getByRole("heading", { name: "Cronômetro de estudo" })).toBeInTheDocument();
+    first.unmount();
+    renderTimer();
+    expect(usePomodoroSessionStore.getState().hasSession).toBe(true);
+    expect(usePomodoroSessionStore.getState().countdown.deadlineAt).toBe(deadline);
+    expect(usePomodoroStore.getState().activityContext).toEqual(context);
   });
 
   it("encerra o ciclo com confirmação sem abrir registro de estudo", async () => {

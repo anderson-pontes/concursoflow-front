@@ -15,6 +15,7 @@ type PomodoroState = {
   cyclesTarget: number;
   disciplinaId: string | null;
   topicoId: string | null;
+  activityContext: { disciplinaId: string; concursoId?: string; blocoId?: string; itemId?: string; dataReferencia?: string } | null;
   setMode: (mode: PomodoroMode) => void;
   setDisciplinaId: (id: string | null) => void;
   setTopicoId: (id: string | null) => void;
@@ -35,8 +36,9 @@ export const usePomodoroStore = create<PomodoroState>()(
       cyclesTarget: POMODORO_DEFAULTS.cyclesTarget,
       disciplinaId: null,
       topicoId: null,
+      activityContext: null,
       setMode: (mode) => set({ mode }),
-      setDisciplinaId: (disciplinaId) => set({ disciplinaId }),
+      setDisciplinaId: (disciplinaId) => set(s => ({ disciplinaId, activityContext: s.disciplinaId === disciplinaId ? s.activityContext : null })),
       setTopicoId: (topicoId) => set({ topicoId }),
       setConfig: (cfg) => set((s) => ({ ...s, ...cfg })),
       setFocusDuration: (hours, minutes) => {
@@ -55,6 +57,7 @@ export const usePomodoroStore = create<PomodoroState>()(
         cyclesTarget: s.cyclesTarget,
         disciplinaId: s.disciplinaId,
         topicoId: s.topicoId,
+        activityContext: s.activityContext,
       }),
       migrate: (persisted) => {
         const raw = persisted as Partial<PomodoroState> & { focusHours?: number };

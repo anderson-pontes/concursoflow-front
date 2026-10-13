@@ -22,6 +22,8 @@ export function RegistroEstudoModal({
   onClose,
   defaultDisciplinaId,
   defaultConcursoId,
+  defaultBlocoId,
+  defaultCronogramaItemId,
   defaultTopicos,
   defaultDuracaoSegundos,
   defaultAcertos,
@@ -43,6 +45,7 @@ export function RegistroEstudoModal({
   const [modalidade, setModalidade] = React.useState<"teoria" | "questoes" | "revisao">("teoria");
   const [disciplinaId, setDisciplinaId] = React.useState(defaultDisciplinaId ?? "");
 
+  const [atividadeConcluida, setAtividadeConcluida] = React.useState(false);
   const [hours, setHours] = React.useState(0);
   const [minutes, setMinutes] = React.useState(25);
   const [seconds, setSeconds] = React.useState(0);
@@ -98,6 +101,7 @@ export function RegistroEstudoModal({
     setBranco(defaultBranco ?? 0);
     setPaginas([{ inicio: "", fim: "" }]);
     setSaveAndNew(false);
+    setAtividadeConcluida(false);
     setDisciplinaId(nextDisciplinaId);
     if (defaultDataReferencia) {
       setDateKind("outro");
@@ -130,11 +134,18 @@ export function RegistroEstudoModal({
     enabled: open,
   });
 
+  const { data: sessaoData, isLoading: loadingSessao } = useQuery({
+    queryKey: ["sessao-estudo", sessaoId],
+    queryFn: async () => (await api.get(`/sessoes-estudo/${sessaoId}`)).data as SessaoEstudoApi,
+    enabled: open && Boolean(sessaoId),
+  });
+  const registroConcursoId = sessaoId ? sessaoData?.concurso_id : defaultConcursoId ?? concursoAtivoId;
+
   const { data: disciplinas } = useQuery({
-    queryKey: ["registro-disciplinas", concursoAtivoId],
-    enabled: open && Boolean(concursoAtivoId),
+    queryKey: ["registro-disciplinas", registroConcursoId],
+    enabled: open && Boolean(registroConcursoId),
     queryFn: async () => {
-      const rows = (await api.get("/disciplinas", { params: { concurso_id: concursoAtivoId } })).data as Array<{
+      const rows = (await api.get("/disciplinas", { params: { concurso_id: registroConcursoId } })).data as Array<{
         id: string;
         nome: string;
       }>;
@@ -156,11 +167,7 @@ export function RegistroEstudoModal({
     },
   });
 
-  const { data: sessaoData, isLoading: loadingSessao } = useQuery({
-    queryKey: ["sessao-estudo", sessaoId],
-    queryFn: async () => (await api.get(`/sessoes-estudo/${sessaoId}`)).data as SessaoEstudoApi,
-    enabled: open && Boolean(sessaoId),
-  });
+
 
   const hydratedRef = React.useRef<string | null>(null);
   React.useEffect(() => {
@@ -184,6 +191,7 @@ export function RegistroEstudoModal({
     setMaterial(sessaoData.material ?? "");
     setComentarios(sessaoData.comentarios ?? "");
     setTeoriaFinalizada(sessaoData.teoria_finalizada);
+    setAtividadeConcluida(sessaoData.atividade_concluida ?? false);
     setModalidade(sessaoData.modalidade ?? (sessaoData.questoes_acertos + sessaoData.questoes_erros + sessaoData.questoes_em_branco > 0 ? "questoes" : "teoria"));
     setContabilizar(sessaoData.contabilizar_no_planejamento);
     setProgramarRevisoes(sessaoData.programar_revisoes);
@@ -311,7 +319,10 @@ export function RegistroEstudoModal({
         topico_id: selectedTopicos[0]?.id ?? null,
         topico_ids: selectedTopicos.map((t) => t.id),
         plano_id: sessaoId && sessaoData ? sessaoData.plano_id : null,
-        concurso_id: defaultConcursoId ?? concursoAtivoId ?? (sessaoId && sessaoData ? sessaoData.concurso_id : null),
+        concurso_id: sessaoId && sessaoData ? sessaoData.concurso_id : defaultConcursoId ?? concursoAtivoId,
+        bloco_cronograma_id: disciplinaId === (sessaoData?.disciplina_id ?? defaultDisciplinaId) ? (sessaoId ? sessaoData?.bloco_cronograma_id ?? null : defaultBlocoId ?? null) : null,
+        cronograma_item_id: disciplinaId === (sessaoData?.disciplina_id ?? defaultDisciplinaId) ? (sessaoId ? sessaoData?.cronograma_item_id ?? null : defaultCronogramaItemId ?? null) : null,
+        atividade_concluida: disciplinaId === (sessaoData?.disciplina_id ?? defaultDisciplinaId) && atividadeConcluida,
         modalidade,
         categoria_id: categoriaId || null,
         data_referencia: baseDate,
@@ -425,6 +436,7 @@ export function RegistroEstudoModal({
               <p className="text-sm font-medium text-slate-600 dark:text-neutral-300">Carregando registro…</p>
             </div>
           ) : null}
+          {(defaultBlocoId || defaultCronogramaItemId || sessaoData?.bloco_cronograma_id || sessaoData?.cronograma_item_id) && disciplinaId === (sessaoData?.disciplina_id ?? defaultDisciplinaId) && <label className="flex min-h-11 items-start gap-3 rounded-lg border border-primary/30 bg-primary/5 p-3 text-sm"><input type="checkbox" checked={atividadeConcluida} onChange={e => setAtividadeConcluida(e.target.checked)} /><span>Concluir atividade desta ocorrência<span className="mt-1 block text-xs text-muted-foreground">O tempo estudado será registrado mesmo se a atividade continuar pendente.</span></span></label>}
           <RegistroDateSelector kind={dateKind} customDate={dateCustom} onKindChange={setDateKind} onCustomDateChange={setDateCustom} />
 
           <div className="grid gap-4 md:grid-cols-2">
@@ -456,7 +468,7 @@ export function RegistroEstudoModal({
               <div className="mt-1.5">
                 <Select
                   value={disciplinaId ? disciplinaId : NONE_DISCIPLINA}
-                  onValueChange={(v) => setDisciplinaId(v === NONE_DISCIPLINA ? "" : v)}
+                  onValueChange={(v) => { setDisciplinaId(v === NONE_DISCIPLINA ? "" : v); setAtividadeConcluida(false); }}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Selecione a disciplina" />

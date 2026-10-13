@@ -15,7 +15,7 @@ export function CalendarioMensalWidget({ ano, mes, concursoId }: Props) {
   const { dias, resumo, isLoading } = useCalendarioMensal(ano, mes, concursoId);
 
   return (
-    <section className="rounded-xl border border-border bg-card p-4 shadow-sm">
+    <section className="min-w-0 rounded-xl border border-border bg-card p-4 shadow-sm">
       <div className="mb-3 flex items-center justify-between gap-2">
         <h2 className="flex items-center gap-2 text-sm font-semibold text-card-foreground">
           <CalendarDays className="h-4 w-4" />

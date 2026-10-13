@@ -33,6 +33,7 @@ type DisciplinaRow = {
 export function Pomodoro() {
   const navigate = useNavigate();
   const qc = useQueryClient();
+  const activityContext = usePomodoroStore(s => s.activityContext);
   const [searchParams] = useSearchParams();
   const launchParams = React.useMemo(() => parsePomodoroLaunchParams(searchParams), [searchParams]);
   const launchSignature = launchParams ? pomodoroLaunchSignature(launchParams) : null;
@@ -208,7 +209,7 @@ export function Pomodoro() {
             <Timer className="h-5 w-5" strokeWidth={2} />
           </div>
           <div>
-            <h1 className="text-xl font-semibold tracking-tight text-foreground">
+            <h1 className="text-2xl font-semibold tracking-tight text-foreground">
               {timerActive ? "Sessão em andamento" : pageTitle}
             </h1>
             <p className="mt-0.5 text-sm text-muted-foreground">
@@ -281,6 +282,10 @@ export function Pomodoro() {
         <RegistroEstudoModal
           open={openRegistro}
           onClose={() => setOpenRegistro(false)}
+          defaultConcursoId={activityContext?.concursoId}
+          defaultBlocoId={activityContext?.blocoId}
+          defaultCronogramaItemId={activityContext?.itemId}
+          defaultDataReferencia={activityContext?.dataReferencia}
           defaultDisciplinaId={disciplinaId}
           defaultTopicos={topicoId && topicoNome ? [{ id: topicoId, nome: topicoNome }] : null}
         />

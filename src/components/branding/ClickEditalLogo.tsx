@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 
-import markSrc from "@/assets/brand/click-edital-mark.svg";
+import markSrc from "@/assets/brand/clickedital-icon.webp";
+import logoSrc from "@/assets/brand/clickedital-logo.webp";
 import { cn } from "@/lib/utils";
 
 export type ClickEditalLogoSize = "sm" | "md" | "lg" | "hero";
@@ -10,10 +11,7 @@ type ClickEditalLogoProps = {
   size?: ClickEditalLogoSize;
   /** Só o mark (ex.: sidebar colapsada) */
   markOnly?: boolean;
-  /**
-   * `inverse`: wordmark branco + mark colorido (não usar brightness invert —
-   * isso achata o SVG e parece logo quebrada).
-   */
+  /** Fundo claro de apoio para preservar o logo original em superfícies escuras. */
   variant?: "default" | "inverse";
   /** Quando false, sem link (hero landing, auth) */
   asLink?: boolean;
@@ -28,15 +26,12 @@ const MARK_PX: Record<ClickEditalLogoSize, { w: number; className: string }> = {
   hero: { w: 56, className: "h-12 w-12 sm:h-14 sm:w-14" },
 };
 
-const WORDMARK: Record<ClickEditalLogoSize, string> = {
-  sm: "text-base leading-none font-semibold tracking-tight",
-  md: "text-lg leading-none font-semibold tracking-tight sm:text-xl",
-  lg: "text-xl leading-none font-semibold tracking-tight sm:text-2xl",
-  hero: "font-display text-3xl leading-none sm:text-4xl md:text-5xl",
+const LOGO_WIDTH: Record<ClickEditalLogoSize, string> = {
+  sm: "w-36", md: "w-40 sm:w-44", lg: "w-48 sm:w-52", hero: "w-72 sm:w-80 lg:w-96",
 };
 
 /**
- * Marca Click Edital — mark SVG + wordmark (app + landing).
+ * Marca completa fornecida pelo usuário, sem wordmark recriado em texto.
  */
 export function ClickEditalLogo({
   className,
@@ -51,33 +46,17 @@ export function ClickEditalLogo({
   const inverse = variant === "inverse";
   const priorityProps = fetchPriority ? { fetchpriority: fetchPriority } : {};
 
-  const inner = (
-    <>
-      <img
-        src={markSrc}
-        alt=""
-        aria-hidden
-        width={mark.w}
-        height={mark.w}
-        className={cn("shrink-0 object-contain", mark.className)}
-        decoding="async"
-        {...priorityProps}
-      />
-      {!markOnly && (
-        <span
-          className={cn(
-            WORDMARK[size],
-            inverse ? "text-white" : "text-primary",
-          )}
-        >
-          Click Edital
-        </span>
-      )}
-    </>
-  );
+  const inner = <img
+    src={markOnly ? markSrc : logoSrc}
+    alt="" aria-hidden
+    width={markOnly ? mark.w : 960} height={markOnly ? mark.w : 188}
+    className={cn("shrink-0 object-contain", markOnly ? mark.className : ["h-auto max-w-full", LOGO_WIDTH[size]])}
+    decoding="async" {...priorityProps}
+  />;
 
   const classes = cn(
-    "inline-flex items-center gap-2 sm:gap-2.5",
+    "inline-flex max-w-full shrink-0 items-center rounded-lg",
+    !markOnly && (inverse ? "bg-white p-2" : "dark:bg-white dark:p-2"),
     asLink && "outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
     className,
   );

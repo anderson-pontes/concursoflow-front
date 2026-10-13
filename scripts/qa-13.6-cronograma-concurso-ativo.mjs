@@ -32,14 +32,8 @@ assert.deepEqual(
 assert.deepEqual(filtrarDisciplinasDoConcursoAtivo(disciplinas, "concurso-c"), []);
 assert.deepEqual(filtrarDisciplinasDoConcursoAtivo(disciplinas, null), []);
 
-assert.match(
-  cronogramaSource,
-  /const disciplinasDoConcursoAtivo = React\.useMemo\([\s\S]*?filtrarDisciplinasDoConcursoAtivo/,
-);
-assert.equal(
-  cronogramaSource.match(/disciplinas=\{disciplinasDoConcursoAtivo\}/g)?.length,
-  5,
-  "Os modais Automático, Analítico e Simplificado, incluindo edição, devem usar a lista filtrada.",
-);
-
-console.log("Story 13.6 smoke: filtro por concurso ativo aprovado nos três modos.");
+assert.match(cronogramaSource, /const disciplinas = React\.useMemo\([\s\S]*?filtrarDisciplinasDoConcursoAtivo/);
+assert.match(cronogramaSource, /disciplinas=\{disciplinas\}/);
+assert.match(cronogramaSource, /disciplinas=\{scopedDisciplines\}/);
+assert.match(cronogramaSource, /disciplinas\.filter\(d => plano\?\.disciplinas/);
+console.log("Story 13.6 smoke: concurso ativo filtra cadastro, lote e atividades do planejamento persistente.");

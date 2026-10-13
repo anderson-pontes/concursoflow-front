@@ -52,7 +52,7 @@ export function DataTable<T>({
   });
 
   return (
-    <div className={cn("space-y-3", className)}>
+    <div className={cn("min-w-0 space-y-4", className)}>
       <div className="relative max-w-sm">
         <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         <input
@@ -61,7 +61,7 @@ export function DataTable<T>({
           onChange={(e) => setGlobalFilter(e.target.value)}
           placeholder={searchPlaceholder}
           aria-label={searchPlaceholder}
-          className="min-h-11 w-full rounded-lg border border-border bg-background py-2 pl-9 pr-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          className="min-h-11 w-full rounded-lg border border-border bg-surface py-2 pl-9 pr-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
         />
       </div>
       <div className="overflow-x-auto rounded-xl border border-border bg-card shadow-sm">

@@ -38,20 +38,24 @@ const navSections = [
     items: [
       { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
       { to: "/concursos", label: "Meus Concursos", icon: Trophy, end: true },
-      { to: "/disciplinas", label: "Disciplinas", icon: BookOpen },
       { to: "/cronograma", label: "Cronograma", icon: CalendarDays },
     ],
   },
   {
-    label: "ESTUDO",
+    label: "ESTUDOS",
     items: [
       { to: "/pomodoro", label: "Pomodoro", icon: Timer },
+      { to: "/disciplinas?view=edital", label: "Edital Verticalizado", icon: LibraryBig },
+      { to: "/disciplinas?view=cards", label: "Disciplinas", icon: BookOpen },
       { to: "/estudos/calendario", label: "Calendário", icon: CalendarDays },
-      { to: "/estudos/historico", label: "Histórico", icon: History },
       { to: "/revisoes", label: "Revisões", icon: Repeat2 },
       { to: "/flashcards", label: "Flashcards", icon: Layers },
       { to: "/mapas-mentais", label: "Mapas Mentais", icon: BrainCircuit },
     ],
+  },
+  {
+    label: "ANÁLISES",
+    items: [{ to: "/estudos/historico", label: "Histórico de Estudos", icon: History }],
   },
   {
     label: "OUTROS",
@@ -126,6 +130,13 @@ export function Sidebar({
   const user = useAuthStore((s) => s.user);
   const navigate = useNavigate();
   const asideRef = React.useRef<HTMLElement>(null);
+  const [desktop, setDesktop] = React.useState(() => typeof window !== "undefined" && window.innerWidth >= 768);
+  React.useEffect(() => {
+    const update = () => setDesktop(window.innerWidth >= 768);
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, []);
+  React.useEffect(() => { if (asideRef.current) asideRef.current.inert = !desktop && !mobileOpen; }, [desktop, mobileOpen]);
 
   const { isDark, toggle: toggleTheme } = useTheme();
   const [tooltip, setTooltip] = React.useState<{ text: string; top: number } | null>(null);
@@ -157,6 +168,7 @@ export function Sidebar({
     if (!mobileOpen || !asideRef.current) return;
 
     const aside = asideRef.current;
+    const previousFocus = document.activeElement as HTMLElement | null;
     const focusables = Array.from(aside.querySelectorAll<HTMLElement>(FOCUSABLE));
     const first = focusables[0];
     const last = focusables[focusables.length - 1];
@@ -179,7 +191,7 @@ export function Sidebar({
     };
 
     document.addEventListener("keydown", onKeyDown);
-    return () => document.removeEventListener("keydown", onKeyDown);
+    return () => { document.removeEventListener("keydown", onKeyDown); previousFocus?.focus(); };
   }, [mobileOpen, onMobileClose]);
 
   return (
@@ -196,7 +208,10 @@ export function Sidebar({
       <aside
         ref={asideRef}
         id="app-sidebar"
-        aria-hidden={!mobileOpen ? undefined : false}
+        aria-hidden={!desktop && !mobileOpen}
+        role={!desktop && mobileOpen ? "dialog" : undefined}
+        aria-modal={!desktop && mobileOpen ? true : undefined}
+        aria-label="Menu principal"
         className={cn(
           "fixed left-0 top-0 z-[100] flex h-[100dvh] flex-col overflow-hidden border-r border-[var(--sidebar-ap-border)] bg-sidebar font-sans shadow-[var(--sidebar-ap-shadow)] transition-[width,transform] duration-[250ms] [transition-timing-function:cubic-bezier(0.4,0,0.2,1)]",
           mobileOpen ? "w-[min(280px,100vw)] translate-x-0" : "w-[260px] -translate-x-full md:translate-x-0",
@@ -210,7 +225,7 @@ export function Sidebar({
           )}
         >
           {(!desktopCollapsed || mobileOpen) && (
-            <ClickEditalLogo size="sm" fetchPriority="high" className="min-w-0 shrink" />
+            <ClickEditalLogo size="sm" variant="inverse" fetchPriority="high" className="min-w-0 shrink" />
           )}
 
           <button
@@ -353,16 +368,20 @@ function SidebarNavRow({
   const location = useLocation();
   const Icon = item.icon;
   const end = "end" in item ? item.end : false;
-  const isActive = Boolean(matchPath({ path: item.to, end: Boolean(end) }, location.pathname));
+  const [itemPath, itemQuery] = item.to.split("?");
+  const isActive = Boolean(matchPath({ path: itemPath, end: Boolean(end) }, location.pathname)) && (!itemQuery || new URLSearchParams(location.search).get("view") === new URLSearchParams(itemQuery).get("view"));
 
   return (
     <NavLink
       to={item.to}
       end={Boolean(end)}
+      aria-current={isActive ? "page" : false}
       onClick={() => onMobileClose?.()}
       title={collapsed ? item.label : undefined}
       onMouseEnter={(e) => onEnterTooltip(e.currentTarget, item.label)}
       onMouseLeave={onLeaveTooltip}
+      onFocus={(e) => onEnterTooltip(e.currentTarget, item.label)}
+      onBlur={onLeaveTooltip}
       className={cn(
         "group relative mx-2 flex min-h-11 cursor-pointer select-none items-center gap-3 overflow-hidden whitespace-nowrap rounded-lg px-3 py-2 text-sm transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-sidebar",
         "text-[var(--nav-text)]",

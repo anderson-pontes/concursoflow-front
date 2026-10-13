@@ -2,10 +2,10 @@
 export const CHART_STRIP_BG_CLASSES = [
   "bg-primary",
   "bg-success",
-  "bg-blue-500",
-  "bg-amber-500",
-  "bg-pink-500",
-  "bg-teal-500",
+  "bg-info",
+  "bg-warning",
+  "bg-review",
+  "bg-secondary",
 ] as const;
 
 export function chartStripClass(index: number): (typeof CHART_STRIP_BG_CLASSES)[number] {

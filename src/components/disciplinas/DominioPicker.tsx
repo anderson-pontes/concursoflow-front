@@ -28,14 +28,14 @@ export function DominioPicker({ value, onChange, disabled = false, size = "md" }
               "rounded-full border-2 transition-colors",
               dot,
               n <= value
-                ? "border-slate-900 bg-slate-900 dark:border-neutral-100 dark:bg-neutral-100"
-                : "border-slate-300 bg-white hover:border-slate-400 dark:border-neutral-600 dark:bg-neutral-900",
+                ? "border-slate-900 bg-slate-900 border-border dark:bg-muted"
+                : "border-border bg-card hover:border-slate-400 border-border bg-card",
               disabled && "cursor-not-allowed opacity-50",
             )}
           />
         ))}
       </div>
-      <span className="hidden text-[10px] text-slate-500 dark:text-neutral-400 sm:inline">
+      <span className="hidden text-[10px] text-muted-foreground sm:inline">
         {DOMINIO_LABELS[value] ?? ""}
       </span>
     </div>

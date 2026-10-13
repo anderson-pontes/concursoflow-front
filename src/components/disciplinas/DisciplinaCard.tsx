@@ -68,7 +68,7 @@ function progressFillClass(foraDoConcurso: boolean, kind: string, pct: number) {
 }
 
 function pctColorClass(pct: number) {
-  if (pct >= 70) return "text-emerald-600 dark:text-emerald-400";
+  if (pct >= 70) return "text-success-foreground";
   if (pct >= 40) return "text-amber-600 dark:text-amber-400";
   return "text-destructive";
 }

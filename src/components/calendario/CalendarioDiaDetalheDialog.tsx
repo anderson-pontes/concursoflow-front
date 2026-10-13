@@ -21,6 +21,7 @@ type Props = {
   open: boolean;
   onClose: () => void;
   onRegistrar?: (data: string) => void;
+  onAdicionar?: (data: string) => void;
   onEditarBloco?: (blocoId: string) => void;
   onRemoverBloco?: (blocoId: string) => void;
 };
@@ -40,7 +41,8 @@ function PlanejadoActions({
   onEditar?: (blocoId: string) => void;
   onRemover?: (blocoId: string) => void;
 }) {
-  if (item.fonte !== "bloco_semanal") return null;
+  const blocoId = item.bloco_cronograma_id ?? (item.fonte === "bloco_semanal" ? item.id : null);
+  if (!blocoId) return null;
   if (!onEditar && !onRemover) return null;
 
   return (
@@ -48,7 +50,7 @@ function PlanejadoActions({
       {onEditar ? (
         <button
           type="button"
-          onClick={() => onEditar(item.id)}
+          onClick={() => onEditar(blocoId)}
           aria-label={`Editar ${item.disciplina_nome}`}
           className="inline-flex items-center gap-1 rounded-md border border-border px-2 py-1 text-xs font-medium text-foreground transition hover:bg-muted"
         >
@@ -59,7 +61,7 @@ function PlanejadoActions({
       {onRemover ? (
         <button
           type="button"
-          onClick={() => onRemover(item.id)}
+          onClick={() => onRemover(blocoId)}
           aria-label={`Remover ${item.disciplina_nome}`}
           className="inline-flex items-center gap-1 rounded-md border border-border px-2 py-1 text-xs font-medium text-destructive transition hover:bg-destructive/10"
         >
@@ -77,6 +79,7 @@ export function CalendarioDiaDetalheDialog({
   open,
   onClose,
   onRegistrar,
+  onAdicionar,
   onEditarBloco,
   onRemoverBloco,
 }: Props) {
@@ -156,6 +159,7 @@ export function CalendarioDiaDetalheDialog({
             )}
 
             <div className="space-y-2">
+              {data && onAdicionar && <button type="button" onClick={() => onAdicionar(data)} className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg border border-border px-4 text-sm font-medium hover:bg-muted"><Plus className="size-4" />Adicionar atividade neste dia</button>}
               {mostrarRegistrar ? (
                 <button
                   type="button"

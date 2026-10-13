@@ -53,7 +53,7 @@ export function LandingHeader() {
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
         <LandingLogo size="header" />
 
-        <nav className="hidden items-center gap-6 md:flex" aria-label="Principal">
+        <nav className="hidden items-center gap-6 lg:flex" aria-label="Principal">
           {navLinks.map((l) => (
             <a
               key={l.href}
@@ -77,7 +77,7 @@ export function LandingHeader() {
           </a>
         </nav>
 
-        <div className="flex items-center gap-2 md:hidden">
+        <div className="flex items-center gap-2 lg:hidden">
           <a
             href={KIWIFY_CHECKOUT_URL}
             aria-label="Organizar meus estudos"
@@ -101,7 +101,7 @@ export function LandingHeader() {
       {menuOpen ? (
         <div
           id="landing-mobile-menu"
-          className="border-t border-border bg-surface px-4 py-4 md:hidden"
+          className="border-t border-border bg-surface px-4 py-4 lg:hidden"
           role="dialog"
           aria-label="Menu de navegação"
         >

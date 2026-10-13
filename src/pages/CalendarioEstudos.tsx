@@ -279,25 +279,25 @@ export function CalendarioEstudos() {
   if (contextStatus === "hydrating") return <PageSkeleton cards={2} rows={3} />;
 
   if (contextStatus === "no_contest") {
-    return <div className="space-y-6 pb-8"><header><h1 className="text-xl font-semibold tracking-tight text-foreground">Calendário de estudos</h1><p className="text-sm text-muted-foreground">Escolha um concurso antes de acompanhar o planejamento.</p></header><BannerSemConcurso /></div>;
+    return <div className="space-y-6 pb-8"><header><h1 className="text-2xl font-semibold tracking-tight text-foreground">Calendário de estudos</h1><p className="text-sm text-muted-foreground">Escolha um concurso antes de acompanhar o planejamento.</p></header><BannerSemConcurso /></div>;
   }
 
   if (contextStatus === "error") {
-    return <div className="space-y-6 pb-8"><header><h1 className="text-xl font-semibold tracking-tight text-foreground">Calendário de estudos</h1></header><div role="alert" className="rounded-xl border border-destructive/30 bg-card p-8 text-center"><h2 className="font-semibold">Não foi possível carregar o calendário</h2><p className="mt-1 text-sm text-muted-foreground">Tente novamente sem perder o concurso selecionado.</p><Button className="mt-5" onClick={() => void Promise.all([qc.invalidateQueries({ queryKey: ["concursos"] }), refetch(), refetchDisciplinas(), refetchBlocos()])}>Tentar novamente</Button></div></div>;
+    return <div className="space-y-6 pb-8"><header><h1 className="text-2xl font-semibold tracking-tight text-foreground">Calendário de estudos</h1></header><div role="alert" className="rounded-xl border border-destructive/30 bg-card p-8 text-center"><h2 className="font-semibold">Não foi possível carregar o calendário</h2><p className="mt-1 text-sm text-muted-foreground">Tente novamente sem perder o concurso selecionado.</p><Button className="mt-5" onClick={() => void Promise.all([qc.invalidateQueries({ queryKey: ["concursos"] }), refetch(), refetchDisciplinas(), refetchBlocos()])}>Tentar novamente</Button></div></div>;
   }
 
   if (contextStatus === "no_disciplines") {
-    return <div className="space-y-6 pb-8"><header><h1 className="text-xl font-semibold tracking-tight text-foreground">Calendário de estudos</h1></header><EmptyState title="Adicione disciplinas para montar o calendário" description="O calendário será criado a partir do conteúdo vinculado ao concurso ativo." action={<Button asChild><Link to="/disciplinas">Adicionar disciplinas</Link></Button>} /></div>;
+    return <div className="space-y-6 pb-8"><header><h1 className="text-2xl font-semibold tracking-tight text-foreground">Calendário de estudos</h1></header><EmptyState title="Adicione disciplinas para montar o calendário" description="O calendário será criado a partir do conteúdo vinculado ao concurso ativo." action={<Button asChild><Link to="/disciplinas">Adicionar disciplinas</Link></Button>} /></div>;
   }
 
   if (contextStatus === "no_plan") {
-    return <div className="space-y-6 pb-8"><header><h1 className="text-xl font-semibold tracking-tight text-foreground">Calendário de estudos</h1></header><EmptyState title="Seu calendário ainda não tem planejamento" description="Crie um cronograma para distribuir as disciplinas ao longo do mês." action={<Button asChild><Link to="/cronograma">Criar cronograma</Link></Button>} /></div>;
+    return <div className="space-y-6 pb-8"><header><h1 className="text-2xl font-semibold tracking-tight text-foreground">Calendário de estudos</h1></header><EmptyState title="Seu calendário ainda não tem planejamento" description="Crie um cronograma para distribuir as disciplinas ao longo do mês." action={<Button asChild><Link to="/cronograma">Criar cronograma</Link></Button>} /></div>;
   }
 
   return (
     <div className="space-y-6 pb-8">
       <div>
-        <h1 className="text-xl font-semibold tracking-tight text-foreground">Calendário de estudos</h1>
+        <h1 className="text-2xl font-semibold tracking-tight text-foreground">Calendário de estudos</h1>
         <p className="text-sm text-muted-foreground">Acompanhe cumprimento do plano mês a mês</p>
       </div>
 

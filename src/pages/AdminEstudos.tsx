@@ -244,7 +244,7 @@ export function ConfiguracoesEstudos() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-xl font-semibold tracking-tight text-neutral-900 dark:text-neutral-50">
+        <h1 className="text-2xl font-semibold tracking-tight text-neutral-900 dark:text-neutral-50">
           Configurações de estudos
         </h1>
         <p className="text-sm text-muted-foreground">Categorias, ciclo de revisão e privacidade</p>

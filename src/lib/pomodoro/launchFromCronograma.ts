@@ -13,6 +13,9 @@ export type PomodoroLaunchParams = {
   revisaoId?: string;
   revisaoVersao?: number;
   concursoId?: string;
+  blocoId?: string;
+  itemId?: string;
+  dataReferencia?: string;
   returnTo?: string;
 };
 
@@ -29,7 +32,7 @@ export function resolvePomodoroTopicoId(
 }
 
 export function buildPomodoroLaunchUrl(
-  bloco: Pick<Bloco, "disciplina_id" | "topico_id" | "topico_ids">,
+  bloco: Pick<Bloco, "disciplina_id" | "topico_id" | "topico_ids"> & Partial<Pick<Bloco, "id" | "concurso_id" | "cronograma_item_id" | "bloco_cronograma_id" | "data">> & { data_referencia?: string },
   minutos: number,
 ): string {
   return buildPomodoroLaunchUrlFromStudy({
@@ -37,6 +40,10 @@ export function buildPomodoroLaunchUrl(
     disciplinaId: bloco.disciplina_id,
     topicoId: resolvePomodoroTopicoId(bloco),
     minutos,
+    blocoId: bloco.cronograma_item_id ? undefined : bloco.bloco_cronograma_id ?? bloco.id,
+    itemId: bloco.cronograma_item_id ?? undefined,
+    concursoId: bloco.concurso_id ?? undefined,
+    dataReferencia: bloco.data_referencia ?? bloco.data,
   });
 }
 
@@ -46,6 +53,9 @@ export function buildPomodoroLaunchUrlFromStudy({
   topicoId,
   minutos,
   concursoId,
+  blocoId,
+  itemId,
+  dataReferencia,
   returnTo,
 }: PomodoroLaunchParams): string {
   if (!Number.isInteger(minutos) || minutos < 1 || minutos > 480) {
@@ -57,6 +67,10 @@ export function buildPomodoroLaunchUrlFromStudy({
     minutos: String(minutos),
   });
   if (topicoId) params.set("topico_id", topicoId);
+  if (concursoId) params.set("concurso_id", concursoId);
+  if (blocoId) params.set("bloco_id", blocoId);
+  if (itemId) params.set("item_id", itemId);
+  if (dataReferencia) params.set("data_referencia", dataReferencia);
   if (source === "edital") {
     if (!concursoId || !topicoId) throw new Error("invalid_edital_context");
     params.set("concurso_id", concursoId);
@@ -105,6 +119,15 @@ export function parsePomodoroLaunchParams(searchParams: URLSearchParams): Pomodo
     topicoId: topicoId || null,
     minutos,
   };
+  if (source === "cronograma" || source === "dashboard") {
+    parsed.blocoId = searchParams.get("bloco_id") || undefined;
+    parsed.itemId = searchParams.get("item_id") || undefined;
+    if (parsed.blocoId && parsed.itemId) return null;
+    parsed.concursoId = searchParams.get("concurso_id") || undefined;
+    const refDate = searchParams.get("data_referencia");
+    if (refDate && !/^\d{4}-\d{2}-\d{2}$/.test(refDate)) return null;
+    parsed.dataReferencia = refDate || undefined;
+  }
   if (source === "revisao") {
     const revisaoId = searchParams.get("revisao_id");
     const revisaoVersao = Number(searchParams.get("revisao_versao"));
@@ -130,7 +153,7 @@ export function hasPomodoroLaunchParams(searchParams: URLSearchParams): boolean 
 
 /** Chave estável para detectar novo launch (mesmo componente montado). */
 export function pomodoroLaunchSignature(params: PomodoroLaunchParams): string {
-  return `${params.source}|${params.disciplinaId}|${params.topicoId ?? ""}|${params.minutos}|${params.revisaoId ?? ""}|${params.revisaoVersao ?? ""}|${params.concursoId ?? ""}`;
+  return `${params.source}|${params.disciplinaId}|${params.topicoId ?? ""}|${params.minutos}|${params.revisaoId ?? ""}|${params.revisaoVersao ?? ""}|${params.concursoId ?? ""}${params.blocoId || params.itemId || params.dataReferencia ? `|${params.blocoId ?? ""}|${params.itemId ?? ""}|${params.dataReferencia ?? ""}` : ""}`;
 }
 
 export function applyPomodoroLaunchToStore(params: PomodoroLaunchParams): { focusHours: number; focusMinutes: number } {
@@ -140,6 +163,7 @@ export function applyPomodoroLaunchToStore(params: PomodoroLaunchParams): { focu
   store.setDisciplinaId(params.disciplinaId);
   store.setTopicoId(params.topicoId);
   store.setFocusDuration(hours, minutes);
+  store.setConfig({ activityContext: { disciplinaId: params.disciplinaId, concursoId: params.concursoId, blocoId: params.blocoId, itemId: params.itemId, dataReferencia: params.dataReferencia } });
   return { focusHours: hours, focusMinutes: minutes };
 }
 
@@ -155,7 +179,7 @@ export function buildDisciplinaDashboardUrl(
 /** Valida minutos e navega; retorna false se inválido. */
 export function launchPomodoroFromBloco(
   navigate: (to: string) => void,
-  bloco: Pick<Bloco, "disciplina_id" | "topico_id" | "topico_ids">,
+  bloco: Pick<Bloco, "disciplina_id" | "topico_id" | "topico_ids"> & Partial<Pick<Bloco, "id" | "concurso_id" | "cronograma_item_id" | "bloco_cronograma_id" | "data">> & { data_referencia?: string },
   minutos: number,
 ): boolean {
   if (minutos < 1) {

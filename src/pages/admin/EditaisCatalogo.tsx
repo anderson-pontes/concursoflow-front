@@ -19,7 +19,7 @@ import { cn } from "@/lib/utils";
 import { arquivarEdital, paginarEditaisAdmin } from "@/services/editaisCatalogo";
 import type { EditalCatalogo, EditalStatus } from "@/types/editaisCatalogo";
 
-const statusClass: Record<EditalStatus, string> = { rascunho: "bg-warning/15 text-warning", publicado: "bg-success/15 text-success", arquivado: "bg-muted text-muted-foreground" };
+const statusClass: Record<EditalStatus, string> = { rascunho: "bg-warning/15 text-warning-foreground", publicado: "bg-success/15 text-success-text", arquivado: "bg-muted text-muted-foreground" };
 type Filters = { search: string; orgao: string; cargo: string; ano: string; status: string };
 const EMPTY_FILTERS: Filters = { search: "", orgao: "", cargo: "", ano: "", status: "" };
 

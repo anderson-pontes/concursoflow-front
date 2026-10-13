@@ -4,7 +4,7 @@ import { MemoryRouter } from "react-router-dom";
 import { describe, expect, it, vi } from "vitest";
 
 import { CronogramaBlocoCard } from "@/components/cronograma/CronogramaBlocoCard";
-import { getDisciplinaPalette } from "@/components/disciplinas/disciplinaPalettes";
+
 import type { Bloco } from "@/lib/cronograma/types";
 
 const bloco: Bloco = {
@@ -19,7 +19,7 @@ const bloco: Bloco = {
 };
 
 describe("CronogramaBlocoCard", () => {
-  it("exibe disciplina e tempo com a cor determinística da disciplina", () => {
+  it("exibe disciplina, tempo e tipo de atividade sem depender da cor", () => {
     render(
       <MemoryRouter>
         <CronogramaBlocoCard
@@ -35,10 +35,11 @@ describe("CronogramaBlocoCard", () => {
     const card = screen.getByRole("article", {
       name: "Bloco de estudo: Direito Constitucional",
     });
-    const palette = getDisciplinaPalette(bloco.disciplina_id);
+
 
     expect(screen.getByText("08:00–08:55 · 55 min")).toBeInTheDocument();
-    expect(card).toHaveClass(...palette.cardBg.split(" "), ...palette.cardBorder.split(" "));
+    expect(card).toHaveClass("border-l-primary");
+    expect(screen.getByText("Estudo")).toBeInTheDocument();
   });
 
   it("mantém as ações secundárias acessíveis em um menu compacto", async () => {

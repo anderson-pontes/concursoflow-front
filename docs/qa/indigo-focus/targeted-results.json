@@ -1,0 +1,44 @@
+{
+  "mocked": true,
+  "base": "http://127.0.0.1:13010",
+  "results": [
+    {
+      "width": 1440,
+      "theme": "light",
+      "name": "catalogo",
+      "actualTheme": "light",
+      "pageWidth": 1440,
+      "mainWidth": 1180,
+      "mainScrollWidth": 1180,
+      "pageOverflow": false,
+      "mainOverflow": false,
+      "heading": "Catálogo de Editais",
+      "missingNames": [],
+      "activeNav": [
+        "Catálogo de Editais"
+      ],
+      "offenders": [],
+      "errors": [],
+      "passed": true
+    },
+    {
+      "width": 1440,
+      "theme": "dark",
+      "name": "catalogo",
+      "actualTheme": "dark",
+      "pageWidth": 1440,
+      "mainWidth": 1180,
+      "mainScrollWidth": 1180,
+      "pageOverflow": false,
+      "mainOverflow": false,
+      "heading": "Catálogo de Editais",
+      "missingNames": [],
+      "activeNav": [
+        "Catálogo de Editais"
+      ],
+      "offenders": [],
+      "errors": [],
+      "passed": true
+    }
+  ]
+}

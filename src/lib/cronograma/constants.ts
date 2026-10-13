@@ -34,10 +34,10 @@ export const diaIndex: Record<Bloco["dia_semana"], number> = {
 
 export const tipoMap: Record<string, TipoBadge> = {
   estudo: { label: "Estudo", cls: "bg-primary-100 text-primary-700 dark:bg-primary-900/40 dark:text-primary-300" },
-  revisao: { label: "Revisão", cls: "bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300" },
-  questoes: { label: "Questões", cls: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300" },
+  revisao: { label: "Revisão", cls: "bg-review/10 text-review-foreground" },
+  questoes: { label: "Questões", cls: "bg-success/10 text-success-foreground" },
   livre: { label: "Livre", cls: "bg-neutral-100 text-neutral-600 dark:bg-neutral-700 dark:text-neutral-300" },
-  pomodoro: { label: "Pomodoro", cls: "bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-300" },
+  pomodoro: { label: "Pomodoro", cls: "bg-primary/10 text-primary" },
 };
 
 export function getTipo(tipo: string): TipoBadge {
@@ -47,10 +47,10 @@ export function getTipo(tipo: string): TipoBadge {
 /** Cor sólida (bolinha/acento) por tipo de bloco — tokens Tailwind, sem hex. */
 export const tipoDotMap: Record<string, string> = {
   estudo: "bg-primary-500",
-  revisao: "bg-amber-500",
-  questoes: "bg-emerald-500",
+  revisao: "bg-review",
+  questoes: "bg-success",
   livre: "bg-neutral-400",
-  pomodoro: "bg-rose-500",
+  pomodoro: "bg-primary",
 };
 
 export function getTipoDot(tipo: string): string {
@@ -122,3 +122,8 @@ export const defaultForm: FormState = {
   tipo: "estudo",
   ativo: true,
 };
+
+/** Semantic activity tint; color supplements the visible activity label. */
+export function getTipoSurface(tipo: string): string {
+  return ({ estudo: "bg-primary/5 border-l-primary", revisao: "bg-review/5 border-l-review", questoes: "bg-success/5 border-l-success", simulado: "bg-warning/5 border-l-warning", livre: "bg-info/5 border-l-info", pomodoro: "bg-primary/5 border-l-primary" } as Record<string,string>)[tipo.toLowerCase()] ?? "bg-muted/40 border-l-muted-foreground";
+}

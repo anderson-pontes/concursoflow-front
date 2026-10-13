@@ -1,0 +1,684 @@
+{
+  "mocked": true,
+  "productionWrites": false,
+  "results": [
+    {
+      "profile": "desktop-light",
+      "passed": true,
+      "overflow": false,
+      "charts": 2,
+      "errors": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/concursos",
+          "query": {}
+        },
+        {
+          "method": "GET",
+          "path": "/telemetry/preference",
+          "query": {}
+        },
+        {
+          "method": "GET",
+          "path": "/cronograma/calendario",
+          "query": {
+            "ano": "2026",
+            "mes": "10",
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/analise",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001",
+            "inicio": "2026-10-12",
+            "fim": "2026-10-18"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/resumo",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/proximo-estudo",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/revisoes-pendentes",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/heatmap",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/avisos/concurso/29110000-0000-4000-8000-000000000001",
+          "query": {}
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/analise",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001",
+            "inicio": "2026-10-01",
+            "fim": "2026-10-31"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/cronograma/calendario",
+          "query": {
+            "ano": "2026",
+            "mes": "11",
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/categorias",
+          "query": {}
+        },
+        {
+          "method": "GET",
+          "path": "/revisoes-config",
+          "query": {}
+        },
+        {
+          "method": "GET",
+          "path": "/disciplinas",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/disciplinas/29110000-0000-4000-8000-000000000003/topicos",
+          "query": {}
+        },
+        {
+          "method": "GET",
+          "path": "/cronograma/calendario",
+          "query": {
+            "ano": "2026",
+            "mes": "10",
+            "concurso_id": "29110000-0000-4000-8000-000000000020"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/analise",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000020",
+            "inicio": "2026-10-01",
+            "fim": "2026-10-31"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/resumo",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000020"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/proximo-estudo",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000020"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/revisoes-pendentes",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000020"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/heatmap",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000020"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/avisos/concurso/29110000-0000-4000-8000-000000000020",
+          "query": {}
+        }
+      ]
+    },
+    {
+      "profile": "desktop-dark",
+      "passed": true,
+      "overflow": false,
+      "charts": 2,
+      "errors": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/concursos",
+          "query": {}
+        },
+        {
+          "method": "GET",
+          "path": "/telemetry/preference",
+          "query": {}
+        },
+        {
+          "method": "GET",
+          "path": "/cronograma/calendario",
+          "query": {
+            "ano": "2026",
+            "mes": "10",
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/analise",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001",
+            "inicio": "2026-10-12",
+            "fim": "2026-10-18"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/resumo",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/proximo-estudo",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/revisoes-pendentes",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/heatmap",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/avisos/concurso/29110000-0000-4000-8000-000000000001",
+          "query": {}
+        }
+      ]
+    },
+    {
+      "profile": "tablet-light",
+      "passed": true,
+      "overflow": false,
+      "charts": 2,
+      "errors": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/concursos",
+          "query": {}
+        },
+        {
+          "method": "GET",
+          "path": "/telemetry/preference",
+          "query": {}
+        },
+        {
+          "method": "GET",
+          "path": "/cronograma/calendario",
+          "query": {
+            "ano": "2026",
+            "mes": "10",
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/analise",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001",
+            "inicio": "2026-10-12",
+            "fim": "2026-10-18"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/resumo",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/proximo-estudo",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/revisoes-pendentes",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/heatmap",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/avisos/concurso/29110000-0000-4000-8000-000000000001",
+          "query": {}
+        }
+      ]
+    },
+    {
+      "profile": "mobile-light",
+      "passed": true,
+      "overflow": false,
+      "charts": 2,
+      "errors": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/concursos",
+          "query": {}
+        },
+        {
+          "method": "GET",
+          "path": "/telemetry/preference",
+          "query": {}
+        },
+        {
+          "method": "GET",
+          "path": "/cronograma/calendario",
+          "query": {
+            "ano": "2026",
+            "mes": "10",
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/analise",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001",
+            "inicio": "2026-10-12",
+            "fim": "2026-10-18"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/resumo",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/proximo-estudo",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/revisoes-pendentes",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/heatmap",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/avisos/concurso/29110000-0000-4000-8000-000000000001",
+          "query": {}
+        }
+      ]
+    },
+    {
+      "profile": "mobile-dark",
+      "passed": true,
+      "overflow": false,
+      "charts": 2,
+      "errors": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/concursos",
+          "query": {}
+        },
+        {
+          "method": "GET",
+          "path": "/telemetry/preference",
+          "query": {}
+        },
+        {
+          "method": "GET",
+          "path": "/cronograma/calendario",
+          "query": {
+            "ano": "2026",
+            "mes": "10",
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/analise",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001",
+            "inicio": "2026-10-12",
+            "fim": "2026-10-18"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/resumo",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/proximo-estudo",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/revisoes-pendentes",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/heatmap",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/avisos/concurso/29110000-0000-4000-8000-000000000001",
+          "query": {}
+        }
+      ]
+    },
+    {
+      "profile": "desktop-empty",
+      "passed": true,
+      "overflow": false,
+      "charts": 0,
+      "errors": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/concursos",
+          "query": {}
+        },
+        {
+          "method": "GET",
+          "path": "/telemetry/preference",
+          "query": {}
+        },
+        {
+          "method": "GET",
+          "path": "/cronograma/calendario",
+          "query": {
+            "ano": "2026",
+            "mes": "10",
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/analise",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001",
+            "inicio": "2026-10-12",
+            "fim": "2026-10-18"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/resumo",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/proximo-estudo",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/revisoes-pendentes",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/heatmap",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/avisos/concurso/29110000-0000-4000-8000-000000000001",
+          "query": {}
+        }
+      ]
+    },
+    {
+      "profile": "desktop-zero-rate",
+      "passed": true,
+      "overflow": false,
+      "charts": 2,
+      "errors": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/concursos",
+          "query": {}
+        },
+        {
+          "method": "GET",
+          "path": "/telemetry/preference",
+          "query": {}
+        },
+        {
+          "method": "GET",
+          "path": "/cronograma/calendario",
+          "query": {
+            "ano": "2026",
+            "mes": "10",
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/analise",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001",
+            "inicio": "2026-10-12",
+            "fim": "2026-10-18"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/resumo",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/proximo-estudo",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/revisoes-pendentes",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/heatmap",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/avisos/concurso/29110000-0000-4000-8000-000000000001",
+          "query": {}
+        }
+      ]
+    },
+    {
+      "profile": "desktop-error",
+      "passed": true,
+      "overflow": false,
+      "charts": 0,
+      "errors": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/concursos",
+          "query": {}
+        },
+        {
+          "method": "GET",
+          "path": "/telemetry/preference",
+          "query": {}
+        },
+        {
+          "method": "GET",
+          "path": "/cronograma/calendario",
+          "query": {
+            "ano": "2026",
+            "mes": "10",
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/analise",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001",
+            "inicio": "2026-10-12",
+            "fim": "2026-10-18"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/resumo",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/proximo-estudo",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/revisoes-pendentes",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/heatmap",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/avisos/concurso/29110000-0000-4000-8000-000000000001",
+          "query": {}
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/analise",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001",
+            "inicio": "2026-10-12",
+            "fim": "2026-10-18"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/analise",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001",
+            "inicio": "2026-10-12",
+            "fim": "2026-10-18"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/analise",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001",
+            "inicio": "2026-10-12",
+            "fim": "2026-10-18"
+          }
+        }
+      ]
+    }
+  ]
+}

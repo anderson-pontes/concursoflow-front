@@ -1,0 +1,29 @@
+{
+  "mocked": true,
+  "results": [
+    {
+      "profile": "desktop",
+      "passed": true,
+      "createCount": 1,
+      "disciplineCount": 4,
+      "blocks": 15,
+      "overflow": false
+    },
+    {
+      "profile": "tablet",
+      "passed": true,
+      "createCount": 1,
+      "disciplineCount": 4,
+      "blocks": 15,
+      "overflow": false
+    },
+    {
+      "profile": "mobile",
+      "passed": true,
+      "createCount": 1,
+      "disciplineCount": 4,
+      "blocks": 15,
+      "overflow": false
+    }
+  ]
+}

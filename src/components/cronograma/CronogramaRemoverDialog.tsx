@@ -5,7 +5,7 @@ import type { Bloco } from "@/lib/cronograma/types";
 import { fmtDateBR } from "@/lib/cronograma/types";
 import { cn } from "@/lib/utils";
 
-export type RemoverScope = "one" | "future";
+export type RemoverScope = "one" | "future" | "all";
 
 type Props = {
   open: boolean;
@@ -110,6 +110,7 @@ export function CronogramaRemoverDialog({
               </span>
             </span>
           </label>
+          <label className="flex min-h-11 items-center gap-3 rounded-lg border border-border px-3 py-3 text-sm"><input type="radio" name="remover_scope" checked={scope === "all"} onChange={() => setScope("all")} /><span>Toda a série ? mantém sessões realizadas</span></label>
         </div>
 
         <div className="flex justify-end gap-2 border-t border-border px-5 py-4">

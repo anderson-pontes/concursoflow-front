@@ -1,214 +1,50 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
-import { Menu, Moon, Search, Sun, X } from "lucide-react";
-
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { ChevronRight, Menu, Moon, Search, Sun } from "lucide-react";
 import { useTheme } from "@/hooks/useTheme";
 import { UserDropdown } from "@/components/layout/UserDropdown";
 import { NotificationBell } from "@/components/layout/NotificationBell";
-import { primeiroNome } from "@/lib/userDisplay";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { pageBreadcrumb, pageLinks } from "@/lib/navigation";
+import { isAdminUser } from "@/lib/authRoles";
 import { useAuthStore } from "@/stores/authStore";
-import { cn } from "@/lib/utils";
 
-function saudacaoPorHora(): string {
-  const h = new Date().getHours();
-  if (h < 12) return "Bom dia";
-  if (h < 18) return "Boa tarde";
-  return "Boa noite";
-}
-
-const iconBtnClass =
-  "inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-border bg-surface text-muted-foreground transition-colors hover:bg-surface-hover hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background";
-
-const cmdItemClass =
-  "flex min-h-11 w-full items-center rounded-lg px-3 text-left text-sm text-foreground hover:bg-surface-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset";
-
-export function Header({
-  onOpenSidebar,
-  mobileSidebarOpen = false,
-}: {
-  onOpenSidebar?: () => void;
-  mobileSidebarOpen?: boolean;
-}) {
-  const user = useAuthStore((s) => s.user);
+export function Header({ onOpenSidebar, mobileSidebarOpen = false }: { onOpenSidebar?: () => void; mobileSidebarOpen?: boolean }) {
+  const user = useAuthStore(s => s.user);
+  const { pathname } = useLocation();
   const navigate = useNavigate();
-  const { isDark, toggle: toggleTheme } = useTheme();
-
-  const [cmdOpen, setCmdOpen] = React.useState(false);
-  const [cmdQuery, setCmdQuery] = React.useState("");
-  const cmdInputRef = React.useRef<HTMLInputElement>(null);
-
-  const actions = React.useMemo(
-    () => [
-      { label: "Dashboard", to: "/dashboard" },
-      { label: "Concursos", to: "/concursos" },
-      { label: "Disciplinas", to: "/disciplinas" },
-      { label: "Cronograma", to: "/cronograma" },
-      { label: "Calendário", to: "/estudos/calendario" },
-      { label: "Histórico", to: "/estudos/historico" },
-      { label: "Revisões", to: "/revisoes" },
-      { label: "Pomodoro", to: "/pomodoro" },
-      { label: "Avisos", to: "/avisos" },
-      { label: "Flashcards", to: "/flashcards" },
-      { label: "Perfil", to: "/perfil" },
-    ],
-    [],
-  );
-
+  const { isDark, toggle } = useTheme();
+  const [open, setOpen] = React.useState(false);
+  const [query, setQuery] = React.useState("");
+  const searchButton = React.useRef<HTMLButtonElement>(null);
+  const breadcrumb = pageBreadcrumb(pathname);
+  const actions = [...pageLinks, ...(isAdminUser(user) ? [{ label: "Gestão de usuários", to: "/admin/usuarios" }, { label: "Catálogo de editais", to: "/admin/editais" }] : [])];
+  const filtered = actions.filter(a => a.label.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase("pt-BR").includes(query.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase("pt-BR")));
   React.useEffect(() => {
-    const onKeyDown = (e: KeyboardEvent) => {
-      const key = e.key.toLowerCase();
-      if (key === "k" && (e.ctrlKey || e.metaKey)) {
-        e.preventDefault();
-        setCmdOpen(true);
-        setCmdQuery("");
-      }
-      if (key === "Escape" && cmdOpen) {
-        e.preventDefault();
-        setCmdOpen(false);
-      }
-    };
-    window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
-  }, [cmdOpen]);
-
-  React.useEffect(() => {
-    if (cmdOpen) {
-      requestAnimationFrame(() => cmdInputRef.current?.focus());
-    }
-  }, [cmdOpen]);
-
-  const filteredActions = actions.filter((a) => a.label.toLowerCase().includes(cmdQuery.toLowerCase()));
-  const nomeSaudacao = primeiroNome(user?.name, "Concurseiro");
-  const saudacao = saudacaoPorHora();
-
-  return (
-    <header className="sticky top-0 z-50 shrink-0 border-b border-border bg-surface/95 backdrop-blur-sm supports-[backdrop-filter]:bg-surface/80">
-      <div className="flex h-14 items-center gap-2 px-3 sm:gap-3 sm:px-4 md:pl-6 md:pr-6 lg:h-16">
-        <div className="flex min-w-0 flex-1 items-center gap-2 sm:gap-3">
-          <button
-            type="button"
-            className={cn(iconBtnClass, "md:hidden")}
-            onClick={onOpenSidebar}
-            aria-label="Abrir menu"
-            aria-controls="app-sidebar"
-            aria-expanded={mobileSidebarOpen}
-          >
-            <Menu className="h-5 w-5" />
-          </button>
-          <div className="min-w-0 flex-1">
-            <p className="truncate text-sm font-semibold leading-tight text-foreground sm:text-base">
-              <span className="sm:hidden">
-                {saudacao}, {nomeSaudacao}
-              </span>
-              <span className="hidden sm:inline">
-                {saudacao}, {nomeSaudacao}!
-              </span>
-            </p>
-            <p className="mt-0.5 hidden truncate text-xs text-muted-foreground lg:block">
-              Estude com foco e consistência.
-            </p>
-          </div>
-        </div>
-
-        <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
-          <button
-            type="button"
-            className={cn(iconBtnClass, "hidden sm:inline-flex")}
-            onClick={toggleTheme}
-            aria-label={isDark ? "Ativar modo claro" : "Ativar modo escuro"}
-            title={isDark ? "Modo claro" : "Modo escuro"}
-          >
-            {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-          </button>
-
-          <NotificationBell />
-
-          <button
-            type="button"
-            className={iconBtnClass}
-            onClick={() => {
-              setCmdOpen(true);
-              setCmdQuery("");
-            }}
-            title="Buscar (Ctrl+K)"
-            aria-label="Buscar páginas"
-          >
-            <Search className="h-4 w-4" />
-          </button>
-
-          <UserDropdown compact />
-
-        </div>
-      </div>
-
-      {cmdOpen ? (
-        <div
-          className="fixed inset-0 z-[200] flex items-start justify-center bg-black/40 p-4 pt-[max(1rem,10vh)] backdrop-blur-[2px]"
-          role="presentation"
-          onMouseDown={(e) => {
-            if (e.target === e.currentTarget) setCmdOpen(false);
-          }}
-        >
-          <div
-            className="w-full max-w-md rounded-xl border border-border bg-surface p-4 shadow-lg"
-            role="dialog"
-            aria-modal="true"
-            aria-label="Paleta de comandos"
-          >
-            <div className="flex items-center justify-between gap-3">
-              <div className="text-sm font-semibold text-foreground">Ir para…</div>
-              <button
-                type="button"
-                className={cn(iconBtnClass, "h-9 w-9")}
-                onClick={() => setCmdOpen(false)}
-                aria-label="Fechar"
-              >
-                <X className="h-4 w-4" />
-              </button>
-            </div>
-
-            <input
-              ref={cmdInputRef}
-              className="mt-3 w-full rounded-lg border border-input bg-background px-3 py-2.5 text-sm text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring"
-              placeholder="Digite para buscar…"
-              value={cmdQuery}
-              onChange={(e) => setCmdQuery(e.target.value)}
-              aria-label="Buscar página"
-            />
-
-            <div className="mt-3 max-h-64 space-y-1 overflow-auto">
-              <button
-                type="button"
-                className={cmdItemClass}
-                onClick={() => {
-                  toggleTheme();
-                  setCmdOpen(false);
-                }}
-              >
-                Alternar tema {isDark ? "claro" : "escuro"}
-              </button>
-
-              {filteredActions.map((a) => (
-                <button
-                  key={a.to}
-                  type="button"
-                  className={cmdItemClass}
-                  onClick={() => {
-                    setCmdOpen(false);
-                    navigate(a.to);
-                  }}
-                >
-                  {a.label}
-                </button>
-              ))}
-
-              {filteredActions.length === 0 ? (
-                <div className="rounded-lg px-3 py-2 text-sm text-muted-foreground">Nenhum resultado.</div>
-              ) : null}
-            </div>
-          </div>
-        </div>
-      ) : null}
-    </header>
-  );
+    const handler = (event: KeyboardEvent) => { if (event.key.toLowerCase() === "k" && (event.ctrlKey || event.metaKey)) { event.preventDefault(); setQuery(""); setOpen(true); } };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, []);
+  return <header className="sticky top-0 z-50 shrink-0 border-b border-border bg-surface">
+    <div className="flex h-16 min-w-0 items-center gap-2 px-4 md:gap-4 md:px-6">
+      <Button variant="ghost" size="icon" className="md:hidden" onClick={onOpenSidebar} aria-label="Abrir menu" aria-controls="app-sidebar" aria-expanded={mobileSidebarOpen}><Menu aria-hidden /></Button>
+      <nav aria-label="Breadcrumb" className="min-w-0 flex-1 text-sm">
+        <ol className="flex min-w-0 items-center gap-2">
+          {breadcrumb.parent && <li className="hidden items-center gap-2 text-muted-foreground lg:flex"><Link to={breadcrumb.parent.to} className="rounded hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">{breadcrumb.parent.label}</Link><ChevronRight className="size-4" aria-hidden /></li>}
+          <li className="truncate font-semibold" aria-current="page">{breadcrumb.label}</li>
+        </ol>
+      </nav>
+      <Button ref={searchButton} variant="ghost" className="shrink-0 lg:w-60 lg:justify-start lg:bg-muted/50" onClick={() => { setQuery(""); setOpen(true); }} aria-label="Buscar páginas (Ctrl+K)"><Search aria-hidden /><span className="hidden font-normal text-muted-foreground lg:inline">Buscar páginas…</span><kbd className="ml-auto hidden rounded border border-border px-1 text-xs text-muted-foreground lg:inline">Ctrl K</kbd></Button>
+      <Button variant="ghost" size="icon" className="hidden sm:inline-flex" onClick={toggle} aria-label={isDark ? "Ativar modo claro" : "Ativar modo escuro"}>{isDark ? <Sun aria-hidden /> : <Moon aria-hidden />}</Button>
+      <NotificationBell />
+      <UserDropdown compact />
+    </div>
+    <Dialog open={open} onOpenChange={setOpen}><DialogContent onCloseAutoFocus={event => { event.preventDefault(); searchButton.current?.focus(); }}>
+      <DialogHeader><DialogTitle>Buscar páginas</DialogTitle><DialogDescription>Encontre uma área da plataforma pelo nome.</DialogDescription></DialogHeader>
+      <Input autoFocus aria-label="Nome da página" placeholder="Cronograma, disciplinas, revisões…" value={query} onChange={e => setQuery(e.target.value)} />
+      <div className="max-h-72 space-y-1 overflow-y-auto" aria-label="Resultados de páginas">{filtered.map(a => <Button key={a.to} variant="ghost" className="w-full justify-start" onClick={() => { setOpen(false); navigate(a.to); }}>{a.label}<ChevronRight className="ml-auto" aria-hidden /></Button>)}{!filtered.length && <p role="status" className="p-4 text-sm text-muted-foreground">Nenhuma página encontrada.</p>}</div>
+    </DialogContent></Dialog>
+  </header>;
 }

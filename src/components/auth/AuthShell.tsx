@@ -50,7 +50,7 @@ export function AuthShell({ children, logoAsLink = false }: AuthShellProps) {
     <div className="fixed inset-0 z-[200] flex h-[100dvh] max-h-[100dvh] w-full flex-col overflow-hidden font-sans md:flex-row">
       {/* Mobile — faixa com logo em chip claro (marca legível) */}
       <div className="auth-hero-gradient flex shrink-0 items-center px-4 py-2.5 md:hidden">
-        <div className="rounded-xl bg-white/95 px-3 py-1.5 shadow-sm">
+        <div className="rounded-xl bg-white/95 dark:bg-surface px-3 py-1.5 shadow-sm">
           <ClickEditalLogo size="sm" className="shrink-0" asLink={logoAsLink} />
         </div>
       </div>
@@ -63,7 +63,7 @@ export function AuthShell({ children, logoAsLink = false }: AuthShellProps) {
 
         <div className="relative z-10 flex h-full min-h-0 flex-col">
           <div className="shrink-0 px-8 pb-0 pt-8 lg:px-10">
-            <div className="inline-flex rounded-2xl bg-white/95 px-4 py-2.5 shadow-md">
+            <div className="inline-flex rounded-2xl bg-white/95 dark:bg-surface px-4 py-2.5 shadow-md">
               <ClickEditalLogo size="md" className="shrink-0" asLink={logoAsLink} />
             </div>
             <div className="h-8" aria-hidden />

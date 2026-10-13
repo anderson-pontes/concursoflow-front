@@ -1,0 +1,3070 @@
+{
+  "mocked": true,
+  "productionWrites": false,
+  "results": [
+    {
+      "profile": "1440-light-data",
+      "passed": true,
+      "overflow": false,
+      "charts": 2,
+      "errors": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/concursos",
+          "query": {}
+        },
+        {
+          "method": "GET",
+          "path": "/telemetry/preference",
+          "query": {}
+        },
+        {
+          "method": "GET",
+          "path": "/cronograma/calendario",
+          "query": {
+            "ano": "2026",
+            "mes": "10",
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/analise",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001",
+            "inicio": "2026-10-12",
+            "fim": "2026-10-18"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/resumo",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/proximo-estudo",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/revisoes-pendentes",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/heatmap",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/avisos/concurso/29110000-0000-4000-8000-000000000001",
+          "query": {}
+        }
+      ],
+      "alignment": [
+        {
+          "name": "actions",
+          "boxes": [
+            {
+              "top": 398,
+              "bottom": 791,
+              "height": 393
+            },
+            {
+              "top": 398,
+              "bottom": 791,
+              "height": 393
+            }
+          ]
+        },
+        {
+          "name": "daily",
+          "boxes": [
+            {
+              "top": 811,
+              "bottom": 1221,
+              "height": 410
+            },
+            {
+              "top": 811,
+              "bottom": 1221,
+              "height": 410
+            }
+          ]
+        },
+        {
+          "name": "disciplines",
+          "boxes": [
+            {
+              "top": 1303,
+              "bottom": 1714,
+              "height": 411
+            },
+            {
+              "top": 1303,
+              "bottom": 1714,
+              "height": 411
+            }
+          ]
+        },
+        {
+          "name": "tracking",
+          "boxes": [
+            {
+              "top": 1734,
+              "bottom": 2201,
+              "height": 467
+            },
+            {
+              "top": 1734,
+              "bottom": 2201,
+              "height": 467
+            }
+          ]
+        },
+        {
+          "name": "complementary",
+          "boxes": [
+            {
+              "top": 2221,
+              "bottom": 2512,
+              "height": 291
+            },
+            {
+              "top": 2221,
+              "bottom": 2512,
+              "height": 291
+            },
+            {
+              "top": 2221,
+              "bottom": 2512,
+              "height": 291
+            }
+          ]
+        }
+      ],
+      "menu": {
+        "bg": "rgb(25, 38, 91)",
+        "color": "rgb(232, 236, 255)",
+        "selected": "Tribunal Regional de uma Região com nome bastante extenso — Analista Judiciário de Tecnologia da InformaçãoConcurso QA Dashboard",
+        "bounds": {
+          "left": 13,
+          "right": 251
+        }
+      }
+    },
+    {
+      "profile": "1440-light-empty",
+      "passed": true,
+      "overflow": false,
+      "charts": 0,
+      "errors": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/concursos",
+          "query": {}
+        },
+        {
+          "method": "GET",
+          "path": "/telemetry/preference",
+          "query": {}
+        },
+        {
+          "method": "GET",
+          "path": "/cronograma/calendario",
+          "query": {
+            "ano": "2026",
+            "mes": "10",
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/analise",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001",
+            "inicio": "2026-10-12",
+            "fim": "2026-10-18"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/resumo",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/proximo-estudo",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/revisoes-pendentes",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/heatmap",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/avisos/concurso/29110000-0000-4000-8000-000000000001",
+          "query": {}
+        }
+      ],
+      "alignment": [
+        {
+          "name": "actions",
+          "boxes": [
+            {
+              "top": 398,
+              "bottom": 607,
+              "height": 209
+            },
+            {
+              "top": 398,
+              "bottom": 607,
+              "height": 209
+            }
+          ]
+        },
+        {
+          "name": "daily",
+          "boxes": [
+            {
+              "top": 627,
+              "bottom": 1037,
+              "height": 410
+            },
+            {
+              "top": 627,
+              "bottom": 1037,
+              "height": 410
+            }
+          ]
+        },
+        {
+          "name": "disciplines",
+          "boxes": [
+            {
+              "top": 1119,
+              "bottom": 1562,
+              "height": 443
+            },
+            {
+              "top": 1119,
+              "bottom": 1562,
+              "height": 443
+            }
+          ]
+        },
+        {
+          "name": "tracking",
+          "boxes": [
+            {
+              "top": 1582,
+              "bottom": 2049,
+              "height": 467
+            },
+            {
+              "top": 1582,
+              "bottom": 2049,
+              "height": 467
+            }
+          ]
+        },
+        {
+          "name": "complementary",
+          "boxes": [
+            {
+              "top": 2069,
+              "bottom": 2360,
+              "height": 291
+            },
+            {
+              "top": 2069,
+              "bottom": 2360,
+              "height": 291
+            },
+            {
+              "top": 2069,
+              "bottom": 2360,
+              "height": 291
+            }
+          ]
+        }
+      ],
+      "menu": {
+        "bg": "rgb(25, 38, 91)",
+        "color": "rgb(232, 236, 255)",
+        "selected": "Tribunal Regional de uma Região com nome bastante extenso — Analista Judiciário de Tecnologia da InformaçãoConcurso QA Dashboard",
+        "bounds": {
+          "left": 13,
+          "right": 251
+        }
+      }
+    },
+    {
+      "profile": "1440-dark-data",
+      "passed": true,
+      "overflow": false,
+      "charts": 2,
+      "errors": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/concursos",
+          "query": {}
+        },
+        {
+          "method": "GET",
+          "path": "/telemetry/preference",
+          "query": {}
+        },
+        {
+          "method": "GET",
+          "path": "/cronograma/calendario",
+          "query": {
+            "ano": "2026",
+            "mes": "10",
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/analise",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001",
+            "inicio": "2026-10-12",
+            "fim": "2026-10-18"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/resumo",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/proximo-estudo",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/revisoes-pendentes",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/heatmap",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/avisos/concurso/29110000-0000-4000-8000-000000000001",
+          "query": {}
+        }
+      ],
+      "alignment": [
+        {
+          "name": "actions",
+          "boxes": [
+            {
+              "top": 398,
+              "bottom": 791,
+              "height": 393
+            },
+            {
+              "top": 398,
+              "bottom": 791,
+              "height": 393
+            }
+          ]
+        },
+        {
+          "name": "daily",
+          "boxes": [
+            {
+              "top": 811,
+              "bottom": 1221,
+              "height": 410
+            },
+            {
+              "top": 811,
+              "bottom": 1221,
+              "height": 410
+            }
+          ]
+        },
+        {
+          "name": "disciplines",
+          "boxes": [
+            {
+              "top": 1303,
+              "bottom": 1714,
+              "height": 411
+            },
+            {
+              "top": 1303,
+              "bottom": 1714,
+              "height": 411
+            }
+          ]
+        },
+        {
+          "name": "tracking",
+          "boxes": [
+            {
+              "top": 1734,
+              "bottom": 2201,
+              "height": 467
+            },
+            {
+              "top": 1734,
+              "bottom": 2201,
+              "height": 467
+            }
+          ]
+        },
+        {
+          "name": "complementary",
+          "boxes": [
+            {
+              "top": 2221,
+              "bottom": 2512,
+              "height": 291
+            },
+            {
+              "top": 2221,
+              "bottom": 2512,
+              "height": 291
+            },
+            {
+              "top": 2221,
+              "bottom": 2512,
+              "height": 291
+            }
+          ]
+        }
+      ],
+      "menu": {
+        "bg": "rgb(25, 38, 91)",
+        "color": "rgb(232, 236, 255)",
+        "selected": "Tribunal Regional de uma Região com nome bastante extenso — Analista Judiciário de Tecnologia da InformaçãoConcurso QA Dashboard",
+        "bounds": {
+          "left": 13,
+          "right": 251
+        }
+      }
+    },
+    {
+      "profile": "1440-dark-empty",
+      "passed": true,
+      "overflow": false,
+      "charts": 0,
+      "errors": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/concursos",
+          "query": {}
+        },
+        {
+          "method": "GET",
+          "path": "/telemetry/preference",
+          "query": {}
+        },
+        {
+          "method": "GET",
+          "path": "/cronograma/calendario",
+          "query": {
+            "ano": "2026",
+            "mes": "10",
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/analise",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001",
+            "inicio": "2026-10-12",
+            "fim": "2026-10-18"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/resumo",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/proximo-estudo",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/revisoes-pendentes",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/heatmap",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/avisos/concurso/29110000-0000-4000-8000-000000000001",
+          "query": {}
+        }
+      ],
+      "alignment": [
+        {
+          "name": "actions",
+          "boxes": [
+            {
+              "top": 398,
+              "bottom": 607,
+              "height": 209
+            },
+            {
+              "top": 398,
+              "bottom": 607,
+              "height": 209
+            }
+          ]
+        },
+        {
+          "name": "daily",
+          "boxes": [
+            {
+              "top": 627,
+              "bottom": 1037,
+              "height": 410
+            },
+            {
+              "top": 627,
+              "bottom": 1037,
+              "height": 410
+            }
+          ]
+        },
+        {
+          "name": "disciplines",
+          "boxes": [
+            {
+              "top": 1119,
+              "bottom": 1562,
+              "height": 443
+            },
+            {
+              "top": 1119,
+              "bottom": 1562,
+              "height": 443
+            }
+          ]
+        },
+        {
+          "name": "tracking",
+          "boxes": [
+            {
+              "top": 1582,
+              "bottom": 2049,
+              "height": 467
+            },
+            {
+              "top": 1582,
+              "bottom": 2049,
+              "height": 467
+            }
+          ]
+        },
+        {
+          "name": "complementary",
+          "boxes": [
+            {
+              "top": 2069,
+              "bottom": 2360,
+              "height": 291
+            },
+            {
+              "top": 2069,
+              "bottom": 2360,
+              "height": 291
+            },
+            {
+              "top": 2069,
+              "bottom": 2360,
+              "height": 291
+            }
+          ]
+        }
+      ],
+      "menu": {
+        "bg": "rgb(25, 38, 91)",
+        "color": "rgb(232, 236, 255)",
+        "selected": "Tribunal Regional de uma Região com nome bastante extenso — Analista Judiciário de Tecnologia da InformaçãoConcurso QA Dashboard",
+        "bounds": {
+          "left": 13,
+          "right": 251
+        }
+      }
+    },
+    {
+      "profile": "1280-light-data",
+      "passed": true,
+      "overflow": false,
+      "charts": 2,
+      "errors": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/concursos",
+          "query": {}
+        },
+        {
+          "method": "GET",
+          "path": "/telemetry/preference",
+          "query": {}
+        },
+        {
+          "method": "GET",
+          "path": "/cronograma/calendario",
+          "query": {
+            "ano": "2026",
+            "mes": "10",
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/analise",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001",
+            "inicio": "2026-10-12",
+            "fim": "2026-10-18"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/resumo",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/proximo-estudo",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/revisoes-pendentes",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/heatmap",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/avisos/concurso/29110000-0000-4000-8000-000000000001",
+          "query": {}
+        }
+      ],
+      "alignment": [
+        {
+          "name": "actions",
+          "boxes": [
+            {
+              "top": 418,
+              "bottom": 811,
+              "height": 393
+            },
+            {
+              "top": 418,
+              "bottom": 811,
+              "height": 393
+            }
+          ]
+        },
+        {
+          "name": "daily",
+          "boxes": [
+            {
+              "top": 831,
+              "bottom": 1241,
+              "height": 410
+            },
+            {
+              "top": 831,
+              "bottom": 1241,
+              "height": 410
+            }
+          ]
+        },
+        {
+          "name": "disciplines",
+          "boxes": [
+            {
+              "top": 1323,
+              "bottom": 1754,
+              "height": 431
+            },
+            {
+              "top": 1323,
+              "bottom": 1754,
+              "height": 431
+            }
+          ]
+        },
+        {
+          "name": "tracking",
+          "boxes": [
+            {
+              "top": 1774,
+              "bottom": 2241,
+              "height": 467
+            },
+            {
+              "top": 1774,
+              "bottom": 2241,
+              "height": 467
+            }
+          ]
+        },
+        {
+          "name": "complementary",
+          "boxes": [
+            {
+              "top": 2261,
+              "bottom": 2552,
+              "height": 291
+            },
+            {
+              "top": 2261,
+              "bottom": 2552,
+              "height": 291
+            },
+            {
+              "top": 2261,
+              "bottom": 2552,
+              "height": 291
+            }
+          ]
+        }
+      ],
+      "menu": {
+        "bg": "rgb(25, 38, 91)",
+        "color": "rgb(232, 236, 255)",
+        "selected": "Tribunal Regional de uma Região com nome bastante extenso — Analista Judiciário de Tecnologia da InformaçãoConcurso QA Dashboard",
+        "bounds": {
+          "left": 13,
+          "right": 251
+        }
+      }
+    },
+    {
+      "profile": "1280-light-empty",
+      "passed": true,
+      "overflow": false,
+      "charts": 0,
+      "errors": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/concursos",
+          "query": {}
+        },
+        {
+          "method": "GET",
+          "path": "/telemetry/preference",
+          "query": {}
+        },
+        {
+          "method": "GET",
+          "path": "/cronograma/calendario",
+          "query": {
+            "ano": "2026",
+            "mes": "10",
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/analise",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001",
+            "inicio": "2026-10-12",
+            "fim": "2026-10-18"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/resumo",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/proximo-estudo",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/revisoes-pendentes",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/heatmap",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/avisos/concurso/29110000-0000-4000-8000-000000000001",
+          "query": {}
+        }
+      ],
+      "alignment": [
+        {
+          "name": "actions",
+          "boxes": [
+            {
+              "top": 418,
+              "bottom": 627,
+              "height": 209
+            },
+            {
+              "top": 418,
+              "bottom": 627,
+              "height": 209
+            }
+          ]
+        },
+        {
+          "name": "daily",
+          "boxes": [
+            {
+              "top": 647,
+              "bottom": 1057,
+              "height": 410
+            },
+            {
+              "top": 647,
+              "bottom": 1057,
+              "height": 410
+            }
+          ]
+        },
+        {
+          "name": "disciplines",
+          "boxes": [
+            {
+              "top": 1139,
+              "bottom": 1582,
+              "height": 443
+            },
+            {
+              "top": 1139,
+              "bottom": 1582,
+              "height": 443
+            }
+          ]
+        },
+        {
+          "name": "tracking",
+          "boxes": [
+            {
+              "top": 1602,
+              "bottom": 2069,
+              "height": 467
+            },
+            {
+              "top": 1602,
+              "bottom": 2069,
+              "height": 467
+            }
+          ]
+        },
+        {
+          "name": "complementary",
+          "boxes": [
+            {
+              "top": 2089,
+              "bottom": 2380,
+              "height": 291
+            },
+            {
+              "top": 2089,
+              "bottom": 2380,
+              "height": 291
+            },
+            {
+              "top": 2089,
+              "bottom": 2380,
+              "height": 291
+            }
+          ]
+        }
+      ],
+      "menu": {
+        "bg": "rgb(25, 38, 91)",
+        "color": "rgb(232, 236, 255)",
+        "selected": "Tribunal Regional de uma Região com nome bastante extenso — Analista Judiciário de Tecnologia da InformaçãoConcurso QA Dashboard",
+        "bounds": {
+          "left": 13,
+          "right": 251
+        }
+      }
+    },
+    {
+      "profile": "1280-dark-data",
+      "passed": true,
+      "overflow": false,
+      "charts": 2,
+      "errors": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/concursos",
+          "query": {}
+        },
+        {
+          "method": "GET",
+          "path": "/telemetry/preference",
+          "query": {}
+        },
+        {
+          "method": "GET",
+          "path": "/cronograma/calendario",
+          "query": {
+            "ano": "2026",
+            "mes": "10",
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/analise",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001",
+            "inicio": "2026-10-12",
+            "fim": "2026-10-18"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/resumo",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/proximo-estudo",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/revisoes-pendentes",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/heatmap",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/avisos/concurso/29110000-0000-4000-8000-000000000001",
+          "query": {}
+        }
+      ],
+      "alignment": [
+        {
+          "name": "actions",
+          "boxes": [
+            {
+              "top": 418,
+              "bottom": 811,
+              "height": 393
+            },
+            {
+              "top": 418,
+              "bottom": 811,
+              "height": 393
+            }
+          ]
+        },
+        {
+          "name": "daily",
+          "boxes": [
+            {
+              "top": 831,
+              "bottom": 1241,
+              "height": 410
+            },
+            {
+              "top": 831,
+              "bottom": 1241,
+              "height": 410
+            }
+          ]
+        },
+        {
+          "name": "disciplines",
+          "boxes": [
+            {
+              "top": 1323,
+              "bottom": 1754,
+              "height": 431
+            },
+            {
+              "top": 1323,
+              "bottom": 1754,
+              "height": 431
+            }
+          ]
+        },
+        {
+          "name": "tracking",
+          "boxes": [
+            {
+              "top": 1774,
+              "bottom": 2241,
+              "height": 467
+            },
+            {
+              "top": 1774,
+              "bottom": 2241,
+              "height": 467
+            }
+          ]
+        },
+        {
+          "name": "complementary",
+          "boxes": [
+            {
+              "top": 2261,
+              "bottom": 2552,
+              "height": 291
+            },
+            {
+              "top": 2261,
+              "bottom": 2552,
+              "height": 291
+            },
+            {
+              "top": 2261,
+              "bottom": 2552,
+              "height": 291
+            }
+          ]
+        }
+      ],
+      "menu": {
+        "bg": "rgb(25, 38, 91)",
+        "color": "rgb(232, 236, 255)",
+        "selected": "Tribunal Regional de uma Região com nome bastante extenso — Analista Judiciário de Tecnologia da InformaçãoConcurso QA Dashboard",
+        "bounds": {
+          "left": 13,
+          "right": 251
+        }
+      }
+    },
+    {
+      "profile": "1280-dark-empty",
+      "passed": true,
+      "overflow": false,
+      "charts": 0,
+      "errors": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/concursos",
+          "query": {}
+        },
+        {
+          "method": "GET",
+          "path": "/telemetry/preference",
+          "query": {}
+        },
+        {
+          "method": "GET",
+          "path": "/cronograma/calendario",
+          "query": {
+            "ano": "2026",
+            "mes": "10",
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/analise",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001",
+            "inicio": "2026-10-12",
+            "fim": "2026-10-18"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/resumo",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/proximo-estudo",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/revisoes-pendentes",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/heatmap",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/avisos/concurso/29110000-0000-4000-8000-000000000001",
+          "query": {}
+        }
+      ],
+      "alignment": [
+        {
+          "name": "actions",
+          "boxes": [
+            {
+              "top": 418,
+              "bottom": 627,
+              "height": 209
+            },
+            {
+              "top": 418,
+              "bottom": 627,
+              "height": 209
+            }
+          ]
+        },
+        {
+          "name": "daily",
+          "boxes": [
+            {
+              "top": 647,
+              "bottom": 1057,
+              "height": 410
+            },
+            {
+              "top": 647,
+              "bottom": 1057,
+              "height": 410
+            }
+          ]
+        },
+        {
+          "name": "disciplines",
+          "boxes": [
+            {
+              "top": 1139,
+              "bottom": 1582,
+              "height": 443
+            },
+            {
+              "top": 1139,
+              "bottom": 1582,
+              "height": 443
+            }
+          ]
+        },
+        {
+          "name": "tracking",
+          "boxes": [
+            {
+              "top": 1602,
+              "bottom": 2069,
+              "height": 467
+            },
+            {
+              "top": 1602,
+              "bottom": 2069,
+              "height": 467
+            }
+          ]
+        },
+        {
+          "name": "complementary",
+          "boxes": [
+            {
+              "top": 2089,
+              "bottom": 2380,
+              "height": 291
+            },
+            {
+              "top": 2089,
+              "bottom": 2380,
+              "height": 291
+            },
+            {
+              "top": 2089,
+              "bottom": 2380,
+              "height": 291
+            }
+          ]
+        }
+      ],
+      "menu": {
+        "bg": "rgb(25, 38, 91)",
+        "color": "rgb(232, 236, 255)",
+        "selected": "Tribunal Regional de uma Região com nome bastante extenso — Analista Judiciário de Tecnologia da InformaçãoConcurso QA Dashboard",
+        "bounds": {
+          "left": 13,
+          "right": 251
+        }
+      }
+    },
+    {
+      "profile": "768-light-data",
+      "passed": true,
+      "overflow": false,
+      "charts": 2,
+      "errors": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/concursos",
+          "query": {}
+        },
+        {
+          "method": "GET",
+          "path": "/telemetry/preference",
+          "query": {}
+        },
+        {
+          "method": "GET",
+          "path": "/cronograma/calendario",
+          "query": {
+            "ano": "2026",
+            "mes": "10",
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/analise",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001",
+            "inicio": "2026-10-12",
+            "fim": "2026-10-18"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/resumo",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/proximo-estudo",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/revisoes-pendentes",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/heatmap",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/avisos/concurso/29110000-0000-4000-8000-000000000001",
+          "query": {}
+        }
+      ],
+      "alignment": [
+        {
+          "name": "actions",
+          "boxes": [
+            {
+              "top": 651,
+              "bottom": 978,
+              "height": 327
+            },
+            {
+              "top": 994,
+              "bottom": 1389,
+              "height": 395
+            }
+          ]
+        },
+        {
+          "name": "daily",
+          "boxes": [
+            {
+              "top": 1409,
+              "bottom": 1797,
+              "height": 388
+            },
+            {
+              "top": 1813,
+              "bottom": 2221,
+              "height": 408
+            }
+          ]
+        },
+        {
+          "name": "disciplines",
+          "boxes": [
+            {
+              "top": 2303,
+              "bottom": 2712,
+              "height": 409
+            },
+            {
+              "top": 2728,
+              "bottom": 3137,
+              "height": 409
+            }
+          ]
+        },
+        {
+          "name": "tracking",
+          "boxes": [
+            {
+              "top": 3157,
+              "bottom": 3510,
+              "height": 353
+            },
+            {
+              "top": 3526,
+              "bottom": 3977,
+              "height": 451
+            }
+          ]
+        },
+        {
+          "name": "complementary",
+          "boxes": [
+            {
+              "top": 3997,
+              "bottom": 4190,
+              "height": 193
+            },
+            {
+              "top": 4206,
+              "bottom": 4475,
+              "height": 269
+            },
+            {
+              "top": 4491,
+              "bottom": 4680,
+              "height": 189
+            }
+          ]
+        }
+      ],
+      "menu": {
+        "bg": "rgb(25, 38, 91)",
+        "color": "rgb(232, 236, 255)",
+        "selected": "Tribunal Regional de uma Região com nome bastante extenso — Analista Judiciário de Tecnologia da InformaçãoConcurso QA Dashboard",
+        "bounds": {
+          "left": 13,
+          "right": 251
+        }
+      }
+    },
+    {
+      "profile": "768-light-empty",
+      "passed": true,
+      "overflow": false,
+      "charts": 0,
+      "errors": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/concursos",
+          "query": {}
+        },
+        {
+          "method": "GET",
+          "path": "/telemetry/preference",
+          "query": {}
+        },
+        {
+          "method": "GET",
+          "path": "/cronograma/calendario",
+          "query": {
+            "ano": "2026",
+            "mes": "10",
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/analise",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001",
+            "inicio": "2026-10-12",
+            "fim": "2026-10-18"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/resumo",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/proximo-estudo",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/revisoes-pendentes",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/heatmap",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/avisos/concurso/29110000-0000-4000-8000-000000000001",
+          "query": {}
+        }
+      ],
+      "alignment": [
+        {
+          "name": "actions",
+          "boxes": [
+            {
+              "top": 651,
+              "bottom": 860,
+              "height": 209
+            },
+            {
+              "top": 876,
+              "bottom": 1065,
+              "height": 189
+            }
+          ]
+        },
+        {
+          "name": "daily",
+          "boxes": [
+            {
+              "top": 1085,
+              "bottom": 1473,
+              "height": 388
+            },
+            {
+              "top": 1489,
+              "bottom": 1897,
+              "height": 408
+            }
+          ]
+        },
+        {
+          "name": "disciplines",
+          "boxes": [
+            {
+              "top": 1979,
+              "bottom": 2388,
+              "height": 409
+            },
+            {
+              "top": 2404,
+              "bottom": 2825,
+              "height": 421
+            }
+          ]
+        },
+        {
+          "name": "tracking",
+          "boxes": [
+            {
+              "top": 2845,
+              "bottom": 3238,
+              "height": 393
+            },
+            {
+              "top": 3254,
+              "bottom": 3705,
+              "height": 451
+            }
+          ]
+        },
+        {
+          "name": "complementary",
+          "boxes": [
+            {
+              "top": 3725,
+              "bottom": 3918,
+              "height": 193
+            },
+            {
+              "top": 3934,
+              "bottom": 4203,
+              "height": 269
+            },
+            {
+              "top": 4219,
+              "bottom": 4408,
+              "height": 189
+            }
+          ]
+        }
+      ],
+      "menu": {
+        "bg": "rgb(25, 38, 91)",
+        "color": "rgb(232, 236, 255)",
+        "selected": "Tribunal Regional de uma Região com nome bastante extenso — Analista Judiciário de Tecnologia da InformaçãoConcurso QA Dashboard",
+        "bounds": {
+          "left": 13,
+          "right": 251
+        }
+      }
+    },
+    {
+      "profile": "768-dark-data",
+      "passed": true,
+      "overflow": false,
+      "charts": 2,
+      "errors": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/concursos",
+          "query": {}
+        },
+        {
+          "method": "GET",
+          "path": "/telemetry/preference",
+          "query": {}
+        },
+        {
+          "method": "GET",
+          "path": "/cronograma/calendario",
+          "query": {
+            "ano": "2026",
+            "mes": "10",
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/analise",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001",
+            "inicio": "2026-10-12",
+            "fim": "2026-10-18"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/resumo",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/proximo-estudo",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/revisoes-pendentes",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/heatmap",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/avisos/concurso/29110000-0000-4000-8000-000000000001",
+          "query": {}
+        }
+      ],
+      "alignment": [
+        {
+          "name": "actions",
+          "boxes": [
+            {
+              "top": 651,
+              "bottom": 978,
+              "height": 327
+            },
+            {
+              "top": 994,
+              "bottom": 1389,
+              "height": 395
+            }
+          ]
+        },
+        {
+          "name": "daily",
+          "boxes": [
+            {
+              "top": 1409,
+              "bottom": 1797,
+              "height": 388
+            },
+            {
+              "top": 1813,
+              "bottom": 2221,
+              "height": 408
+            }
+          ]
+        },
+        {
+          "name": "disciplines",
+          "boxes": [
+            {
+              "top": 2303,
+              "bottom": 2712,
+              "height": 409
+            },
+            {
+              "top": 2728,
+              "bottom": 3137,
+              "height": 409
+            }
+          ]
+        },
+        {
+          "name": "tracking",
+          "boxes": [
+            {
+              "top": 3157,
+              "bottom": 3510,
+              "height": 353
+            },
+            {
+              "top": 3526,
+              "bottom": 3977,
+              "height": 451
+            }
+          ]
+        },
+        {
+          "name": "complementary",
+          "boxes": [
+            {
+              "top": 3997,
+              "bottom": 4190,
+              "height": 193
+            },
+            {
+              "top": 4206,
+              "bottom": 4475,
+              "height": 269
+            },
+            {
+              "top": 4491,
+              "bottom": 4680,
+              "height": 189
+            }
+          ]
+        }
+      ],
+      "menu": {
+        "bg": "rgb(25, 38, 91)",
+        "color": "rgb(232, 236, 255)",
+        "selected": "Tribunal Regional de uma Região com nome bastante extenso — Analista Judiciário de Tecnologia da InformaçãoConcurso QA Dashboard",
+        "bounds": {
+          "left": 13,
+          "right": 251
+        }
+      }
+    },
+    {
+      "profile": "768-dark-empty",
+      "passed": true,
+      "overflow": false,
+      "charts": 0,
+      "errors": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/concursos",
+          "query": {}
+        },
+        {
+          "method": "GET",
+          "path": "/telemetry/preference",
+          "query": {}
+        },
+        {
+          "method": "GET",
+          "path": "/cronograma/calendario",
+          "query": {
+            "ano": "2026",
+            "mes": "10",
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/analise",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001",
+            "inicio": "2026-10-12",
+            "fim": "2026-10-18"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/resumo",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/proximo-estudo",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/revisoes-pendentes",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/heatmap",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/avisos/concurso/29110000-0000-4000-8000-000000000001",
+          "query": {}
+        }
+      ],
+      "alignment": [
+        {
+          "name": "actions",
+          "boxes": [
+            {
+              "top": 651,
+              "bottom": 860,
+              "height": 209
+            },
+            {
+              "top": 876,
+              "bottom": 1065,
+              "height": 189
+            }
+          ]
+        },
+        {
+          "name": "daily",
+          "boxes": [
+            {
+              "top": 1085,
+              "bottom": 1473,
+              "height": 388
+            },
+            {
+              "top": 1489,
+              "bottom": 1897,
+              "height": 408
+            }
+          ]
+        },
+        {
+          "name": "disciplines",
+          "boxes": [
+            {
+              "top": 1979,
+              "bottom": 2388,
+              "height": 409
+            },
+            {
+              "top": 2404,
+              "bottom": 2825,
+              "height": 421
+            }
+          ]
+        },
+        {
+          "name": "tracking",
+          "boxes": [
+            {
+              "top": 2845,
+              "bottom": 3238,
+              "height": 393
+            },
+            {
+              "top": 3254,
+              "bottom": 3705,
+              "height": 451
+            }
+          ]
+        },
+        {
+          "name": "complementary",
+          "boxes": [
+            {
+              "top": 3725,
+              "bottom": 3918,
+              "height": 193
+            },
+            {
+              "top": 3934,
+              "bottom": 4203,
+              "height": 269
+            },
+            {
+              "top": 4219,
+              "bottom": 4408,
+              "height": 189
+            }
+          ]
+        }
+      ],
+      "menu": {
+        "bg": "rgb(25, 38, 91)",
+        "color": "rgb(232, 236, 255)",
+        "selected": "Tribunal Regional de uma Região com nome bastante extenso — Analista Judiciário de Tecnologia da InformaçãoConcurso QA Dashboard",
+        "bounds": {
+          "left": 13,
+          "right": 251
+        }
+      }
+    },
+    {
+      "profile": "375-light-data",
+      "passed": true,
+      "overflow": false,
+      "charts": 2,
+      "errors": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/concursos",
+          "query": {}
+        },
+        {
+          "method": "GET",
+          "path": "/telemetry/preference",
+          "query": {}
+        },
+        {
+          "method": "GET",
+          "path": "/cronograma/calendario",
+          "query": {
+            "ano": "2026",
+            "mes": "10",
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/analise",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001",
+            "inicio": "2026-10-12",
+            "fim": "2026-10-18"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/resumo",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/proximo-estudo",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/revisoes-pendentes",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/heatmap",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/avisos/concurso/29110000-0000-4000-8000-000000000001",
+          "query": {}
+        }
+      ],
+      "alignment": [
+        {
+          "name": "actions",
+          "boxes": [
+            {
+              "top": 859,
+              "bottom": 1238,
+              "height": 379
+            },
+            {
+              "top": 1254,
+              "bottom": 1669,
+              "height": 415
+            }
+          ]
+        },
+        {
+          "name": "daily",
+          "boxes": [
+            {
+              "top": 1689,
+              "bottom": 2077,
+              "height": 388
+            },
+            {
+              "top": 2093,
+              "bottom": 2501,
+              "height": 408
+            }
+          ]
+        },
+        {
+          "name": "disciplines",
+          "boxes": [
+            {
+              "top": 2583,
+              "bottom": 2992,
+              "height": 409
+            },
+            {
+              "top": 3008,
+              "bottom": 3437,
+              "height": 429
+            }
+          ]
+        },
+        {
+          "name": "tracking",
+          "boxes": [
+            {
+              "top": 3457,
+              "bottom": 3817.9375,
+              "height": 360.9375
+            },
+            {
+              "top": 3833.9375,
+              "bottom": 4284.9375,
+              "height": 451
+            }
+          ]
+        },
+        {
+          "name": "complementary",
+          "boxes": [
+            {
+              "top": 4304.9375,
+              "bottom": 4497.9375,
+              "height": 193
+            },
+            {
+              "top": 4513.9375,
+              "bottom": 4782.9375,
+              "height": 269
+            },
+            {
+              "top": 4798.9375,
+              "bottom": 4987.9375,
+              "height": 189
+            }
+          ]
+        }
+      ],
+      "menu": {
+        "bg": "rgb(25, 38, 91)",
+        "color": "rgb(232, 236, 255)",
+        "selected": "Tribunal Regional de uma Região com nome bastante extenso — Analista Judiciário de Tecnologia da InformaçãoConcurso QA Dashboard",
+        "bounds": {
+          "left": 13,
+          "right": 266
+        }
+      }
+    },
+    {
+      "profile": "375-light-empty",
+      "passed": true,
+      "overflow": false,
+      "charts": 0,
+      "errors": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/concursos",
+          "query": {}
+        },
+        {
+          "method": "GET",
+          "path": "/telemetry/preference",
+          "query": {}
+        },
+        {
+          "method": "GET",
+          "path": "/cronograma/calendario",
+          "query": {
+            "ano": "2026",
+            "mes": "10",
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/analise",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001",
+            "inicio": "2026-10-12",
+            "fim": "2026-10-18"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/resumo",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/proximo-estudo",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/revisoes-pendentes",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/heatmap",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/avisos/concurso/29110000-0000-4000-8000-000000000001",
+          "query": {}
+        }
+      ],
+      "alignment": [
+        {
+          "name": "actions",
+          "boxes": [
+            {
+              "top": 859,
+              "bottom": 1088,
+              "height": 229
+            },
+            {
+              "top": 1104,
+              "bottom": 1313,
+              "height": 209
+            }
+          ]
+        },
+        {
+          "name": "daily",
+          "boxes": [
+            {
+              "top": 1333,
+              "bottom": 1721,
+              "height": 388
+            },
+            {
+              "top": 1737,
+              "bottom": 2145,
+              "height": 408
+            }
+          ]
+        },
+        {
+          "name": "disciplines",
+          "boxes": [
+            {
+              "top": 2227,
+              "bottom": 2636,
+              "height": 409
+            },
+            {
+              "top": 2652,
+              "bottom": 3093,
+              "height": 441
+            }
+          ]
+        },
+        {
+          "name": "tracking",
+          "boxes": [
+            {
+              "top": 3113,
+              "bottom": 3513.9375,
+              "height": 400.9375
+            },
+            {
+              "top": 3529.9375,
+              "bottom": 3980.9375,
+              "height": 451
+            }
+          ]
+        },
+        {
+          "name": "complementary",
+          "boxes": [
+            {
+              "top": 4000.9375,
+              "bottom": 4193.9375,
+              "height": 193
+            },
+            {
+              "top": 4209.9375,
+              "bottom": 4478.9375,
+              "height": 269
+            },
+            {
+              "top": 4494.9375,
+              "bottom": 4683.9375,
+              "height": 189
+            }
+          ]
+        }
+      ],
+      "menu": {
+        "bg": "rgb(25, 38, 91)",
+        "color": "rgb(232, 236, 255)",
+        "selected": "Tribunal Regional de uma Região com nome bastante extenso — Analista Judiciário de Tecnologia da InformaçãoConcurso QA Dashboard",
+        "bounds": {
+          "left": 13,
+          "right": 266
+        }
+      }
+    },
+    {
+      "profile": "375-dark-data",
+      "passed": true,
+      "overflow": false,
+      "charts": 2,
+      "errors": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/concursos",
+          "query": {}
+        },
+        {
+          "method": "GET",
+          "path": "/telemetry/preference",
+          "query": {}
+        },
+        {
+          "method": "GET",
+          "path": "/cronograma/calendario",
+          "query": {
+            "ano": "2026",
+            "mes": "10",
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/analise",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001",
+            "inicio": "2026-10-12",
+            "fim": "2026-10-18"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/resumo",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/proximo-estudo",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/revisoes-pendentes",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/heatmap",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/avisos/concurso/29110000-0000-4000-8000-000000000001",
+          "query": {}
+        }
+      ],
+      "alignment": [
+        {
+          "name": "actions",
+          "boxes": [
+            {
+              "top": 859,
+              "bottom": 1238,
+              "height": 379
+            },
+            {
+              "top": 1254,
+              "bottom": 1669,
+              "height": 415
+            }
+          ]
+        },
+        {
+          "name": "daily",
+          "boxes": [
+            {
+              "top": 1689,
+              "bottom": 2077,
+              "height": 388
+            },
+            {
+              "top": 2093,
+              "bottom": 2501,
+              "height": 408
+            }
+          ]
+        },
+        {
+          "name": "disciplines",
+          "boxes": [
+            {
+              "top": 2583,
+              "bottom": 2992,
+              "height": 409
+            },
+            {
+              "top": 3008,
+              "bottom": 3437,
+              "height": 429
+            }
+          ]
+        },
+        {
+          "name": "tracking",
+          "boxes": [
+            {
+              "top": 3457,
+              "bottom": 3817.9375,
+              "height": 360.9375
+            },
+            {
+              "top": 3833.9375,
+              "bottom": 4284.9375,
+              "height": 451
+            }
+          ]
+        },
+        {
+          "name": "complementary",
+          "boxes": [
+            {
+              "top": 4304.9375,
+              "bottom": 4497.9375,
+              "height": 193
+            },
+            {
+              "top": 4513.9375,
+              "bottom": 4782.9375,
+              "height": 269
+            },
+            {
+              "top": 4798.9375,
+              "bottom": 4987.9375,
+              "height": 189
+            }
+          ]
+        }
+      ],
+      "menu": {
+        "bg": "rgb(25, 38, 91)",
+        "color": "rgb(232, 236, 255)",
+        "selected": "Tribunal Regional de uma Região com nome bastante extenso — Analista Judiciário de Tecnologia da InformaçãoConcurso QA Dashboard",
+        "bounds": {
+          "left": 13,
+          "right": 266
+        }
+      }
+    },
+    {
+      "profile": "375-dark-empty",
+      "passed": true,
+      "overflow": false,
+      "charts": 0,
+      "errors": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/concursos",
+          "query": {}
+        },
+        {
+          "method": "GET",
+          "path": "/telemetry/preference",
+          "query": {}
+        },
+        {
+          "method": "GET",
+          "path": "/cronograma/calendario",
+          "query": {
+            "ano": "2026",
+            "mes": "10",
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/analise",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001",
+            "inicio": "2026-10-12",
+            "fim": "2026-10-18"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/resumo",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/proximo-estudo",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/revisoes-pendentes",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/heatmap",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/avisos/concurso/29110000-0000-4000-8000-000000000001",
+          "query": {}
+        }
+      ],
+      "alignment": [
+        {
+          "name": "actions",
+          "boxes": [
+            {
+              "top": 859,
+              "bottom": 1088,
+              "height": 229
+            },
+            {
+              "top": 1104,
+              "bottom": 1313,
+              "height": 209
+            }
+          ]
+        },
+        {
+          "name": "daily",
+          "boxes": [
+            {
+              "top": 1333,
+              "bottom": 1721,
+              "height": 388
+            },
+            {
+              "top": 1737,
+              "bottom": 2145,
+              "height": 408
+            }
+          ]
+        },
+        {
+          "name": "disciplines",
+          "boxes": [
+            {
+              "top": 2227,
+              "bottom": 2636,
+              "height": 409
+            },
+            {
+              "top": 2652,
+              "bottom": 3093,
+              "height": 441
+            }
+          ]
+        },
+        {
+          "name": "tracking",
+          "boxes": [
+            {
+              "top": 3113,
+              "bottom": 3513.9375,
+              "height": 400.9375
+            },
+            {
+              "top": 3529.9375,
+              "bottom": 3980.9375,
+              "height": 451
+            }
+          ]
+        },
+        {
+          "name": "complementary",
+          "boxes": [
+            {
+              "top": 4000.9375,
+              "bottom": 4193.9375,
+              "height": 193
+            },
+            {
+              "top": 4209.9375,
+              "bottom": 4478.9375,
+              "height": 269
+            },
+            {
+              "top": 4494.9375,
+              "bottom": 4683.9375,
+              "height": 189
+            }
+          ]
+        }
+      ],
+      "menu": {
+        "bg": "rgb(25, 38, 91)",
+        "color": "rgb(232, 236, 255)",
+        "selected": "Tribunal Regional de uma Região com nome bastante extenso — Analista Judiciário de Tecnologia da InformaçãoConcurso QA Dashboard",
+        "bounds": {
+          "left": 13,
+          "right": 266
+        }
+      }
+    },
+    {
+      "profile": "1440-light-zero",
+      "passed": true,
+      "overflow": false,
+      "charts": 2,
+      "errors": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/concursos",
+          "query": {}
+        },
+        {
+          "method": "GET",
+          "path": "/telemetry/preference",
+          "query": {}
+        },
+        {
+          "method": "GET",
+          "path": "/cronograma/calendario",
+          "query": {
+            "ano": "2026",
+            "mes": "10",
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/analise",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001",
+            "inicio": "2026-10-12",
+            "fim": "2026-10-18"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/resumo",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/proximo-estudo",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/revisoes-pendentes",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/heatmap",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/avisos/concurso/29110000-0000-4000-8000-000000000001",
+          "query": {}
+        }
+      ],
+      "alignment": [
+        {
+          "name": "actions",
+          "boxes": [
+            {
+              "top": 398,
+              "bottom": 791,
+              "height": 393
+            },
+            {
+              "top": 398,
+              "bottom": 791,
+              "height": 393
+            }
+          ]
+        },
+        {
+          "name": "daily",
+          "boxes": [
+            {
+              "top": 811,
+              "bottom": 1221,
+              "height": 410
+            },
+            {
+              "top": 811,
+              "bottom": 1221,
+              "height": 410
+            }
+          ]
+        },
+        {
+          "name": "disciplines",
+          "boxes": [
+            {
+              "top": 1303,
+              "bottom": 1714,
+              "height": 411
+            },
+            {
+              "top": 1303,
+              "bottom": 1714,
+              "height": 411
+            }
+          ]
+        },
+        {
+          "name": "tracking",
+          "boxes": [
+            {
+              "top": 1734,
+              "bottom": 2201,
+              "height": 467
+            },
+            {
+              "top": 1734,
+              "bottom": 2201,
+              "height": 467
+            }
+          ]
+        },
+        {
+          "name": "complementary",
+          "boxes": [
+            {
+              "top": 2221,
+              "bottom": 2512,
+              "height": 291
+            },
+            {
+              "top": 2221,
+              "bottom": 2512,
+              "height": 291
+            },
+            {
+              "top": 2221,
+              "bottom": 2512,
+              "height": 291
+            }
+          ]
+        }
+      ],
+      "menu": {
+        "bg": "rgb(25, 38, 91)",
+        "color": "rgb(232, 236, 255)",
+        "selected": "Tribunal Regional de uma Região com nome bastante extenso — Analista Judiciário de Tecnologia da InformaçãoConcurso QA Dashboard",
+        "bounds": {
+          "left": 13,
+          "right": 251
+        }
+      }
+    },
+    {
+      "profile": "1440-light-error",
+      "passed": true,
+      "overflow": false,
+      "charts": 0,
+      "errors": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/concursos",
+          "query": {}
+        },
+        {
+          "method": "GET",
+          "path": "/telemetry/preference",
+          "query": {}
+        },
+        {
+          "method": "GET",
+          "path": "/cronograma/calendario",
+          "query": {
+            "ano": "2026",
+            "mes": "10",
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/analise",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001",
+            "inicio": "2026-10-12",
+            "fim": "2026-10-18"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/resumo",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/proximo-estudo",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/revisoes-pendentes",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/heatmap",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/avisos/concurso/29110000-0000-4000-8000-000000000001",
+          "query": {}
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/analise",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001",
+            "inicio": "2026-10-12",
+            "fim": "2026-10-18"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/analise",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001",
+            "inicio": "2026-10-12",
+            "fim": "2026-10-18"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/analise",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001",
+            "inicio": "2026-10-12",
+            "fim": "2026-10-18"
+          }
+        }
+      ],
+      "alignment": [
+        {
+          "name": "actions",
+          "boxes": [
+            {
+              "top": 387,
+              "bottom": 714,
+              "height": 327
+            },
+            {
+              "top": 387,
+              "bottom": 714,
+              "height": 327
+            }
+          ]
+        },
+        {
+          "name": "daily",
+          "boxes": []
+        },
+        {
+          "name": "disciplines",
+          "boxes": []
+        },
+        {
+          "name": "tracking",
+          "boxes": [
+            {
+              "top": 734,
+              "bottom": 1201,
+              "height": 467
+            },
+            {
+              "top": 734,
+              "bottom": 1201,
+              "height": 467
+            }
+          ]
+        },
+        {
+          "name": "complementary",
+          "boxes": [
+            {
+              "top": 1221,
+              "bottom": 1512,
+              "height": 291
+            },
+            {
+              "top": 1221,
+              "bottom": 1512,
+              "height": 291
+            },
+            {
+              "top": 1221,
+              "bottom": 1512,
+              "height": 291
+            }
+          ]
+        }
+      ],
+      "menu": {
+        "bg": "rgb(25, 38, 91)",
+        "color": "rgb(232, 236, 255)",
+        "selected": "Tribunal Regional de uma Região com nome bastante extenso — Analista Judiciário de Tecnologia da InformaçãoConcurso QA Dashboard",
+        "bounds": {
+          "left": 13,
+          "right": 251
+        }
+      }
+    },
+    {
+      "profile": "1440-light-no-questions",
+      "passed": true,
+      "overflow": false,
+      "charts": 1,
+      "errors": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/concursos",
+          "query": {}
+        },
+        {
+          "method": "GET",
+          "path": "/telemetry/preference",
+          "query": {}
+        },
+        {
+          "method": "GET",
+          "path": "/cronograma/calendario",
+          "query": {
+            "ano": "2026",
+            "mes": "10",
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/analise",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001",
+            "inicio": "2026-10-12",
+            "fim": "2026-10-18"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/resumo",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/proximo-estudo",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/revisoes-pendentes",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/dashboard/heatmap",
+          "query": {
+            "concurso_id": "29110000-0000-4000-8000-000000000001"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/avisos/concurso/29110000-0000-4000-8000-000000000001",
+          "query": {}
+        }
+      ],
+      "alignment": [
+        {
+          "name": "actions",
+          "boxes": [
+            {
+              "top": 398,
+              "bottom": 791,
+              "height": 393
+            },
+            {
+              "top": 398,
+              "bottom": 791,
+              "height": 393
+            }
+          ]
+        },
+        {
+          "name": "daily",
+          "boxes": [
+            {
+              "top": 811,
+              "bottom": 1221,
+              "height": 410
+            },
+            {
+              "top": 811,
+              "bottom": 1221,
+              "height": 410
+            }
+          ]
+        },
+        {
+          "name": "disciplines",
+          "boxes": [
+            {
+              "top": 1303,
+              "bottom": 1714,
+              "height": 411
+            },
+            {
+              "top": 1303,
+              "bottom": 1714,
+              "height": 411
+            }
+          ]
+        },
+        {
+          "name": "tracking",
+          "boxes": [
+            {
+              "top": 1734,
+              "bottom": 2201,
+              "height": 467
+            },
+            {
+              "top": 1734,
+              "bottom": 2201,
+              "height": 467
+            }
+          ]
+        },
+        {
+          "name": "complementary",
+          "boxes": [
+            {
+              "top": 2221,
+              "bottom": 2512,
+              "height": 291
+            },
+            {
+              "top": 2221,
+              "bottom": 2512,
+              "height": 291
+            },
+            {
+              "top": 2221,
+              "bottom": 2512,
+              "height": 291
+            }
+          ]
+        }
+      ],
+      "menu": {
+        "bg": "rgb(25, 38, 91)",
+        "color": "rgb(232, 236, 255)",
+        "selected": "Tribunal Regional de uma Região com nome bastante extenso — Analista Judiciário de Tecnologia da InformaçãoConcurso QA Dashboard",
+        "bounds": {
+          "left": 13,
+          "right": 251
+        }
+      }
+    }
+  ]
+}

@@ -19,7 +19,7 @@ describe("organismos primários do dashboard", () => {
     render(<MemoryRouter><NextActionCard study={{ disciplina_id: "disc-1", disciplina_nome: "Português", topico_id: "top-1", topico_nome: "Interpretação", data: "2026-09-02", duracao_minutos: 50 }} state="ready" isError={false} onRetry={vi.fn()} onStart={onStart} onManual={onManual} replanUrl="/planos/concurso-1/replanejar" /></MemoryRouter>);
 
     const start = screen.getByRole("link", { name: /iniciar estudo/i });
-    expect(start).toHaveAttribute("href", "/pomodoro?from=dashboard&disciplina_id=disc-1&minutos=50&topico_id=top-1");
+    expect(start).toHaveAttribute("href", "/pomodoro?from=dashboard&disciplina_id=disc-1&minutos=50&topico_id=top-1&data_referencia=2026-09-02");
     expect(screen.getAllByRole("link").filter((link) => link.className.includes("bg-primary"))).toHaveLength(1);
     fireEvent.click(start);
     expect(onStart).toHaveBeenCalledOnce();

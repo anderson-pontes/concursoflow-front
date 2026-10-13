@@ -10,6 +10,11 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useConfirmDialog } from "@/components/ui/confirm-dialog";
 import { DisciplinaDashboardTopicosTable } from "@/components/disciplinaDashboard/DisciplinaDashboardTopicosTable";
 import { KpiCard } from "@/components/disciplinaDashboard/KpiCard";
 import { RegistroEstudoModal, type RegistroDefaultTopico } from "@/components/estudos/RegistroEstudoModal";
@@ -51,6 +56,12 @@ export function DisciplinaDashboard() {
   const [registroTopicosPrefill, setRegistroTopicosPrefill] = React.useState<RegistroDefaultTopico[] | null>(null);
   const [detalhesTopico, setDetalhesTopico] = React.useState<{ id: string; descricao: string } | null>(null);
   const [editing, setEditing] = React.useState<{ id: string; descricao: string } | null>(null);
+  const editBaseline = React.useRef("");
+  const { requestConfirmation, confirmDialog } = useConfirmDialog();
+  const closeTopicEditor = async () => {
+    if (renomearTopico.isPending) return;
+    if (!editing || editing.descricao === editBaseline.current || await requestConfirmation({ title: "Descartar altera\u00e7\u00f5es?", description: "O nome do tópico ainda n\u00e3o foi salvo.", confirmLabel: "Descartar", cancelLabel: "Continuar editando", variant: "destructive" })) setEditing(null);
+  };
   const [menuRow, setMenuRow] = React.useState<string | null>(null);
   const menuRef = React.useRef<HTMLDivElement>(null);
 
@@ -205,7 +216,7 @@ export function DisciplinaDashboard() {
 
   if (!disciplinaId) {
     return (
-      <div className="p-6 text-sm text-slate-600">
+      <div className="p-6 text-sm text-muted-foreground">
         Disciplina inválida. <Link to="/disciplinas">Voltar</Link>
       </div>
     );
@@ -225,10 +236,10 @@ export function DisciplinaDashboard() {
             <ArrowLeft className="h-4 w-4" />
             Disciplinas
           </Link>
-          <h1 className="text-2xl font-semibold tracking-tight text-slate-900 dark:text-neutral-50">
+          <h1 className="text-2xl font-semibold tracking-tight text-foreground">
             {isLoading ? "Carregando…" : data?.nome ?? "Disciplina"}
           </h1>
-          <p className="mt-1 text-sm text-slate-500 dark:text-neutral-400">Dashboard de desempenho e edital verticalizado</p>
+          <p className="mt-1 text-sm text-muted-foreground">Dashboard de desempenho e edital verticalizado</p>
         </div>
         <button
           type="button"
@@ -268,56 +279,56 @@ export function DisciplinaDashboard() {
           <KpiCard title="Tempo de estudo">
             <div className="flex items-center gap-2">
               <Clock className="h-8 w-8 text-primary-500" />
-              <span className="text-2xl font-bold text-slate-900 dark:text-neutral-100">{fmtHoras(k.tempo_estudo_horas)}</span>
+              <span className="text-2xl font-bold text-foreground">{fmtHoras(k.tempo_estudo_horas)}</span>
             </div>
-            <p className="mt-1 text-xs text-slate-500">Sessões registradas nesta disciplina</p>
+            <p className="mt-1 text-xs text-muted-foreground">Sessões registradas nesta disciplina</p>
           </KpiCard>
 
           <KpiCard title="Desempenho geral">
             <div className="flex items-center gap-2">
-              <Target className="h-8 w-8 text-emerald-500" />
-              <span className="text-2xl font-bold text-slate-900 dark:text-neutral-100">{k.desempenho_geral_pct}%</span>
+              <Target className="h-8 w-8 text-success-foreground" />
+              <span className="text-2xl font-bold text-foreground">{k.desempenho_geral_pct}%</span>
             </div>
-            <p className="mt-2 text-xs text-slate-500">
-              <span className="font-medium text-emerald-600">{k.questoes_certas_total} certas</span>
+            <p className="mt-2 text-xs text-muted-foreground">
+              <span className="font-medium text-success-foreground">{k.questoes_certas_total} certas</span>
               {" · "}
-              <span className="font-medium text-rose-500">{k.questoes_erradas_total} erradas</span>
+              <span className="font-medium text-destructive">{k.questoes_erradas_total} erradas</span>
             </p>
           </KpiCard>
 
           <KpiCard title="Progresso no edital">
             <div className="flex items-center gap-2">
               <BookOpen className="h-8 w-8 text-primary-500" />
-              <span className="text-2xl font-bold text-slate-900 dark:text-neutral-100">{k.progresso_edital_pct}%</span>
+              <span className="text-2xl font-bold text-foreground">{k.progresso_edital_pct}%</span>
             </div>
-            <p className="mt-1 text-xs text-slate-500">
+            <p className="mt-1 text-xs text-muted-foreground">
               {k.topicos_concluidos} concluídos · {k.topicos_pendentes} pendentes ({k.topicos_total} tópicos)
             </p>
           </KpiCard>
 
           <KpiCard title="Questões resolvidas">
-            <div className="text-2xl font-bold text-slate-900 dark:text-neutral-100">{k.questoes_resolvidas_total}</div>
+            <div className="text-2xl font-bold text-foreground">{k.questoes_resolvidas_total}</div>
             <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-xs">
-              <span className="text-emerald-600 dark:text-emerald-400">Certas {k.questoes_certas_total}</span>
-              <span className="text-rose-500 dark:text-rose-400">Erradas {k.questoes_erradas_total}</span>
-              <span className="text-slate-400">Branco {k.questoes_branco_total}</span>
+              <span className="text-success-foreground">Certas {k.questoes_certas_total}</span>
+              <span className="text-destructive">Erradas {k.questoes_erradas_total}</span>
+              <span className="text-muted-foreground">Branco {k.questoes_branco_total}</span>
             </div>
           </KpiCard>
 
           <KpiCard title="Páginas estudadas">
             <div className="flex items-center gap-2">
-              <FileText className="h-8 w-8 text-sky-500" />
-              <span className="text-2xl font-bold text-slate-900 dark:text-neutral-100">
+              <FileText className="h-8 w-8 text-info-foreground" />
+              <span className="text-2xl font-bold text-foreground">
                 {(k.paginas_lidas_total ?? 0).toLocaleString("pt-BR")}
               </span>
             </div>
-            <p className="mt-1 text-xs text-slate-500">Soma dos blocos de páginas nos registros de estudo</p>
+            <p className="mt-1 text-xs text-muted-foreground">Soma dos blocos de páginas nos registros de estudo</p>
           </KpiCard>
         </div>
       ) : isLoading ? (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
           {[1, 2, 3, 4, 5].map((i) => (
-            <div key={i} className="h-28 animate-pulse rounded-xl bg-slate-100 dark:bg-neutral-800" />
+            <div key={i} className="h-28 animate-pulse rounded-xl bg-muted bg-card" />
           ))}
         </div>
       ) : null}
@@ -343,41 +354,21 @@ export function DisciplinaDashboard() {
           setRegistroTopicosPrefill(prefill);
           setOpenRegistro(true);
         }}
-        onEditTopico={setEditing}
+        onEditTopico={(topic) => { editBaseline.current = topic.descricao; setEditing(topic); }}
         highlightedTopicoId={highlightTopicoId}
       />
 
-      {editing ? (
-        <div className="fixed inset-0 z-[160] flex items-center justify-center bg-black/50 p-4 dark:bg-black/60">
-          <div className="w-full max-w-md rounded-xl border border-slate-200 bg-white p-5 shadow-xl dark:border-neutral-700 dark:bg-neutral-950">
-            <h3 className="text-base font-semibold text-slate-900 dark:text-neutral-100">Editar tópico</h3>
-            <input
-              className="mt-3 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm dark:border-neutral-600 dark:bg-neutral-900 dark:text-neutral-100"
-              value={editing.descricao}
-              onChange={(e) => setEditing((s) => (s ? { ...s, descricao: e.target.value } : s))}
-            />
-            <div className="mt-4 flex justify-end gap-2">
-              <button
-                type="button"
-                className="rounded-lg border border-slate-200 px-3 py-2 text-sm dark:border-neutral-600"
-                onClick={() => setEditing(null)}
-              >
-                Cancelar
-              </button>
-              <button
-                type="button"
-                className="rounded-lg bg-primary-600 px-3 py-2 text-sm font-medium text-white disabled:opacity-50"
-                disabled={!editing.descricao.trim() || renomearTopico.isPending}
-                onClick={() =>
-                  renomearTopico.mutate({ topicoId: editing.id, descricao: editing.descricao.trim() })
-                }
-              >
-                Salvar
-              </button>
-            </div>
-          </div>
-        </div>
-      ) : null}
+      <Dialog open={Boolean(editing)} onOpenChange={(open) => { if (!open) void closeTopicEditor(); }}>
+        <DialogContent className="max-w-md">
+          <DialogTitle>Editar tópico</DialogTitle>
+          <DialogDescription>Atualize o nome do assunto mantendo seu histórico de estudos.</DialogDescription>
+          <form className="space-y-4" onSubmit={(event) => { event.preventDefault(); if (editing && editing.descricao.trim()) renomearTopico.mutate({ topicoId: editing.id, descricao: editing.descricao.trim() }); }}>
+            <div className="space-y-2"><Label htmlFor="topic-name">Nome do tópico</Label><Input id="topic-name" autoFocus required disabled={renomearTopico.isPending} value={editing?.descricao ?? ""} onChange={(event) => setEditing((current) => current ? { ...current, descricao: event.target.value } : current)} /></div>
+            <div className="flex flex-wrap justify-end gap-2"><Button type="button" variant="outline" disabled={renomearTopico.isPending} onClick={() => void closeTopicEditor()}>Cancelar</Button><Button type="submit" disabled={!editing?.descricao.trim() || renomearTopico.isPending}>{renomearTopico.isPending ? "Salvando..." : "Salvar"}</Button></div>
+          </form>
+        </DialogContent>
+      </Dialog>
+      {confirmDialog}
       <RegistroEstudoModal
         open={openRegistro || Boolean(editSessaoId)}
         onClose={() => {

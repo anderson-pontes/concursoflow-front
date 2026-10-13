@@ -1,0 +1,134 @@
+[
+  {
+    "width": 375,
+    "theme": "light",
+    "overflow": false,
+    "logos": [
+      {
+        "images": 1,
+        "text": "",
+        "loaded": true
+      },
+      {
+        "images": 1,
+        "text": "",
+        "loaded": true
+      },
+      {
+        "images": 1,
+        "text": "",
+        "loaded": true
+      }
+    ]
+  },
+  {
+    "width": 375,
+    "theme": "dark",
+    "overflow": false,
+    "logos": [
+      {
+        "images": 1,
+        "text": "",
+        "loaded": true
+      },
+      {
+        "images": 1,
+        "text": "",
+        "loaded": true
+      },
+      {
+        "images": 1,
+        "text": "",
+        "loaded": true
+      }
+    ]
+  },
+  {
+    "width": 768,
+    "theme": "light",
+    "overflow": false,
+    "logos": [
+      {
+        "images": 1,
+        "text": "",
+        "loaded": true
+      },
+      {
+        "images": 1,
+        "text": "",
+        "loaded": true
+      },
+      {
+        "images": 1,
+        "text": "",
+        "loaded": true
+      }
+    ]
+  },
+  {
+    "width": 768,
+    "theme": "dark",
+    "overflow": false,
+    "logos": [
+      {
+        "images": 1,
+        "text": "",
+        "loaded": true
+      },
+      {
+        "images": 1,
+        "text": "",
+        "loaded": true
+      },
+      {
+        "images": 1,
+        "text": "",
+        "loaded": true
+      }
+    ]
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "overflow": false,
+    "logos": [
+      {
+        "images": 1,
+        "text": "",
+        "loaded": true
+      },
+      {
+        "images": 1,
+        "text": "",
+        "loaded": true
+      },
+      {
+        "images": 1,
+        "text": "",
+        "loaded": true
+      }
+    ]
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "overflow": false,
+    "logos": [
+      {
+        "images": 1,
+        "text": "",
+        "loaded": true
+      },
+      {
+        "images": 1,
+        "text": "",
+        "loaded": true
+      },
+      {
+        "images": 1,
+        "text": "",
+        "loaded": true
+      }
+    ]
+  }
+]

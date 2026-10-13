@@ -130,7 +130,7 @@ function SortableRow({
       style={style}
       data-topico-id={row.id}
       className={cn(
-        "border-b border-slate-100 transition hover:bg-slate-50/80 dark:border-neutral-800 dark:hover:bg-neutral-900/40",
+        "border-b border-border transition hover:bg-muted/80 border-border dark:hover:bg-neutral-900/40",
         highlighted && "bg-primary-50 ring-2 ring-inset ring-primary-400 dark:bg-primary-950/30 dark:ring-primary-500",
       )}
     >
@@ -138,7 +138,7 @@ function SortableRow({
         {!isDemoMode ? (
           <button
             type="button"
-            className="cursor-grab touch-none rounded p-1 text-slate-400 hover:text-slate-600 active:cursor-grabbing dark:hover:text-neutral-300"
+            className="cursor-grab touch-none rounded p-1 text-muted-foreground hover:text-muted-foreground active:cursor-grabbing dark:hover:text-muted-foreground"
             aria-label="Arrastar para reordenar"
             {...attributes}
             {...listeners}
@@ -159,13 +159,13 @@ function SortableRow({
             "mx-auto flex h-6 w-6 items-center justify-center rounded-md border-2 transition",
             row.concluido_edital
               ? "border-emerald-500 bg-emerald-500 text-white"
-              : "border-slate-300 bg-white dark:border-neutral-600 dark:bg-neutral-900",
+              : "border-border bg-card border-border bg-card",
           )}
         >
           {row.concluido_edital ? <Check className="h-3.5 w-3.5" strokeWidth={3} /> : null}
         </button>
       </td>
-      <td className="max-w-[200px] px-3 py-3 font-medium text-slate-900 dark:text-neutral-100">
+      <td className="max-w-[200px] px-3 py-3 font-medium text-foreground">
         <span className="line-clamp-2">{row.descricao}</span>
         <span className="mt-1 block text-[10px] font-normal text-muted-foreground">
           {row.sessoes_count} {row.sessoes_count === 1 ? "sessão" : "sessões"}
@@ -185,7 +185,7 @@ function SortableRow({
             const v = Math.max(1, parseInt(e.target.value, 10) || 1);
             if (v !== row.peso) atualizarTopico.mutate({ topicoId: row.id, patch: { peso: v } });
           }}
-          className="w-12 rounded-md border border-slate-200 bg-white px-1.5 py-1 text-center text-xs tabular-nums dark:border-neutral-600 dark:bg-neutral-900"
+          className="w-12 rounded-md border border-border bg-card px-1.5 py-1 text-center text-xs tabular-nums border-border bg-card"
         />
       </td>
       <td className="px-2 py-3">
@@ -199,14 +199,14 @@ function SortableRow({
         />
       </td>
       <td className="px-2 py-3 text-center">
-        <span className="font-mono text-xs font-semibold text-slate-600 dark:text-neutral-300">{prio}</span>
+        <span className="font-mono text-xs font-semibold text-muted-foreground">{prio}</span>
         {rev.variant !== "none" ? (
           <span
             className={cn(
               "mt-0.5 block rounded-full px-1.5 py-0.5 text-[9px] font-semibold",
               rev.variant === "overdue"
-                ? "bg-rose-50 text-rose-600 dark:bg-rose-950/40 dark:text-rose-400"
-                : "bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400",
+                ? "bg-rose-50 text-destructive dark:bg-rose-950/40 text-destructive"
+                : "bg-emerald-50 text-success-foreground dark:bg-emerald-950/40 text-success-foreground",
             )}
           >
             {rev.label}
@@ -214,37 +214,37 @@ function SortableRow({
         ) : null}
       </td>
       <td className="px-3 py-3 text-center">
-        <span className="inline-flex items-center gap-1 font-medium text-emerald-600 dark:text-emerald-400">
+        <span className="inline-flex items-center gap-1 font-medium text-success-foreground">
           <Check className="h-3.5 w-3.5" aria-hidden />
           {row.certas}
         </span>
       </td>
       <td className="px-3 py-3 text-center">
-        <span className="inline-flex items-center gap-1 font-medium text-rose-500 dark:text-rose-400">
+        <span className="inline-flex items-center gap-1 font-medium text-destructive">
           <X className="h-3.5 w-3.5" aria-hidden />
           {row.erradas}
         </span>
       </td>
       <td className="px-3 py-3 text-center">
-        <span className="inline-flex items-center gap-1 font-medium text-slate-400">
+        <span className="inline-flex items-center gap-1 font-medium text-muted-foreground">
           <Circle className="h-3.5 w-3.5" aria-hidden />
           {row.em_branco}
         </span>
       </td>
-      <td className="px-3 py-3 text-center font-semibold text-slate-800 dark:text-neutral-200">
+      <td className="px-3 py-3 text-center font-semibold text-foreground dark:text-neutral-200">
         {row.aproveitamento_pct}%
       </td>
-      <td className="whitespace-nowrap px-3 py-3 text-slate-600 dark:text-neutral-300">
+      <td className="whitespace-nowrap px-3 py-3 text-muted-foreground">
         {fmtTempoTopico(row.tempo_estudo_minutos)}
       </td>
-      <td className="px-3 py-3 text-center tabular-nums text-slate-700 dark:text-neutral-200">
+      <td className="px-3 py-3 text-center tabular-nums text-foreground dark:text-neutral-200">
         {(row.paginas_lidas ?? 0) > 0 ? (row.paginas_lidas ?? 0).toLocaleString("pt-BR") : "—"}
       </td>
       <td className="relative px-2 py-3">
         <div ref={menuRow === row.id ? menuRef : undefined}>
           <button
             type="button"
-            className="rounded-md p-1.5 text-slate-500 hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-50 dark:hover:bg-neutral-800"
+            className="rounded-md p-1.5 text-muted-foreground hover:bg-muted disabled:cursor-not-allowed disabled:opacity-50 dark:hover:bg-neutral-800"
             aria-label="Ações do tópico"
             disabled={isDemoMode}
             onClick={() => onMenuRowChange(menuRow === row.id ? null : row.id)}
@@ -252,10 +252,10 @@ function SortableRow({
             <MoreHorizontal className="h-4 w-4" />
           </button>
           {menuRow === row.id ? (
-            <div className="absolute right-2 z-20 mt-1 w-44 rounded-lg border border-slate-200 bg-white py-1 shadow-lg dark:border-neutral-600 dark:bg-neutral-900">
+            <div className="absolute right-2 z-20 mt-1 w-44 rounded-lg border border-border bg-card py-1 shadow-lg border-border bg-card">
               <button
                 type="button"
-                className="flex w-full items-center gap-2 px-3 py-2 text-left text-xs hover:bg-slate-50 dark:hover:bg-neutral-800"
+                className="flex w-full items-center gap-2 px-3 py-2 text-left text-xs hover:bg-muted dark:hover:bg-neutral-800"
                 onClick={() => {
                   onMenuRowChange(null);
                   onDetalhesTopico({ id: row.id, descricao: row.descricao });
@@ -266,7 +266,7 @@ function SortableRow({
               </button>
               <button
                 type="button"
-                className="flex w-full items-center gap-2 px-3 py-2 text-left text-xs hover:bg-slate-50 dark:hover:bg-neutral-800"
+                className="flex w-full items-center gap-2 px-3 py-2 text-left text-xs hover:bg-muted dark:hover:bg-neutral-800"
                 onClick={() => {
                   onMenuRowChange(null);
                   onRegistroTopico([{ id: row.id, nome: row.descricao }]);
@@ -277,7 +277,7 @@ function SortableRow({
               </button>
               <button
                 type="button"
-                className="flex w-full items-center gap-2 px-3 py-2 text-left text-xs hover:bg-slate-50 dark:hover:bg-neutral-800"
+                className="flex w-full items-center gap-2 px-3 py-2 text-left text-xs hover:bg-muted dark:hover:bg-neutral-800"
                 onClick={() => {
                   onMenuRowChange(null);
                   onEditTopico({ id: row.id, descricao: row.descricao });
@@ -288,7 +288,7 @@ function SortableRow({
               </button>
               <button
                 type="button"
-                className="flex w-full items-center gap-2 px-3 py-2 text-left text-xs text-rose-600 hover:bg-rose-50 dark:text-rose-400 dark:hover:bg-rose-950/30"
+                className="flex w-full items-center gap-2 px-3 py-2 text-left text-xs text-destructive hover:bg-rose-50 text-destructive dark:hover:bg-rose-950/30"
                 onClick={() => {
                   onMenuRowChange(null);
                   void requestConfirmation({
@@ -379,15 +379,15 @@ export function DisciplinaDashboardTopicosTable({
   };
 
   return (
-    <section className="rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-neutral-700 dark:bg-card">
-      <div className="border-b border-slate-100 px-6 py-4 dark:border-neutral-800">
-        <h2 className="text-base font-semibold text-slate-900 dark:text-neutral-100">Edital verticalizado</h2>
-        <p className="text-sm text-slate-500 dark:text-neutral-400">
+    <section className="rounded-2xl border border-border bg-card shadow-sm border-border dark:bg-card">
+      <div className="border-b border-border px-6 py-4 border-border">
+        <h2 className="text-base font-semibold text-foreground">Edital verticalizado</h2>
+        <p className="text-sm text-muted-foreground">
           Arraste para ordenar · peso e domínio definem a prioridade no cronograma
         </p>
       </div>
 
-      <div className="border-b border-slate-100 p-4 dark:border-neutral-800">
+      <div className="border-b border-border p-4 border-border">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <button
           type="button"
@@ -423,7 +423,7 @@ export function DisciplinaDashboardTopicosTable({
         <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
           <table className="w-full min-w-[1100px] border-collapse text-left text-sm">
             <thead>
-              <tr className="border-b border-slate-200 bg-slate-50/80 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:border-neutral-700 dark:bg-neutral-900/50 dark:text-neutral-400">
+              <tr className="border-b border-border bg-muted/80 text-xs font-semibold uppercase tracking-wide text-muted-foreground border-border bg-card/50 text-muted-foreground">
                 <th className="w-8 px-2 py-3" scope="col" />
                 <th className="w-12 px-2 py-3 text-center" scope="col">
                   <span className="sr-only">Concluído</span>
@@ -487,12 +487,12 @@ export function DisciplinaDashboardTopicosTable({
           </table>
         </DndContext>
         {!isLoading && data && data.topicos.length === 0 ? (
-          <p className="px-6 py-10 text-center text-sm text-slate-500">
+          <p className="px-6 py-10 text-center text-sm text-muted-foreground">
             Nenhum tópico cadastrado. Adicione o primeiro acima.
           </p>
         ) : null}
         {!isLoading && data && data.topicos.length > 0 && visibleRows.length === 0 ? (
-          <p className="px-6 py-10 text-center text-sm text-slate-500">Nenhum tópico corresponde a este filtro.</p>
+          <p className="px-6 py-10 text-center text-sm text-muted-foreground">Nenhum tópico corresponde a este filtro.</p>
         ) : null}
       </div>
     </section>

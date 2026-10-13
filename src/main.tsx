@@ -5,8 +5,10 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "sonner";
 import App from "./App";
 import { AppErrorBoundary } from "@/components/errors/AppErrorBoundary";
+import { initThemeFromStorage } from "@/hooks/useTheme";
 import "./index.css";
 
+initThemeFromStorage();
 const queryClient = new QueryClient();
 
 ReactDOM.createRoot(document.getElementById("root")!).render(

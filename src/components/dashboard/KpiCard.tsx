@@ -1,4 +1,4 @@
-import { BarChart3 } from "lucide-react";
+import { BarChart3, type LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 type BadgeVariant = "green" | "amber";
@@ -10,6 +10,7 @@ export function KpiCard({
   badge,
   badgeVariant,
   progress,
+  icon: Icon = BarChart3,
 }: {
   label: string;
   value: string;
@@ -17,26 +18,27 @@ export function KpiCard({
   badge?: string;
   badgeVariant?: BadgeVariant;
   progress?: number;
+  icon?: LucideIcon;
 }) {
   return (
-    <div className="rounded-xl border border-neutral-200 bg-white p-4 dark:border-neutral-700 dark:bg-neutral-800">
-      <div className="mb-2 flex items-center gap-1.5 text-[11px] text-neutral-400">
-        <BarChart3 className="h-3.5 w-3.5 shrink-0" />
-        <span className="truncate">{label}</span>
+    <div className="min-w-0 rounded-xl border border-border bg-card p-5 shadow-sm">
+      <div className="mb-2 flex items-center gap-1.5 text-sm text-muted-foreground">
+        <span className="rounded-lg bg-primary/10 p-2"><Icon className="size-5 shrink-0 text-primary" /></span>
+        <span className="break-words">{label}</span>
       </div>
-      <div className="mb-0.5 min-w-0 truncate text-2xl font-medium text-neutral-800 dark:text-neutral-100">{value}</div>
-      <div className="min-w-0 truncate text-[11px] text-neutral-400">{sub}</div>
+      <div className="mb-0.5 min-w-0 break-words text-3xl font-semibold tabular-nums text-card-foreground">{value}</div>
+      <div className="min-w-0 break-words text-sm text-muted-foreground">{sub}</div>
 
       {progress !== undefined ? (
-        <div className="mt-2.5 h-1 overflow-hidden rounded-full bg-neutral-100">
-          <div className="h-full rounded-full bg-primary-600 transition-all" style={{ width: `${progress}%` }} />
+        <div className="mt-2.5 h-1 overflow-hidden rounded-full bg-muted">
+          <div className="h-full rounded-full bg-primary-600 transition-all" style={{ width: `${Math.max(0, Math.min(100, progress))}%` }} />
         </div>
       ) : null}
 
       {badge ? (
         <span
           className={cn(
-            "mt-2 inline-flex rounded px-1.5 py-0.5 text-[10px] font-medium",
+            "mt-2 inline-flex rounded px-1.5 py-0.5 text-xs font-medium",
             badgeVariant === "green" && "bg-success-50 text-success-800",
             badgeVariant === "amber" && "bg-warning-50 text-warning-800",
           )}

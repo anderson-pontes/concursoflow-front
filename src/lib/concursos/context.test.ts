@@ -25,6 +25,7 @@ describe("isConcursoContextQueryKey", () => {
     expect(isConcursoContextQueryKey(["concursos"])).toBe(false);
     expect(isConcursoContextQueryKey(["disciplinas", "catalog", null])).toBe(false);
     expect(isConcursoContextQueryKey(["dashboard-heatmap"])).toBe(false);
+    expect(isConcursoContextQueryKey(["dashboard-heatmap", "a"])).toBe(true);
     expect(isConcursoContextQueryKey(["notifications"])).toBe(false);
   });
 });

@@ -69,14 +69,15 @@ export function Disciplinas() {
   }, [concursoId, setViewMode, viewMode]);
 
   React.useEffect(() => {
-    if (pageParams.get("view") === "edital" && concursoId && viewMode !== "edital") setViewMode("edital");
+    const requestedView = pageParams.get("view");
+    if ((requestedView === "cards" || requestedView === "table" || (requestedView === "edital" && concursoId)) && viewMode !== requestedView) setViewMode(requestedView);
   }, [concursoId, pageParams, setViewMode, viewMode]);
 
   const changeViewMode = (value: "cards" | "table" | "edital") => {
     setViewMode(value);
     setPage(1);
     const next = new URLSearchParams(pageParams);
-    if (value === "edital") next.set("view", "edital"); else next.delete("view");
+    next.set("view", value);
     setPageParams(next);
   };
 
@@ -182,12 +183,12 @@ export function Disciplinas() {
   if (contextStatus === "hydrating") return <PageSkeleton cards={3} rows={2} />;
 
   if (contextStatus === "no_contest") {
-    return <div className="space-y-6 pb-10"><header><h1 className="text-xl font-semibold tracking-tight text-foreground">Disciplinas &amp; Tópicos</h1><p className="text-sm text-muted-foreground">Escolha um concurso para organizar o conteúdo correto.</p></header><BannerSemConcurso /></div>;
+    return <div className="space-y-6 pb-10"><header><h1 className="text-2xl font-semibold tracking-tight text-foreground">Disciplinas &amp; Tópicos</h1><p className="text-sm text-muted-foreground">Escolha um concurso para organizar o conteúdo correto.</p></header><BannerSemConcurso /></div>;
   }
 
   if (contextStatus === "error") {
     const retry = pageQuery.refetch;
-    return <div className="space-y-6 pb-10"><header><h1 className="text-xl font-semibold tracking-tight text-foreground">Disciplinas &amp; Tópicos</h1></header><div role="alert" className="rounded-xl border border-destructive/30 bg-card p-8 text-center"><h2 className="font-semibold">Não foi possível carregar as disciplinas</h2><p className="mt-1 text-sm text-muted-foreground">O conteúdo anterior foi ocultado. Tente novamente.</p><Button className="mt-5" onClick={() => void Promise.all([qc.invalidateQueries({ queryKey: ["concursos"] }), retry()])}>Tentar novamente</Button></div></div>;
+    return <div className="space-y-6 pb-10"><header><h1 className="text-2xl font-semibold tracking-tight text-foreground">Disciplinas &amp; Tópicos</h1></header><div role="alert" className="rounded-xl border border-destructive/30 bg-card p-8 text-center"><h2 className="font-semibold">Não foi possível carregar as disciplinas</h2><p className="mt-1 text-sm text-muted-foreground">O conteúdo anterior foi ocultado. Tente novamente.</p><Button className="mt-5" onClick={() => void Promise.all([qc.invalidateQueries({ queryKey: ["concursos"] }), retry()])}>Tentar novamente</Button></div></div>;
   }
 
   return (

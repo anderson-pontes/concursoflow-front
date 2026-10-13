@@ -55,6 +55,7 @@ const CONTEXTUAL_ROOTS = new Set([
  */
 export function isConcursoContextQueryKey(queryKey: QueryKey): boolean {
   const [root, scope] = queryKey;
+  if (root === "dashboard-heatmap") return scope != null;
   if (root === "disciplinas") return scope !== "catalog" && scope !== "catalogo-plano";
   return typeof root === "string" && CONTEXTUAL_ROOTS.has(root);
 }

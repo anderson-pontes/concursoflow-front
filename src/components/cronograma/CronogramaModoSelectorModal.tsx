@@ -1,5 +1,5 @@
 import React from "react";
-import { CalendarDays, Layers, Sparkles, X } from "lucide-react";
+import { Layers, Sparkles, X } from "lucide-react";
 
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
@@ -27,18 +27,12 @@ const OPTIONS: ModeOption[] = [
   },
   {
     id: "analitica",
-    title: "Analítica",
-    description: "Você define o horário e pode escolher um ou mais tópicos da disciplina.",
+    title: "Manual",
+    description: "Crie uma vez, adicione várias disciplinas e personalize dias, horários e tópicos aos poucos.",
     icon: Layers,
-    ariaLabel: "Analítica: define horários e, se quiser, os tópicos do edital",
+    ariaLabel: "Manual: cria um cronograma e adiciona disciplinas incrementalmente",
   },
-  {
-    id: "simplificada",
-    title: "Simplificada",
-    description: "Só a disciplina e os dias da semana, com ou sem período de vigência.",
-    icon: CalendarDays,
-    ariaLabel: "Simplificada: só disciplina e dias da semana, com ou sem período",
-  },
+
 ];
 
 type Props = {

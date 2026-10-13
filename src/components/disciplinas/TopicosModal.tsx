@@ -2,6 +2,7 @@ import React from "react";
 import { X } from "lucide-react";
 
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { useConfirmDialog } from "@/components/ui/confirm-dialog";
 import { cn } from "@/lib/utils";
 import { DISCIPLINA_PALETTES, getDisciplinaPaletteIndex } from "./disciplinaPalettes";
 
@@ -31,6 +32,12 @@ export function TopicosModal({ open, onClose, onSave, disciplinaId = "", disable
   const [selectedIndex, setSelectedIndex] = React.useState<number | null>(null);
   const [salvarEContinuar, setSalvarEContinuar] = React.useState(false);
   const [saving, setSaving] = React.useState(false);
+  const [saveError, setSaveError] = React.useState<string | null>(null);
+  const { requestConfirmation, confirmDialog } = useConfirmDialog();
+  const requestClose = async () => {
+    if (saving) return;
+    if (!conteudo.trim() || await requestConfirmation({ title: "Descartar tópicos?", description: "Os tópicos digitados ainda não foram adicionados à disciplina.", confirmLabel: "Descartar", cancelLabel: "Continuar editando", variant: "destructive" })) onClose();
+  };
   const textareaRef = React.useRef<HTMLTextAreaElement>(null);
 
   const previewItems = React.useMemo(() => parseTopicosLinhas(conteudo), [conteudo]);
@@ -41,6 +48,7 @@ export function TopicosModal({ open, onClose, onSave, disciplinaId = "", disable
   React.useEffect(() => {
     if (!open) return;
     setConteudo("");
+    setSaveError(null);
     setSelectedIndex(null);
     setSalvarEContinuar(false);
     const t = window.setTimeout(() => {
@@ -60,6 +68,7 @@ export function TopicosModal({ open, onClose, onSave, disciplinaId = "", disable
     const topicos = parseTopicosLinhas(conteudo);
     if (topicos.length === 0 || disabled || saving) return;
     setSaving(true);
+    setSaveError(null);
     try {
       await Promise.resolve(onSave(topicos));
       if (salvarEContinuar) {
@@ -73,7 +82,7 @@ export function TopicosModal({ open, onClose, onSave, disciplinaId = "", disable
       if (e instanceof Error && e.message === "DEMO_MODE") {
         return;
       }
-      throw e;
+      setSaveError("Não foi possível adicionar os tópicos. Seu conteúdo foi preservado; tente novamente.");
     } finally {
       setSaving(false);
     }
@@ -83,24 +92,25 @@ export function TopicosModal({ open, onClose, onSave, disciplinaId = "", disable
   const adicionarDisabled = listaVazia || saving || disabled;
 
   return (
+    <>
     <Dialog
       open={open}
       onOpenChange={(o) => {
-        if (!o && !saving) onClose();
+        if (!o) void requestClose();
       }}
     >
       <DialogContent
         hideClose
         aria-describedby={undefined}
-        className="flex max-h-[min(90vh,640px)] w-full max-w-2xl flex-col gap-0 overflow-hidden rounded-xl border border-slate-200 bg-white p-0 shadow-xl dark:border-neutral-700 dark:bg-neutral-950"
+        className="flex max-h-[min(90vh,640px)] w-full max-w-2xl flex-col gap-0 overflow-hidden rounded-xl border border-border bg-card p-0 shadow-xl border-border bg-card"
       >
-        <div className="flex items-center justify-between border-b border-slate-100 px-5 py-4 dark:border-neutral-800">
-          <DialogTitle className="text-lg font-semibold text-slate-900 dark:text-neutral-50">Tópico</DialogTitle>
+        <div className="flex items-center justify-between border-b border-border px-5 py-4 border-border">
+          <DialogTitle className="text-lg font-semibold text-foreground">Tópico</DialogTitle>
           <button
             type="button"
-            className="rounded-md p-1.5 text-slate-500 hover:bg-slate-100 disabled:opacity-50 dark:hover:bg-neutral-800"
+            className="rounded-md p-1.5 text-muted-foreground hover:bg-muted disabled:opacity-50 dark:hover:bg-neutral-800"
             disabled={saving}
-            onClick={() => onClose()}
+            onClick={() => void requestClose()}
             aria-label="Fechar modal"
           >
             <X className="h-5 w-5" />
@@ -109,27 +119,27 @@ export function TopicosModal({ open, onClose, onSave, disciplinaId = "", disable
 
         <div className="grid flex-1 grid-cols-1 gap-4 overflow-hidden p-5 md:grid-cols-2 md:gap-5">
           <div className="flex min-h-0 flex-col">
-            <p className="mb-2 text-xs font-semibold tracking-wide text-slate-500 dark:text-neutral-400">TÓPICOS</p>
+            <p className="mb-2 text-xs font-semibold tracking-wide text-muted-foreground">TÓPICOS</p>
             <ul
-              className="min-h-[200px] flex-1 list-none overflow-y-auto rounded-lg border border-slate-200 bg-slate-50/80 p-0 dark:border-neutral-700 dark:bg-neutral-900/50"
+              className="min-h-[200px] flex-1 list-none overflow-y-auto rounded-lg border border-border bg-muted/80 p-0 border-border bg-card/50"
               aria-label="Pré-visualização dos tópicos"
             >
               {previewItems.length === 0 ? (
-                <li className="p-3 text-sm text-slate-500 dark:text-neutral-500">Nenhum tópico ainda. Digite à direita.</li>
+                <li className="p-3 text-sm text-muted-foreground">Nenhum tópico ainda. Digite à direita.</li>
               ) : (
                 previewItems.map((item, index) => {
                   const selected = selectedIndex === index;
                   return (
                     <li
                       key={`${index}-${item.slice(0, 48)}`}
-                      className="border-b border-slate-200 last:border-b-0 dark:border-neutral-700"
+                      className="border-b border-border last:border-b-0 border-border"
                     >
                       <button
                         type="button"
                         onClick={() => setSelectedIndex(index)}
                         className={cn(
-                          "w-full px-3 py-2.5 text-left text-sm text-slate-900 transition-colors dark:text-neutral-100",
-                          selected ? selectionClass : "hover:bg-slate-100/80 dark:hover:bg-neutral-800/80",
+                          "w-full px-3 py-2.5 text-left text-sm text-foreground transition-colors text-foreground",
+                          selected ? selectionClass : "hover:bg-muted/80 dark:hover:bg-neutral-800/80",
                         )}
                         aria-pressed={selected}
                       >
@@ -143,7 +153,7 @@ export function TopicosModal({ open, onClose, onSave, disciplinaId = "", disable
           </div>
 
           <div className="flex min-h-0 flex-col">
-            <p className="mb-2 text-xs font-semibold tracking-wide text-slate-500 dark:text-neutral-400">CONTEÚDO</p>
+            <label htmlFor="topicos-modal-conteudo" className="mb-2 text-xs font-semibold tracking-wide text-muted-foreground">CONTEÚDO</label>
             <textarea
               ref={textareaRef}
               id="topicos-modal-conteudo"
@@ -152,36 +162,36 @@ export function TopicosModal({ open, onClose, onSave, disciplinaId = "", disable
               onChange={(e) => setConteudo(e.target.value)}
               disabled={disabled || saving}
               className={cn(
-                "min-h-[200px] flex-1 resize-y rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 focus-visible:ring-2 focus-visible:ring-ring",
-                "focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 dark:border-neutral-600 dark:bg-neutral-900 dark:text-neutral-100",
+                "min-h-[200px] flex-1 resize-y rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 focus-visible:ring-2 focus-visible:ring-ring",
+                "focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 border-border bg-card text-foreground",
                 (disabled || saving) && "cursor-not-allowed opacity-60",
               )}
               placeholder="Digite um tópico por linha…"
               aria-describedby="topicos-modal-dica"
             />
-            <p id="topicos-modal-dica" className="mt-2 text-xs text-slate-500 dark:text-neutral-500">
+            <p id="topicos-modal-dica" className="mt-2 text-xs text-muted-foreground">
               Você pode fazer quebra de linha com Enter para adicionar mais de um tópico.
             </p>
           </div>
         </div>
 
-        <div className="flex flex-col gap-3 border-t border-slate-100 px-5 py-4 dark:border-neutral-800 sm:flex-row sm:items-center sm:justify-between">
-          <label className="flex cursor-pointer items-center gap-2 text-sm text-slate-700 dark:text-neutral-300">
+        <div className="flex flex-col gap-3 border-t border-border px-5 py-4 border-border sm:flex-row sm:items-center sm:justify-between">
+          <label className="flex cursor-pointer items-center gap-2 text-sm text-foreground text-muted-foreground">
             <input
               type="checkbox"
               checked={salvarEContinuar}
               onChange={(e) => setSalvarEContinuar(e.target.checked)}
               disabled={disabled || saving}
-              className="h-4 w-4 rounded border-slate-300 text-primary-600 focus:ring-primary-500 dark:border-neutral-600"
+              className="h-4 w-4 rounded border-border text-primary-600 focus:ring-primary-500 border-border"
             />
             Salvar e continuar
           </label>
           <div className="flex flex-wrap justify-end gap-2">
             <button
               type="button"
-              className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-50 dark:border-neutral-600 dark:text-neutral-200 dark:hover:bg-neutral-800"
+              className="rounded-lg border border-border px-4 py-2 text-sm font-medium text-foreground hover:bg-muted disabled:opacity-50 border-border dark:text-neutral-200 dark:hover:bg-neutral-800"
               disabled={saving}
-              onClick={() => onClose()}
+              onClick={() => void requestClose()}
             >
               Cancelar
             </button>
@@ -196,7 +206,10 @@ export function TopicosModal({ open, onClose, onSave, disciplinaId = "", disable
             </button>
           </div>
         </div>
+        {saveError ? <p role="alert" className="px-5 pb-4 text-sm text-destructive">{saveError}</p> : null}
       </DialogContent>
     </Dialog>
+    {confirmDialog}
+    </>
   );
 }

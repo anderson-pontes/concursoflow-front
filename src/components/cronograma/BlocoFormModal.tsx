@@ -20,6 +20,7 @@ export type BlocoFormModalProps = {
   initialValues?: Partial<FormState>;
   title: string;
   isSaving: boolean;
+  extraFields?: React.ReactNode;
 };
 
 type TopicoOption = { id: string; descricao: string };
@@ -32,6 +33,7 @@ export function BlocoFormModal({
   initialValues,
   title,
   isSaving,
+  extraFields,
 }: BlocoFormModalProps) {
   const [form, setForm] = React.useState<FormState>({ ...defaultForm, ...initialValues });
 
@@ -81,6 +83,7 @@ export function BlocoFormModal({
         </div>
 
         <div className="max-h-[70dvh] space-y-4 overflow-y-auto px-5 py-5">
+          {extraFields}
           <div>
             <label className="mb-1.5 block text-sm font-medium text-card-foreground">Disciplina</label>
             <Select

@@ -1,238 +1,64 @@
-import React from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { BookOpenCheck, Flame, RefreshCw, Target } from "lucide-react";
-import { Link } from "react-router-dom";
+import React from 'react';
+import {useQueryClient} from '@tanstack/react-query';
+import {Link} from 'react-router-dom';
+import {BannerSemConcurso} from '@/components/dashboard/BannerSemConcurso';
+import {DashboardContextHeader,NextActionCard,UrgentReviewsCard} from '@/components/dashboard/DashboardPrimary';
+import {AnalyticsState,DashboardPeriodKpis,DashboardDailyCharts,DashboardDisciplineCharts} from '@/components/dashboard/DashboardAnalytics';
+import {DashboardTodayPlan} from '@/components/dashboard/DashboardTodayPlan';
+import {DashboardMiniCalendar} from '@/components/dashboard/DashboardMiniCalendar';
+import {DashboardComplementary} from '@/components/dashboard/DashboardComplementary';
+import {HeatmapCard} from '@/components/dashboard/HeatmapCard';
+import {Button} from '@/components/ui/button';
+import {Alert,AlertTitle,AlertDescription} from '@/components/ui/alert';
+import {PageSkeleton} from '@/components/ui/page-skeleton';
+import {Skeleton} from '@/components/ui/skeleton';
+import {SelectField} from '@/components/ui/select-field';
+import {dashboardRange,dashboardDayISO,todaySessionWithTimer,type DashboardPeriod,type TodaySession} from '@/lib/dashboard/analysis';
+import {calendarDaysFromToday,formatNumericDate} from '@/lib/dashboard/dates';
+import {resolveDashboardActionState} from '@/lib/dashboard/presentation';
+import {useDashboardAnalysis} from '@/hooks/useDashboardAnalysis';
+import {trackTelemetry} from '@/services/telemetry';
+import {useConcursoAtivoId,useConcursoContextResolved,useConcursoContextError} from '@/stores/concursoStore';
+import {usePomodoroStore} from '@/stores/pomodoroStore';
+import {usePomodoroSessionStore} from '@/stores/pomodoroSessionStore';
 
-import { CalendarioMensalWidget } from "@/components/calendario/CalendarioMensalWidget";
-import { BannerSemConcurso } from "@/components/dashboard/BannerSemConcurso";
-import { DashboardKpis, DashboardWeeklySchedule } from "@/components/dashboard/DashboardOverview";
-import {
-  DashboardContextHeader,
-  NextActionCard,
-  SecondarySection,
-  TodayPlanCard,
-  UrgentReviewsCard,
-  WeeklyGoalCard,
-  type DashboardContest,
-  type NextStudy,
-  type PendingReview,
-  type TodayPlanItem,
-} from "@/components/dashboard/DashboardPrimary";
-import { HeatmapCard } from "@/components/dashboard/HeatmapCard";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { EmptyState } from "@/components/ui/empty-state";
-import { PageSkeleton } from "@/components/ui/page-skeleton";
-import { Progress } from "@/components/ui/progress";
-import { resolveConcursoContextStatus } from "@/lib/concursos/context";
-import { blocoDurationMinutes, DIAS } from "@/lib/cronograma/constants";
-import type { Bloco } from "@/lib/cronograma/types";
-import { resolveDashboardActionState } from "@/lib/dashboard/presentation";
-import { calendarDaysFromToday, formatNumericDate } from "@/lib/dashboard/dates";
-import type { Disciplina } from "@/lib/disciplinas/types";
-import { api } from "@/services/api";
-import { trackTelemetry } from "@/services/telemetry";
-import { useConcursoAtivoId, useConcursoContextError, useConcursoContextResolved } from "@/stores/concursoStore";
-
-type DashboardResumo = {
-  horas_hoje: number;
-  meta_horas: number;
-  horas_semana: number;
-  sessoes_semana: number;
-  questoes_semana: number;
-  rendimento_medio: number;
-  avisos_proximos: number;
-  flashcards_para_revisar: number;
-  streak_dias?: number;
-  taxa_cumprimento_mes?: number;
-  minutos_planejados_mes?: number;
-  minutos_realizados_mes?: number;
-};
-
-type RevisoesPendentes = { total: number; items: PendingReview[] };
-type HeatmapData = { date: string; count: number; minutes?: number };
-type Aviso = { id: string; titulo: string; data_vencimento: string; prioridade: string };
-type Concurso = DashboardContest & { id: string };
-type ProximoEstudo = NextStudy & { item_id: string; concurso_id: string; sessoes_recentes: number };
-
-const RegistroEstudoModal = React.lazy(async () => {
-  const module = await import("@/components/estudos/RegistroEstudoModal");
-  return { default: module.RegistroEstudoModal };
-});
-
+type Prefill={disciplinaId:string;topicoId?:string|null;blocoId?:string;itemId?:string;dataReferencia?:string};
+const RegistroEstudoModal=React.lazy(async()=>({default:(await import('@/components/estudos/RegistroEstudoModal')).RegistroEstudoModal}));
 export function Dashboard() {
-  const queryClient = useQueryClient();
-  const concursoAtivoId = useConcursoAtivoId();
-  const contextResolved = useConcursoContextResolved();
-  const contextError = useConcursoContextError();
-  const viewedStateRef = React.useRef<string | null>(null);
-  const [registroOpen, setRegistroOpen] = React.useState(false);
-  const [registroPrefill, setRegistroPrefill] = React.useState<{ disciplinaId: string; topicoId?: string | null } | null>(null);
-
-  const resumoQuery = useQuery({
-    queryKey: ["dashboard-resumo", concursoAtivoId ?? null],
-    queryFn: async () => (await api.get("/dashboard/resumo", { params: concursoAtivoId ? { concurso_id: concursoAtivoId } : {} })).data as DashboardResumo,
-    enabled: contextResolved && Boolean(concursoAtivoId),
-  });
-  const heatmapQuery = useQuery({
-    queryKey: ["dashboard-heatmap"],
-    queryFn: async () => (await api.get("/dashboard/heatmap")).data as HeatmapData[],
-    enabled: contextResolved && Boolean(concursoAtivoId),
-  });
-  const concursosQuery = useQuery({
-    queryKey: ["concursos"],
-    queryFn: async () => (await api.get("/concursos")).data as Concurso[],
-  });
-  const proximoQuery = useQuery({
-    queryKey: ["dashboard", "proximo-estudo", concursoAtivoId],
-    queryFn: async () => (await api.get<ProximoEstudo | null>("/dashboard/proximo-estudo", { params: { concurso_id: concursoAtivoId } })).data,
-    enabled: contextResolved && Boolean(concursoAtivoId),
-  });
-  const revisoesQuery = useQuery({
-    queryKey: ["dashboard", "revisoes-pendentes", concursoAtivoId],
-    queryFn: async () => (await api.get<RevisoesPendentes>("/dashboard/revisoes-pendentes", { params: { concurso_id: concursoAtivoId } })).data,
-    enabled: contextResolved && Boolean(concursoAtivoId),
-  });
-  const disciplinasQuery = useQuery({
-    queryKey: ["disciplinas", "dashboard", concursoAtivoId ?? null],
-    queryFn: async () => (await api.get("/disciplinas", { params: { include_topicos_stats: true, ...(concursoAtivoId ? { concurso_id: concursoAtivoId } : {}) } })).data as Disciplina[],
-    enabled: contextResolved && Boolean(concursoAtivoId),
-  });
-  const blocosQuery = useQuery({
-    queryKey: ["cronograma-blocos", concursoAtivoId ?? null],
-    queryFn: async () => (await api.get("/cronograma/blocos", { params: concursoAtivoId ? { concurso_id: concursoAtivoId } : {} })).data as Bloco[],
-    enabled: contextResolved && Boolean(concursoAtivoId),
-  });
-  const avisosQuery = useQuery({
-    queryKey: ["avisos-concurso", concursoAtivoId],
-    queryFn: async () => {
-      const rows = (await api.get(`/avisos/concurso/${concursoAtivoId}`)).data as Aviso[];
-      const today = new Date();
-      return rows.filter((aviso) => {
-        const daysUntilDue = calendarDaysFromToday(aviso.data_vencimento, today);
-        return daysUntilDue >= 0 && daysUntilDue <= 7;
-      });
-    },
-    enabled: contextResolved && Boolean(concursoAtivoId),
-  });
-
-  const concursoAtivo = React.useMemo(() => concursosQuery.data?.find((contest) => contest.id === concursoAtivoId) ?? null, [concursosQuery.data, concursoAtivoId]);
-  const diasParaProva = React.useMemo(() => concursoAtivo?.data_prova ? calendarDaysFromToday(concursoAtivo.data_prova) : null, [concursoAtivo]);
-  const discMap = React.useMemo(() => new Map((disciplinasQuery.data ?? []).map((discipline) => [discipline.id, discipline.nome])), [disciplinasQuery.data]);
-  const diaHoje = (["dom", "seg", "ter", "qua", "qui", "sex", "sab"] as Bloco["dia_semana"][])[new Date().getDay()];
-  const blocosSemana = React.useMemo(() => {
-    if (!concursoAtivoId || !blocosQuery.data) return undefined;
-    const ids = new Set((disciplinasQuery.data ?? []).map((discipline) => discipline.id));
-    const map = Object.fromEntries(DIAS.map((day) => [day, [] as Bloco[]])) as Record<Bloco["dia_semana"], Bloco[]>;
-    for (const bloco of blocosQuery.data.filter((item) => ids.has(item.disciplina_id))) map[bloco.dia_semana]?.push(bloco);
-    for (const day of DIAS) map[day] = [...map[day]].sort((a, b) => a.hora_inicio.localeCompare(b.hora_inicio));
-    return map;
-  }, [blocosQuery.data, disciplinasQuery.data, concursoAtivoId]);
-  const planoHoje = React.useMemo<TodayPlanItem[]>(() => (blocosSemana?.[diaHoje] ?? []).flatMap((bloco) => {
-    const disciplina = discMap.get(bloco.disciplina_id);
-    return disciplina ? [{ bloco, disciplina, minutos: blocoDurationMinutes(bloco.hora_inicio, bloco.hora_fim) }] : [];
-  }), [blocosSemana, diaHoje, discMap]);
-  const progressoDisciplinas = React.useMemo(() => (disciplinasQuery.data ?? [])
-    .filter((discipline) => (discipline.topicos_total ?? 0) > 0)
-    .sort((a, b) => ((b.topicos_estudados ?? 0) / (b.topicos_total ?? 1)) - ((a.topicos_estudados ?? 0) / (a.topicos_total ?? 1)))
-    .slice(0, 8), [disciplinasQuery.data]);
-
-  const contextStatus = resolveConcursoContextStatus({
-    resolved: contextResolved,
-    concursoId: concursoAtivoId,
-    essentialError: contextError || concursosQuery.isError || disciplinasQuery.isError || blocosQuery.isError,
-    essentialLoading: concursosQuery.data === undefined || disciplinasQuery.data === undefined || blocosQuery.data === undefined || proximoQuery.isLoading,
-    disciplinesLoaded: disciplinasQuery.data !== undefined,
-    disciplinesCount: disciplinasQuery.data?.length,
-    planLoaded: blocosQuery.data !== undefined,
-    plannedItemsCount: blocosQuery.data?.length,
-    actionableItemsCount: proximoQuery.isError ? 1 : proximoQuery.data ? 1 : 0,
-  });
-  const presentationIsStable = contextStatus !== "ready" || (
-    (resumoQuery.data !== undefined || resumoQuery.isError)
-    && (revisoesQuery.data !== undefined || revisoesQuery.isError)
-  );
-  const actionState = presentationIsStable ? resolveDashboardActionState({
-      contextStatus,
-      overdueReviews: revisoesQuery.data?.items.filter((review) => review.dias_atraso > 0).length ?? 0,
-      daysUntilExam: diasParaProva,
-      hoursToday: resumoQuery.data?.horas_hoje ?? 0,
-      dailyGoalHours: resumoQuery.data?.meta_horas ?? 0,
-    }) : null;
-
-  React.useEffect(() => {
-    if (!concursoAtivoId || !actionState) return;
-    const fingerprint = `${concursoAtivoId}:${actionState}`;
-    if (viewedStateRef.current === fingerprint) return;
-    viewedStateRef.current = fingerprint;
-    trackTelemetry("next_action_viewed", { state: actionState });
-  }, [actionState, concursoAtivoId]);
-
-  const openManual = React.useCallback((disciplinaId: string, topicoId: string | null | undefined, source: "dashboard" | "schedule") => {
-    setRegistroPrefill({ disciplinaId, topicoId });
-    setRegistroOpen(true);
-    trackTelemetry("manual_study_opened", { source });
-  }, []);
-
-  if (contextStatus === "hydrating") return <PageSkeleton cards={2} rows={3} />;
-  if (contextStatus === "no_contest") return <div className="space-y-6 pb-8"><header><h1 className="text-2xl font-bold tracking-tight">Painel</h1><p className="text-sm text-muted-foreground">Comece escolhendo o contexto dos seus estudos.</p></header><BannerSemConcurso /></div>;
-  if (contextStatus === "error") return <div className="space-y-6 pb-8"><header><h1 className="text-2xl font-bold tracking-tight">Painel</h1></header><Alert variant="destructive"><RefreshCw aria-hidden="true" /><AlertTitle>Não foi possível carregar o concurso ativo</AlertTitle><AlertDescription>Os dados anteriores foram ocultados. <Button type="button" variant="outline" size="sm" className="mt-3 block" onClick={() => void Promise.all([queryClient.invalidateQueries({ queryKey: ["concursos"] }), disciplinasQuery.refetch(), blocosQuery.refetch(), proximoQuery.refetch()])}>Tentar novamente</Button></AlertDescription></Alert></div>;
-
-  const contestHeader = concursoAtivo ? <DashboardContextHeader contest={concursoAtivo} daysUntilExam={diasParaProva} /> : null;
-  if (contextStatus === "no_disciplines") return <div className="space-y-6 pb-8">{contestHeader}<EmptyState icon={BookOpenCheck} title="Adicione as disciplinas deste concurso" description="O concurso está ativo, mas ainda não possui conteúdo para orientar seu planejamento." action={<Button asChild><Link to="/disciplinas">Adicionar disciplinas</Link></Button>} /></div>;
-  if (contextStatus === "no_plan") return <div className="space-y-6 pb-8">{contestHeader}<EmptyState icon={Target} title="Configure seu planejamento" description="As disciplinas estão prontas. Agora distribua seus estudos na semana." action={<Button asChild><Link to="/cronograma">Criar cronograma</Link></Button>} /></div>;
-  if (contextStatus === "empty_plan") return <div className="space-y-6 pb-8">{contestHeader}<EmptyState icon={RefreshCw} title="Seu plano precisa de ajuste" description="Há planejamento cadastrado, mas nenhuma próxima ação disponível." action={<Button asChild><Link to={`/planos/${concursoAtivoId}/replanejar`}>Replanejar</Link></Button>} /></div>;
-  if (!concursoAtivo || !concursoAtivoId) return null;
-
-  const stableActionState = actionState && !["no_plan", "empty_plan"].includes(actionState) ? actionState as "ready" | "completed" | "overdue" | "upcoming_exam" : "ready";
-  const weeklyGoal = Math.max((resumoQuery.data?.meta_horas ?? 0) * 7, 0);
-  const today = new Date();
-
-  return (
-    <div className="space-y-6 pb-8">
-      <DashboardContextHeader contest={concursoAtivo} daysUntilExam={diasParaProva} />
-      <NextActionCard
-        study={proximoQuery.data}
-        state={stableActionState}
-        isError={proximoQuery.isError}
-        onRetry={() => void proximoQuery.refetch()}
-        onStart={() => trackTelemetry("next_action_started", { action_type: "study", source: "dashboard" })}
-        onManual={() => {
-          if (!proximoQuery.data) return;
-          trackTelemetry("next_action_started", { action_type: "manual", source: "dashboard" });
-          openManual(proximoQuery.data.disciplina_id, proximoQuery.data.topico_id, "dashboard");
-        }}
-        replanUrl={`/planos/${concursoAtivoId}/replanejar`}
-      />
-
-      <TodayPlanCard items={planoHoje} onRegister={(item) => openManual(item.bloco.disciplina_id, item.bloco.topico_id, "schedule")} />
-
-      <div className="grid gap-4 lg:grid-cols-2">
-        <WeeklyGoalCard hours={resumoQuery.data?.horas_semana ?? 0} goalHours={weeklyGoal} questions={resumoQuery.data?.questoes_semana ?? 0} isError={resumoQuery.isError} onRetry={() => void resumoQuery.refetch()} />
-        <UrgentReviewsCard reviews={revisoesQuery.data?.items ?? []} total={revisoesQuery.data?.total ?? 0} isError={revisoesQuery.isError} onRetry={() => void revisoesQuery.refetch()} />
-      </div>
-
-      <SecondarySection>
-        {progressoDisciplinas.length > 0 ? <Card aria-labelledby="subject-progress-title"><CardHeader><CardTitle id="subject-progress-title">Progresso no edital</CardTitle></CardHeader><CardContent className="space-y-4">{progressoDisciplinas.map((discipline) => { const total = discipline.topicos_total ?? 0; const studied = discipline.topicos_estudados ?? 0; const percent = total > 0 ? Math.round((studied / total) * 100) : 0; return <div key={discipline.id}><div className="mb-1 flex items-center justify-between gap-3 text-sm"><Link to={`/disciplinas/${discipline.id}`} className="truncate font-medium hover:underline">{discipline.nome}</Link><span className="shrink-0 text-xs text-muted-foreground">{studied}/{total} · {percent}%</span></div><Progress value={percent} aria-label={`${discipline.nome}: ${percent}% do edital concluído`} /></div>; })}</CardContent></Card> : null}
-
-        {resumoQuery.isError ? <Alert variant="destructive"><RefreshCw aria-hidden="true" /><AlertTitle>Resumo de desempenho indisponível</AlertTitle><AlertDescription>As demais seções continuam funcionando.</AlertDescription></Alert> : <DashboardKpis summary={resumoQuery.data} />}
-
-        <DashboardWeeklySchedule schedule={blocosSemana} today={diaHoje} disciplineNames={discMap} />
-
-        <div className="grid gap-4 lg:grid-cols-2">
-          {heatmapQuery.isError ? <Alert variant="destructive"><RefreshCw aria-hidden="true" /><AlertTitle>Constância indisponível</AlertTitle><AlertDescription><Button type="button" variant="outline" size="sm" onClick={() => void heatmapQuery.refetch()}>Tentar novamente</Button></AlertDescription></Alert> : <HeatmapCard data={heatmapQuery.data ?? []} />}
-          <CalendarioMensalWidget ano={today.getFullYear()} mes={today.getMonth() + 1} concursoId={concursoAtivoId} />
-        </div>
-
-        <Card aria-labelledby="upcoming-notices-title"><CardHeader><CardTitle id="upcoming-notices-title" className="flex items-center gap-2"><Flame className="size-5 text-amber-500" aria-hidden="true" />Avisos próximos</CardTitle><Button asChild variant="ghost" size="sm"><Link to="/avisos">Ver todos</Link></Button></CardHeader><CardContent>{avisosQuery.isError ? <p className="text-sm text-muted-foreground">Não foi possível carregar os avisos.</p> : avisosQuery.data?.length ? <ul className="grid gap-2 sm:grid-cols-2">{avisosQuery.data.slice(0, 4).map((aviso) => <li key={aviso.id} className="rounded-lg bg-muted/40 px-3 py-2 text-sm"><strong className="block">{aviso.titulo}</strong><span className="text-xs text-muted-foreground">{formatNumericDate(aviso.data_vencimento)}</span></li>)}</ul> : <p className="text-sm text-muted-foreground">Nenhum aviso nos próximos 7 dias.</p>}</CardContent></Card>
-      </SecondarySection>
-
-      {registroOpen ? (
-        <React.Suspense fallback={null}>
-          <RegistroEstudoModal open onClose={() => { setRegistroOpen(false); setRegistroPrefill(null); }} defaultDisciplinaId={registroPrefill?.disciplinaId ?? null} defaultConcursoId={concursoAtivoId} defaultTopicos={registroPrefill?.topicoId ? [{ id: registroPrefill.topicoId, nome: "" }] : null} />
-        </React.Suspense>
-      ) : null}
-    </div>
-  );
+ const qc=useQueryClient();const concursoId=useConcursoAtivoId();const resolved=useConcursoContextResolved();const contextError=useConcursoContextError();
+ const [period,setPeriod]=React.useState<DashboardPeriod>('week');
+ const [timezone,setTimezone]=React.useState('America/Sao_Paulo');
+ const today=dashboardDayISO(timezone);const userDate=new Date(`${today}T12:00:00`);
+ const range=dashboardRange(period,userDate);const enabled=resolved&&Boolean(concursoId)&&!contextError;
+ const [prefill,setPrefill]=React.useState<Prefill|null>(null);
+ const {contests,analysis,summary,next,reviews,heatmap,notices}=useDashboardAnalysis(concursoId,range,enabled);
+ React.useEffect(()=>{if(analysis.data?.timezone)setTimezone(analysis.data.timezone);},[analysis.data?.timezone]);
+ const activity=usePomodoroStore(s=>s.activityContext);const hasSession=usePomodoroSessionStore(s=>s.hasSession);const phase=usePomodoroSessionStore(s=>s.phase);
+ const todayPlan=React.useMemo(()=>analysis.data?.plano_hoje.map(item=>todaySessionWithTimer(item,activity,concursoId,hasSession&&phase==='foco'))??[],[analysis.data,activity,concursoId,hasSession,phase]);
+ const contest=contests.data?.find(c=>c.id===concursoId);
+ const days=contest?.data_prova?calendarDaysFromToday(contest.data_prova,userDate):null;
+ const state=resolveDashboardActionState({contextStatus:'ready',overdueReviews:reviews.data?.items.filter(r=>r.dias_atraso>0).length??0,daysUntilExam:days,hoursToday:summary.data?.horas_hoje??0,dailyGoalHours:summary.data?.meta_horas??0});
+ const actionState=state&&state!=='no_plan'&&state!=='empty_plan'?state:'ready';
+ const seen=React.useRef<string|null>(null);
+ React.useEffect(()=>{if(!enabled||summary.isLoading||reviews.isLoading)return;const key=`${concursoId}:${actionState}`;if(key!==seen.current){seen.current=key;trackTelemetry('next_action_viewed',{state:actionState});}},[enabled,concursoId,actionState,summary.isLoading,reviews.isLoading]);
+ const register=(item:TodaySession)=>{setPrefill({disciplinaId:item.disciplina_id,topicoId:item.topico_id,blocoId:item.fonte==='bloco_semanal'?(item.bloco_cronograma_id??item.id):undefined,itemId:item.fonte==='cronograma_item'?item.id:undefined,dataReferencia:item.data});trackTelemetry('manual_study_opened',{source:'schedule'});};
+ if(!resolved)return <PageSkeleton cards={4} rows={2}/>;
+ if(contextError||contests.isError)return <div className="space-y-4"><h1 className="text-2xl font-semibold">Painel</h1><Alert variant="destructive"><AlertTitle>Não foi possível carregar o concurso ativo</AlertTitle><AlertDescription>Os dados anteriores foram ocultados.<Button variant="outline" className="mt-3 block" onClick={()=>void qc.invalidateQueries({queryKey:['concursos']})}>Tentar novamente</Button></AlertDescription></Alert></div>;
+ if(!concursoId)return <div className="space-y-6"><h1 className="text-2xl font-semibold">Painel</h1><BannerSemConcurso/></div>;
+ if(contests.isLoading)return <PageSkeleton cards={4} rows={2}/>;
+ if(!contest)return <div className="space-y-6"><h1 className="text-2xl font-semibold">Painel</h1><BannerSemConcurso/></div>;
+ return <div className="space-y-5 pb-8">
+  <DashboardContextHeader contest={contest} daysUntilExam={days}/>
+  <div className="flex flex-wrap items-center justify-between gap-3">{!contest.data_prova?<Link to="/concursos" className="text-sm font-medium text-primary underline">Cadastrar data da prova</Link>:<span className="text-xs text-muted-foreground">Acompanhamento do concurso ativo</span>}<div className="flex flex-wrap items-center gap-3"><SelectField aria-label="Período do dashboard" className="w-44" value={period} onValueChange={v=>setPeriod(v as DashboardPeriod)} options={[{value:'week',label:'Esta semana'},{value:'month',label:'Este mês'},{value:'30days',label:'Últimos 30 dias'}]}/><p className="text-xs text-muted-foreground">{formatNumericDate(range.inicio)} a {formatNumericDate(range.fim)}</p></div></div>
+  <AnalyticsState loading={analysis.isLoading} error={analysis.isError} retry={()=>void analysis.refetch()}/>
+  {!analysis.isError&&analysis.data&&<DashboardPeriodKpis data={analysis.data}/>}
+  <div data-dashboard-row="actions" className="grid items-start gap-4 xl:items-stretch xl:grid-cols-2">
+   {next.isLoading?<Skeleton className="h-48 rounded-xl"/>:<NextActionCard compact study={next.data} state={actionState} isError={next.isError} onRetry={()=>void next.refetch()} onStart={()=>trackTelemetry('next_action_started',{action_type:'study',source:'dashboard'})} onManual={()=>{if(!next.data)return;const s=next.data;setPrefill({disciplinaId:s.disciplina_id,topicoId:s.topico_id,blocoId:s.fonte==='bloco_semanal'?s.item_id:undefined,itemId:s.fonte==='cronograma_item'?s.item_id:undefined,dataReferencia:s.data});trackTelemetry('manual_study_opened',{source:'dashboard'});}} replanUrl={`/planos/${concursoId}/replanejar`}/>}
+   {analysis.isLoading?<Skeleton className="h-48 rounded-xl"/>:<DashboardTodayPlan items={todayPlan} onRegister={register} error={analysis.isError} retry={()=>void analysis.refetch()}/>}
+  </div>
+  {!analysis.isError&&analysis.data&&<><DashboardDailyCharts data={analysis.data}/><DashboardDisciplineCharts data={analysis.data}/></>}
+  <div data-dashboard-row="tracking" className="grid items-start gap-4 xl:items-stretch xl:grid-cols-2"><HeatmapCard className="flex flex-col xl:h-full xl:self-stretch" data={heatmap.data??[]} scopeLabel="Concurso ativo" endDate={today} isLoading={heatmap.isLoading} isError={heatmap.isError} onRetry={()=>void heatmap.refetch()}/><DashboardMiniCalendar timezone={timezone} concursoId={concursoId} disciplineNames={new Map(analysis.data?.disciplinas.map(d=>[d.id,d.nome]))}/></div>
+  <div data-dashboard-row="complementary" className="grid items-start gap-4 xl:items-stretch xl:grid-cols-3">{reviews.isLoading?<Skeleton className="h-36 rounded-xl"/>:<UrgentReviewsCard reviews={reviews.data?.items??[]} total={reviews.data?.total??0} isError={reviews.isError} onRetry={()=>void reviews.refetch()}/>}<DashboardComplementary summary={summary} notices={notices}/></div>
+  {prefill&&<React.Suspense fallback={null}><RegistroEstudoModal open onClose={()=>setPrefill(null)} defaultDisciplinaId={prefill.disciplinaId} defaultBlocoId={prefill.blocoId} defaultCronogramaItemId={prefill.itemId} defaultDataReferencia={prefill.dataReferencia} defaultConcursoId={concursoId} defaultTopicos={prefill.topicoId?[{id:prefill.topicoId,nome:''}]:null}/></React.Suspense>}
+ </div>;
 }

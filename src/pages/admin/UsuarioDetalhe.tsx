@@ -24,7 +24,8 @@ export function UsuarioDetalhe() {
   };
 
   if (userQuery.isLoading) return <div className="space-y-4"><Skeleton className="h-10 w-72" /><Skeleton className="h-64" /></div>;
-  if (userQuery.isError || !userQuery.data) return <EmptyState title="Usuário não encontrado" description="A conta pode ter sido removida ou você não possui acesso." action={<Button asChild variant="outline"><Link to="/admin/usuarios">Voltar à gestão</Link></Button>} />;
+  if (userQuery.isError) return <EmptyState title="Não foi possível carregar o usuário" description="Confira sua conexão e permissão de acesso e tente novamente." action={<Button variant="outline" onClick={() => void userQuery.refetch()}>Tentar novamente</Button>} />;
+  if (!userQuery.data) return <EmptyState title="Usuário não encontrado" description="A conta não está disponível." action={<Button asChild variant="outline"><Link to="/admin/usuarios">Voltar à gestão</Link></Button>} />;
   const user = userQuery.data;
 
   return <div className="space-y-6">

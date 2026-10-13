@@ -3,6 +3,7 @@ import { BookOpen } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { useConfirmDialog } from "@/components/ui/confirm-dialog";
 import { cn } from "@/lib/utils";
 import { fmtPontos } from "@/lib/disciplinas/pontos";
 import type { DisciplinaInput } from "@/lib/disciplinas/types";
@@ -51,22 +52,36 @@ export function ModalDisciplinaForm({
   isPending = false,
   defaultConcursoId,
 }: ModalDisciplinaFormProps) {
+  const initialized = React.useRef(false);
+  const baseline = React.useRef<DisciplinaFormValues>(emptyValues);
+  const { requestConfirmation, confirmDialog } = useConfirmDialog();
   const [values, setValues] = React.useState<DisciplinaFormValues>(emptyValues);
+  const [submitError, setSubmitError] = React.useState<string | null>(null);
 
-  const { data: concursos = [] } = useQuery({
+  const { data: concursos = [], isLoading: loadingConcursos, isError: concursosError, refetch: retryConcursos } = useQuery({
     queryKey: ["concursos"],
     queryFn: async () => (await api.get("/concursos")).data as ConcursoOption[],
     enabled: open,
   });
 
   React.useEffect(() => {
-    if (!open) return;
+    if (!open) { initialized.current = false; return; }
+    if (initialized.current) return;
+    initialized.current = true;
     const base = { ...emptyValues, ...initialValues };
     if (mode === "create" && defaultConcursoId && base.concursoIds.length === 0) {
       base.concursoIds = [defaultConcursoId];
     }
+    baseline.current = base;
     setValues(base);
+    setSubmitError(null);
   }, [open, mode, initialValues, defaultConcursoId]);
+
+  const dirty = JSON.stringify(values) !== JSON.stringify(baseline.current);
+  const requestClose = async () => {
+    if (isPending) return;
+    if (!dirty || await requestConfirmation({ title: "Descartar alterações?", description: "As alterações desta disciplina ainda não foram salvas.", confirmLabel: "Descartar", cancelLabel: "Continuar editando", variant: "destructive" })) onClose();
+  };
 
   const toggleConcurso = (id: string) => {
     setValues((s) => ({
@@ -80,18 +95,20 @@ export function ModalDisciplinaForm({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!values.nome.trim()) return;
-    await onSubmit({
+    setSubmitError(null);
+    try { await onSubmit({
       ...values,
       nome: values.nome.trim(),
       sigla: values.sigla.trim(),
-    });
+    }); } catch { setSubmitError("Não foi possível salvar a disciplina. Seus dados foram preservados para nova tentativa."); }
   };
 
   return (
+    <>
     <Dialog
       open={open}
       onOpenChange={(o) => {
-        if (!o && !isPending) onClose();
+        if (!o) void requestClose();
       }}
     >
       <DialogContent
@@ -99,13 +116,13 @@ export function ModalDisciplinaForm({
         aria-describedby={undefined}
         className={cn(
           "flex w-full max-w-[520px] flex-col gap-0 overflow-hidden border border-[var(--border-default)] bg-[var(--bg-surface)] p-0 font-sans shadow-xl",
-          "max-h-[92vh] max-sm:bottom-0 max-sm:left-0 max-sm:top-auto max-sm:max-h-[92vh] max-sm:translate-x-0 max-sm:translate-y-0 max-sm:rounded-t-[20px] sm:rounded-[20px]",
+          "max-h-[92vh] max-sm:bottom-0 max-sm:left-0 max-sm:top-auto max-sm:max-h-[92vh] max-sm:translate-x-0 max-sm:translate-y-0 max-sm:rounded-t-2xl sm:rounded-2xl",
         )}
       >
         <header className="relative shrink-0 border-b border-[var(--border-subtle)] px-6 pb-4 pt-6 pr-14">
           <button
             type="button"
-            onClick={onClose}
+            onClick={() => void requestClose()}
             disabled={isPending}
             className="absolute right-3 top-3 rounded-lg p-2 text-2xl leading-none text-[var(--text-muted)] hover:bg-[var(--bg-surface-hover)]"
             aria-label="Fechar"
@@ -131,7 +148,7 @@ export function ModalDisciplinaForm({
           <div className="min-h-0 flex-1 space-y-5 overflow-y-auto px-6 py-6">
             <div>
               <label htmlFor="disc-nome" className="mb-1.5 block text-sm font-medium text-[var(--text-secondary)]">
-                Nome <span className="text-red-500">*</span>
+                Nome <span className="text-destructive">*</span>
               </label>
               <input
                 id="disc-nome"
@@ -194,7 +211,7 @@ export function ModalDisciplinaForm({
 
             <div>
               <p className="mb-2 text-sm font-medium text-[var(--text-secondary)]">Vincular a concursos</p>
-              {concursos.length === 0 ? (
+              {loadingConcursos ? <p role="status" className="text-sm text-muted-foreground">Carregando concursos…</p> : concursosError ? <div role="alert" className="rounded-lg border border-destructive/30 p-3 text-sm"><p>Não foi possível carregar os concursos. Seus vínculos atuais foram preservados.</p><button type="button" className="mt-2 font-medium text-primary underline" onClick={() => void retryConcursos()}>Tentar novamente</button></div> : concursos.length === 0 ? (
                 <p className="rounded-lg border border-dashed border-[var(--border-default)] px-4 py-3 text-sm text-[var(--text-muted)]">
                   Nenhum concurso cadastrado. A disciplina ficará só no catálogo.
                 </p>
@@ -232,11 +249,12 @@ export function ModalDisciplinaForm({
             </div>
           </div>
 
+          {submitError ? <p role="alert" className="px-6 pb-4 text-sm text-destructive">{submitError}</p> : null}
           <footer className="flex shrink-0 items-center justify-end gap-3 border-t border-[var(--border-subtle)] px-6 py-4">
             <button
               type="button"
               disabled={isPending}
-              onClick={onClose}
+              onClick={() => void requestClose()}
               className="rounded-[10px] border border-[var(--border-default)] px-4 py-2.5 text-sm font-semibold text-[var(--text-secondary)] hover:bg-[var(--bg-surface-hover)]"
             >
               Cancelar
@@ -252,6 +270,8 @@ export function ModalDisciplinaForm({
         </form>
       </DialogContent>
     </Dialog>
+    {confirmDialog}
+    </>
   );
 }
 

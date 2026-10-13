@@ -338,7 +338,7 @@ export function Avisos() {
     <div className="space-y-4">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0">
-          <h1 className="text-xl font-semibold tracking-tight text-neutral-900 dark:text-neutral-50">
+          <h1 className="text-2xl font-semibold tracking-tight text-neutral-900 dark:text-neutral-50">
             Avisos & Prazos
           </h1>
           <p className="text-sm text-muted-foreground">Prazos e lembretes do seu plano</p>

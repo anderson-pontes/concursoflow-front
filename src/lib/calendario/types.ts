@@ -7,6 +7,7 @@ export type DiaStatus =
   | "futuro";
 
 export type PlanejadoItem = {
+  bloco_cronograma_id?: string | null;
   fonte: "cronograma_item" | "bloco_semanal";
   id: string;
   disciplina_id: string;

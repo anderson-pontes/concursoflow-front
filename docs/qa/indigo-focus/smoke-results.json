@@ -1,0 +1,4154 @@
+{
+  "mocked": true,
+  "base": "http://127.0.0.1:13010",
+  "results": [
+    {
+      "width": 1440,
+      "theme": "light",
+      "name": "dashboard",
+      "actualTheme": "light",
+      "pageWidth": 1440,
+      "mainWidth": 1180,
+      "mainScrollWidth": 1180,
+      "pageOverflow": false,
+      "mainOverflow": false,
+      "heading": "Concurso QA – Analista",
+      "missingNames": [],
+      "activeNav": [
+        "Dashboard"
+      ],
+      "offenders": [
+        {
+          "tag": "DIV",
+          "classes": "min-w-[700px]",
+          "left": 875,
+          "right": 1575,
+          "width": 700,
+          "overflow": "visible",
+          "text": "DomSegTerQuaQuiSexSáb12345678910111213141516171819202122232425262728293031"
+        },
+        {
+          "tag": "DIV",
+          "classes": "mb-1.5 grid grid-cols-7 gap-1.5",
+          "left": 875,
+          "right": 1575,
+          "width": 700,
+          "overflow": "visible",
+          "text": "DomSegTerQuaQuiSexSáb"
+        },
+        {
+          "tag": "DIV",
+          "classes": "py-1.5 text-center text-xs font-semibold uppercase tracking-wide text-muted-foreground",
+          "left": 1379,
+          "right": 1474,
+          "width": 95,
+          "overflow": "visible",
+          "text": "Sex"
+        },
+        {
+          "tag": "DIV",
+          "classes": "py-1.5 text-center text-xs font-semibold uppercase tracking-wide text-muted-foreground",
+          "left": 1480,
+          "right": 1575,
+          "width": 95,
+          "overflow": "visible",
+          "text": "Sáb"
+        },
+        {
+          "tag": "DIV",
+          "classes": "grid grid-cols-7 gap-1.5",
+          "left": 875,
+          "right": 1575,
+          "width": 700,
+          "overflow": "visible",
+          "text": "12345678910111213141516171819202122232425262728293031"
+        },
+        {
+          "tag": "BUTTON",
+          "classes": "flex min-h-[132px] flex-col rounded-lg border p-2 text-left transition hover:ring-2 hover:ring-primary-400/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default disabled:opacity-40 disabled:hover:ring-0 sm:min-h-[160px] bg-neutral-50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700",
+          "left": 1379,
+          "right": 1474,
+          "width": 95,
+          "overflow": "visible",
+          "text": "2"
+        },
+        {
+          "tag": "DIV",
+          "classes": "flex items-center justify-between gap-1",
+          "left": 1388,
+          "right": 1465,
+          "width": 77,
+          "overflow": "visible",
+          "text": "2"
+        },
+        {
+          "tag": "BUTTON",
+          "classes": "flex min-h-[132px] flex-col rounded-lg border p-2 text-left transition hover:ring-2 hover:ring-primary-400/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default disabled:opacity-40 disabled:hover:ring-0 sm:min-h-[160px] bg-neutral-50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700",
+          "left": 1480,
+          "right": 1575,
+          "width": 95,
+          "overflow": "visible",
+          "text": "3"
+        },
+        {
+          "tag": "DIV",
+          "classes": "flex items-center justify-between gap-1",
+          "left": 1489,
+          "right": 1566,
+          "width": 77,
+          "overflow": "visible",
+          "text": "3"
+        },
+        {
+          "tag": "SPAN",
+          "classes": "text-sm font-semibold tabular-nums text-foreground",
+          "left": 1489,
+          "right": 1498,
+          "width": 9,
+          "overflow": "visible",
+          "text": "3"
+        },
+        {
+          "tag": "BUTTON",
+          "classes": "flex min-h-[132px] flex-col rounded-lg border p-2 text-left transition hover:ring-2 hover:ring-primary-400/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default disabled:opacity-40 disabled:hover:ring-0 sm:min-h-[160px] bg-neutral-50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700",
+          "left": 1379,
+          "right": 1474,
+          "width": 95,
+          "overflow": "visible",
+          "text": "9"
+        },
+        {
+          "tag": "DIV",
+          "classes": "flex items-center justify-between gap-1",
+          "left": 1388,
+          "right": 1465,
+          "width": 77,
+          "overflow": "visible",
+          "text": "9"
+        },
+        {
+          "tag": "BUTTON",
+          "classes": "flex min-h-[132px] flex-col rounded-lg border p-2 text-left transition hover:ring-2 hover:ring-primary-400/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default disabled:opacity-40 disabled:hover:ring-0 sm:min-h-[160px] bg-neutral-50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700",
+          "left": 1480,
+          "right": 1575,
+          "width": 95,
+          "overflow": "visible",
+          "text": "10"
+        },
+        {
+          "tag": "DIV",
+          "classes": "flex items-center justify-between gap-1",
+          "left": 1489,
+          "right": 1566,
+          "width": 77,
+          "overflow": "visible",
+          "text": "10"
+        },
+        {
+          "tag": "SPAN",
+          "classes": "text-sm font-semibold tabular-nums text-foreground",
+          "left": 1489,
+          "right": 1507,
+          "width": 17,
+          "overflow": "visible",
+          "text": "10"
+        },
+        {
+          "tag": "BUTTON",
+          "classes": "flex min-h-[132px] flex-col rounded-lg border p-2 text-left transition hover:ring-2 hover:ring-primary-400/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default disabled:opacity-40 disabled:hover:ring-0 sm:min-h-[160px] bg-neutral-50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700",
+          "left": 1379,
+          "right": 1474,
+          "width": 95,
+          "overflow": "visible",
+          "text": "16"
+        },
+        {
+          "tag": "DIV",
+          "classes": "flex items-center justify-between gap-1",
+          "left": 1388,
+          "right": 1465,
+          "width": 77,
+          "overflow": "visible",
+          "text": "16"
+        },
+        {
+          "tag": "BUTTON",
+          "classes": "flex min-h-[132px] flex-col rounded-lg border p-2 text-left transition hover:ring-2 hover:ring-primary-400/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default disabled:opacity-40 disabled:hover:ring-0 sm:min-h-[160px] bg-neutral-50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700",
+          "left": 1480,
+          "right": 1575,
+          "width": 95,
+          "overflow": "visible",
+          "text": "17"
+        },
+        {
+          "tag": "DIV",
+          "classes": "flex items-center justify-between gap-1",
+          "left": 1489,
+          "right": 1566,
+          "width": 77,
+          "overflow": "visible",
+          "text": "17"
+        },
+        {
+          "tag": "SPAN",
+          "classes": "text-sm font-semibold tabular-nums text-foreground",
+          "left": 1489,
+          "right": 1507,
+          "width": 18,
+          "overflow": "visible",
+          "text": "17"
+        },
+        {
+          "tag": "BUTTON",
+          "classes": "flex min-h-[132px] flex-col rounded-lg border p-2 text-left transition hover:ring-2 hover:ring-primary-400/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default disabled:opacity-40 disabled:hover:ring-0 sm:min-h-[160px] bg-neutral-50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700",
+          "left": 1379,
+          "right": 1474,
+          "width": 95,
+          "overflow": "visible",
+          "text": "23"
+        },
+        {
+          "tag": "DIV",
+          "classes": "flex items-center justify-between gap-1",
+          "left": 1388,
+          "right": 1465,
+          "width": 77,
+          "overflow": "visible",
+          "text": "23"
+        },
+        {
+          "tag": "BUTTON",
+          "classes": "flex min-h-[132px] flex-col rounded-lg border p-2 text-left transition hover:ring-2 hover:ring-primary-400/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default disabled:opacity-40 disabled:hover:ring-0 sm:min-h-[160px] bg-neutral-50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700",
+          "left": 1480,
+          "right": 1575,
+          "width": 95,
+          "overflow": "visible",
+          "text": "24"
+        },
+        {
+          "tag": "DIV",
+          "classes": "flex items-center justify-between gap-1",
+          "left": 1489,
+          "right": 1566,
+          "width": 77,
+          "overflow": "visible",
+          "text": "24"
+        },
+        {
+          "tag": "SPAN",
+          "classes": "text-sm font-semibold tabular-nums text-foreground",
+          "left": 1489,
+          "right": 1507,
+          "width": 18,
+          "overflow": "visible",
+          "text": "24"
+        },
+        {
+          "tag": "BUTTON",
+          "classes": "flex min-h-[132px] flex-col rounded-lg border p-2 text-left transition hover:ring-2 hover:ring-primary-400/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default disabled:opacity-40 disabled:hover:ring-0 sm:min-h-[160px] bg-neutral-50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700",
+          "left": 1379,
+          "right": 1474,
+          "width": 95,
+          "overflow": "visible",
+          "text": "30"
+        },
+        {
+          "tag": "DIV",
+          "classes": "flex items-center justify-between gap-1",
+          "left": 1388,
+          "right": 1465,
+          "width": 77,
+          "overflow": "visible",
+          "text": "30"
+        },
+        {
+          "tag": "BUTTON",
+          "classes": "flex min-h-[132px] flex-col rounded-lg border p-2 text-left transition hover:ring-2 hover:ring-primary-400/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default disabled:opacity-40 disabled:hover:ring-0 sm:min-h-[160px] bg-neutral-50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700",
+          "left": 1480,
+          "right": 1575,
+          "width": 95,
+          "overflow": "visible",
+          "text": "31"
+        },
+        {
+          "tag": "DIV",
+          "classes": "flex items-center justify-between gap-1",
+          "left": 1489,
+          "right": 1566,
+          "width": 77,
+          "overflow": "visible",
+          "text": "31"
+        },
+        {
+          "tag": "SPAN",
+          "classes": "text-sm font-semibold tabular-nums text-foreground",
+          "left": 1489,
+          "right": 1507,
+          "width": 17,
+          "overflow": "visible",
+          "text": "31"
+        }
+      ],
+      "errors": [],
+      "passed": true
+    },
+    {
+      "width": 1440,
+      "theme": "light",
+      "name": "cronograma",
+      "actualTheme": "light",
+      "pageWidth": 1440,
+      "mainWidth": 1180,
+      "mainScrollWidth": 1180,
+      "pageOverflow": false,
+      "mainOverflow": false,
+      "heading": "Meu Cronograma",
+      "missingNames": [],
+      "activeNav": [
+        "Cronograma"
+      ],
+      "offenders": [],
+      "errors": [],
+      "passed": true
+    },
+    {
+      "width": 1440,
+      "theme": "light",
+      "name": "edital",
+      "actualTheme": "light",
+      "pageWidth": 1440,
+      "mainWidth": 1180,
+      "mainScrollWidth": 1180,
+      "pageOverflow": false,
+      "mainOverflow": false,
+      "heading": "Disciplinas & Tópicos",
+      "missingNames": [],
+      "activeNav": [
+        "Edital Verticalizado"
+      ],
+      "offenders": [],
+      "errors": [],
+      "passed": true
+    },
+    {
+      "width": 1440,
+      "theme": "light",
+      "name": "disciplinas",
+      "actualTheme": "light",
+      "pageWidth": 1440,
+      "mainWidth": 1180,
+      "mainScrollWidth": 1180,
+      "pageOverflow": false,
+      "mainOverflow": false,
+      "heading": "Disciplinas & Tópicos",
+      "missingNames": [],
+      "activeNav": [
+        "Disciplinas"
+      ],
+      "offenders": [],
+      "errors": [],
+      "passed": true
+    },
+    {
+      "width": 1440,
+      "theme": "light",
+      "name": "usuarios",
+      "actualTheme": "light",
+      "pageWidth": 1440,
+      "mainWidth": 1180,
+      "mainScrollWidth": 1180,
+      "pageOverflow": false,
+      "mainOverflow": false,
+      "heading": "Gestão de Usuários",
+      "missingNames": [],
+      "activeNav": [
+        "Gestão de Usuários"
+      ],
+      "offenders": [],
+      "errors": [],
+      "passed": true
+    },
+    {
+      "width": 1440,
+      "theme": "light",
+      "name": "catalogo",
+      "actualTheme": "light",
+      "pageWidth": 1440,
+      "mainWidth": 1180,
+      "mainScrollWidth": 1180,
+      "pageOverflow": false,
+      "mainOverflow": false,
+      "heading": "Catálogo de Editais",
+      "missingNames": [],
+      "activeNav": [
+        "Catálogo de Editais"
+      ],
+      "offenders": [],
+      "errors": [],
+      "passed": true
+    },
+    {
+      "width": 1440,
+      "theme": "light",
+      "name": "keyboard",
+      "searchFocused": true,
+      "searchRestore": true,
+      "compactPersisted": true,
+      "passed": true
+    },
+    {
+      "width": 1440,
+      "theme": "dark",
+      "name": "dashboard",
+      "actualTheme": "dark",
+      "pageWidth": 1440,
+      "mainWidth": 1180,
+      "mainScrollWidth": 1180,
+      "pageOverflow": false,
+      "mainOverflow": false,
+      "heading": "Concurso QA – Analista",
+      "missingNames": [],
+      "activeNav": [
+        "Dashboard"
+      ],
+      "offenders": [
+        {
+          "tag": "DIV",
+          "classes": "min-w-[700px]",
+          "left": 875,
+          "right": 1575,
+          "width": 700,
+          "overflow": "visible",
+          "text": "DomSegTerQuaQuiSexSáb12345678910111213141516171819202122232425262728293031"
+        },
+        {
+          "tag": "DIV",
+          "classes": "mb-1.5 grid grid-cols-7 gap-1.5",
+          "left": 875,
+          "right": 1575,
+          "width": 700,
+          "overflow": "visible",
+          "text": "DomSegTerQuaQuiSexSáb"
+        },
+        {
+          "tag": "DIV",
+          "classes": "py-1.5 text-center text-xs font-semibold uppercase tracking-wide text-muted-foreground",
+          "left": 1379,
+          "right": 1474,
+          "width": 95,
+          "overflow": "visible",
+          "text": "Sex"
+        },
+        {
+          "tag": "DIV",
+          "classes": "py-1.5 text-center text-xs font-semibold uppercase tracking-wide text-muted-foreground",
+          "left": 1480,
+          "right": 1575,
+          "width": 95,
+          "overflow": "visible",
+          "text": "Sáb"
+        },
+        {
+          "tag": "DIV",
+          "classes": "grid grid-cols-7 gap-1.5",
+          "left": 875,
+          "right": 1575,
+          "width": 700,
+          "overflow": "visible",
+          "text": "12345678910111213141516171819202122232425262728293031"
+        },
+        {
+          "tag": "BUTTON",
+          "classes": "flex min-h-[132px] flex-col rounded-lg border p-2 text-left transition hover:ring-2 hover:ring-primary-400/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default disabled:opacity-40 disabled:hover:ring-0 sm:min-h-[160px] bg-neutral-50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700",
+          "left": 1379,
+          "right": 1474,
+          "width": 95,
+          "overflow": "visible",
+          "text": "2"
+        },
+        {
+          "tag": "DIV",
+          "classes": "flex items-center justify-between gap-1",
+          "left": 1388,
+          "right": 1465,
+          "width": 77,
+          "overflow": "visible",
+          "text": "2"
+        },
+        {
+          "tag": "BUTTON",
+          "classes": "flex min-h-[132px] flex-col rounded-lg border p-2 text-left transition hover:ring-2 hover:ring-primary-400/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default disabled:opacity-40 disabled:hover:ring-0 sm:min-h-[160px] bg-neutral-50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700",
+          "left": 1480,
+          "right": 1575,
+          "width": 95,
+          "overflow": "visible",
+          "text": "3"
+        },
+        {
+          "tag": "DIV",
+          "classes": "flex items-center justify-between gap-1",
+          "left": 1489,
+          "right": 1566,
+          "width": 77,
+          "overflow": "visible",
+          "text": "3"
+        },
+        {
+          "tag": "SPAN",
+          "classes": "text-sm font-semibold tabular-nums text-foreground",
+          "left": 1489,
+          "right": 1498,
+          "width": 9,
+          "overflow": "visible",
+          "text": "3"
+        },
+        {
+          "tag": "BUTTON",
+          "classes": "flex min-h-[132px] flex-col rounded-lg border p-2 text-left transition hover:ring-2 hover:ring-primary-400/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default disabled:opacity-40 disabled:hover:ring-0 sm:min-h-[160px] bg-neutral-50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700",
+          "left": 1379,
+          "right": 1474,
+          "width": 95,
+          "overflow": "visible",
+          "text": "9"
+        },
+        {
+          "tag": "DIV",
+          "classes": "flex items-center justify-between gap-1",
+          "left": 1388,
+          "right": 1465,
+          "width": 77,
+          "overflow": "visible",
+          "text": "9"
+        },
+        {
+          "tag": "BUTTON",
+          "classes": "flex min-h-[132px] flex-col rounded-lg border p-2 text-left transition hover:ring-2 hover:ring-primary-400/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default disabled:opacity-40 disabled:hover:ring-0 sm:min-h-[160px] bg-neutral-50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700",
+          "left": 1480,
+          "right": 1575,
+          "width": 95,
+          "overflow": "visible",
+          "text": "10"
+        },
+        {
+          "tag": "DIV",
+          "classes": "flex items-center justify-between gap-1",
+          "left": 1489,
+          "right": 1566,
+          "width": 77,
+          "overflow": "visible",
+          "text": "10"
+        },
+        {
+          "tag": "SPAN",
+          "classes": "text-sm font-semibold tabular-nums text-foreground",
+          "left": 1489,
+          "right": 1507,
+          "width": 17,
+          "overflow": "visible",
+          "text": "10"
+        },
+        {
+          "tag": "BUTTON",
+          "classes": "flex min-h-[132px] flex-col rounded-lg border p-2 text-left transition hover:ring-2 hover:ring-primary-400/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default disabled:opacity-40 disabled:hover:ring-0 sm:min-h-[160px] bg-neutral-50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700",
+          "left": 1379,
+          "right": 1474,
+          "width": 95,
+          "overflow": "visible",
+          "text": "16"
+        },
+        {
+          "tag": "DIV",
+          "classes": "flex items-center justify-between gap-1",
+          "left": 1388,
+          "right": 1465,
+          "width": 77,
+          "overflow": "visible",
+          "text": "16"
+        },
+        {
+          "tag": "BUTTON",
+          "classes": "flex min-h-[132px] flex-col rounded-lg border p-2 text-left transition hover:ring-2 hover:ring-primary-400/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default disabled:opacity-40 disabled:hover:ring-0 sm:min-h-[160px] bg-neutral-50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700",
+          "left": 1480,
+          "right": 1575,
+          "width": 95,
+          "overflow": "visible",
+          "text": "17"
+        },
+        {
+          "tag": "DIV",
+          "classes": "flex items-center justify-between gap-1",
+          "left": 1489,
+          "right": 1566,
+          "width": 77,
+          "overflow": "visible",
+          "text": "17"
+        },
+        {
+          "tag": "SPAN",
+          "classes": "text-sm font-semibold tabular-nums text-foreground",
+          "left": 1489,
+          "right": 1507,
+          "width": 18,
+          "overflow": "visible",
+          "text": "17"
+        },
+        {
+          "tag": "BUTTON",
+          "classes": "flex min-h-[132px] flex-col rounded-lg border p-2 text-left transition hover:ring-2 hover:ring-primary-400/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default disabled:opacity-40 disabled:hover:ring-0 sm:min-h-[160px] bg-neutral-50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700",
+          "left": 1379,
+          "right": 1474,
+          "width": 95,
+          "overflow": "visible",
+          "text": "23"
+        },
+        {
+          "tag": "DIV",
+          "classes": "flex items-center justify-between gap-1",
+          "left": 1388,
+          "right": 1465,
+          "width": 77,
+          "overflow": "visible",
+          "text": "23"
+        },
+        {
+          "tag": "BUTTON",
+          "classes": "flex min-h-[132px] flex-col rounded-lg border p-2 text-left transition hover:ring-2 hover:ring-primary-400/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default disabled:opacity-40 disabled:hover:ring-0 sm:min-h-[160px] bg-neutral-50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700",
+          "left": 1480,
+          "right": 1575,
+          "width": 95,
+          "overflow": "visible",
+          "text": "24"
+        },
+        {
+          "tag": "DIV",
+          "classes": "flex items-center justify-between gap-1",
+          "left": 1489,
+          "right": 1566,
+          "width": 77,
+          "overflow": "visible",
+          "text": "24"
+        },
+        {
+          "tag": "SPAN",
+          "classes": "text-sm font-semibold tabular-nums text-foreground",
+          "left": 1489,
+          "right": 1507,
+          "width": 18,
+          "overflow": "visible",
+          "text": "24"
+        },
+        {
+          "tag": "BUTTON",
+          "classes": "flex min-h-[132px] flex-col rounded-lg border p-2 text-left transition hover:ring-2 hover:ring-primary-400/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default disabled:opacity-40 disabled:hover:ring-0 sm:min-h-[160px] bg-neutral-50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700",
+          "left": 1379,
+          "right": 1474,
+          "width": 95,
+          "overflow": "visible",
+          "text": "30"
+        },
+        {
+          "tag": "DIV",
+          "classes": "flex items-center justify-between gap-1",
+          "left": 1388,
+          "right": 1465,
+          "width": 77,
+          "overflow": "visible",
+          "text": "30"
+        },
+        {
+          "tag": "BUTTON",
+          "classes": "flex min-h-[132px] flex-col rounded-lg border p-2 text-left transition hover:ring-2 hover:ring-primary-400/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default disabled:opacity-40 disabled:hover:ring-0 sm:min-h-[160px] bg-neutral-50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700",
+          "left": 1480,
+          "right": 1575,
+          "width": 95,
+          "overflow": "visible",
+          "text": "31"
+        },
+        {
+          "tag": "DIV",
+          "classes": "flex items-center justify-between gap-1",
+          "left": 1489,
+          "right": 1566,
+          "width": 77,
+          "overflow": "visible",
+          "text": "31"
+        },
+        {
+          "tag": "SPAN",
+          "classes": "text-sm font-semibold tabular-nums text-foreground",
+          "left": 1489,
+          "right": 1507,
+          "width": 17,
+          "overflow": "visible",
+          "text": "31"
+        }
+      ],
+      "errors": [],
+      "passed": true
+    },
+    {
+      "width": 1440,
+      "theme": "dark",
+      "name": "cronograma",
+      "actualTheme": "dark",
+      "pageWidth": 1440,
+      "mainWidth": 1180,
+      "mainScrollWidth": 1180,
+      "pageOverflow": false,
+      "mainOverflow": false,
+      "heading": "Meu Cronograma",
+      "missingNames": [],
+      "activeNav": [
+        "Cronograma"
+      ],
+      "offenders": [],
+      "errors": [],
+      "passed": true
+    },
+    {
+      "width": 1440,
+      "theme": "dark",
+      "name": "edital",
+      "actualTheme": "dark",
+      "pageWidth": 1440,
+      "mainWidth": 1180,
+      "mainScrollWidth": 1180,
+      "pageOverflow": false,
+      "mainOverflow": false,
+      "heading": "Disciplinas & Tópicos",
+      "missingNames": [],
+      "activeNav": [
+        "Edital Verticalizado"
+      ],
+      "offenders": [],
+      "errors": [],
+      "passed": true
+    },
+    {
+      "width": 1440,
+      "theme": "dark",
+      "name": "disciplinas",
+      "actualTheme": "dark",
+      "pageWidth": 1440,
+      "mainWidth": 1180,
+      "mainScrollWidth": 1180,
+      "pageOverflow": false,
+      "mainOverflow": false,
+      "heading": "Disciplinas & Tópicos",
+      "missingNames": [],
+      "activeNav": [
+        "Disciplinas"
+      ],
+      "offenders": [],
+      "errors": [],
+      "passed": true
+    },
+    {
+      "width": 1440,
+      "theme": "dark",
+      "name": "usuarios",
+      "actualTheme": "dark",
+      "pageWidth": 1440,
+      "mainWidth": 1180,
+      "mainScrollWidth": 1180,
+      "pageOverflow": false,
+      "mainOverflow": false,
+      "heading": "Gestão de Usuários",
+      "missingNames": [],
+      "activeNav": [
+        "Gestão de Usuários"
+      ],
+      "offenders": [],
+      "errors": [],
+      "passed": true
+    },
+    {
+      "width": 1440,
+      "theme": "dark",
+      "name": "catalogo",
+      "actualTheme": "dark",
+      "pageWidth": 1440,
+      "mainWidth": 1180,
+      "mainScrollWidth": 1180,
+      "pageOverflow": false,
+      "mainOverflow": false,
+      "heading": "Catálogo de Editais",
+      "missingNames": [],
+      "activeNav": [
+        "Catálogo de Editais"
+      ],
+      "offenders": [],
+      "errors": [],
+      "passed": true
+    },
+    {
+      "width": 1440,
+      "theme": "dark",
+      "name": "keyboard",
+      "searchFocused": true,
+      "searchRestore": true,
+      "compactPersisted": true,
+      "passed": true
+    },
+    {
+      "width": 1280,
+      "theme": "light",
+      "name": "dashboard",
+      "actualTheme": "light",
+      "pageWidth": 1280,
+      "mainWidth": 1020,
+      "mainScrollWidth": 1020,
+      "pageOverflow": false,
+      "mainOverflow": false,
+      "heading": "Concurso QA – Analista",
+      "missingNames": [],
+      "activeNav": [
+        "Dashboard"
+      ],
+      "offenders": [
+        {
+          "tag": "DIV",
+          "classes": "min-w-[700px]",
+          "left": 795,
+          "right": 1495,
+          "width": 700,
+          "overflow": "visible",
+          "text": "DomSegTerQuaQuiSexSáb12345678910111213141516171819202122232425262728293031"
+        },
+        {
+          "tag": "DIV",
+          "classes": "mb-1.5 grid grid-cols-7 gap-1.5",
+          "left": 795,
+          "right": 1495,
+          "width": 700,
+          "overflow": "visible",
+          "text": "DomSegTerQuaQuiSexSáb"
+        },
+        {
+          "tag": "DIV",
+          "classes": "py-1.5 text-center text-xs font-semibold uppercase tracking-wide text-muted-foreground",
+          "left": 1198,
+          "right": 1293,
+          "width": 95,
+          "overflow": "visible",
+          "text": "Qui"
+        },
+        {
+          "tag": "DIV",
+          "classes": "py-1.5 text-center text-xs font-semibold uppercase tracking-wide text-muted-foreground",
+          "left": 1299,
+          "right": 1394,
+          "width": 95,
+          "overflow": "visible",
+          "text": "Sex"
+        },
+        {
+          "tag": "DIV",
+          "classes": "py-1.5 text-center text-xs font-semibold uppercase tracking-wide text-muted-foreground",
+          "left": 1400,
+          "right": 1495,
+          "width": 95,
+          "overflow": "visible",
+          "text": "Sáb"
+        },
+        {
+          "tag": "DIV",
+          "classes": "grid grid-cols-7 gap-1.5",
+          "left": 795,
+          "right": 1495,
+          "width": 700,
+          "overflow": "visible",
+          "text": "12345678910111213141516171819202122232425262728293031"
+        },
+        {
+          "tag": "BUTTON",
+          "classes": "flex min-h-[132px] flex-col rounded-lg border p-2 text-left transition hover:ring-2 hover:ring-primary-400/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default disabled:opacity-40 disabled:hover:ring-0 sm:min-h-[160px] bg-neutral-50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700",
+          "left": 1198,
+          "right": 1293,
+          "width": 95,
+          "overflow": "visible",
+          "text": "1"
+        },
+        {
+          "tag": "DIV",
+          "classes": "flex items-center justify-between gap-1",
+          "left": 1207,
+          "right": 1284,
+          "width": 77,
+          "overflow": "visible",
+          "text": "1"
+        },
+        {
+          "tag": "BUTTON",
+          "classes": "flex min-h-[132px] flex-col rounded-lg border p-2 text-left transition hover:ring-2 hover:ring-primary-400/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default disabled:opacity-40 disabled:hover:ring-0 sm:min-h-[160px] bg-neutral-50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700",
+          "left": 1299,
+          "right": 1394,
+          "width": 95,
+          "overflow": "visible",
+          "text": "2"
+        },
+        {
+          "tag": "DIV",
+          "classes": "flex items-center justify-between gap-1",
+          "left": 1308,
+          "right": 1385,
+          "width": 77,
+          "overflow": "visible",
+          "text": "2"
+        },
+        {
+          "tag": "SPAN",
+          "classes": "text-sm font-semibold tabular-nums text-foreground",
+          "left": 1308,
+          "right": 1317,
+          "width": 9,
+          "overflow": "visible",
+          "text": "2"
+        },
+        {
+          "tag": "BUTTON",
+          "classes": "flex min-h-[132px] flex-col rounded-lg border p-2 text-left transition hover:ring-2 hover:ring-primary-400/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default disabled:opacity-40 disabled:hover:ring-0 sm:min-h-[160px] bg-neutral-50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700",
+          "left": 1400,
+          "right": 1495,
+          "width": 95,
+          "overflow": "visible",
+          "text": "3"
+        },
+        {
+          "tag": "DIV",
+          "classes": "flex items-center justify-between gap-1",
+          "left": 1409,
+          "right": 1486,
+          "width": 77,
+          "overflow": "visible",
+          "text": "3"
+        },
+        {
+          "tag": "SPAN",
+          "classes": "text-sm font-semibold tabular-nums text-foreground",
+          "left": 1409,
+          "right": 1418,
+          "width": 9,
+          "overflow": "visible",
+          "text": "3"
+        },
+        {
+          "tag": "BUTTON",
+          "classes": "flex min-h-[132px] flex-col rounded-lg border p-2 text-left transition hover:ring-2 hover:ring-primary-400/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default disabled:opacity-40 disabled:hover:ring-0 sm:min-h-[160px] bg-neutral-50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700",
+          "left": 1198,
+          "right": 1293,
+          "width": 95,
+          "overflow": "visible",
+          "text": "8"
+        },
+        {
+          "tag": "DIV",
+          "classes": "flex items-center justify-between gap-1",
+          "left": 1207,
+          "right": 1284,
+          "width": 77,
+          "overflow": "visible",
+          "text": "8"
+        },
+        {
+          "tag": "BUTTON",
+          "classes": "flex min-h-[132px] flex-col rounded-lg border p-2 text-left transition hover:ring-2 hover:ring-primary-400/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default disabled:opacity-40 disabled:hover:ring-0 sm:min-h-[160px] bg-neutral-50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700",
+          "left": 1299,
+          "right": 1394,
+          "width": 95,
+          "overflow": "visible",
+          "text": "9"
+        },
+        {
+          "tag": "DIV",
+          "classes": "flex items-center justify-between gap-1",
+          "left": 1308,
+          "right": 1385,
+          "width": 77,
+          "overflow": "visible",
+          "text": "9"
+        },
+        {
+          "tag": "SPAN",
+          "classes": "text-sm font-semibold tabular-nums text-foreground",
+          "left": 1308,
+          "right": 1317,
+          "width": 9,
+          "overflow": "visible",
+          "text": "9"
+        },
+        {
+          "tag": "BUTTON",
+          "classes": "flex min-h-[132px] flex-col rounded-lg border p-2 text-left transition hover:ring-2 hover:ring-primary-400/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default disabled:opacity-40 disabled:hover:ring-0 sm:min-h-[160px] bg-neutral-50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700",
+          "left": 1400,
+          "right": 1495,
+          "width": 95,
+          "overflow": "visible",
+          "text": "10"
+        },
+        {
+          "tag": "DIV",
+          "classes": "flex items-center justify-between gap-1",
+          "left": 1409,
+          "right": 1486,
+          "width": 77,
+          "overflow": "visible",
+          "text": "10"
+        },
+        {
+          "tag": "SPAN",
+          "classes": "text-sm font-semibold tabular-nums text-foreground",
+          "left": 1409,
+          "right": 1427,
+          "width": 17,
+          "overflow": "visible",
+          "text": "10"
+        },
+        {
+          "tag": "BUTTON",
+          "classes": "flex min-h-[132px] flex-col rounded-lg border p-2 text-left transition hover:ring-2 hover:ring-primary-400/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default disabled:opacity-40 disabled:hover:ring-0 sm:min-h-[160px] bg-neutral-50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700",
+          "left": 1198,
+          "right": 1293,
+          "width": 95,
+          "overflow": "visible",
+          "text": "15"
+        },
+        {
+          "tag": "DIV",
+          "classes": "flex items-center justify-between gap-1",
+          "left": 1207,
+          "right": 1284,
+          "width": 77,
+          "overflow": "visible",
+          "text": "15"
+        },
+        {
+          "tag": "BUTTON",
+          "classes": "flex min-h-[132px] flex-col rounded-lg border p-2 text-left transition hover:ring-2 hover:ring-primary-400/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default disabled:opacity-40 disabled:hover:ring-0 sm:min-h-[160px] bg-neutral-50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700",
+          "left": 1299,
+          "right": 1394,
+          "width": 95,
+          "overflow": "visible",
+          "text": "16"
+        },
+        {
+          "tag": "DIV",
+          "classes": "flex items-center justify-between gap-1",
+          "left": 1308,
+          "right": 1385,
+          "width": 77,
+          "overflow": "visible",
+          "text": "16"
+        },
+        {
+          "tag": "SPAN",
+          "classes": "text-sm font-semibold tabular-nums text-foreground",
+          "left": 1308,
+          "right": 1326,
+          "width": 18,
+          "overflow": "visible",
+          "text": "16"
+        },
+        {
+          "tag": "BUTTON",
+          "classes": "flex min-h-[132px] flex-col rounded-lg border p-2 text-left transition hover:ring-2 hover:ring-primary-400/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default disabled:opacity-40 disabled:hover:ring-0 sm:min-h-[160px] bg-neutral-50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700",
+          "left": 1400,
+          "right": 1495,
+          "width": 95,
+          "overflow": "visible",
+          "text": "17"
+        },
+        {
+          "tag": "DIV",
+          "classes": "flex items-center justify-between gap-1",
+          "left": 1409,
+          "right": 1486,
+          "width": 77,
+          "overflow": "visible",
+          "text": "17"
+        },
+        {
+          "tag": "SPAN",
+          "classes": "text-sm font-semibold tabular-nums text-foreground",
+          "left": 1409,
+          "right": 1427,
+          "width": 18,
+          "overflow": "visible",
+          "text": "17"
+        },
+        {
+          "tag": "BUTTON",
+          "classes": "flex min-h-[132px] flex-col rounded-lg border p-2 text-left transition hover:ring-2 hover:ring-primary-400/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default disabled:opacity-40 disabled:hover:ring-0 sm:min-h-[160px] bg-neutral-50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700",
+          "left": 1198,
+          "right": 1293,
+          "width": 95,
+          "overflow": "visible",
+          "text": "22"
+        },
+        {
+          "tag": "DIV",
+          "classes": "flex items-center justify-between gap-1",
+          "left": 1207,
+          "right": 1284,
+          "width": 77,
+          "overflow": "visible",
+          "text": "22"
+        },
+        {
+          "tag": "BUTTON",
+          "classes": "flex min-h-[132px] flex-col rounded-lg border p-2 text-left transition hover:ring-2 hover:ring-primary-400/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default disabled:opacity-40 disabled:hover:ring-0 sm:min-h-[160px] bg-neutral-50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700",
+          "left": 1299,
+          "right": 1394,
+          "width": 95,
+          "overflow": "visible",
+          "text": "23"
+        },
+        {
+          "tag": "DIV",
+          "classes": "flex items-center justify-between gap-1",
+          "left": 1308,
+          "right": 1385,
+          "width": 77,
+          "overflow": "visible",
+          "text": "23"
+        },
+        {
+          "tag": "SPAN",
+          "classes": "text-sm font-semibold tabular-nums text-foreground",
+          "left": 1308,
+          "right": 1326,
+          "width": 18,
+          "overflow": "visible",
+          "text": "23"
+        }
+      ],
+      "errors": [],
+      "passed": true
+    },
+    {
+      "width": 1280,
+      "theme": "light",
+      "name": "cronograma",
+      "actualTheme": "light",
+      "pageWidth": 1280,
+      "mainWidth": 1020,
+      "mainScrollWidth": 1020,
+      "pageOverflow": false,
+      "mainOverflow": false,
+      "heading": "Meu Cronograma",
+      "missingNames": [],
+      "activeNav": [
+        "Cronograma"
+      ],
+      "offenders": [],
+      "errors": [],
+      "passed": true
+    },
+    {
+      "width": 1280,
+      "theme": "light",
+      "name": "edital",
+      "actualTheme": "light",
+      "pageWidth": 1280,
+      "mainWidth": 1020,
+      "mainScrollWidth": 1020,
+      "pageOverflow": false,
+      "mainOverflow": false,
+      "heading": "Disciplinas & Tópicos",
+      "missingNames": [],
+      "activeNav": [
+        "Edital Verticalizado"
+      ],
+      "offenders": [],
+      "errors": [],
+      "passed": true
+    },
+    {
+      "width": 1280,
+      "theme": "light",
+      "name": "disciplinas",
+      "actualTheme": "light",
+      "pageWidth": 1280,
+      "mainWidth": 1020,
+      "mainScrollWidth": 1020,
+      "pageOverflow": false,
+      "mainOverflow": false,
+      "heading": "Disciplinas & Tópicos",
+      "missingNames": [],
+      "activeNav": [
+        "Disciplinas"
+      ],
+      "offenders": [],
+      "errors": [],
+      "passed": true
+    },
+    {
+      "width": 1280,
+      "theme": "light",
+      "name": "usuarios",
+      "actualTheme": "light",
+      "pageWidth": 1280,
+      "mainWidth": 1020,
+      "mainScrollWidth": 1020,
+      "pageOverflow": false,
+      "mainOverflow": false,
+      "heading": "Gestão de Usuários",
+      "missingNames": [],
+      "activeNav": [
+        "Gestão de Usuários"
+      ],
+      "offenders": [],
+      "errors": [],
+      "passed": true
+    },
+    {
+      "width": 1280,
+      "theme": "light",
+      "name": "catalogo",
+      "actualTheme": "light",
+      "pageWidth": 1280,
+      "mainWidth": 1020,
+      "mainScrollWidth": 1020,
+      "pageOverflow": false,
+      "mainOverflow": false,
+      "heading": "Catálogo de Editais",
+      "missingNames": [],
+      "activeNav": [
+        "Catálogo de Editais"
+      ],
+      "offenders": [
+        {
+          "tag": "TABLE",
+          "classes": "w-full min-w-[1040px] text-left text-sm",
+          "left": 285,
+          "right": 1325,
+          "width": 1040,
+          "overflow": "visible",
+          "text": "EditalCargoAnoConteúdoStatusAçõesConcurso nacional para Analista com título extenso e cont"
+        },
+        {
+          "tag": "THEAD",
+          "classes": "",
+          "left": 285,
+          "right": 1325,
+          "width": 1040,
+          "overflow": "visible",
+          "text": "EditalCargoAnoConteúdoStatusAções"
+        },
+        {
+          "tag": "TR",
+          "classes": "border-b border-border bg-muted/30 text-xs uppercase tracking-wide text-muted-foreground",
+          "left": 285,
+          "right": 1325,
+          "width": 1040,
+          "overflow": "visible",
+          "text": "EditalCargoAnoConteúdoStatusAções"
+        },
+        {
+          "tag": "TH",
+          "classes": "px-4 py-3 text-right",
+          "left": 1044,
+          "right": 1325,
+          "width": 281,
+          "overflow": "visible",
+          "text": "Ações"
+        },
+        {
+          "tag": "TBODY",
+          "classes": "",
+          "left": 285,
+          "right": 1325,
+          "width": 1040,
+          "overflow": "visible",
+          "text": "Concurso nacional para Analista com título extenso e conteúdo programáticoÓrgão federal——3"
+        },
+        {
+          "tag": "TR",
+          "classes": "border-b border-border/70 last:border-0 hover:bg-muted/20",
+          "left": 285,
+          "right": 1325,
+          "width": 1040,
+          "overflow": "visible",
+          "text": "Concurso nacional para Analista com título extenso e conteúdo programáticoÓrgão federal——3"
+        },
+        {
+          "tag": "TD",
+          "classes": "px-4 py-3",
+          "left": 1044,
+          "right": 1325,
+          "width": 281,
+          "overflow": "visible",
+          "text": "GerenciarEditar"
+        },
+        {
+          "tag": "DIV",
+          "classes": "flex justify-end gap-1",
+          "left": 1060,
+          "right": 1309,
+          "width": 249,
+          "overflow": "visible",
+          "text": "GerenciarEditar"
+        },
+        {
+          "tag": "BUTTON",
+          "classes": "inline-flex shrink-0 items-center justify-center whitespace-nowrap rounded-lg border border-transparent text-sm font-semibold transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 active:translate-y-px disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg]:size-4 hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:hover:bg-muted/50 h-11 w-11",
+          "left": 1265,
+          "right": 1309,
+          "width": 44,
+          "overflow": "visible",
+          "text": ""
+        },
+        {
+          "tag": "svg",
+          "classes": {},
+          "left": 1279,
+          "right": 1295,
+          "width": 16,
+          "overflow": "hidden",
+          "text": ""
+        },
+        {
+          "tag": "circle",
+          "classes": {},
+          "left": 1286,
+          "right": 1288,
+          "width": 1,
+          "overflow": "visible",
+          "text": ""
+        },
+        {
+          "tag": "circle",
+          "classes": {},
+          "left": 1291,
+          "right": 1292,
+          "width": 1,
+          "overflow": "visible",
+          "text": ""
+        },
+        {
+          "tag": "circle",
+          "classes": {},
+          "left": 1282,
+          "right": 1283,
+          "width": 1,
+          "overflow": "visible",
+          "text": ""
+        }
+      ],
+      "errors": [],
+      "passed": true
+    },
+    {
+      "width": 1280,
+      "theme": "light",
+      "name": "keyboard",
+      "searchFocused": true,
+      "searchRestore": true,
+      "compactPersisted": true,
+      "passed": true
+    },
+    {
+      "width": 1280,
+      "theme": "dark",
+      "name": "dashboard",
+      "actualTheme": "dark",
+      "pageWidth": 1280,
+      "mainWidth": 1020,
+      "mainScrollWidth": 1020,
+      "pageOverflow": false,
+      "mainOverflow": false,
+      "heading": "Concurso QA – Analista",
+      "missingNames": [],
+      "activeNav": [
+        "Dashboard"
+      ],
+      "offenders": [
+        {
+          "tag": "DIV",
+          "classes": "min-w-[700px]",
+          "left": 795,
+          "right": 1495,
+          "width": 700,
+          "overflow": "visible",
+          "text": "DomSegTerQuaQuiSexSáb12345678910111213141516171819202122232425262728293031"
+        },
+        {
+          "tag": "DIV",
+          "classes": "mb-1.5 grid grid-cols-7 gap-1.5",
+          "left": 795,
+          "right": 1495,
+          "width": 700,
+          "overflow": "visible",
+          "text": "DomSegTerQuaQuiSexSáb"
+        },
+        {
+          "tag": "DIV",
+          "classes": "py-1.5 text-center text-xs font-semibold uppercase tracking-wide text-muted-foreground",
+          "left": 1198,
+          "right": 1293,
+          "width": 95,
+          "overflow": "visible",
+          "text": "Qui"
+        },
+        {
+          "tag": "DIV",
+          "classes": "py-1.5 text-center text-xs font-semibold uppercase tracking-wide text-muted-foreground",
+          "left": 1299,
+          "right": 1394,
+          "width": 95,
+          "overflow": "visible",
+          "text": "Sex"
+        },
+        {
+          "tag": "DIV",
+          "classes": "py-1.5 text-center text-xs font-semibold uppercase tracking-wide text-muted-foreground",
+          "left": 1400,
+          "right": 1495,
+          "width": 95,
+          "overflow": "visible",
+          "text": "Sáb"
+        },
+        {
+          "tag": "DIV",
+          "classes": "grid grid-cols-7 gap-1.5",
+          "left": 795,
+          "right": 1495,
+          "width": 700,
+          "overflow": "visible",
+          "text": "12345678910111213141516171819202122232425262728293031"
+        },
+        {
+          "tag": "BUTTON",
+          "classes": "flex min-h-[132px] flex-col rounded-lg border p-2 text-left transition hover:ring-2 hover:ring-primary-400/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default disabled:opacity-40 disabled:hover:ring-0 sm:min-h-[160px] bg-neutral-50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700",
+          "left": 1198,
+          "right": 1293,
+          "width": 95,
+          "overflow": "visible",
+          "text": "1"
+        },
+        {
+          "tag": "DIV",
+          "classes": "flex items-center justify-between gap-1",
+          "left": 1207,
+          "right": 1284,
+          "width": 77,
+          "overflow": "visible",
+          "text": "1"
+        },
+        {
+          "tag": "BUTTON",
+          "classes": "flex min-h-[132px] flex-col rounded-lg border p-2 text-left transition hover:ring-2 hover:ring-primary-400/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default disabled:opacity-40 disabled:hover:ring-0 sm:min-h-[160px] bg-neutral-50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700",
+          "left": 1299,
+          "right": 1394,
+          "width": 95,
+          "overflow": "visible",
+          "text": "2"
+        },
+        {
+          "tag": "DIV",
+          "classes": "flex items-center justify-between gap-1",
+          "left": 1308,
+          "right": 1385,
+          "width": 77,
+          "overflow": "visible",
+          "text": "2"
+        },
+        {
+          "tag": "SPAN",
+          "classes": "text-sm font-semibold tabular-nums text-foreground",
+          "left": 1308,
+          "right": 1317,
+          "width": 9,
+          "overflow": "visible",
+          "text": "2"
+        },
+        {
+          "tag": "BUTTON",
+          "classes": "flex min-h-[132px] flex-col rounded-lg border p-2 text-left transition hover:ring-2 hover:ring-primary-400/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default disabled:opacity-40 disabled:hover:ring-0 sm:min-h-[160px] bg-neutral-50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700",
+          "left": 1400,
+          "right": 1495,
+          "width": 95,
+          "overflow": "visible",
+          "text": "3"
+        },
+        {
+          "tag": "DIV",
+          "classes": "flex items-center justify-between gap-1",
+          "left": 1409,
+          "right": 1486,
+          "width": 77,
+          "overflow": "visible",
+          "text": "3"
+        },
+        {
+          "tag": "SPAN",
+          "classes": "text-sm font-semibold tabular-nums text-foreground",
+          "left": 1409,
+          "right": 1418,
+          "width": 9,
+          "overflow": "visible",
+          "text": "3"
+        },
+        {
+          "tag": "BUTTON",
+          "classes": "flex min-h-[132px] flex-col rounded-lg border p-2 text-left transition hover:ring-2 hover:ring-primary-400/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default disabled:opacity-40 disabled:hover:ring-0 sm:min-h-[160px] bg-neutral-50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700",
+          "left": 1198,
+          "right": 1293,
+          "width": 95,
+          "overflow": "visible",
+          "text": "8"
+        },
+        {
+          "tag": "DIV",
+          "classes": "flex items-center justify-between gap-1",
+          "left": 1207,
+          "right": 1284,
+          "width": 77,
+          "overflow": "visible",
+          "text": "8"
+        },
+        {
+          "tag": "BUTTON",
+          "classes": "flex min-h-[132px] flex-col rounded-lg border p-2 text-left transition hover:ring-2 hover:ring-primary-400/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default disabled:opacity-40 disabled:hover:ring-0 sm:min-h-[160px] bg-neutral-50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700",
+          "left": 1299,
+          "right": 1394,
+          "width": 95,
+          "overflow": "visible",
+          "text": "9"
+        },
+        {
+          "tag": "DIV",
+          "classes": "flex items-center justify-between gap-1",
+          "left": 1308,
+          "right": 1385,
+          "width": 77,
+          "overflow": "visible",
+          "text": "9"
+        },
+        {
+          "tag": "SPAN",
+          "classes": "text-sm font-semibold tabular-nums text-foreground",
+          "left": 1308,
+          "right": 1317,
+          "width": 9,
+          "overflow": "visible",
+          "text": "9"
+        },
+        {
+          "tag": "BUTTON",
+          "classes": "flex min-h-[132px] flex-col rounded-lg border p-2 text-left transition hover:ring-2 hover:ring-primary-400/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default disabled:opacity-40 disabled:hover:ring-0 sm:min-h-[160px] bg-neutral-50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700",
+          "left": 1400,
+          "right": 1495,
+          "width": 95,
+          "overflow": "visible",
+          "text": "10"
+        },
+        {
+          "tag": "DIV",
+          "classes": "flex items-center justify-between gap-1",
+          "left": 1409,
+          "right": 1486,
+          "width": 77,
+          "overflow": "visible",
+          "text": "10"
+        },
+        {
+          "tag": "SPAN",
+          "classes": "text-sm font-semibold tabular-nums text-foreground",
+          "left": 1409,
+          "right": 1427,
+          "width": 17,
+          "overflow": "visible",
+          "text": "10"
+        },
+        {
+          "tag": "BUTTON",
+          "classes": "flex min-h-[132px] flex-col rounded-lg border p-2 text-left transition hover:ring-2 hover:ring-primary-400/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default disabled:opacity-40 disabled:hover:ring-0 sm:min-h-[160px] bg-neutral-50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700",
+          "left": 1198,
+          "right": 1293,
+          "width": 95,
+          "overflow": "visible",
+          "text": "15"
+        },
+        {
+          "tag": "DIV",
+          "classes": "flex items-center justify-between gap-1",
+          "left": 1207,
+          "right": 1284,
+          "width": 77,
+          "overflow": "visible",
+          "text": "15"
+        },
+        {
+          "tag": "BUTTON",
+          "classes": "flex min-h-[132px] flex-col rounded-lg border p-2 text-left transition hover:ring-2 hover:ring-primary-400/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default disabled:opacity-40 disabled:hover:ring-0 sm:min-h-[160px] bg-neutral-50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700",
+          "left": 1299,
+          "right": 1394,
+          "width": 95,
+          "overflow": "visible",
+          "text": "16"
+        },
+        {
+          "tag": "DIV",
+          "classes": "flex items-center justify-between gap-1",
+          "left": 1308,
+          "right": 1385,
+          "width": 77,
+          "overflow": "visible",
+          "text": "16"
+        },
+        {
+          "tag": "SPAN",
+          "classes": "text-sm font-semibold tabular-nums text-foreground",
+          "left": 1308,
+          "right": 1326,
+          "width": 18,
+          "overflow": "visible",
+          "text": "16"
+        },
+        {
+          "tag": "BUTTON",
+          "classes": "flex min-h-[132px] flex-col rounded-lg border p-2 text-left transition hover:ring-2 hover:ring-primary-400/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default disabled:opacity-40 disabled:hover:ring-0 sm:min-h-[160px] bg-neutral-50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700",
+          "left": 1400,
+          "right": 1495,
+          "width": 95,
+          "overflow": "visible",
+          "text": "17"
+        },
+        {
+          "tag": "DIV",
+          "classes": "flex items-center justify-between gap-1",
+          "left": 1409,
+          "right": 1486,
+          "width": 77,
+          "overflow": "visible",
+          "text": "17"
+        },
+        {
+          "tag": "SPAN",
+          "classes": "text-sm font-semibold tabular-nums text-foreground",
+          "left": 1409,
+          "right": 1427,
+          "width": 18,
+          "overflow": "visible",
+          "text": "17"
+        },
+        {
+          "tag": "BUTTON",
+          "classes": "flex min-h-[132px] flex-col rounded-lg border p-2 text-left transition hover:ring-2 hover:ring-primary-400/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default disabled:opacity-40 disabled:hover:ring-0 sm:min-h-[160px] bg-neutral-50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700",
+          "left": 1198,
+          "right": 1293,
+          "width": 95,
+          "overflow": "visible",
+          "text": "22"
+        },
+        {
+          "tag": "DIV",
+          "classes": "flex items-center justify-between gap-1",
+          "left": 1207,
+          "right": 1284,
+          "width": 77,
+          "overflow": "visible",
+          "text": "22"
+        },
+        {
+          "tag": "BUTTON",
+          "classes": "flex min-h-[132px] flex-col rounded-lg border p-2 text-left transition hover:ring-2 hover:ring-primary-400/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default disabled:opacity-40 disabled:hover:ring-0 sm:min-h-[160px] bg-neutral-50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700",
+          "left": 1299,
+          "right": 1394,
+          "width": 95,
+          "overflow": "visible",
+          "text": "23"
+        },
+        {
+          "tag": "DIV",
+          "classes": "flex items-center justify-between gap-1",
+          "left": 1308,
+          "right": 1385,
+          "width": 77,
+          "overflow": "visible",
+          "text": "23"
+        },
+        {
+          "tag": "SPAN",
+          "classes": "text-sm font-semibold tabular-nums text-foreground",
+          "left": 1308,
+          "right": 1326,
+          "width": 18,
+          "overflow": "visible",
+          "text": "23"
+        }
+      ],
+      "errors": [],
+      "passed": true
+    },
+    {
+      "width": 1280,
+      "theme": "dark",
+      "name": "cronograma",
+      "actualTheme": "dark",
+      "pageWidth": 1280,
+      "mainWidth": 1020,
+      "mainScrollWidth": 1020,
+      "pageOverflow": false,
+      "mainOverflow": false,
+      "heading": "Meu Cronograma",
+      "missingNames": [],
+      "activeNav": [
+        "Cronograma"
+      ],
+      "offenders": [],
+      "errors": [],
+      "passed": true
+    },
+    {
+      "width": 1280,
+      "theme": "dark",
+      "name": "edital",
+      "actualTheme": "dark",
+      "pageWidth": 1280,
+      "mainWidth": 1020,
+      "mainScrollWidth": 1020,
+      "pageOverflow": false,
+      "mainOverflow": false,
+      "heading": "Disciplinas & Tópicos",
+      "missingNames": [],
+      "activeNav": [
+        "Edital Verticalizado"
+      ],
+      "offenders": [],
+      "errors": [],
+      "passed": true
+    },
+    {
+      "width": 1280,
+      "theme": "dark",
+      "name": "disciplinas",
+      "actualTheme": "dark",
+      "pageWidth": 1280,
+      "mainWidth": 1020,
+      "mainScrollWidth": 1020,
+      "pageOverflow": false,
+      "mainOverflow": false,
+      "heading": "Disciplinas & Tópicos",
+      "missingNames": [],
+      "activeNav": [
+        "Disciplinas"
+      ],
+      "offenders": [],
+      "errors": [],
+      "passed": true
+    },
+    {
+      "width": 1280,
+      "theme": "dark",
+      "name": "usuarios",
+      "actualTheme": "dark",
+      "pageWidth": 1280,
+      "mainWidth": 1020,
+      "mainScrollWidth": 1020,
+      "pageOverflow": false,
+      "mainOverflow": false,
+      "heading": "Gestão de Usuários",
+      "missingNames": [],
+      "activeNav": [
+        "Gestão de Usuários"
+      ],
+      "offenders": [],
+      "errors": [],
+      "passed": true
+    },
+    {
+      "width": 1280,
+      "theme": "dark",
+      "name": "catalogo",
+      "actualTheme": "dark",
+      "pageWidth": 1280,
+      "mainWidth": 1020,
+      "mainScrollWidth": 1020,
+      "pageOverflow": false,
+      "mainOverflow": false,
+      "heading": "Catálogo de Editais",
+      "missingNames": [],
+      "activeNav": [
+        "Catálogo de Editais"
+      ],
+      "offenders": [
+        {
+          "tag": "TABLE",
+          "classes": "w-full min-w-[1040px] text-left text-sm",
+          "left": 285,
+          "right": 1325,
+          "width": 1040,
+          "overflow": "visible",
+          "text": "EditalCargoAnoConteúdoStatusAçõesConcurso nacional para Analista com título extenso e cont"
+        },
+        {
+          "tag": "THEAD",
+          "classes": "",
+          "left": 285,
+          "right": 1325,
+          "width": 1040,
+          "overflow": "visible",
+          "text": "EditalCargoAnoConteúdoStatusAções"
+        },
+        {
+          "tag": "TR",
+          "classes": "border-b border-border bg-muted/30 text-xs uppercase tracking-wide text-muted-foreground",
+          "left": 285,
+          "right": 1325,
+          "width": 1040,
+          "overflow": "visible",
+          "text": "EditalCargoAnoConteúdoStatusAções"
+        },
+        {
+          "tag": "TH",
+          "classes": "px-4 py-3 text-right",
+          "left": 1044,
+          "right": 1325,
+          "width": 281,
+          "overflow": "visible",
+          "text": "Ações"
+        },
+        {
+          "tag": "TBODY",
+          "classes": "",
+          "left": 285,
+          "right": 1325,
+          "width": 1040,
+          "overflow": "visible",
+          "text": "Concurso nacional para Analista com título extenso e conteúdo programáticoÓrgão federal——3"
+        },
+        {
+          "tag": "TR",
+          "classes": "border-b border-border/70 last:border-0 hover:bg-muted/20",
+          "left": 285,
+          "right": 1325,
+          "width": 1040,
+          "overflow": "visible",
+          "text": "Concurso nacional para Analista com título extenso e conteúdo programáticoÓrgão federal——3"
+        },
+        {
+          "tag": "TD",
+          "classes": "px-4 py-3",
+          "left": 1044,
+          "right": 1325,
+          "width": 281,
+          "overflow": "visible",
+          "text": "GerenciarEditar"
+        },
+        {
+          "tag": "DIV",
+          "classes": "flex justify-end gap-1",
+          "left": 1060,
+          "right": 1309,
+          "width": 249,
+          "overflow": "visible",
+          "text": "GerenciarEditar"
+        },
+        {
+          "tag": "BUTTON",
+          "classes": "inline-flex shrink-0 items-center justify-center whitespace-nowrap rounded-lg border border-transparent text-sm font-semibold transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 active:translate-y-px disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg]:size-4 hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:hover:bg-muted/50 h-11 w-11",
+          "left": 1265,
+          "right": 1309,
+          "width": 44,
+          "overflow": "visible",
+          "text": ""
+        },
+        {
+          "tag": "svg",
+          "classes": {},
+          "left": 1279,
+          "right": 1295,
+          "width": 16,
+          "overflow": "hidden",
+          "text": ""
+        },
+        {
+          "tag": "circle",
+          "classes": {},
+          "left": 1286,
+          "right": 1288,
+          "width": 1,
+          "overflow": "visible",
+          "text": ""
+        },
+        {
+          "tag": "circle",
+          "classes": {},
+          "left": 1291,
+          "right": 1292,
+          "width": 1,
+          "overflow": "visible",
+          "text": ""
+        },
+        {
+          "tag": "circle",
+          "classes": {},
+          "left": 1282,
+          "right": 1283,
+          "width": 1,
+          "overflow": "visible",
+          "text": ""
+        }
+      ],
+      "errors": [],
+      "passed": true
+    },
+    {
+      "width": 1280,
+      "theme": "dark",
+      "name": "keyboard",
+      "searchFocused": true,
+      "searchRestore": true,
+      "compactPersisted": true,
+      "passed": true
+    },
+    {
+      "width": 768,
+      "theme": "light",
+      "name": "dashboard",
+      "actualTheme": "light",
+      "pageWidth": 768,
+      "mainWidth": 508,
+      "mainScrollWidth": 508,
+      "pageOverflow": false,
+      "mainOverflow": false,
+      "heading": "Concurso QA – Analista",
+      "missingNames": [],
+      "activeNav": [
+        "Dashboard"
+      ],
+      "offenders": [
+        {
+          "tag": "DIV",
+          "classes": "min-w-[700px]",
+          "left": 301,
+          "right": 1001,
+          "width": 700,
+          "overflow": "visible",
+          "text": "DomSegTerQuaQuiSexSáb12345678910111213141516171819202122232425262728293031"
+        },
+        {
+          "tag": "DIV",
+          "classes": "mb-1.5 grid grid-cols-7 gap-1.5",
+          "left": 301,
+          "right": 1001,
+          "width": 700,
+          "overflow": "visible",
+          "text": "DomSegTerQuaQuiSexSáb"
+        },
+        {
+          "tag": "DIV",
+          "classes": "py-1.5 text-center text-xs font-semibold uppercase tracking-wide text-muted-foreground",
+          "left": 704,
+          "right": 799,
+          "width": 95,
+          "overflow": "visible",
+          "text": "Qui"
+        },
+        {
+          "tag": "DIV",
+          "classes": "py-1.5 text-center text-xs font-semibold uppercase tracking-wide text-muted-foreground",
+          "left": 805,
+          "right": 900,
+          "width": 95,
+          "overflow": "visible",
+          "text": "Sex"
+        },
+        {
+          "tag": "DIV",
+          "classes": "py-1.5 text-center text-xs font-semibold uppercase tracking-wide text-muted-foreground",
+          "left": 906,
+          "right": 1001,
+          "width": 95,
+          "overflow": "visible",
+          "text": "Sáb"
+        },
+        {
+          "tag": "DIV",
+          "classes": "grid grid-cols-7 gap-1.5",
+          "left": 301,
+          "right": 1001,
+          "width": 700,
+          "overflow": "visible",
+          "text": "12345678910111213141516171819202122232425262728293031"
+        },
+        {
+          "tag": "BUTTON",
+          "classes": "flex min-h-[132px] flex-col rounded-lg border p-2 text-left transition hover:ring-2 hover:ring-primary-400/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default disabled:opacity-40 disabled:hover:ring-0 sm:min-h-[160px] bg-neutral-50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700",
+          "left": 704,
+          "right": 799,
+          "width": 95,
+          "overflow": "visible",
+          "text": "1"
+        },
+        {
+          "tag": "DIV",
+          "classes": "flex items-center justify-between gap-1",
+          "left": 713,
+          "right": 790,
+          "width": 77,
+          "overflow": "visible",
+          "text": "1"
+        },
+        {
+          "tag": "BUTTON",
+          "classes": "flex min-h-[132px] flex-col rounded-lg border p-2 text-left transition hover:ring-2 hover:ring-primary-400/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default disabled:opacity-40 disabled:hover:ring-0 sm:min-h-[160px] bg-neutral-50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700",
+          "left": 805,
+          "right": 900,
+          "width": 95,
+          "overflow": "visible",
+          "text": "2"
+        },
+        {
+          "tag": "DIV",
+          "classes": "flex items-center justify-between gap-1",
+          "left": 814,
+          "right": 891,
+          "width": 77,
+          "overflow": "visible",
+          "text": "2"
+        },
+        {
+          "tag": "SPAN",
+          "classes": "text-sm font-semibold tabular-nums text-foreground",
+          "left": 814,
+          "right": 823,
+          "width": 9,
+          "overflow": "visible",
+          "text": "2"
+        },
+        {
+          "tag": "BUTTON",
+          "classes": "flex min-h-[132px] flex-col rounded-lg border p-2 text-left transition hover:ring-2 hover:ring-primary-400/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default disabled:opacity-40 disabled:hover:ring-0 sm:min-h-[160px] bg-neutral-50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700",
+          "left": 906,
+          "right": 1001,
+          "width": 95,
+          "overflow": "visible",
+          "text": "3"
+        },
+        {
+          "tag": "DIV",
+          "classes": "flex items-center justify-between gap-1",
+          "left": 915,
+          "right": 992,
+          "width": 77,
+          "overflow": "visible",
+          "text": "3"
+        },
+        {
+          "tag": "SPAN",
+          "classes": "text-sm font-semibold tabular-nums text-foreground",
+          "left": 915,
+          "right": 924,
+          "width": 9,
+          "overflow": "visible",
+          "text": "3"
+        },
+        {
+          "tag": "BUTTON",
+          "classes": "flex min-h-[132px] flex-col rounded-lg border p-2 text-left transition hover:ring-2 hover:ring-primary-400/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default disabled:opacity-40 disabled:hover:ring-0 sm:min-h-[160px] bg-neutral-50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700",
+          "left": 704,
+          "right": 799,
+          "width": 95,
+          "overflow": "visible",
+          "text": "8"
+        },
+        {
+          "tag": "DIV",
+          "classes": "flex items-center justify-between gap-1",
+          "left": 713,
+          "right": 790,
+          "width": 77,
+          "overflow": "visible",
+          "text": "8"
+        },
+        {
+          "tag": "BUTTON",
+          "classes": "flex min-h-[132px] flex-col rounded-lg border p-2 text-left transition hover:ring-2 hover:ring-primary-400/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default disabled:opacity-40 disabled:hover:ring-0 sm:min-h-[160px] bg-neutral-50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700",
+          "left": 805,
+          "right": 900,
+          "width": 95,
+          "overflow": "visible",
+          "text": "9"
+        },
+        {
+          "tag": "DIV",
+          "classes": "flex items-center justify-between gap-1",
+          "left": 814,
+          "right": 891,
+          "width": 77,
+          "overflow": "visible",
+          "text": "9"
+        },
+        {
+          "tag": "SPAN",
+          "classes": "text-sm font-semibold tabular-nums text-foreground",
+          "left": 814,
+          "right": 823,
+          "width": 9,
+          "overflow": "visible",
+          "text": "9"
+        },
+        {
+          "tag": "BUTTON",
+          "classes": "flex min-h-[132px] flex-col rounded-lg border p-2 text-left transition hover:ring-2 hover:ring-primary-400/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default disabled:opacity-40 disabled:hover:ring-0 sm:min-h-[160px] bg-neutral-50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700",
+          "left": 906,
+          "right": 1001,
+          "width": 95,
+          "overflow": "visible",
+          "text": "10"
+        },
+        {
+          "tag": "DIV",
+          "classes": "flex items-center justify-between gap-1",
+          "left": 915,
+          "right": 992,
+          "width": 77,
+          "overflow": "visible",
+          "text": "10"
+        },
+        {
+          "tag": "SPAN",
+          "classes": "text-sm font-semibold tabular-nums text-foreground",
+          "left": 915,
+          "right": 933,
+          "width": 17,
+          "overflow": "visible",
+          "text": "10"
+        },
+        {
+          "tag": "BUTTON",
+          "classes": "flex min-h-[132px] flex-col rounded-lg border p-2 text-left transition hover:ring-2 hover:ring-primary-400/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default disabled:opacity-40 disabled:hover:ring-0 sm:min-h-[160px] bg-neutral-50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700",
+          "left": 704,
+          "right": 799,
+          "width": 95,
+          "overflow": "visible",
+          "text": "15"
+        },
+        {
+          "tag": "DIV",
+          "classes": "flex items-center justify-between gap-1",
+          "left": 713,
+          "right": 790,
+          "width": 77,
+          "overflow": "visible",
+          "text": "15"
+        },
+        {
+          "tag": "BUTTON",
+          "classes": "flex min-h-[132px] flex-col rounded-lg border p-2 text-left transition hover:ring-2 hover:ring-primary-400/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default disabled:opacity-40 disabled:hover:ring-0 sm:min-h-[160px] bg-neutral-50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700",
+          "left": 805,
+          "right": 900,
+          "width": 95,
+          "overflow": "visible",
+          "text": "16"
+        },
+        {
+          "tag": "DIV",
+          "classes": "flex items-center justify-between gap-1",
+          "left": 814,
+          "right": 891,
+          "width": 77,
+          "overflow": "visible",
+          "text": "16"
+        },
+        {
+          "tag": "SPAN",
+          "classes": "text-sm font-semibold tabular-nums text-foreground",
+          "left": 814,
+          "right": 832,
+          "width": 18,
+          "overflow": "visible",
+          "text": "16"
+        },
+        {
+          "tag": "BUTTON",
+          "classes": "flex min-h-[132px] flex-col rounded-lg border p-2 text-left transition hover:ring-2 hover:ring-primary-400/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default disabled:opacity-40 disabled:hover:ring-0 sm:min-h-[160px] bg-neutral-50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700",
+          "left": 906,
+          "right": 1001,
+          "width": 95,
+          "overflow": "visible",
+          "text": "17"
+        },
+        {
+          "tag": "DIV",
+          "classes": "flex items-center justify-between gap-1",
+          "left": 915,
+          "right": 992,
+          "width": 77,
+          "overflow": "visible",
+          "text": "17"
+        },
+        {
+          "tag": "SPAN",
+          "classes": "text-sm font-semibold tabular-nums text-foreground",
+          "left": 915,
+          "right": 933,
+          "width": 18,
+          "overflow": "visible",
+          "text": "17"
+        },
+        {
+          "tag": "BUTTON",
+          "classes": "flex min-h-[132px] flex-col rounded-lg border p-2 text-left transition hover:ring-2 hover:ring-primary-400/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default disabled:opacity-40 disabled:hover:ring-0 sm:min-h-[160px] bg-neutral-50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700",
+          "left": 704,
+          "right": 799,
+          "width": 95,
+          "overflow": "visible",
+          "text": "22"
+        },
+        {
+          "tag": "DIV",
+          "classes": "flex items-center justify-between gap-1",
+          "left": 713,
+          "right": 790,
+          "width": 77,
+          "overflow": "visible",
+          "text": "22"
+        },
+        {
+          "tag": "BUTTON",
+          "classes": "flex min-h-[132px] flex-col rounded-lg border p-2 text-left transition hover:ring-2 hover:ring-primary-400/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default disabled:opacity-40 disabled:hover:ring-0 sm:min-h-[160px] bg-neutral-50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700",
+          "left": 805,
+          "right": 900,
+          "width": 95,
+          "overflow": "visible",
+          "text": "23"
+        },
+        {
+          "tag": "DIV",
+          "classes": "flex items-center justify-between gap-1",
+          "left": 814,
+          "right": 891,
+          "width": 77,
+          "overflow": "visible",
+          "text": "23"
+        },
+        {
+          "tag": "SPAN",
+          "classes": "text-sm font-semibold tabular-nums text-foreground",
+          "left": 814,
+          "right": 832,
+          "width": 18,
+          "overflow": "visible",
+          "text": "23"
+        }
+      ],
+      "errors": [],
+      "passed": true
+    },
+    {
+      "width": 768,
+      "theme": "light",
+      "name": "cronograma",
+      "actualTheme": "light",
+      "pageWidth": 768,
+      "mainWidth": 508,
+      "mainScrollWidth": 508,
+      "pageOverflow": false,
+      "mainOverflow": false,
+      "heading": "Meu Cronograma",
+      "missingNames": [],
+      "activeNav": [
+        "Cronograma"
+      ],
+      "offenders": [],
+      "errors": [],
+      "passed": true
+    },
+    {
+      "width": 768,
+      "theme": "light",
+      "name": "edital",
+      "actualTheme": "light",
+      "pageWidth": 768,
+      "mainWidth": 508,
+      "mainScrollWidth": 508,
+      "pageOverflow": false,
+      "mainOverflow": false,
+      "heading": "Disciplinas & Tópicos",
+      "missingNames": [],
+      "activeNav": [
+        "Edital Verticalizado"
+      ],
+      "offenders": [],
+      "errors": [],
+      "passed": true
+    },
+    {
+      "width": 768,
+      "theme": "light",
+      "name": "disciplinas",
+      "actualTheme": "light",
+      "pageWidth": 768,
+      "mainWidth": 508,
+      "mainScrollWidth": 508,
+      "pageOverflow": false,
+      "mainOverflow": false,
+      "heading": "Disciplinas & Tópicos",
+      "missingNames": [],
+      "activeNav": [
+        "Disciplinas"
+      ],
+      "offenders": [],
+      "errors": [],
+      "passed": true
+    },
+    {
+      "width": 768,
+      "theme": "light",
+      "name": "usuarios",
+      "actualTheme": "light",
+      "pageWidth": 768,
+      "mainWidth": 508,
+      "mainScrollWidth": 508,
+      "pageOverflow": false,
+      "mainOverflow": false,
+      "heading": "Gestão de Usuários",
+      "missingNames": [],
+      "activeNav": [
+        "Gestão de Usuários"
+      ],
+      "offenders": [
+        {
+          "tag": "TABLE",
+          "classes": "w-full min-w-[820px] text-left text-sm",
+          "left": 285,
+          "right": 1105,
+          "width": 820,
+          "overflow": "visible",
+          "text": "UsuárioPerfilObjetivoStatusCadastroÚltimo acessoAçõesAnderson QA com nome completoqa@examp"
+        },
+        {
+          "tag": "THEAD",
+          "classes": "",
+          "left": 285,
+          "right": 1105,
+          "width": 820,
+          "overflow": "visible",
+          "text": "UsuárioPerfilObjetivoStatusCadastroÚltimo acessoAções"
+        },
+        {
+          "tag": "TR",
+          "classes": "border-b border-border bg-muted/30 text-xs text-muted-foreground",
+          "left": 285,
+          "right": 1105,
+          "width": 820,
+          "overflow": "visible",
+          "text": "UsuárioPerfilObjetivoStatusCadastroÚltimo acessoAções"
+        },
+        {
+          "tag": "TH",
+          "classes": "px-4 py-3 font-medium",
+          "left": 734,
+          "right": 815,
+          "width": 81,
+          "overflow": "visible",
+          "text": "Status"
+        },
+        {
+          "tag": "TH",
+          "classes": "px-4 py-3 font-medium",
+          "left": 815,
+          "right": 924,
+          "width": 109,
+          "overflow": "visible",
+          "text": "Cadastro"
+        },
+        {
+          "tag": "TH",
+          "classes": "px-4 py-3 font-medium",
+          "left": 924,
+          "right": 1033,
+          "width": 109,
+          "overflow": "visible",
+          "text": "Último acesso"
+        },
+        {
+          "tag": "TH",
+          "classes": "w-16 px-4 py-3",
+          "left": 1033,
+          "right": 1105,
+          "width": 72,
+          "overflow": "visible",
+          "text": "Ações"
+        },
+        {
+          "tag": "SPAN",
+          "classes": "sr-only",
+          "left": 1048,
+          "right": 1049,
+          "width": 1,
+          "overflow": "hidden",
+          "text": "Ações"
+        },
+        {
+          "tag": "TBODY",
+          "classes": "",
+          "left": 285,
+          "right": 1105,
+          "width": 820,
+          "overflow": "visible",
+          "text": "Anderson QA com nome completoqa@example.invalidAdministrador—Ativo10/10/2026—"
+        },
+        {
+          "tag": "TR",
+          "classes": "border-b border-border/70 last:border-0 hover:bg-muted/20",
+          "left": 285,
+          "right": 1105,
+          "width": 820,
+          "overflow": "visible",
+          "text": "Anderson QA com nome completoqa@example.invalidAdministrador—Ativo10/10/2026—"
+        },
+        {
+          "tag": "TD",
+          "classes": "px-4 py-3",
+          "left": 734,
+          "right": 815,
+          "width": 81,
+          "overflow": "visible",
+          "text": "Ativo"
+        },
+        {
+          "tag": "SPAN",
+          "classes": "rounded-full px-2.5 py-1 text-xs font-medium bg-emerald-100 text-emerald-800",
+          "left": 750,
+          "right": 799,
+          "width": 49,
+          "overflow": "visible",
+          "text": "Ativo"
+        },
+        {
+          "tag": "TD",
+          "classes": "px-4 py-3",
+          "left": 815,
+          "right": 924,
+          "width": 109,
+          "overflow": "visible",
+          "text": "10/10/2026"
+        },
+        {
+          "tag": "TD",
+          "classes": "px-4 py-3",
+          "left": 924,
+          "right": 1033,
+          "width": 109,
+          "overflow": "visible",
+          "text": "—"
+        },
+        {
+          "tag": "TD",
+          "classes": "px-4 py-2",
+          "left": 1033,
+          "right": 1105,
+          "width": 72,
+          "overflow": "visible",
+          "text": ""
+        },
+        {
+          "tag": "BUTTON",
+          "classes": "inline-flex shrink-0 items-center justify-center whitespace-nowrap rounded-lg border border-transparent text-sm font-semibold transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 active:translate-y-px disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg]:size-4 hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:hover:bg-muted/50 h-10 w-10",
+          "left": 1049,
+          "right": 1089,
+          "width": 40,
+          "overflow": "visible",
+          "text": ""
+        },
+        {
+          "tag": "svg",
+          "classes": {},
+          "left": 1061,
+          "right": 1077,
+          "width": 16,
+          "overflow": "hidden",
+          "text": ""
+        },
+        {
+          "tag": "circle",
+          "classes": {},
+          "left": 1068,
+          "right": 1070,
+          "width": 1,
+          "overflow": "visible",
+          "text": ""
+        },
+        {
+          "tag": "circle",
+          "classes": {},
+          "left": 1073,
+          "right": 1074,
+          "width": 1,
+          "overflow": "visible",
+          "text": ""
+        },
+        {
+          "tag": "circle",
+          "classes": {},
+          "left": 1064,
+          "right": 1065,
+          "width": 1,
+          "overflow": "visible",
+          "text": ""
+        }
+      ],
+      "errors": [],
+      "passed": true
+    },
+    {
+      "width": 768,
+      "theme": "light",
+      "name": "catalogo",
+      "actualTheme": "light",
+      "pageWidth": 768,
+      "mainWidth": 508,
+      "mainScrollWidth": 508,
+      "pageOverflow": false,
+      "mainOverflow": false,
+      "heading": "Catálogo de Editais",
+      "missingNames": [],
+      "activeNav": [
+        "Catálogo de Editais"
+      ],
+      "offenders": [],
+      "errors": [],
+      "passed": true
+    },
+    {
+      "width": 768,
+      "theme": "light",
+      "name": "keyboard",
+      "searchFocused": true,
+      "searchRestore": true,
+      "compactPersisted": true,
+      "passed": true
+    },
+    {
+      "width": 768,
+      "theme": "dark",
+      "name": "dashboard",
+      "actualTheme": "dark",
+      "pageWidth": 768,
+      "mainWidth": 508,
+      "mainScrollWidth": 508,
+      "pageOverflow": false,
+      "mainOverflow": false,
+      "heading": "Concurso QA – Analista",
+      "missingNames": [],
+      "activeNav": [
+        "Dashboard"
+      ],
+      "offenders": [
+        {
+          "tag": "DIV",
+          "classes": "min-w-[700px]",
+          "left": 301,
+          "right": 1001,
+          "width": 700,
+          "overflow": "visible",
+          "text": "DomSegTerQuaQuiSexSáb12345678910111213141516171819202122232425262728293031"
+        },
+        {
+          "tag": "DIV",
+          "classes": "mb-1.5 grid grid-cols-7 gap-1.5",
+          "left": 301,
+          "right": 1001,
+          "width": 700,
+          "overflow": "visible",
+          "text": "DomSegTerQuaQuiSexSáb"
+        },
+        {
+          "tag": "DIV",
+          "classes": "py-1.5 text-center text-xs font-semibold uppercase tracking-wide text-muted-foreground",
+          "left": 704,
+          "right": 799,
+          "width": 95,
+          "overflow": "visible",
+          "text": "Qui"
+        },
+        {
+          "tag": "DIV",
+          "classes": "py-1.5 text-center text-xs font-semibold uppercase tracking-wide text-muted-foreground",
+          "left": 805,
+          "right": 900,
+          "width": 95,
+          "overflow": "visible",
+          "text": "Sex"
+        },
+        {
+          "tag": "DIV",
+          "classes": "py-1.5 text-center text-xs font-semibold uppercase tracking-wide text-muted-foreground",
+          "left": 906,
+          "right": 1001,
+          "width": 95,
+          "overflow": "visible",
+          "text": "Sáb"
+        },
+        {
+          "tag": "DIV",
+          "classes": "grid grid-cols-7 gap-1.5",
+          "left": 301,
+          "right": 1001,
+          "width": 700,
+          "overflow": "visible",
+          "text": "12345678910111213141516171819202122232425262728293031"
+        },
+        {
+          "tag": "BUTTON",
+          "classes": "flex min-h-[132px] flex-col rounded-lg border p-2 text-left transition hover:ring-2 hover:ring-primary-400/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default disabled:opacity-40 disabled:hover:ring-0 sm:min-h-[160px] bg-neutral-50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700",
+          "left": 704,
+          "right": 799,
+          "width": 95,
+          "overflow": "visible",
+          "text": "1"
+        },
+        {
+          "tag": "DIV",
+          "classes": "flex items-center justify-between gap-1",
+          "left": 713,
+          "right": 790,
+          "width": 77,
+          "overflow": "visible",
+          "text": "1"
+        },
+        {
+          "tag": "BUTTON",
+          "classes": "flex min-h-[132px] flex-col rounded-lg border p-2 text-left transition hover:ring-2 hover:ring-primary-400/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default disabled:opacity-40 disabled:hover:ring-0 sm:min-h-[160px] bg-neutral-50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700",
+          "left": 805,
+          "right": 900,
+          "width": 95,
+          "overflow": "visible",
+          "text": "2"
+        },
+        {
+          "tag": "DIV",
+          "classes": "flex items-center justify-between gap-1",
+          "left": 814,
+          "right": 891,
+          "width": 77,
+          "overflow": "visible",
+          "text": "2"
+        },
+        {
+          "tag": "SPAN",
+          "classes": "text-sm font-semibold tabular-nums text-foreground",
+          "left": 814,
+          "right": 823,
+          "width": 9,
+          "overflow": "visible",
+          "text": "2"
+        },
+        {
+          "tag": "BUTTON",
+          "classes": "flex min-h-[132px] flex-col rounded-lg border p-2 text-left transition hover:ring-2 hover:ring-primary-400/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default disabled:opacity-40 disabled:hover:ring-0 sm:min-h-[160px] bg-neutral-50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700",
+          "left": 906,
+          "right": 1001,
+          "width": 95,
+          "overflow": "visible",
+          "text": "3"
+        },
+        {
+          "tag": "DIV",
+          "classes": "flex items-center justify-between gap-1",
+          "left": 915,
+          "right": 992,
+          "width": 77,
+          "overflow": "visible",
+          "text": "3"
+        },
+        {
+          "tag": "SPAN",
+          "classes": "text-sm font-semibold tabular-nums text-foreground",
+          "left": 915,
+          "right": 924,
+          "width": 9,
+          "overflow": "visible",
+          "text": "3"
+        },
+        {
+          "tag": "BUTTON",
+          "classes": "flex min-h-[132px] flex-col rounded-lg border p-2 text-left transition hover:ring-2 hover:ring-primary-400/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default disabled:opacity-40 disabled:hover:ring-0 sm:min-h-[160px] bg-neutral-50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700",
+          "left": 704,
+          "right": 799,
+          "width": 95,
+          "overflow": "visible",
+          "text": "8"
+        },
+        {
+          "tag": "DIV",
+          "classes": "flex items-center justify-between gap-1",
+          "left": 713,
+          "right": 790,
+          "width": 77,
+          "overflow": "visible",
+          "text": "8"
+        },
+        {
+          "tag": "BUTTON",
+          "classes": "flex min-h-[132px] flex-col rounded-lg border p-2 text-left transition hover:ring-2 hover:ring-primary-400/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default disabled:opacity-40 disabled:hover:ring-0 sm:min-h-[160px] bg-neutral-50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700",
+          "left": 805,
+          "right": 900,
+          "width": 95,
+          "overflow": "visible",
+          "text": "9"
+        },
+        {
+          "tag": "DIV",
+          "classes": "flex items-center justify-between gap-1",
+          "left": 814,
+          "right": 891,
+          "width": 77,
+          "overflow": "visible",
+          "text": "9"
+        },
+        {
+          "tag": "SPAN",
+          "classes": "text-sm font-semibold tabular-nums text-foreground",
+          "left": 814,
+          "right": 823,
+          "width": 9,
+          "overflow": "visible",
+          "text": "9"
+        },
+        {
+          "tag": "BUTTON",
+          "classes": "flex min-h-[132px] flex-col rounded-lg border p-2 text-left transition hover:ring-2 hover:ring-primary-400/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default disabled:opacity-40 disabled:hover:ring-0 sm:min-h-[160px] bg-neutral-50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700",
+          "left": 906,
+          "right": 1001,
+          "width": 95,
+          "overflow": "visible",
+          "text": "10"
+        },
+        {
+          "tag": "DIV",
+          "classes": "flex items-center justify-between gap-1",
+          "left": 915,
+          "right": 992,
+          "width": 77,
+          "overflow": "visible",
+          "text": "10"
+        },
+        {
+          "tag": "SPAN",
+          "classes": "text-sm font-semibold tabular-nums text-foreground",
+          "left": 915,
+          "right": 933,
+          "width": 17,
+          "overflow": "visible",
+          "text": "10"
+        },
+        {
+          "tag": "BUTTON",
+          "classes": "flex min-h-[132px] flex-col rounded-lg border p-2 text-left transition hover:ring-2 hover:ring-primary-400/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default disabled:opacity-40 disabled:hover:ring-0 sm:min-h-[160px] bg-neutral-50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700",
+          "left": 704,
+          "right": 799,
+          "width": 95,
+          "overflow": "visible",
+          "text": "15"
+        },
+        {
+          "tag": "DIV",
+          "classes": "flex items-center justify-between gap-1",
+          "left": 713,
+          "right": 790,
+          "width": 77,
+          "overflow": "visible",
+          "text": "15"
+        },
+        {
+          "tag": "BUTTON",
+          "classes": "flex min-h-[132px] flex-col rounded-lg border p-2 text-left transition hover:ring-2 hover:ring-primary-400/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default disabled:opacity-40 disabled:hover:ring-0 sm:min-h-[160px] bg-neutral-50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700",
+          "left": 805,
+          "right": 900,
+          "width": 95,
+          "overflow": "visible",
+          "text": "16"
+        },
+        {
+          "tag": "DIV",
+          "classes": "flex items-center justify-between gap-1",
+          "left": 814,
+          "right": 891,
+          "width": 77,
+          "overflow": "visible",
+          "text": "16"
+        },
+        {
+          "tag": "SPAN",
+          "classes": "text-sm font-semibold tabular-nums text-foreground",
+          "left": 814,
+          "right": 832,
+          "width": 18,
+          "overflow": "visible",
+          "text": "16"
+        },
+        {
+          "tag": "BUTTON",
+          "classes": "flex min-h-[132px] flex-col rounded-lg border p-2 text-left transition hover:ring-2 hover:ring-primary-400/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default disabled:opacity-40 disabled:hover:ring-0 sm:min-h-[160px] bg-neutral-50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700",
+          "left": 906,
+          "right": 1001,
+          "width": 95,
+          "overflow": "visible",
+          "text": "17"
+        },
+        {
+          "tag": "DIV",
+          "classes": "flex items-center justify-between gap-1",
+          "left": 915,
+          "right": 992,
+          "width": 77,
+          "overflow": "visible",
+          "text": "17"
+        },
+        {
+          "tag": "SPAN",
+          "classes": "text-sm font-semibold tabular-nums text-foreground",
+          "left": 915,
+          "right": 933,
+          "width": 18,
+          "overflow": "visible",
+          "text": "17"
+        },
+        {
+          "tag": "BUTTON",
+          "classes": "flex min-h-[132px] flex-col rounded-lg border p-2 text-left transition hover:ring-2 hover:ring-primary-400/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default disabled:opacity-40 disabled:hover:ring-0 sm:min-h-[160px] bg-neutral-50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700",
+          "left": 704,
+          "right": 799,
+          "width": 95,
+          "overflow": "visible",
+          "text": "22"
+        },
+        {
+          "tag": "DIV",
+          "classes": "flex items-center justify-between gap-1",
+          "left": 713,
+          "right": 790,
+          "width": 77,
+          "overflow": "visible",
+          "text": "22"
+        },
+        {
+          "tag": "BUTTON",
+          "classes": "flex min-h-[132px] flex-col rounded-lg border p-2 text-left transition hover:ring-2 hover:ring-primary-400/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default disabled:opacity-40 disabled:hover:ring-0 sm:min-h-[160px] bg-neutral-50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700",
+          "left": 805,
+          "right": 900,
+          "width": 95,
+          "overflow": "visible",
+          "text": "23"
+        },
+        {
+          "tag": "DIV",
+          "classes": "flex items-center justify-between gap-1",
+          "left": 814,
+          "right": 891,
+          "width": 77,
+          "overflow": "visible",
+          "text": "23"
+        },
+        {
+          "tag": "SPAN",
+          "classes": "text-sm font-semibold tabular-nums text-foreground",
+          "left": 814,
+          "right": 832,
+          "width": 18,
+          "overflow": "visible",
+          "text": "23"
+        }
+      ],
+      "errors": [],
+      "passed": true
+    },
+    {
+      "width": 768,
+      "theme": "dark",
+      "name": "cronograma",
+      "actualTheme": "dark",
+      "pageWidth": 768,
+      "mainWidth": 508,
+      "mainScrollWidth": 508,
+      "pageOverflow": false,
+      "mainOverflow": false,
+      "heading": "Meu Cronograma",
+      "missingNames": [],
+      "activeNav": [
+        "Cronograma"
+      ],
+      "offenders": [],
+      "errors": [],
+      "passed": true
+    },
+    {
+      "width": 768,
+      "theme": "dark",
+      "name": "edital",
+      "actualTheme": "dark",
+      "pageWidth": 768,
+      "mainWidth": 508,
+      "mainScrollWidth": 508,
+      "pageOverflow": false,
+      "mainOverflow": false,
+      "heading": "Disciplinas & Tópicos",
+      "missingNames": [],
+      "activeNav": [
+        "Edital Verticalizado"
+      ],
+      "offenders": [],
+      "errors": [],
+      "passed": true
+    },
+    {
+      "width": 768,
+      "theme": "dark",
+      "name": "disciplinas",
+      "actualTheme": "dark",
+      "pageWidth": 768,
+      "mainWidth": 508,
+      "mainScrollWidth": 508,
+      "pageOverflow": false,
+      "mainOverflow": false,
+      "heading": "Disciplinas & Tópicos",
+      "missingNames": [],
+      "activeNav": [
+        "Disciplinas"
+      ],
+      "offenders": [],
+      "errors": [],
+      "passed": true
+    },
+    {
+      "width": 768,
+      "theme": "dark",
+      "name": "usuarios",
+      "actualTheme": "dark",
+      "pageWidth": 768,
+      "mainWidth": 508,
+      "mainScrollWidth": 508,
+      "pageOverflow": false,
+      "mainOverflow": false,
+      "heading": "Gestão de Usuários",
+      "missingNames": [],
+      "activeNav": [
+        "Gestão de Usuários"
+      ],
+      "offenders": [
+        {
+          "tag": "TABLE",
+          "classes": "w-full min-w-[820px] text-left text-sm",
+          "left": 285,
+          "right": 1105,
+          "width": 820,
+          "overflow": "visible",
+          "text": "UsuárioPerfilObjetivoStatusCadastroÚltimo acessoAçõesAnderson QA com nome completoqa@examp"
+        },
+        {
+          "tag": "THEAD",
+          "classes": "",
+          "left": 285,
+          "right": 1105,
+          "width": 820,
+          "overflow": "visible",
+          "text": "UsuárioPerfilObjetivoStatusCadastroÚltimo acessoAções"
+        },
+        {
+          "tag": "TR",
+          "classes": "border-b border-border bg-muted/30 text-xs text-muted-foreground",
+          "left": 285,
+          "right": 1105,
+          "width": 820,
+          "overflow": "visible",
+          "text": "UsuárioPerfilObjetivoStatusCadastroÚltimo acessoAções"
+        },
+        {
+          "tag": "TH",
+          "classes": "px-4 py-3 font-medium",
+          "left": 734,
+          "right": 815,
+          "width": 81,
+          "overflow": "visible",
+          "text": "Status"
+        },
+        {
+          "tag": "TH",
+          "classes": "px-4 py-3 font-medium",
+          "left": 815,
+          "right": 924,
+          "width": 109,
+          "overflow": "visible",
+          "text": "Cadastro"
+        },
+        {
+          "tag": "TH",
+          "classes": "px-4 py-3 font-medium",
+          "left": 924,
+          "right": 1033,
+          "width": 109,
+          "overflow": "visible",
+          "text": "Último acesso"
+        },
+        {
+          "tag": "TH",
+          "classes": "w-16 px-4 py-3",
+          "left": 1033,
+          "right": 1105,
+          "width": 72,
+          "overflow": "visible",
+          "text": "Ações"
+        },
+        {
+          "tag": "SPAN",
+          "classes": "sr-only",
+          "left": 1048,
+          "right": 1049,
+          "width": 1,
+          "overflow": "hidden",
+          "text": "Ações"
+        },
+        {
+          "tag": "TBODY",
+          "classes": "",
+          "left": 285,
+          "right": 1105,
+          "width": 820,
+          "overflow": "visible",
+          "text": "Anderson QA com nome completoqa@example.invalidAdministrador—Ativo10/10/2026—"
+        },
+        {
+          "tag": "TR",
+          "classes": "border-b border-border/70 last:border-0 hover:bg-muted/20",
+          "left": 285,
+          "right": 1105,
+          "width": 820,
+          "overflow": "visible",
+          "text": "Anderson QA com nome completoqa@example.invalidAdministrador—Ativo10/10/2026—"
+        },
+        {
+          "tag": "TD",
+          "classes": "px-4 py-3",
+          "left": 734,
+          "right": 815,
+          "width": 81,
+          "overflow": "visible",
+          "text": "Ativo"
+        },
+        {
+          "tag": "SPAN",
+          "classes": "rounded-full px-2.5 py-1 text-xs font-medium bg-emerald-100 text-emerald-800",
+          "left": 750,
+          "right": 799,
+          "width": 49,
+          "overflow": "visible",
+          "text": "Ativo"
+        },
+        {
+          "tag": "TD",
+          "classes": "px-4 py-3",
+          "left": 815,
+          "right": 924,
+          "width": 109,
+          "overflow": "visible",
+          "text": "10/10/2026"
+        },
+        {
+          "tag": "TD",
+          "classes": "px-4 py-3",
+          "left": 924,
+          "right": 1033,
+          "width": 109,
+          "overflow": "visible",
+          "text": "—"
+        },
+        {
+          "tag": "TD",
+          "classes": "px-4 py-2",
+          "left": 1033,
+          "right": 1105,
+          "width": 72,
+          "overflow": "visible",
+          "text": ""
+        },
+        {
+          "tag": "BUTTON",
+          "classes": "inline-flex shrink-0 items-center justify-center whitespace-nowrap rounded-lg border border-transparent text-sm font-semibold transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 active:translate-y-px disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg]:size-4 hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:hover:bg-muted/50 h-10 w-10",
+          "left": 1049,
+          "right": 1089,
+          "width": 40,
+          "overflow": "visible",
+          "text": ""
+        },
+        {
+          "tag": "svg",
+          "classes": {},
+          "left": 1061,
+          "right": 1077,
+          "width": 16,
+          "overflow": "hidden",
+          "text": ""
+        },
+        {
+          "tag": "circle",
+          "classes": {},
+          "left": 1068,
+          "right": 1070,
+          "width": 1,
+          "overflow": "visible",
+          "text": ""
+        },
+        {
+          "tag": "circle",
+          "classes": {},
+          "left": 1073,
+          "right": 1074,
+          "width": 1,
+          "overflow": "visible",
+          "text": ""
+        },
+        {
+          "tag": "circle",
+          "classes": {},
+          "left": 1064,
+          "right": 1065,
+          "width": 1,
+          "overflow": "visible",
+          "text": ""
+        }
+      ],
+      "errors": [],
+      "passed": true
+    },
+    {
+      "width": 768,
+      "theme": "dark",
+      "name": "catalogo",
+      "actualTheme": "dark",
+      "pageWidth": 768,
+      "mainWidth": 508,
+      "mainScrollWidth": 508,
+      "pageOverflow": false,
+      "mainOverflow": false,
+      "heading": "Catálogo de Editais",
+      "missingNames": [],
+      "activeNav": [
+        "Catálogo de Editais"
+      ],
+      "offenders": [],
+      "errors": [],
+      "passed": true
+    },
+    {
+      "width": 768,
+      "theme": "dark",
+      "name": "keyboard",
+      "searchFocused": true,
+      "searchRestore": true,
+      "compactPersisted": true,
+      "passed": true
+    },
+    {
+      "width": 375,
+      "theme": "light",
+      "name": "dashboard",
+      "actualTheme": "light",
+      "pageWidth": 375,
+      "mainWidth": 375,
+      "mainScrollWidth": 375,
+      "pageOverflow": false,
+      "mainOverflow": false,
+      "heading": "Concurso QA – Analista",
+      "missingNames": [],
+      "activeNav": [
+        "Dashboard"
+      ],
+      "offenders": [
+        {
+          "tag": "DIV",
+          "classes": "min-w-[700px]",
+          "left": 33,
+          "right": 733,
+          "width": 700,
+          "overflow": "visible",
+          "text": "DomSegTerQuaQuiSexSáb12345678910111213141516171819202122232425262728293031"
+        },
+        {
+          "tag": "DIV",
+          "classes": "mb-1.5 grid grid-cols-7 gap-1.5",
+          "left": 33,
+          "right": 733,
+          "width": 700,
+          "overflow": "visible",
+          "text": "DomSegTerQuaQuiSexSáb"
+        },
+        {
+          "tag": "DIV",
+          "classes": "py-1.5 text-center text-xs font-semibold uppercase tracking-wide text-muted-foreground",
+          "left": 336,
+          "right": 430,
+          "width": 95,
+          "overflow": "visible",
+          "text": "Qua"
+        },
+        {
+          "tag": "DIV",
+          "classes": "py-1.5 text-center text-xs font-semibold uppercase tracking-wide text-muted-foreground",
+          "left": 436,
+          "right": 531,
+          "width": 95,
+          "overflow": "visible",
+          "text": "Qui"
+        },
+        {
+          "tag": "DIV",
+          "classes": "py-1.5 text-center text-xs font-semibold uppercase tracking-wide text-muted-foreground",
+          "left": 537,
+          "right": 632,
+          "width": 95,
+          "overflow": "visible",
+          "text": "Sex"
+        },
+        {
+          "tag": "DIV",
+          "classes": "py-1.5 text-center text-xs font-semibold uppercase tracking-wide text-muted-foreground",
+          "left": 638,
+          "right": 733,
+          "width": 95,
+          "overflow": "visible",
+          "text": "Sáb"
+        },
+        {
+          "tag": "DIV",
+          "classes": "grid grid-cols-7 gap-1.5",
+          "left": 33,
+          "right": 733,
+          "width": 700,
+          "overflow": "visible",
+          "text": "12345678910111213141516171819202122232425262728293031"
+        },
+        {
+          "tag": "DIV",
+          "classes": "min-h-[132px] sm:min-h-[160px]",
+          "left": 336,
+          "right": 430,
+          "width": 95,
+          "overflow": "visible",
+          "text": ""
+        },
+        {
+          "tag": "BUTTON",
+          "classes": "flex min-h-[132px] flex-col rounded-lg border p-2 text-left transition hover:ring-2 hover:ring-primary-400/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default disabled:opacity-40 disabled:hover:ring-0 sm:min-h-[160px] bg-neutral-50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700",
+          "left": 436,
+          "right": 531,
+          "width": 95,
+          "overflow": "visible",
+          "text": "1"
+        },
+        {
+          "tag": "DIV",
+          "classes": "flex items-center justify-between gap-1",
+          "left": 445,
+          "right": 522,
+          "width": 77,
+          "overflow": "visible",
+          "text": "1"
+        },
+        {
+          "tag": "SPAN",
+          "classes": "text-sm font-semibold tabular-nums text-foreground",
+          "left": 445,
+          "right": 454,
+          "width": 9,
+          "overflow": "visible",
+          "text": "1"
+        },
+        {
+          "tag": "BUTTON",
+          "classes": "flex min-h-[132px] flex-col rounded-lg border p-2 text-left transition hover:ring-2 hover:ring-primary-400/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default disabled:opacity-40 disabled:hover:ring-0 sm:min-h-[160px] bg-neutral-50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700",
+          "left": 537,
+          "right": 632,
+          "width": 95,
+          "overflow": "visible",
+          "text": "2"
+        },
+        {
+          "tag": "DIV",
+          "classes": "flex items-center justify-between gap-1",
+          "left": 546,
+          "right": 623,
+          "width": 77,
+          "overflow": "visible",
+          "text": "2"
+        },
+        {
+          "tag": "SPAN",
+          "classes": "text-sm font-semibold tabular-nums text-foreground",
+          "left": 546,
+          "right": 555,
+          "width": 9,
+          "overflow": "visible",
+          "text": "2"
+        },
+        {
+          "tag": "BUTTON",
+          "classes": "flex min-h-[132px] flex-col rounded-lg border p-2 text-left transition hover:ring-2 hover:ring-primary-400/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default disabled:opacity-40 disabled:hover:ring-0 sm:min-h-[160px] bg-neutral-50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700",
+          "left": 638,
+          "right": 733,
+          "width": 95,
+          "overflow": "visible",
+          "text": "3"
+        },
+        {
+          "tag": "DIV",
+          "classes": "flex items-center justify-between gap-1",
+          "left": 647,
+          "right": 724,
+          "width": 77,
+          "overflow": "visible",
+          "text": "3"
+        },
+        {
+          "tag": "SPAN",
+          "classes": "text-sm font-semibold tabular-nums text-foreground",
+          "left": 647,
+          "right": 656,
+          "width": 9,
+          "overflow": "visible",
+          "text": "3"
+        },
+        {
+          "tag": "BUTTON",
+          "classes": "flex min-h-[132px] flex-col rounded-lg border p-2 text-left transition hover:ring-2 hover:ring-primary-400/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default disabled:opacity-40 disabled:hover:ring-0 sm:min-h-[160px] bg-neutral-50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700",
+          "left": 336,
+          "right": 430,
+          "width": 95,
+          "overflow": "visible",
+          "text": "7"
+        },
+        {
+          "tag": "DIV",
+          "classes": "flex items-center justify-between gap-1",
+          "left": 345,
+          "right": 421,
+          "width": 77,
+          "overflow": "visible",
+          "text": "7"
+        },
+        {
+          "tag": "BUTTON",
+          "classes": "flex min-h-[132px] flex-col rounded-lg border p-2 text-left transition hover:ring-2 hover:ring-primary-400/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default disabled:opacity-40 disabled:hover:ring-0 sm:min-h-[160px] bg-neutral-50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700",
+          "left": 436,
+          "right": 531,
+          "width": 95,
+          "overflow": "visible",
+          "text": "8"
+        },
+        {
+          "tag": "DIV",
+          "classes": "flex items-center justify-between gap-1",
+          "left": 445,
+          "right": 522,
+          "width": 77,
+          "overflow": "visible",
+          "text": "8"
+        },
+        {
+          "tag": "SPAN",
+          "classes": "text-sm font-semibold tabular-nums text-foreground",
+          "left": 445,
+          "right": 454,
+          "width": 9,
+          "overflow": "visible",
+          "text": "8"
+        },
+        {
+          "tag": "BUTTON",
+          "classes": "flex min-h-[132px] flex-col rounded-lg border p-2 text-left transition hover:ring-2 hover:ring-primary-400/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default disabled:opacity-40 disabled:hover:ring-0 sm:min-h-[160px] bg-neutral-50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700",
+          "left": 537,
+          "right": 632,
+          "width": 95,
+          "overflow": "visible",
+          "text": "9"
+        },
+        {
+          "tag": "DIV",
+          "classes": "flex items-center justify-between gap-1",
+          "left": 546,
+          "right": 623,
+          "width": 77,
+          "overflow": "visible",
+          "text": "9"
+        },
+        {
+          "tag": "SPAN",
+          "classes": "text-sm font-semibold tabular-nums text-foreground",
+          "left": 546,
+          "right": 555,
+          "width": 9,
+          "overflow": "visible",
+          "text": "9"
+        },
+        {
+          "tag": "BUTTON",
+          "classes": "flex min-h-[132px] flex-col rounded-lg border p-2 text-left transition hover:ring-2 hover:ring-primary-400/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default disabled:opacity-40 disabled:hover:ring-0 sm:min-h-[160px] bg-neutral-50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700",
+          "left": 638,
+          "right": 733,
+          "width": 95,
+          "overflow": "visible",
+          "text": "10"
+        },
+        {
+          "tag": "DIV",
+          "classes": "flex items-center justify-between gap-1",
+          "left": 647,
+          "right": 724,
+          "width": 77,
+          "overflow": "visible",
+          "text": "10"
+        },
+        {
+          "tag": "SPAN",
+          "classes": "text-sm font-semibold tabular-nums text-foreground",
+          "left": 647,
+          "right": 665,
+          "width": 17,
+          "overflow": "visible",
+          "text": "10"
+        },
+        {
+          "tag": "BUTTON",
+          "classes": "flex min-h-[132px] flex-col rounded-lg border p-2 text-left transition hover:ring-2 hover:ring-primary-400/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default disabled:opacity-40 disabled:hover:ring-0 sm:min-h-[160px] bg-neutral-50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700",
+          "left": 336,
+          "right": 430,
+          "width": 95,
+          "overflow": "visible",
+          "text": "14"
+        },
+        {
+          "tag": "DIV",
+          "classes": "flex items-center justify-between gap-1",
+          "left": 345,
+          "right": 421,
+          "width": 77,
+          "overflow": "visible",
+          "text": "14"
+        },
+        {
+          "tag": "BUTTON",
+          "classes": "flex min-h-[132px] flex-col rounded-lg border p-2 text-left transition hover:ring-2 hover:ring-primary-400/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default disabled:opacity-40 disabled:hover:ring-0 sm:min-h-[160px] bg-neutral-50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700",
+          "left": 436,
+          "right": 531,
+          "width": 95,
+          "overflow": "visible",
+          "text": "15"
+        },
+        {
+          "tag": "DIV",
+          "classes": "flex items-center justify-between gap-1",
+          "left": 445,
+          "right": 522,
+          "width": 77,
+          "overflow": "visible",
+          "text": "15"
+        },
+        {
+          "tag": "SPAN",
+          "classes": "text-sm font-semibold tabular-nums text-foreground",
+          "left": 445,
+          "right": 463,
+          "width": 18,
+          "overflow": "visible",
+          "text": "15"
+        },
+        {
+          "tag": "BUTTON",
+          "classes": "flex min-h-[132px] flex-col rounded-lg border p-2 text-left transition hover:ring-2 hover:ring-primary-400/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default disabled:opacity-40 disabled:hover:ring-0 sm:min-h-[160px] bg-neutral-50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700",
+          "left": 537,
+          "right": 632,
+          "width": 95,
+          "overflow": "visible",
+          "text": "16"
+        },
+        {
+          "tag": "DIV",
+          "classes": "flex items-center justify-between gap-1",
+          "left": 546,
+          "right": 623,
+          "width": 77,
+          "overflow": "visible",
+          "text": "16"
+        }
+      ],
+      "errors": [],
+      "passed": true
+    },
+    {
+      "width": 375,
+      "theme": "light",
+      "name": "cronograma",
+      "actualTheme": "light",
+      "pageWidth": 375,
+      "mainWidth": 375,
+      "mainScrollWidth": 375,
+      "pageOverflow": false,
+      "mainOverflow": false,
+      "heading": "Meu Cronograma",
+      "missingNames": [],
+      "activeNav": [
+        "Cronograma"
+      ],
+      "offenders": [],
+      "errors": [],
+      "passed": true
+    },
+    {
+      "width": 375,
+      "theme": "light",
+      "name": "edital",
+      "actualTheme": "light",
+      "pageWidth": 375,
+      "mainWidth": 375,
+      "mainScrollWidth": 375,
+      "pageOverflow": false,
+      "mainOverflow": false,
+      "heading": "Disciplinas & Tópicos",
+      "missingNames": [],
+      "activeNav": [
+        "Edital Verticalizado"
+      ],
+      "offenders": [],
+      "errors": [],
+      "passed": true
+    },
+    {
+      "width": 375,
+      "theme": "light",
+      "name": "disciplinas",
+      "actualTheme": "light",
+      "pageWidth": 375,
+      "mainWidth": 375,
+      "mainScrollWidth": 375,
+      "pageOverflow": false,
+      "mainOverflow": false,
+      "heading": "Disciplinas & Tópicos",
+      "missingNames": [],
+      "activeNav": [
+        "Disciplinas"
+      ],
+      "offenders": [],
+      "errors": [],
+      "passed": true
+    },
+    {
+      "width": 375,
+      "theme": "light",
+      "name": "usuarios",
+      "actualTheme": "light",
+      "pageWidth": 375,
+      "mainWidth": 375,
+      "mainScrollWidth": 375,
+      "pageOverflow": false,
+      "mainOverflow": false,
+      "heading": "Gestão de Usuários",
+      "missingNames": [],
+      "activeNav": [
+        "Gestão de Usuários"
+      ],
+      "offenders": [],
+      "errors": [],
+      "passed": true
+    },
+    {
+      "width": 375,
+      "theme": "light",
+      "name": "catalogo",
+      "actualTheme": "light",
+      "pageWidth": 375,
+      "mainWidth": 375,
+      "mainScrollWidth": 375,
+      "pageOverflow": false,
+      "mainOverflow": false,
+      "heading": "Catálogo de Editais",
+      "missingNames": [],
+      "activeNav": [
+        "Catálogo de Editais"
+      ],
+      "offenders": [],
+      "errors": [],
+      "passed": true
+    },
+    {
+      "width": 375,
+      "theme": "light",
+      "name": "keyboard",
+      "searchFocused": true,
+      "searchRestore": true,
+      "drawerRestore": true,
+      "passed": true
+    },
+    {
+      "width": 375,
+      "theme": "dark",
+      "name": "dashboard",
+      "actualTheme": "dark",
+      "pageWidth": 375,
+      "mainWidth": 375,
+      "mainScrollWidth": 375,
+      "pageOverflow": false,
+      "mainOverflow": false,
+      "heading": "Concurso QA – Analista",
+      "missingNames": [],
+      "activeNav": [
+        "Dashboard"
+      ],
+      "offenders": [
+        {
+          "tag": "DIV",
+          "classes": "min-w-[700px]",
+          "left": 33,
+          "right": 733,
+          "width": 700,
+          "overflow": "visible",
+          "text": "DomSegTerQuaQuiSexSáb12345678910111213141516171819202122232425262728293031"
+        },
+        {
+          "tag": "DIV",
+          "classes": "mb-1.5 grid grid-cols-7 gap-1.5",
+          "left": 33,
+          "right": 733,
+          "width": 700,
+          "overflow": "visible",
+          "text": "DomSegTerQuaQuiSexSáb"
+        },
+        {
+          "tag": "DIV",
+          "classes": "py-1.5 text-center text-xs font-semibold uppercase tracking-wide text-muted-foreground",
+          "left": 336,
+          "right": 430,
+          "width": 95,
+          "overflow": "visible",
+          "text": "Qua"
+        },
+        {
+          "tag": "DIV",
+          "classes": "py-1.5 text-center text-xs font-semibold uppercase tracking-wide text-muted-foreground",
+          "left": 436,
+          "right": 531,
+          "width": 95,
+          "overflow": "visible",
+          "text": "Qui"
+        },
+        {
+          "tag": "DIV",
+          "classes": "py-1.5 text-center text-xs font-semibold uppercase tracking-wide text-muted-foreground",
+          "left": 537,
+          "right": 632,
+          "width": 95,
+          "overflow": "visible",
+          "text": "Sex"
+        },
+        {
+          "tag": "DIV",
+          "classes": "py-1.5 text-center text-xs font-semibold uppercase tracking-wide text-muted-foreground",
+          "left": 638,
+          "right": 733,
+          "width": 95,
+          "overflow": "visible",
+          "text": "Sáb"
+        },
+        {
+          "tag": "DIV",
+          "classes": "grid grid-cols-7 gap-1.5",
+          "left": 33,
+          "right": 733,
+          "width": 700,
+          "overflow": "visible",
+          "text": "12345678910111213141516171819202122232425262728293031"
+        },
+        {
+          "tag": "DIV",
+          "classes": "min-h-[132px] sm:min-h-[160px]",
+          "left": 336,
+          "right": 430,
+          "width": 95,
+          "overflow": "visible",
+          "text": ""
+        },
+        {
+          "tag": "BUTTON",
+          "classes": "flex min-h-[132px] flex-col rounded-lg border p-2 text-left transition hover:ring-2 hover:ring-primary-400/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default disabled:opacity-40 disabled:hover:ring-0 sm:min-h-[160px] bg-neutral-50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700",
+          "left": 436,
+          "right": 531,
+          "width": 95,
+          "overflow": "visible",
+          "text": "1"
+        },
+        {
+          "tag": "DIV",
+          "classes": "flex items-center justify-between gap-1",
+          "left": 445,
+          "right": 522,
+          "width": 77,
+          "overflow": "visible",
+          "text": "1"
+        },
+        {
+          "tag": "SPAN",
+          "classes": "text-sm font-semibold tabular-nums text-foreground",
+          "left": 445,
+          "right": 454,
+          "width": 9,
+          "overflow": "visible",
+          "text": "1"
+        },
+        {
+          "tag": "BUTTON",
+          "classes": "flex min-h-[132px] flex-col rounded-lg border p-2 text-left transition hover:ring-2 hover:ring-primary-400/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default disabled:opacity-40 disabled:hover:ring-0 sm:min-h-[160px] bg-neutral-50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700",
+          "left": 537,
+          "right": 632,
+          "width": 95,
+          "overflow": "visible",
+          "text": "2"
+        },
+        {
+          "tag": "DIV",
+          "classes": "flex items-center justify-between gap-1",
+          "left": 546,
+          "right": 623,
+          "width": 77,
+          "overflow": "visible",
+          "text": "2"
+        },
+        {
+          "tag": "SPAN",
+          "classes": "text-sm font-semibold tabular-nums text-foreground",
+          "left": 546,
+          "right": 555,
+          "width": 9,
+          "overflow": "visible",
+          "text": "2"
+        },
+        {
+          "tag": "BUTTON",
+          "classes": "flex min-h-[132px] flex-col rounded-lg border p-2 text-left transition hover:ring-2 hover:ring-primary-400/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default disabled:opacity-40 disabled:hover:ring-0 sm:min-h-[160px] bg-neutral-50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700",
+          "left": 638,
+          "right": 733,
+          "width": 95,
+          "overflow": "visible",
+          "text": "3"
+        },
+        {
+          "tag": "DIV",
+          "classes": "flex items-center justify-between gap-1",
+          "left": 647,
+          "right": 724,
+          "width": 77,
+          "overflow": "visible",
+          "text": "3"
+        },
+        {
+          "tag": "SPAN",
+          "classes": "text-sm font-semibold tabular-nums text-foreground",
+          "left": 647,
+          "right": 656,
+          "width": 9,
+          "overflow": "visible",
+          "text": "3"
+        },
+        {
+          "tag": "BUTTON",
+          "classes": "flex min-h-[132px] flex-col rounded-lg border p-2 text-left transition hover:ring-2 hover:ring-primary-400/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default disabled:opacity-40 disabled:hover:ring-0 sm:min-h-[160px] bg-neutral-50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700",
+          "left": 336,
+          "right": 430,
+          "width": 95,
+          "overflow": "visible",
+          "text": "7"
+        },
+        {
+          "tag": "DIV",
+          "classes": "flex items-center justify-between gap-1",
+          "left": 345,
+          "right": 421,
+          "width": 77,
+          "overflow": "visible",
+          "text": "7"
+        },
+        {
+          "tag": "BUTTON",
+          "classes": "flex min-h-[132px] flex-col rounded-lg border p-2 text-left transition hover:ring-2 hover:ring-primary-400/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default disabled:opacity-40 disabled:hover:ring-0 sm:min-h-[160px] bg-neutral-50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700",
+          "left": 436,
+          "right": 531,
+          "width": 95,
+          "overflow": "visible",
+          "text": "8"
+        },
+        {
+          "tag": "DIV",
+          "classes": "flex items-center justify-between gap-1",
+          "left": 445,
+          "right": 522,
+          "width": 77,
+          "overflow": "visible",
+          "text": "8"
+        },
+        {
+          "tag": "SPAN",
+          "classes": "text-sm font-semibold tabular-nums text-foreground",
+          "left": 445,
+          "right": 454,
+          "width": 9,
+          "overflow": "visible",
+          "text": "8"
+        },
+        {
+          "tag": "BUTTON",
+          "classes": "flex min-h-[132px] flex-col rounded-lg border p-2 text-left transition hover:ring-2 hover:ring-primary-400/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default disabled:opacity-40 disabled:hover:ring-0 sm:min-h-[160px] bg-neutral-50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700",
+          "left": 537,
+          "right": 632,
+          "width": 95,
+          "overflow": "visible",
+          "text": "9"
+        },
+        {
+          "tag": "DIV",
+          "classes": "flex items-center justify-between gap-1",
+          "left": 546,
+          "right": 623,
+          "width": 77,
+          "overflow": "visible",
+          "text": "9"
+        },
+        {
+          "tag": "SPAN",
+          "classes": "text-sm font-semibold tabular-nums text-foreground",
+          "left": 546,
+          "right": 555,
+          "width": 9,
+          "overflow": "visible",
+          "text": "9"
+        },
+        {
+          "tag": "BUTTON",
+          "classes": "flex min-h-[132px] flex-col rounded-lg border p-2 text-left transition hover:ring-2 hover:ring-primary-400/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default disabled:opacity-40 disabled:hover:ring-0 sm:min-h-[160px] bg-neutral-50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700",
+          "left": 638,
+          "right": 733,
+          "width": 95,
+          "overflow": "visible",
+          "text": "10"
+        },
+        {
+          "tag": "DIV",
+          "classes": "flex items-center justify-between gap-1",
+          "left": 647,
+          "right": 724,
+          "width": 77,
+          "overflow": "visible",
+          "text": "10"
+        },
+        {
+          "tag": "SPAN",
+          "classes": "text-sm font-semibold tabular-nums text-foreground",
+          "left": 647,
+          "right": 665,
+          "width": 17,
+          "overflow": "visible",
+          "text": "10"
+        },
+        {
+          "tag": "BUTTON",
+          "classes": "flex min-h-[132px] flex-col rounded-lg border p-2 text-left transition hover:ring-2 hover:ring-primary-400/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default disabled:opacity-40 disabled:hover:ring-0 sm:min-h-[160px] bg-neutral-50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700",
+          "left": 336,
+          "right": 430,
+          "width": 95,
+          "overflow": "visible",
+          "text": "14"
+        },
+        {
+          "tag": "DIV",
+          "classes": "flex items-center justify-between gap-1",
+          "left": 345,
+          "right": 421,
+          "width": 77,
+          "overflow": "visible",
+          "text": "14"
+        },
+        {
+          "tag": "BUTTON",
+          "classes": "flex min-h-[132px] flex-col rounded-lg border p-2 text-left transition hover:ring-2 hover:ring-primary-400/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default disabled:opacity-40 disabled:hover:ring-0 sm:min-h-[160px] bg-neutral-50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700",
+          "left": 436,
+          "right": 531,
+          "width": 95,
+          "overflow": "visible",
+          "text": "15"
+        },
+        {
+          "tag": "DIV",
+          "classes": "flex items-center justify-between gap-1",
+          "left": 445,
+          "right": 522,
+          "width": 77,
+          "overflow": "visible",
+          "text": "15"
+        },
+        {
+          "tag": "SPAN",
+          "classes": "text-sm font-semibold tabular-nums text-foreground",
+          "left": 445,
+          "right": 463,
+          "width": 18,
+          "overflow": "visible",
+          "text": "15"
+        },
+        {
+          "tag": "BUTTON",
+          "classes": "flex min-h-[132px] flex-col rounded-lg border p-2 text-left transition hover:ring-2 hover:ring-primary-400/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default disabled:opacity-40 disabled:hover:ring-0 sm:min-h-[160px] bg-neutral-50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700",
+          "left": 537,
+          "right": 632,
+          "width": 95,
+          "overflow": "visible",
+          "text": "16"
+        },
+        {
+          "tag": "DIV",
+          "classes": "flex items-center justify-between gap-1",
+          "left": 546,
+          "right": 623,
+          "width": 77,
+          "overflow": "visible",
+          "text": "16"
+        }
+      ],
+      "errors": [],
+      "passed": true
+    },
+    {
+      "width": 375,
+      "theme": "dark",
+      "name": "cronograma",
+      "actualTheme": "dark",
+      "pageWidth": 375,
+      "mainWidth": 375,
+      "mainScrollWidth": 375,
+      "pageOverflow": false,
+      "mainOverflow": false,
+      "heading": "Meu Cronograma",
+      "missingNames": [],
+      "activeNav": [
+        "Cronograma"
+      ],
+      "offenders": [],
+      "errors": [],
+      "passed": true
+    },
+    {
+      "width": 375,
+      "theme": "dark",
+      "name": "edital",
+      "actualTheme": "dark",
+      "pageWidth": 375,
+      "mainWidth": 375,
+      "mainScrollWidth": 375,
+      "pageOverflow": false,
+      "mainOverflow": false,
+      "heading": "Disciplinas & Tópicos",
+      "missingNames": [],
+      "activeNav": [
+        "Edital Verticalizado"
+      ],
+      "offenders": [],
+      "errors": [],
+      "passed": true
+    },
+    {
+      "width": 375,
+      "theme": "dark",
+      "name": "disciplinas",
+      "actualTheme": "dark",
+      "pageWidth": 375,
+      "mainWidth": 375,
+      "mainScrollWidth": 375,
+      "pageOverflow": false,
+      "mainOverflow": false,
+      "heading": "Disciplinas & Tópicos",
+      "missingNames": [],
+      "activeNav": [
+        "Disciplinas"
+      ],
+      "offenders": [],
+      "errors": [],
+      "passed": true
+    },
+    {
+      "width": 375,
+      "theme": "dark",
+      "name": "usuarios",
+      "actualTheme": "dark",
+      "pageWidth": 375,
+      "mainWidth": 375,
+      "mainScrollWidth": 375,
+      "pageOverflow": false,
+      "mainOverflow": false,
+      "heading": "Gestão de Usuários",
+      "missingNames": [],
+      "activeNav": [
+        "Gestão de Usuários"
+      ],
+      "offenders": [],
+      "errors": [],
+      "passed": true
+    },
+    {
+      "width": 375,
+      "theme": "dark",
+      "name": "catalogo",
+      "actualTheme": "dark",
+      "pageWidth": 375,
+      "mainWidth": 375,
+      "mainScrollWidth": 375,
+      "pageOverflow": false,
+      "mainOverflow": false,
+      "heading": "Catálogo de Editais",
+      "missingNames": [],
+      "activeNav": [
+        "Catálogo de Editais"
+      ],
+      "offenders": [],
+      "errors": [],
+      "passed": true
+    },
+    {
+      "width": 375,
+      "theme": "dark",
+      "name": "keyboard",
+      "searchFocused": true,
+      "searchRestore": true,
+      "drawerRestore": true,
+      "passed": true
+    },
+    {
+      "width": 1440,
+      "theme": "light",
+      "name": "login",
+      "actualTheme": "light",
+      "pageWidth": 1440,
+      "mainWidth": 720,
+      "mainScrollWidth": 720,
+      "pageOverflow": false,
+      "mainOverflow": false,
+      "heading": "Entrar na sua conta",
+      "missingNames": [],
+      "activeNav": [],
+      "offenders": [],
+      "passed": true
+    },
+    {
+      "width": 1440,
+      "theme": "dark",
+      "name": "login",
+      "actualTheme": "dark",
+      "pageWidth": 1440,
+      "mainWidth": 720,
+      "mainScrollWidth": 720,
+      "pageOverflow": false,
+      "mainOverflow": false,
+      "heading": "Entrar na sua conta",
+      "missingNames": [],
+      "activeNav": [],
+      "offenders": [],
+      "passed": true
+    },
+    {
+      "width": 1280,
+      "theme": "light",
+      "name": "login",
+      "actualTheme": "light",
+      "pageWidth": 1280,
+      "mainWidth": 640,
+      "mainScrollWidth": 640,
+      "pageOverflow": false,
+      "mainOverflow": false,
+      "heading": "Entrar na sua conta",
+      "missingNames": [],
+      "activeNav": [],
+      "offenders": [],
+      "passed": true
+    },
+    {
+      "width": 1280,
+      "theme": "dark",
+      "name": "login",
+      "actualTheme": "dark",
+      "pageWidth": 1280,
+      "mainWidth": 640,
+      "mainScrollWidth": 640,
+      "pageOverflow": false,
+      "mainOverflow": false,
+      "heading": "Entrar na sua conta",
+      "missingNames": [],
+      "activeNav": [],
+      "offenders": [],
+      "passed": true
+    },
+    {
+      "width": 768,
+      "theme": "light",
+      "name": "login",
+      "actualTheme": "light",
+      "pageWidth": 768,
+      "mainWidth": 384,
+      "mainScrollWidth": 384,
+      "pageOverflow": false,
+      "mainOverflow": false,
+      "heading": "Entrar na sua conta",
+      "missingNames": [],
+      "activeNav": [],
+      "offenders": [],
+      "passed": true
+    },
+    {
+      "width": 768,
+      "theme": "dark",
+      "name": "login",
+      "actualTheme": "dark",
+      "pageWidth": 768,
+      "mainWidth": 384,
+      "mainScrollWidth": 384,
+      "pageOverflow": false,
+      "mainOverflow": false,
+      "heading": "Entrar na sua conta",
+      "missingNames": [],
+      "activeNav": [],
+      "offenders": [],
+      "passed": true
+    },
+    {
+      "width": 375,
+      "theme": "light",
+      "name": "login",
+      "actualTheme": "light",
+      "pageWidth": 375,
+      "mainWidth": 375,
+      "mainScrollWidth": 375,
+      "pageOverflow": false,
+      "mainOverflow": false,
+      "heading": "Entrar na sua conta",
+      "missingNames": [],
+      "activeNav": [],
+      "offenders": [],
+      "passed": true
+    },
+    {
+      "width": 375,
+      "theme": "dark",
+      "name": "login",
+      "actualTheme": "dark",
+      "pageWidth": 375,
+      "mainWidth": 375,
+      "mainScrollWidth": 375,
+      "pageOverflow": false,
+      "mainOverflow": false,
+      "heading": "Entrar na sua conta",
+      "missingNames": [],
+      "activeNav": [],
+      "offenders": [],
+      "passed": true
+    }
+  ]
+}

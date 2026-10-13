@@ -5,6 +5,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 
+import { useUnsavedChanges } from "@/hooks/useUnsavedChanges";
 import { EditalImportDialog } from "@/components/admin/editais/EditalImportDialog";
 import { EditalClassificationSection } from "@/components/admin/editais/EditalClassificationSection";
 import { EditalScheduleSection, scheduleIssue } from "@/components/admin/editais/EditalScheduleSection";
@@ -106,6 +107,8 @@ export function EditalCatalogoEditor() {
       : classificationDraft(versao)
   ) : null;
   const classificationDirty = classification?.versionId === versao?.id && classification?.dirty;
+  const hasUnsavedChanges = Boolean(ledger.current.dirty || metadataDirty.current || scheduleDraft || classificationDirty || pendingEditalFile || pendingLogoFile);
+  const guardDialog = useUnsavedChanges(hasUnsavedChanges);
   const saveClassification = async () => {
     if (!versao || !classificationValue || !classificationDirty) return;
     const issue = classificationIssue(classificationValue);
@@ -286,7 +289,12 @@ export function EditalCatalogoEditor() {
   };
 
   if (query.isLoading) return <div className="py-20 text-center text-sm text-muted-foreground" role="status">Carregando editor…</div>;
-  if (query.isError || !edital || !versao) return <div role="alert" className="rounded-xl border border-destructive/30 bg-destructive/10 p-5 text-sm text-destructive">Não foi possível abrir este edital. <button className="font-semibold underline" onClick={() => void query.refetch()}>Tentar novamente</button></div>;
+  if (query.isError) {
+    const status = isAxiosError(query.error) ? query.error.response?.status : undefined;
+    const message = status === 403 ? "Você não possui permissão para gerenciar este edital." : status === 404 ? "Edital não encontrado." : "Não foi possível abrir este edital. Seus dados locais foram preservados.";
+    return <div role="alert" className="rounded-xl border border-destructive/30 bg-destructive/10 p-5 text-sm"><p>{message}</p><div className="mt-3 flex flex-wrap gap-2"><Button variant="outline" asChild><Link to="/admin/editais">Voltar ao catálogo</Link></Button>{status !== 403 && status !== 404 ? <Button onClick={() => void query.refetch()}>Tentar novamente</Button> : null}</div>{guardDialog.confirmDialog}</div>;
+  }
+  if (!edital || !versao) return <div role="status" className="rounded-xl border border-border bg-card p-5 text-sm">Este edital não possui uma versão disponível. <Link to="/admin/editais" className="font-medium text-primary underline">Voltar ao catálogo</Link></div>;
   const totalDisciplines = cargos.reduce((total, cargo) => total + cargo.disciplinas.length, 0);
   const totalTopics = cargos.reduce((total, cargo) => total + cargo.disciplinas.reduce((sum, disciplina) => sum + disciplina.topicos.length, 0), 0);
   const editalDocumentUrl = resolvePublicUrl(edital.edital_url);
@@ -294,13 +302,22 @@ export function EditalCatalogoEditor() {
 
   return (
     <>
+    {guardDialog.confirmDialog}
+    {hasUnsavedChanges ? <div role="status" className="mb-4 rounded-xl border border-warning/30 bg-warning/10 px-4 py-3 text-sm text-foreground"><strong>Alterações não salvas.</strong> Salve o rascunho antes de sair. Atualizações do servidor preservam seus dados locais.</div> : null}
     {conflict ? <div role="alert" className="mb-4 rounded-xl border border-destructive/30 bg-destructive/10 p-4 text-sm">Este rascunho foi alterado no servidor. Suas alterações locais foram preservadas e não serão sobrescritas automaticamente. Confira a versão atual antes de salvar novamente.</div> : null}
     <div className="space-y-5 pb-10">
       <header className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
-        <div><Link to="/admin/editais" className="mb-2 inline-flex min-h-11 items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground"><ArrowLeft className="h-4 w-4" /> Voltar ao catálogo</Link><div className="flex items-center gap-3"><CatalogLogo src={edital.logo_url} orgao={edital.orgao} /><div><h1 className="text-2xl font-bold tracking-tight">{edital.nome}</h1><p className="mt-1 text-sm text-muted-foreground">Versão {versao.numero} · <span className="capitalize">{versao.status}</span></p></div></div></div>
+        <div><Link to="/admin/editais" className="mb-2 inline-flex min-h-11 items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground"><ArrowLeft className="h-4 w-4" /> Voltar ao catálogo</Link><div className="flex min-w-0 items-center gap-3"><CatalogLogo src={edital.logo_url} orgao={edital.orgao} /><div className="min-w-0"><h1 className="break-words text-2xl font-semibold tracking-tight">{edital.nome}</h1><p className="mt-1 text-sm text-muted-foreground">Versão {versao.numero} · <span className="capitalize">{versao.status}</span></p></div></div></div>
         <div className="flex flex-wrap gap-2">{editable ? <><Button variant="outline" className="min-h-11 gap-2" disabled={saveMutation.isPending || publishMutation.isPending} onClick={() => { if (ledger.current.dirty || metadataDirty.current || scheduleDraft || classificationDirty) { toast.error("Salve suas alterações antes de importar uma planilha."); return; } setImportOpen(true); }}><FileSpreadsheet className="h-4 w-4" /> Importar planilha</Button><Button variant="outline" className="min-h-11 gap-2" disabled={saveMutation.isPending || publishMutation.isPending || editalFileMutation.isPending || removeEditalMutation.isPending || logoMutation.isPending} onClick={() => saveMutation.mutate()}><Save className="h-4 w-4" /> {saveMutation.isPending ? "Salvando…" : "Salvar rascunho"}</Button><Button className="min-h-11 gap-2" disabled={publishMutation.isPending || saveMutation.isPending || editalFileMutation.isPending || removeEditalMutation.isPending || logoMutation.isPending} onClick={() => { const issue = structureIssue(cargos, true); if (issue) { toast.error(issue); return; } void requestConfirmation({ title: "Publicar esta versão?", description: "O rascunho será salvo e disponibilizado no catálogo. Depois da publicação, esta versão ficará somente para leitura.", confirmLabel: "Salvar e publicar" }).then((confirmed) => { if (confirmed) publishMutation.mutate(); }); }}><Send className="h-4 w-4" /> {publishMutation.isPending ? "Salvando e publicando…" : "Publicar"}</Button></> : <Button className="min-h-11" disabled={draftMutation.isPending} onClick={() => draftMutation.mutate()}>{draftMutation.isPending ? "Criando…" : "Criar nova versão"}</Button>}</div>
         {!editable && versao.status === "publicado" ? <Button className="min-h-11 gap-2" disabled={!scheduleDraft || saveMutation.isPending || draftMutation.isPending || Boolean(scheduleIssue(schedule))} onClick={() => void requestConfirmation({ title: "Atualizar cronograma publicado?", description: "Os avisos automáticos dos concursos associados serão sincronizados com estas datas. Avisos manuais não serão alterados.", confirmLabel: "Salvar cronograma" }).then((confirmed) => { if (confirmed) saveMutation.mutate(); })}><Save className="h-4 w-4" />{saveMutation.isPending ? "Salvando…" : "Salvar cronograma"}</Button> : null}
       </header>
+
+      <section aria-label="Estrutura do edital" className="rounded-2xl border border-border bg-card p-4 shadow-sm">
+        <p className="text-sm font-medium">Concurso <span aria-hidden="true" className="px-1 text-muted-foreground">→</span> Cargo <span aria-hidden="true" className="px-1 text-muted-foreground">→</span> Disciplina <span aria-hidden="true" className="px-1 text-muted-foreground">→</span> Tópico</p>
+        <dl className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
+          {[{ label: "Cargos", value: cargos.length }, { label: "Disciplinas", value: totalDisciplines }, { label: "Tópicos", value: totalTopics }].map(({ label, value }) => <div key={label} className="rounded-xl bg-muted/50 px-4 py-3"><dt className="text-xs font-medium text-muted-foreground">{label}</dt><dd className="mt-1 text-xl font-semibold tabular-nums">{value}</dd></div>)}
+        </dl>
+      </section>
 
       {!editable ? <div className="rounded-xl border border-primary/30 bg-primary-muted p-4 text-sm text-foreground"><strong>Conteúdo somente leitura.</strong> Crie uma nova versão para alterar disciplinas e tópicos publicados. {versao.status === "publicado" ? "As datas podem ser atualizadas nas Informações gerais, sem alterar o conteúdo do aluno." : null}</div> : null}
 

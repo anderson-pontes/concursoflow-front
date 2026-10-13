@@ -28,6 +28,13 @@ const config: Config = {
         card: "var(--shadow-card)",
       },
       colors: {
+        dashboard: {
+          time: tokenColor("dashboard-time"),
+          success: tokenColor("dashboard-success"),
+          attention: tokenColor("dashboard-attention"),
+          flashcards: tokenColor("dashboard-flashcards"),
+          error: tokenColor("dashboard-error"),
+        },
         background: tokenColor("background"),
         foreground: tokenColor("foreground"),
         surface: {
@@ -55,6 +62,7 @@ const config: Config = {
           900: "var(--brand-900)",
           950: "var(--brand-950)",
         },
+        "primary-hover": tokenColor("primary-hover"),
         "primary-foreground": tokenColor("primary-foreground"),
         secondary: tokenColor("secondary"),
         "secondary-foreground": tokenColor("secondary-foreground"),
@@ -71,6 +79,7 @@ const config: Config = {
         success: {
           DEFAULT: tokenColor("success"),
           foreground: tokenColor("success-foreground"),
+          text: tokenColor("success-text"),
           50: "var(--success-50)",
           100: "var(--success-100)",
           400: "var(--success-400)",
@@ -94,9 +103,11 @@ const config: Config = {
           600: "var(--danger-600)",
           800: "var(--danger-800)",
         },
+        review: { DEFAULT: tokenColor("review"), foreground: tokenColor("review-foreground") },
         info: {
           DEFAULT: tokenColor("info"),
           foreground: tokenColor("info-foreground"),
+          text: tokenColor("info-text"),
         },
         "chart-1": "var(--chart-1)",
         "chart-2": "var(--chart-2)",

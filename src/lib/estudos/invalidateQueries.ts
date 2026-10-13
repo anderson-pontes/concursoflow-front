@@ -2,6 +2,9 @@ import type { QueryClient } from "@tanstack/react-query";
 
 /** Invalida caches de calendário, histórico e dashboard após registrar/editar sessão. */
 export function invalidateEstudosQueries(qc: QueryClient) {
+  void qc.invalidateQueries({ queryKey: ["cronograma-resumo"] });
+  void qc.invalidateQueries({ queryKey: ["cronograma-atividades"] });
+  void qc.invalidateQueries({ queryKey: ["dashboard"] });
   void qc.invalidateQueries({ queryKey: ["calendario"] });
   void qc.invalidateQueries({ queryKey: ["calendario-dia"] });
   void qc.invalidateQueries({ queryKey: ["historico-sessoes"] });

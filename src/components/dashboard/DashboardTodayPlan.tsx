@@ -1,0 +1,17 @@
+import {Link} from 'react-router-dom';
+import {Clock3} from 'lucide-react';
+import {CardTitle,CardDescription} from '@/components/ui/card';
+import {DashboardCard,DashboardCardHeader,DashboardCardBody,DashboardCardActions} from '@/components/dashboard/DashboardCard';
+import {Button} from '@/components/ui/button';
+import {Badge} from '@/components/ui/badge';
+import {formatDashboardDuration as fmtMinutosEstudo} from '@/lib/dashboard/analysis';
+import type {TodaySession} from '@/lib/dashboard/analysis';
+
+const states={planejada:{label:'Planejada',variant:'outline'},em_andamento:{label:'Em andamento',variant:'info'},concluida:{label:'Concluída',variant:'success'},atrasada:{label:'Atrasada',variant:'destructive'}} as const;
+export function DashboardTodayPlan({items,onRegister,error=false,retry}:{items:TodaySession[];onRegister:(item:TodaySession)=>void;error?:boolean;retry?:()=>void}) {
+ const completed=items.filter(i=>i.status==='concluida').length;
+ return <DashboardCard><DashboardCardHeader className="xl:min-h-0"><CardTitle>Plano de hoje</CardTitle><CardDescription>{error?'Acompanhe suas atividades do dia':`${completed} de ${items.length} sessões concluídas`}</CardDescription></DashboardCardHeader><DashboardCardBody>
+  {error?<div><p role="alert" className="text-sm text-muted-foreground">Plano do dia indisponível.</p><Button variant="outline" className="mt-2" onClick={retry}>Tentar novamente</Button></div>:items.length?<ul className="space-y-2 xl:max-h-56 xl:overflow-y-auto">{items.map(item=><li key={`${item.fonte}-${item.id}`} className="rounded-lg border border-border p-3"><div className="flex items-start justify-between gap-2"><p className="min-w-0 break-words text-sm font-semibold">{item.disciplina_nome}</p><Badge className="shrink-0" variant={states[item.status].variant}>{states[item.status].label}</Badge></div>{item.topico_nome&&<p className="mt-1 break-words text-xs text-muted-foreground">{item.topico_nome}</p>}<div className="mt-1 flex flex-wrap items-center justify-between gap-x-2"><span className="inline-flex items-center gap-1 text-xs text-muted-foreground"><Clock3 className="size-3.5" aria-hidden/>{item.hora_inicio?(item.hora_fim?`${item.hora_inicio}–${item.hora_fim}`:item.hora_inicio):'Sem horário'} · {fmtMinutosEstudo(item.duracao_minutos)}</span><Button variant="link" size="sm" className="px-0" onClick={()=>onRegister(item)}>Registrar estudo</Button></div></li>)}</ul>:<p className="text-sm text-muted-foreground">Nenhuma sessão planejada para hoje. <Link to="/cronograma" className="text-primary underline">Organizar cronograma</Link></p>}
+  <DashboardCardActions><Button asChild variant="ghost" className="ml-auto"><Link to="/cronograma">Ver cronograma</Link></Button></DashboardCardActions>
+ </DashboardCardBody></DashboardCard>;
+}

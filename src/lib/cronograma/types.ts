@@ -11,6 +11,13 @@ export type ModoCriacao = "automatica" | "analitica" | "simplificada";
 export type Bloco = {
   id: string;
   user_id: string;
+  cronograma_id?: string | null;
+  concurso_id?: string | null;
+  data?: string;
+  fonte?: "cronograma_item" | "bloco_semanal";
+  cronograma_item_id?: string | null;
+  duracao_minutos?: number;
+  bloco_cronograma_id?: string | null;
   disciplina_id: string;
   topico_id?: string | null;
   topico_ids?: string[];
@@ -26,6 +33,45 @@ export type Bloco = {
   vigencia_inicio?: string | null;
   vigencia_fim?: string | null;
   vigencia_indeterminada?: boolean;
+};
+
+export type Planejamento = {
+  id: string;
+  user_id: string;
+  concurso_id: string;
+  nome: string;
+  tipo: "manual" | "automatico";
+  data_inicio: string;
+  data_fim: string | null;
+  dias_disponiveis: Bloco["dia_semana"][];
+  cargo: string | null;
+  ativo: boolean;
+  disciplinas: { disciplina_id: string; nome: string; ordem: number }[];
+};
+
+export type PlanejamentoForm = Pick<Planejamento, "nome" | "data_inicio" | "data_fim" | "dias_disponiveis" | "cargo">;
+export type DistribuicaoForm = {
+  disciplina_ids: string[];
+  dias_semana: Bloco["dia_semana"][];
+  hora_inicio: string;
+  hora_fim?: string;
+  duracao_minutos: number;
+  sessoes_por_semana: number;
+  tipo: string;
+  topico_ids: string[];
+};
+export type PlanejamentoResumo = {
+  minutos_planejados_semana: number;
+  minutos_estudados_semana: number;
+  disciplinas_count: number;
+  atividades_planejadas: number;
+  atividades_concluidas: number;
+  progresso_pct: number;
+  disciplinas: { disciplina_id: string; minutos_planejados: number; minutos_estudados: number; sessoes_semana: number; progresso_pct: number }[];
+  questoes_total: number;
+  acertos: number;
+  erros: number;
+  rendimento_pct: number;
 };
 
 export type SessaoStats = {

@@ -8,6 +8,11 @@ import {
 } from "@/lib/pomodoro/launchFromCronograma";
 
 describe("lançamento contextual do Pomodoro", () => {
+  it("preserva concurso, atividade e ocorrência semanal para registrar estudo real", () => {
+    const url = buildPomodoroLaunchUrlFromStudy({ source: "cronograma", disciplinaId: "d", topicoId: null, minutos: 60, concursoId: "c", blocoId: "b", dataReferencia: "2026-10-09" });
+    expect(parsePomodoroLaunchParams(new URLSearchParams(url.split("?")[1]))).toMatchObject({ concursoId: "c", blocoId: "b", dataReferencia: "2026-10-09" });
+    expect(parsePomodoroLaunchParams(new URLSearchParams("from=cronograma&disciplina_id=d&minutos=60&bloco_id=b&item_id=i"))).toBeNull();
+  });
   it("monta e interpreta o prefill vindo do dashboard", () => {
     const url = buildPomodoroLaunchUrlFromStudy({
       source: "dashboard",

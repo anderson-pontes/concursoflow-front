@@ -3,6 +3,7 @@ import { isAxiosError } from "axios";
 import { FileText, ImageIcon } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 
+import { useUnsavedChanges } from "@/hooks/useUnsavedChanges";
 import { FileDropZone } from "@/components/concursos/FileDropZone";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -21,9 +22,11 @@ function errorMessage(error: unknown) {
 
 export function EditalCreateForm({ onCancel, onCreated }: { onCancel: () => void; onCreated: (edital: EditalCatalogo) => void }) {
   const [values, setValues] = React.useState(EMPTY);
-  const mutation = useMutation({ mutationFn: criarEditalAdmin, onSuccess: onCreated });
+  const guardDialog = useUnsavedChanges(Object.values(values).some((value) => value !== null && value !== "") );
+  const mutation = useMutation({ mutationFn: criarEditalAdmin, onSuccess: (edital) => { guardDialog.markSaved(); onCreated(edital); } });
 
   return (
+    <>
     <form className="space-y-6" onSubmit={(event) => { event.preventDefault(); if (!scheduleIssue(values)) mutation.mutate(values); }}>
       <section className="space-y-4" aria-labelledby="novo-edital-dados">
         <div>
@@ -51,5 +54,7 @@ export function EditalCreateForm({ onCancel, onCreated }: { onCancel: () => void
         <Button type="submit" className="min-h-11" disabled={mutation.isPending || !values.nome.trim() || !values.orgao.trim() || !values.cargo_nome.trim()}>{mutation.isPending ? "Criando edital…" : "Criar e organizar conteúdo"}</Button>
       </div>
     </form>
+    {guardDialog.confirmDialog}
+    </>
   );
 }

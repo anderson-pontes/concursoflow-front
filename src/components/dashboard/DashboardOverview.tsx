@@ -1,4 +1,4 @@
-import { Calendar } from "lucide-react";
+import { Calendar, Flame, Target, Layers, CalendarCheck } from "lucide-react";
 import { Link } from "react-router-dom";
 
 import { KpiCard } from "@/components/dashboard/KpiCard";
@@ -56,15 +56,15 @@ export function DashboardWeeklySchedule({
           const items = schedule?.[day] ?? [];
           const isToday = day === today;
           return (
-            <div key={day} className={cn("flex min-h-[132px] flex-col rounded-lg border p-2", isToday ? "border-primary/50 bg-primary/5" : "border-border/60 bg-background/40")}>
+            <div key={day} className={cn("flex min-w-0 min-h-[132px] flex-col rounded-lg border p-2", isToday ? "border-primary/50 bg-primary/5" : "border-border/60 bg-background/40")}>
               <div className="mb-1.5 flex items-center justify-between">
                 <p className={cn("text-xs font-semibold uppercase tracking-wide", isToday ? "text-primary" : "text-muted-foreground")}>{diaAbrev[day]}</p>
                 {items.length > 0 ? <span className={cn("rounded-full px-1.5 text-xs font-medium tabular-nums", isToday ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground")}>{items.length}</span> : null}
               </div>
               <div className="flex flex-1 flex-col gap-1">
                 {items.slice(0, 2).map((item) => (
-                  <div key={item.id} className="rounded-md border border-border/50 bg-card px-1.5 py-1 shadow-sm">
-                    <div className="flex items-center gap-1"><span className={cn("size-2 shrink-0 rounded-full", getTipoDot(item.tipo))} /><span className="truncate text-xs font-medium">{disciplineNames.get(item.disciplina_id) ?? "Conteúdo indisponível"}</span></div>
+                  <div key={item.id} className="min-w-0 rounded-md border border-border/50 bg-card px-1.5 py-1 shadow-sm">
+                    <div className="flex items-center gap-1"><span className={cn("size-2 shrink-0 rounded-full", getTipoDot(item.tipo))} /><span className="min-w-0 truncate text-xs font-medium">{disciplineNames.get(item.disciplina_id) ?? "Conteúdo indisponível"}</span></div>
                     {item.topico_nome ? <span className="mt-0.5 block truncate pl-3 text-xs text-muted-foreground">{item.topico_nome}</span> : null}
                     <span className="mt-0.5 block pl-3 text-xs tabular-nums text-muted-foreground">{item.hora_inicio}</span>
                   </div>
@@ -82,11 +82,11 @@ export function DashboardWeeklySchedule({
 
 export function DashboardKpis({ summary }: { summary?: Summary }) {
   return (
-    <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-      <KpiCard label="Sequência" value={`${summary?.streak_dias ?? 0} dias`} sub="Dias consecutivos" badge={(summary?.streak_dias ?? 0) > 0 ? "Em dia" : "Comece hoje"} badgeVariant={(summary?.streak_dias ?? 0) > 0 ? "green" : "amber"} />
-      <KpiCard label="Rendimento" value={`${(summary?.rendimento_medio ?? 0).toFixed(1)}%`} sub="Média no período" badgeVariant={(summary?.rendimento_medio ?? 0) > 0 ? "green" : "amber"} />
-      <KpiCard label="Flashcards" value={compactNumber.format(summary?.flashcards_para_revisar ?? 0)} sub="Para revisar" badgeVariant={(summary?.flashcards_para_revisar ?? 0) > 0 ? "amber" : "green"} />
-      <KpiCard label="Cumprimento mês" value={`${(summary?.taxa_cumprimento_mes ?? 0).toFixed(0)}%`} sub={`${fmtBlocoMinutos(summary?.minutos_realizados_mes ?? 0)} estudadas de ${fmtBlocoMinutos(summary?.minutos_planejados_mes ?? 0)} planejadas`} badgeVariant={(summary?.taxa_cumprimento_mes ?? 0) >= 80 ? "green" : "amber"} />
+    <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-4">
+      <KpiCard icon={Flame} label="Sequência" value={`${summary?.streak_dias ?? 0} dias`} sub="Dias consecutivos" badge={(summary?.streak_dias ?? 0) > 0 ? "Em dia" : "Comece hoje"} badgeVariant={(summary?.streak_dias ?? 0) > 0 ? "green" : "amber"} />
+      <KpiCard icon={Target} label="Rendimento" value={`${(summary?.rendimento_medio ?? 0).toFixed(1)}%`} sub="Média no período" badgeVariant={(summary?.rendimento_medio ?? 0) > 0 ? "green" : "amber"} />
+      <KpiCard icon={Layers} label="Flashcards" value={compactNumber.format(summary?.flashcards_para_revisar ?? 0)} sub="Para revisar" badgeVariant={(summary?.flashcards_para_revisar ?? 0) > 0 ? "amber" : "green"} />
+      <KpiCard icon={CalendarCheck} label="Cumprimento mês" value={`${(summary?.taxa_cumprimento_mes ?? 0).toFixed(0)}%`} sub={`${fmtBlocoMinutos(summary?.minutos_realizados_mes ?? 0)} estudadas de ${fmtBlocoMinutos(summary?.minutos_planejados_mes ?? 0)} planejadas`} badgeVariant={(summary?.taxa_cumprimento_mes ?? 0) >= 80 ? "green" : "amber"} />
     </div>
   );
 }
