@@ -15,11 +15,13 @@ type CronogramaContextStatus =
 interface CronogramaContextStateProps {
   status: CronogramaContextStatus;
   onRetry: () => void;
+  errorMessage?: string;
 }
 
 export function CronogramaContextState({
   status,
   onRetry,
+  errorMessage,
 }: CronogramaContextStateProps): ReactNode | null {
   if (status === "hydrating") return <PageSkeleton cards={2} rows={3} />;
   if (status === "no_contest") {
@@ -39,7 +41,7 @@ export function CronogramaContextState({
         <header><h1 className="text-xl font-semibold tracking-tight text-foreground">Cronograma</h1></header>
         <div role="alert" className="rounded-xl border border-destructive/30 bg-card p-8 text-center">
           <h2 className="font-semibold">Não foi possível carregar o cronograma</h2>
-          <p className="mt-1 text-sm text-muted-foreground">Os dados anteriores foram ocultados. Tente novamente.</p>
+          <p className="mt-1 text-sm text-muted-foreground">{errorMessage ?? "Os dados anteriores foram ocultados. Tente novamente."}</p>
           <Button className="mt-5" onClick={onRetry}>Tentar novamente</Button>
         </div>
       </div>

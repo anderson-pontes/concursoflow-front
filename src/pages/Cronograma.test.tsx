@@ -43,6 +43,22 @@ beforeEach(() => {
 });
 
 describe("gerenciamento incremental do cronograma", () => {
+  it("keeps a missing API route distinct from a successful empty plan", async () => {
+    const { AxiosError } = await import("axios");
+    vi.mocked(api.get).mockImplementation(async url => {
+      if (url === "/cronograma/planejamento") throw new AxiosError("Not Found", undefined, undefined, undefined,
+        { status: 404, statusText: "Not Found", data: {}, headers: {}, config: {} as never });
+      return { data: [] } as never;
+    });
+    const rendered = setup();
+    expect(await screen.findByRole("alert")).toHaveTextContent("Recurso indisponível na API");
+    expect(screen.queryByRole("button", { name: "Criar cronograma" })).not.toBeInTheDocument();
+    expect(vi.mocked(api.get).mock.calls.filter(([url]) => url === "/cronograma/planejamento")).toHaveLength(1);
+    await userEvent.click(screen.getByRole("button", { name: "Tentar novamente" }));
+    await waitFor(() => expect(vi.mocked(api.get).mock.calls.filter(([url]) => url === "/cronograma/planejamento")).toHaveLength(2));
+    rendered.unmount();
+    client.clear();
+  });
   it("cria uma vez, inclui três disciplinas e conserva o ID após nova inclusão e remontagem", async () => {
     const user = userEvent.setup();
     const rendered = setup();

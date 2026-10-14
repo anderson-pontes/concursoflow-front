@@ -1,4 +1,5 @@
 import {useState} from 'react';
+import {apiUnavailableMessage} from '@/lib/apiQuery';
 import {Link} from 'react-router-dom';
 import {BookOpen,CheckCheck,Clock3,ListChecks} from 'lucide-react';
 import {Bar,BarChart,CartesianGrid,Line,LineChart,XAxis,YAxis} from 'recharts';
@@ -12,8 +13,8 @@ import {formatDashboardDuration as fmtMinutosEstudo} from '@/lib/dashboard/analy
 import {formatNumericDate} from '@/lib/dashboard/dates';
 import {percentBR,type DashboardAnalysis,type AnalysisDay,type AnalysisDiscipline} from '@/lib/dashboard/analysis';
 
-export function AnalyticsState({loading,error,retry}:{loading:boolean;error:boolean;retry:()=>void}) {
- return loading?<div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4" aria-label="Carregando indicadores">{[0,1,2,3].map(i=><Skeleton key={i} className="h-28 rounded-xl"/>)}</div>:error?<Card><CardContent className="pt-2"><p role="alert" className="text-sm">Não foi possível carregar os dados deste período.</p><Button className="mt-3" variant="outline" onClick={retry}>Tentar novamente</Button></CardContent></Card>:null;
+export function AnalyticsState({loading,error,retry,cause}:{loading:boolean;error:boolean;retry:()=>void;cause?:unknown}) {
+ return loading?<div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4" aria-label="Carregando indicadores">{[0,1,2,3].map(i=><Skeleton key={i} className="h-28 rounded-xl"/>)}</div>:error?<Card><CardContent className="pt-2"><p role="alert" className="text-sm">{apiUnavailableMessage(cause) ?? 'Não foi possível carregar os dados deste período.'}</p><Button className="mt-3" variant="outline" onClick={retry}>Tentar novamente</Button></CardContent></Card>:null;
 }
 export function DashboardPeriodKpis({data}:{data:DashboardAnalysis}) {
  const t=data.totais;

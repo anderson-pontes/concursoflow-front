@@ -271,9 +271,6 @@ export function CalendarioEstudos() {
     essentialLoading: isLoading || disciplinasLoading || blocosLoading,
     disciplinesLoaded: !disciplinasLoading,
     disciplinesCount: disciplinasVinculadas.length,
-    planLoaded: !isLoading,
-    plannedItemsCount: resumo?.dias_com_planejamento,
-    actionableItemsCount: resumo?.dias_com_planejamento,
   });
 
   if (contextStatus === "hydrating") return <PageSkeleton cards={2} rows={3} />;
@@ -290,9 +287,6 @@ export function CalendarioEstudos() {
     return <div className="space-y-6 pb-8"><header><h1 className="text-2xl font-semibold tracking-tight text-foreground">Calendário de estudos</h1></header><EmptyState title="Adicione disciplinas para montar o calendário" description="O calendário será criado a partir do conteúdo vinculado ao concurso ativo." action={<Button asChild><Link to="/disciplinas">Adicionar disciplinas</Link></Button>} /></div>;
   }
 
-  if (contextStatus === "no_plan") {
-    return <div className="space-y-6 pb-8"><header><h1 className="text-2xl font-semibold tracking-tight text-foreground">Calendário de estudos</h1></header><EmptyState title="Seu calendário ainda não tem planejamento" description="Crie um cronograma para distribuir as disciplinas ao longo do mês." action={<Button asChild><Link to="/cronograma">Criar cronograma</Link></Button>} /></div>;
-  }
 
   return (
     <div className="space-y-6 pb-8">
@@ -310,6 +304,10 @@ export function CalendarioEstudos() {
       />
 
       <CalendarioResumoMes resumo={resumo} />
+
+      {resumo?.dias_com_planejamento === 0 && (
+        <p className="text-sm text-muted-foreground">Nenhuma atividade planejada neste mês.</p>
+      )}
 
       <section className="rounded-xl border border-border bg-card p-4 shadow-sm">
         {isLoading ? (
