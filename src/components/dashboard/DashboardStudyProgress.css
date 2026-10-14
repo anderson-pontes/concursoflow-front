@@ -1,0 +1,75 @@
+.study-progress-card {
+  --study-progress-track: #e9eaf5;
+  --study-progress-top: #a66bfa;
+  --study-progress-bottom: #7138d3;
+  --study-progress-label: #fff;
+  min-width: 0;
+}
+.dark .study-progress-card { --study-progress-track: #29384f; }
+.study-progress-scroll {
+  overflow-x: auto;
+  padding: 4px;
+  border-radius: 12px;
+  scrollbar-width: thin;
+}
+.study-progress-scroll:focus-visible { outline: 2px solid var(--ring); }
+.study-progress-days { display: flex; gap: 10px; min-width: 100%; }
+.study-progress-day {
+  flex: 1 0 56px;
+  min-width: 0;
+  border-radius: 12px;
+  text-align: center;
+}
+.study-progress-day:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
+.study-progress-track {
+  display: block;
+  position: relative;
+  height: 224px;
+  overflow: hidden;
+  border-radius: 12px;
+  background: var(--study-progress-track);
+}
+.study-progress-fill {
+  position: absolute;
+  inset: auto 0 0;
+  height: var(--study-fill);
+  border-radius: inherit;
+  background: linear-gradient(to bottom, var(--study-progress-top), var(--study-progress-bottom));
+  transform-origin: bottom;
+  animation: study-progress-enter 650ms ease-out;
+  transition: height 450ms ease-out;
+}
+.study-progress-percent {
+  position: absolute;
+  inset-inline: 2px;
+  bottom: max(8px, calc(var(--study-fill) - 28px));
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.4;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  transition: bottom 450ms ease-out;
+}
+.study-progress-percent-filled {
+  color: var(--study-progress-label);
+  background: var(--study-progress-bottom);
+  width: fit-content;
+  max-width: calc(100% - 4px);
+  margin-inline: auto;
+  padding-inline: 4px;
+  border-radius: 4px;
+}
+.study-progress-date { display: block; margin-top: 8px; font-size: 11px; font-variant-numeric: tabular-nums; }
+@keyframes study-progress-enter { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+@media (max-width: 640px) {
+  .study-progress-days { gap: 8px; }
+  .study-progress-day { flex-basis: 52px; }
+  .study-progress-track { height: 192px; border-radius: 10px; }
+  .study-progress-percent { font-size: 10px; }
+  .study-progress-percent-filled { padding-inline: 2px; }
+  .study-progress-date { font-size: 10px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .study-progress-fill { animation: none; transition: none; }
+  .study-progress-percent { transition: none; }
+}

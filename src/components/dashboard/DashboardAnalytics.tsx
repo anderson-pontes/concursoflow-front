@@ -2,11 +2,12 @@ import {useState} from 'react';
 import {apiUnavailableMessage} from '@/lib/apiQuery';
 import {Link} from 'react-router-dom';
 import {BookOpen,CheckCheck,Clock3,ListChecks} from 'lucide-react';
-import {Bar,BarChart,CartesianGrid,Line,LineChart,XAxis,YAxis} from 'recharts';
+import {CartesianGrid,Line,LineChart,XAxis,YAxis} from 'recharts';
 import {ChartContainer,ChartTooltip} from '@/components/ui/chart';
 import {CardContent,CardTitle,CardDescription} from '@/components/ui/card';
 import {DashboardCard as Card,DashboardCardHeader as CardHeader,DashboardCardActions,DashboardEmptyPlot} from '@/components/dashboard/DashboardCard';
 import {Button} from '@/components/ui/button';
+import {DashboardStudyProgress} from '@/components/dashboard/DashboardStudyProgress';
 import {Skeleton} from '@/components/ui/skeleton';
 import {getDisciplinaPalette} from '@/components/disciplinas/disciplinaPalettes';
 import {formatDashboardDuration as fmtMinutosEstudo} from '@/lib/dashboard/analysis';
@@ -30,15 +31,11 @@ function DailyTooltip({day,accuracy}:{day?:AnalysisDay;accuracy:boolean}) {
  if(!day)return null;
  return <div className="rounded-lg border border-border bg-popover p-3 text-xs text-popover-foreground shadow-md"><p className="mb-2 font-semibold">{formatNumericDate(day.data)}</p>{accuracy?<><p>{percentBR(day.acertos_pct)}</p><p>{day.acertos} acertos / {day.questoes_total} questões</p></>:<><p>Planejado: {fmtMinutosEstudo(day.minutos_planejados)}</p><p>Estudado: {fmtMinutosEstudo(day.minutos_estudados)}</p></>}</div>;
 }
-const timeConfig={minutos_planejados:{label:'Planejado',color:'var(--primary)'},minutos_estudados:{label:'Realizado',color:'var(--dashboard-time)'}};
 const accuracyConfig={acertos_pct:{label:'Acertos',color:'var(--dashboard-success)'}};
 export function DashboardDailyCharts({data}:{data:DashboardAnalysis}) {
- const hasTime=data.dias.some(d=>d.minutos_planejados||d.minutos_estudados);
  const hasQuestions=data.dias.some(d=>d.questoes_total>0);
  return <div data-dashboard-row="daily" className="grid items-start gap-4 xl:items-stretch xl:grid-cols-2">
-  <Card><CardHeader className="flex flex-col gap-1"><CardTitle>Planejado × realizado</CardTitle><CardDescription>Tempo diário no período selecionado</CardDescription></CardHeader><CardContent className="flex flex-1 flex-col gap-3">
-   <div className="flex min-h-6 flex-wrap gap-4 text-xs"><span><i className="mr-1 inline-block size-2.5 rounded-sm bg-primary" aria-hidden/>Planejado</span><span><i className="mr-1 inline-block size-2.5 rounded-sm bg-dashboard-time" aria-hidden/>Realizado</span></div>{hasTime?<ChartContainer config={timeConfig} className="h-64 w-full aspect-auto"><BarChart data={data.dias} accessibilityLayer margin={{left:-12,right:8}}><CartesianGrid vertical={false}/><XAxis dataKey="data" tickFormatter={d=>String(d).slice(8,10)+'/'+String(d).slice(5,7)} tickLine={false} minTickGap={24}/><YAxis tickFormatter={v=>fmtMinutosEstudo(Number(v))} width={64} tickLine={false}/><ChartTooltip content={({active,payload})=>active?<DailyTooltip day={payload?.[0]?.payload as AnalysisDay|undefined} accuracy={false}/>:null}/><Bar dataKey="minutos_planejados" fill="var(--primary)" radius={[3,3,0,0]} isAnimationActive={false}/><Bar dataKey="minutos_estudados" fill="var(--dashboard-time)" radius={[3,3,0,0]} isAnimationActive={false}/></BarChart></ChartContainer>:<DashboardEmptyPlot to="/cronograma" action="Planejar estudos">Nenhum planejamento ou estudo neste período.</DashboardEmptyPlot>}
-  </CardContent></Card>
+  <DashboardStudyProgress days={data.dias}/>
   <Card><CardHeader className="flex flex-col gap-1"><CardTitle>Evolução dos acertos</CardTitle><CardDescription>Acertos ÷ questões respondidas · dias sem questões não têm percentual</CardDescription></CardHeader><CardContent className="flex flex-1 flex-col gap-3"><div className="flex min-h-6 items-center gap-1 text-xs"><i className="inline-block size-2.5 rounded-sm bg-dashboard-success" aria-hidden/>Acertos</div>{hasQuestions?<ChartContainer config={accuracyConfig} className="h-64 w-full aspect-auto"><LineChart data={data.dias} accessibilityLayer margin={{left:-12,right:8}}><CartesianGrid vertical={false}/><XAxis dataKey="data" tickFormatter={d=>String(d).slice(8,10)+'/'+String(d).slice(5,7)} tickLine={false} minTickGap={24}/><YAxis domain={[0,100]} tickFormatter={v=>`${v}%`} width={50} tickLine={false}/><ChartTooltip content={({active,payload})=>active?<DailyTooltip day={payload?.[0]?.payload as AnalysisDay|undefined} accuracy/>:null}/><Line dataKey="acertos_pct" name="Acertos" stroke="var(--dashboard-success)" strokeWidth={3} connectNulls={false} dot={{r:3}} isAnimationActive={false}/></LineChart></ChartContainer>:<DashboardEmptyPlot to="/estudos/historico" action="Ver registros de estudo">Sem questões respondidas neste período. Registre acertos e erros ao estudar.</DashboardEmptyPlot>}</CardContent></Card>
   <details className="min-w-0 rounded-lg border border-border px-4 py-3 text-sm xl:col-span-2"><summary className="cursor-pointer font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">Ver dados dos gráficos</summary><div className="relative mt-3 overflow-x-auto"><table className="w-full text-left text-xs"><caption className="sr-only">Dados diários do período</caption><thead><tr>{['Data','Planejado','Realizado','Acertos','Respondidas','Taxa'].map(s=><th key={s} className="p-2">{s}</th>)}</tr></thead><tbody>{data.dias.map(d=><tr key={d.data} className="border-t border-border"><td className="p-2 whitespace-nowrap">{formatNumericDate(d.data)}</td><td>{fmtMinutosEstudo(d.minutos_planejados)}</td><td>{fmtMinutosEstudo(d.minutos_estudados)}</td><td>{d.acertos}</td><td>{d.questoes_total}</td><td>{percentBR(d.acertos_pct)}</td></tr>)}</tbody></table></div></details>
  </div>;
