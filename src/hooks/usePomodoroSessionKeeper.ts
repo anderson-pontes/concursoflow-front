@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 import { useQueryClient, type QueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
@@ -7,7 +7,6 @@ import { playBeep, playCompletionSound } from "@/lib/pomodoro/sounds";
 import { getFocusTotalSeconds } from "@/lib/pomodoro/duration";
 import { pauseFocus } from "@/lib/pomodoro/wallClock";
 import { completePomodoroRevision } from "@/lib/revisoes/completePomodoroRevision";
-import { api } from "@/services/api";
 import { usePomodoroStore } from "@/stores/pomodoroStore";
 import { usePomodoroSessionStore } from "@/stores/pomodoroSessionStore";
 import { useRevisaoPomodoroStore } from "@/stores/revisaoPomodoroStore";
@@ -15,9 +14,9 @@ import { useRevisaoPomodoroStore } from "@/stores/revisaoPomodoroStore";
 let completingPhase = false;
 
 /**
- * Auto-salva sessão de foco e avança fase (pausa / próximo ciclo / fim).
- * Seguro para chamar fora da página /pomodoro (aba ou rota diferente).
- * @returns true se a fase avançou; false se abortou (ex.: falha no registro).
+ * Auto-salva sessÃ£o de foco e avanÃ§a fase (pausa / prÃ³ximo ciclo / fim).
+ * Seguro para chamar fora da pÃ¡gina /pomodoro (aba ou rota diferente).
+ * @returns true se a fase avanÃ§ou; false se abortou (ex.: falha no registro).
  */
 export async function completePomodoroCountdownPhase(queryClient: QueryClient): Promise<boolean> {
   if (completingPhase) return false;
@@ -31,7 +30,7 @@ export async function completePomodoroCountdownPhase(queryClient: QueryClient): 
   completingPhase = true;
   try {
     const now = Date.now();
-    // Congela imediatamente (countdown + foco) para o tick seguinte não reentrar
+    // Congela imediatamente (countdown + foco) para o tick seguinte nÃ£o reentrar
     usePomodoroSessionStore.setState({
       isRunning: false,
       countdown: { remainingSeconds: 0, deadlineAt: null },
@@ -56,7 +55,7 @@ export async function completePomodoroCountdownPhase(queryClient: QueryClient): 
         ),
       );
 
-      // Sem disciplina/início não há o que registrar — ainda assim encerra o bloco
+      // Sem disciplina/inÃ­cio nÃ£o hÃ¡ o que registrar â€” ainda assim encerra o bloco
       if (startMs && config.disciplinaId) {
         const duracaoMinutos = Math.max(1, Math.round(focusSeconds / 60));
         try {
@@ -69,31 +68,21 @@ export async function completePomodoroCountdownPhase(queryClient: QueryClient): 
             });
             if (result !== "success") {
               toast.error(result === "conflict"
-                ? "A revisão foi alterada. Volte à Central para atualizar os dados."
-                : "Erro ao concluir a revisão. Toque em Retomar para tentar novamente.");
+                ? "A revisÃ£o foi alterada. Volte Ã  Central para atualizar os dados."
+                : "Erro ao concluir a revisÃ£o. Toque em Retomar para tentar novamente.");
               return false;
             }
-            toast.success(`Revisão concluída (${duracaoMinutos} min).`);
+            toast.success(`RevisÃ£o concluÃ­da (${duracaoMinutos} min).`);
             usePomodoroSessionStore.getState().reset();
             return true;
           } else {
-            await api.post("/sessoes-estudo", {
-              disciplina_id: config.disciplinaId,
-              topico_id: config.topicoId || null,
-              topico_ids: config.topicoId ? [config.topicoId] : [],
-              inicio: new Date(startMs).toISOString(),
-              fim: new Date(endMs).toISOString(),
-              duracao_minutos: duracaoMinutos,
-              tempo_estudo_segundos: focusSeconds,
-              tipo: config.mode === "pomodoro" ? "pomodoro" : "livre",
-              pomodoros_concluidos: config.mode === "pomodoro" ? 1 : 0,
-              anotacoes: null,
-            });
-            toast.success(`Sessão registrada (${duracaoMinutos} min).`);
+            usePomodoroSessionStore.setState({ pendingRegistration: true });
+            toast.info("SessÃ£o concluÃ­da. Revise os dados antes de salvar.");
+            return false;
           }
         } catch {
-          toast.error("Erro ao registrar sessão. Toque em Retomar para tentar novamente.");
-          // Mantém sessão pausada em 00:00 — Retomar dispara novo attempt via deadline
+          toast.error("Erro ao registrar sessÃ£o. Toque em Retomar para tentar novamente.");
+          // MantÃ©m sessÃ£o pausada em 00:00 â€” Retomar dispara novo attempt via deadline
           return false;
         }
       }
@@ -106,7 +95,7 @@ export async function completePomodoroCountdownPhase(queryClient: QueryClient): 
       const next = session.cycleIndex + 1;
       if (next >= config.cyclesTarget) {
         usePomodoroSessionStore.getState().reset();
-        toast.success("Todos os ciclos concluídos!");
+        toast.success("Todos os ciclos concluÃ­dos!");
         return true;
       }
 
@@ -122,7 +111,7 @@ export async function completePomodoroCountdownPhase(queryClient: QueryClient): 
   }
 }
 
-/** Mantém o relógio vivo em qualquer rota autenticada + catch-up ao voltar à aba. */
+/** Mantem o relogio vivo em qualquer rota autenticada e sincroniza ao voltar a aba. */
 export function usePomodoroSessionKeeper() {
   const qc = useQueryClient();
   const hasSession = usePomodoroSessionStore((s) => s.hasSession);
@@ -151,7 +140,7 @@ export function usePomodoroSessionKeeper() {
       }
     };
 
-    // Tick só precisa refresh de UI enquanto corre; visibility/focus sempre sync (catch-up)
+    // Tick sÃ³ precisa refresh de UI enquanto corre; visibility/focus sempre sync (catch-up)
     const id = isRunning ? window.setInterval(sync, 1000) : undefined;
     const onVis = () => {
       if (document.visibilityState === "visible") sync();

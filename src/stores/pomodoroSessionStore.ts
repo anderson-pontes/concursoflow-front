@@ -34,6 +34,8 @@ export type PomodoroSessionState = {
   partialClock: FocusClock;
   /** Epoch do primeiro start do bloco de foco atual (`inicio` na API). */
   sessionStartedAt: number | null;
+  sessionContext: { disciplinaNome?: string; topicoNome?: string } | null;
+  pendingRegistration: boolean;
   clockTick: number;
 
   getDisplayRemaining: (now?: number) => number;
@@ -42,6 +44,7 @@ export type PomodoroSessionState = {
   getPartialSeconds: (now?: number) => number;
 
   bumpTick: () => void;
+  setSessionContext: (context: { disciplinaNome?: string; topicoNome?: string } | null) => void;
   startSession: (opts: { timerKind: SessionTimerKind; focusTotalSeconds: number }) => void;
   pause: () => void;
   resume: () => void;
@@ -74,6 +77,8 @@ export const usePomodoroSessionStore = create<PomodoroSessionState>()(
       focusClock: idleFocus(),
       partialClock: idleFocus(),
       sessionStartedAt: null,
+      sessionContext: null,
+      pendingRegistration: false,
       clockTick: 0,
 
       getDisplayRemaining: (now = Date.now()) => getCountdownRemaining(get().countdown, now),
@@ -83,6 +88,8 @@ export const usePomodoroSessionStore = create<PomodoroSessionState>()(
         Math.max(1, Math.round(getFocusElapsedMs(get().partialClock, now) / 1000)),
 
       bumpTick: () => set((s) => ({ clockTick: s.clockTick + 1 })),
+
+      setSessionContext: (sessionContext) => set({ sessionContext }),
 
       startSession: ({ timerKind, focusTotalSeconds }) => {
         const now = Date.now();
@@ -145,6 +152,8 @@ export const usePomodoroSessionStore = create<PomodoroSessionState>()(
           focusClock: idleFocus(),
           partialClock: idleFocus(),
           sessionStartedAt: null,
+          sessionContext: null,
+          pendingRegistration: false,
           clockTick: get().clockTick + 1,
         }),
 
@@ -161,6 +170,8 @@ export const usePomodoroSessionStore = create<PomodoroSessionState>()(
           focusClock: idleFocus(),
           partialClock: idleFocus(),
           sessionStartedAt: null,
+          sessionContext: get().sessionContext,
+          pendingRegistration: false,
           clockTick: get().clockTick + 1,
         });
       },
@@ -177,6 +188,8 @@ export const usePomodoroSessionStore = create<PomodoroSessionState>()(
           focusClock: armFocus(0, now),
           partialClock: armFocus(0, now),
           sessionStartedAt: now,
+          sessionContext: get().sessionContext,
+          pendingRegistration: false,
           clockTick: get().clockTick + 1,
         });
       },
@@ -194,6 +207,8 @@ export const usePomodoroSessionStore = create<PomodoroSessionState>()(
           focusClock: armFocus(0, now),
           partialClock: armFocus(0, now),
           sessionStartedAt: now,
+          sessionContext: s.sessionContext,
+          pendingRegistration: false,
           cycleIndex: s.cycleIndex,
           clockTick: s.clockTick + 1,
         });
@@ -213,6 +228,8 @@ export const usePomodoroSessionStore = create<PomodoroSessionState>()(
         focusClock: s.focusClock,
         partialClock: s.partialClock,
         sessionStartedAt: s.sessionStartedAt,
+        sessionContext: s.sessionContext,
+        pendingRegistration: s.pendingRegistration,
       }),
     },
   ),

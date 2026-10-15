@@ -1,8 +1,10 @@
-import React from "react";
+﻿import React from "react";
+import { createPortal } from "react-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Play, Pause, Square, RotateCcw, Save, StopCircle, Minimize2 } from "lucide-react";
 
 import { CircularArc } from "@/components/pomodoro/CircularArc";
+import { ResponsiveTimerText } from "@/components/pomodoro/ResponsiveTimerText";
 import { RegistroEstudoModal } from "@/components/estudos/RegistroEstudoModal";
 import type { RegistroDefaultTopico } from "@/components/estudos/RegistroEstudoModal";
 import { MODE_LABELS } from "@/lib/pomodoro/constants";
@@ -82,16 +84,25 @@ export function PomodoroTimer({
   const getPartialSeconds = usePomodoroSessionStore((s) => s.getPartialSeconds);
   const getFocusSeconds = usePomodoroSessionStore((s) => s.getFocusSeconds);
   const sessionStartedAt = usePomodoroSessionStore((s) => s.sessionStartedAt);
+  const pendingRegistration = usePomodoroSessionStore((s) => s.pendingRegistration);
+  const setSessionContext = usePomodoroSessionStore((s) => s.setSessionContext);
 
   const [immersive, setImmersive] = React.useState(false);
   const [registroOpen, setRegistroOpen] = React.useState(false);
   const [registroSnapshot, setRegistroSnapshot] = React.useState<RegistroSnapshot | null>(null);
   const [finishingRevision, setFinishingRevision] = React.useState(false);
+  const pendingPromptedRef = React.useRef(false);
 
   const canStart = Boolean(disciplinaId);
   const isActive = hasSession;
 
-  // Lê wall-clock a cada tick (e nos renders)
+  React.useEffect(() => {
+    if (disciplinaNome || topicoNome) {
+      setSessionContext({ disciplinaNome, topicoNome });
+    }
+  }, [disciplinaNome, setSessionContext, topicoNome]);
+
+  // LÃª wall-clock a cada tick (e nos renders)
   void clockTick;
   const remainingSeconds = getDisplayRemaining();
   const elapsedSeconds = getDisplayElapsed();
@@ -103,6 +114,15 @@ export function PomodoroTimer({
   React.useEffect(() => {
     if (isActive && !compact) setImmersive(true);
   }, [isActive, compact]);
+
+  React.useEffect(() => {
+    if (!isActive || !immersive || typeof document === "undefined") return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [immersive, isActive]);
 
   const { data: topicos } = useQuery({
     queryKey: ["pomodoro-topicos-timer", disciplinaId],
@@ -122,7 +142,7 @@ export function PomodoroTimer({
     return [{ id: topicoId, nome: found?.descricao ?? topicoNome ?? "" }];
   }, [topicoId, topicos, topicoNome]);
 
-  // Mudança de modo invalida a sessão em andamento (duração pode mudar via config sem derrubar)
+  // MudanÃ§a de modo invalida a sessÃ£o em andamento (duraÃ§Ã£o pode mudar via config sem derrubar)
   const prevModeRef = React.useRef(mode);
   React.useEffect(() => {
     const prev = prevModeRef.current;
@@ -150,11 +170,11 @@ export function PomodoroTimer({
   const confirmReset = () => {
     if (!hasSession) return;
     void requestConfirmation({
-      title: revisionMode ? "Descartar revisão em andamento?" : "Cancelar sessão atual?",
+      title: revisionMode ? "Descartar revisÃ£o em andamento?" : "Cancelar sessÃ£o atual?",
       description: revisionMode
-        ? "O tempo desta tentativa não será registrado e a revisão continuará pendente."
-        : "O tempo desta sessão não será salvo automaticamente. Esta ação não pode ser desfeita.",
-      confirmLabel: revisionMode ? "Descartar tentativa" : "Cancelar sessão",
+        ? "O tempo desta tentativa nÃ£o serÃ¡ registrado e a revisÃ£o continuarÃ¡ pendente."
+        : "O tempo desta sessÃ£o nÃ£o serÃ¡ salvo automaticamente. Esta aÃ§Ã£o nÃ£o pode ser desfeita.",
+      confirmLabel: revisionMode ? "Descartar tentativa" : "Cancelar sessÃ£o",
       variant: "destructive",
     }).then((confirmed) => {
       if (!confirmed) return;
@@ -195,10 +215,20 @@ export function PomodoroTimer({
     [disciplinaId, hasSession, phase, getPartialSeconds, pause, topicoDefaultList],
   );
 
+  React.useEffect(() => {
+    if (!pendingRegistration) {
+      pendingPromptedRef.current = false;
+      return;
+    }
+    if (pendingPromptedRef.current || registroOpen || revisionMode) return;
+    pendingPromptedRef.current = true;
+    openModalWithSnapshot(false);
+  }, [openModalWithSnapshot, pendingRegistration, registroOpen, revisionMode]);
+
   const endBreak = React.useCallback(() => {
     void requestConfirmation({
       title: "Encerrar a pausa atual?",
-      description: "O estudo concluído já foi registrado. Esta ação encerra o ciclo atual sem criar outro registro.",
+      description: "O estudo concluÃ­do jÃ¡ foi registrado. Esta aÃ§Ã£o encerra o ciclo atual sem criar outro registro.",
       confirmLabel: "Encerrar ciclo",
       variant: "destructive",
     }).then((confirmed) => {
@@ -272,25 +302,29 @@ export function PomodoroTimer({
     return () => window.removeEventListener("keydown", onKey);
   }, [isActive, isRunning, pause, resume]);
 
-  const contextLabel = [disciplinaNome, topicoNome].filter(Boolean).join(" · ");
+  const contextLabel = [disciplinaNome, topicoNome].filter(Boolean).join(" Â· ");
 
-  return (
+  const content = (
     <>
       {compact ? <div className="rounded-xl border border-border bg-card p-4 text-card-foreground">
-        <h2 className="text-base font-semibold">Cronômetro de estudo</h2>
-        <p className="mt-1 text-xs text-muted-foreground">{MODE_LABELS[mode]} · Mesma sessão do Pomodoro</p>
-        <div className="relative mx-auto my-4 size-48"><CircularArc progress={isActive ? arcProgress : 0} size={192} stroke={9} className="stroke-primary" /><div className="absolute inset-0 flex flex-col items-center justify-center"><span className="text-3xl font-semibold tabular-nums">{isActive ? displayTime : idleTime}</span><span className="mt-1 text-xs text-muted-foreground">{isActive ? isRunning ? "Estudando" : "Pausado" : "Pronto para iniciar"}</span></div></div>
+        <h2 className="text-base font-semibold">CronÃ´metro de estudo</h2>
+        <p className="mt-1 text-xs text-muted-foreground">{MODE_LABELS[mode]} Â· Mesma sessÃ£o do Pomodoro</p>
+        <div className="relative mx-auto my-4 size-48"><CircularArc progress={isActive ? arcProgress : 0} size={192} stroke={9} className="stroke-primary" /><div className="absolute inset-0 flex flex-col items-center justify-center"><ResponsiveTimerText value={isActive ? displayTime : idleTime} compact /><span className="mt-1 text-xs text-muted-foreground">{isActive ? isRunning ? "Estudando" : "Pausado" : "Pronto para iniciar"}</span></div></div>
         <p className="mb-3 break-words text-center text-sm">{contextLabel || "Selecione uma atividade para estudar"}</p>
         <div className="flex flex-wrap justify-center gap-2">
-          {!hasSession ? <Button disabled={!canStart} onClick={start}><Play />Iniciar</Button> : <><Button variant="outline" onClick={isRunning ? pause : resume}>{isRunning ? <Pause /> : <Play />}{isRunning ? "Pausar" : "Retomar"}</Button><Button onClick={finishCurrentPhase}>{phase === "pausa" ? "Encerrar pausa" : "Encerrar e salvar"}</Button><Button variant="ghost" onClick={confirmReset}>Cancelar</Button></>}
+          {!hasSession ? <Button disabled={!canStart} onClick={start}><Play />Iniciar</Button> : <><Button variant="outline" onClick={isRunning ? pause : resume}>{isRunning ? <Pause /> : <Play />}{isRunning ? "Pausar" : "Retomar"}</Button><Button onClick={finishCurrentPhase}>{phase === "pausa" ? "Encerrar pausa" : "Finalizar sessÃ£o"}</Button><Button variant="ghost" onClick={confirmReset}>Cancelar</Button></>}
         </div>
       </div> : <>
+      {isActive && immersive ? <div className="fixed inset-0 z-[170] bg-black/55 backdrop-blur-md" aria-hidden="true" /> : null}
       <div
+        role={isActive && immersive ? "dialog" : undefined}
+        aria-modal={isActive && immersive ? true : undefined}
+        aria-label={isActive && immersive ? "Modo foco imersivo" : undefined}
         className={cn(
           "relative overflow-hidden rounded-3xl border transition-all duration-300",
           theme.shell,
           isActive && immersive
-            ? "min-h-[min(68dvh,600px)] border-primary/30 shadow-2xl shadow-primary/10"
+            ? "fixed inset-0 z-[180] flex min-h-screen flex-col justify-center rounded-none border-primary/30 bg-indigo-950/95 p-4 shadow-2xl shadow-primary/10 backdrop-blur-md sm:p-8"
             : "border-border shadow-sm",
         )}
       >
@@ -305,6 +339,7 @@ export function PomodoroTimer({
         {isActive ? (
           <div className="relative flex items-center justify-between px-5 pt-5">
             <div className="flex items-center gap-2">
+              {immersive ? <span className="mr-2 text-sm font-semibold text-white/80">ClickEdital</span> : null}
               <span
                 className={cn(
                   "h-2 w-2 rounded-full",
@@ -345,20 +380,18 @@ export function PomodoroTimer({
             <p className="mb-6 max-w-sm truncate text-center text-sm font-medium text-white/50">{contextLabel}</p>
           ) : null}
 
-          <div className="relative mx-auto h-[240px] w-[240px] sm:h-[260px] sm:w-[260px]">
+          <div className="relative mx-auto h-[clamp(260px,28vw,360px)] w-[clamp(260px,28vw,360px)]">
             <div className="absolute inset-0 flex items-center justify-center">
               <CircularArc
                 progress={isActive ? arcProgress : 0}
-                size={260}
+                size={360}
                 stroke={11}
                 className={theme.arc}
               />
             </div>
             <div className={cn("absolute inset-4 rounded-full border sm:inset-5", theme.ring)} />
             <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <span className="font-mono text-5xl font-black tracking-tight text-white sm:text-6xl">
-                {isActive ? displayTime : idleTime}
-              </span>
+              <ResponsiveTimerText value={isActive ? displayTime : idleTime} />
               <span className="mt-2 text-[11px] font-semibold uppercase tracking-widest text-white/35">
                 {isActive
                   ? isCronometro
@@ -392,19 +425,20 @@ export function PomodoroTimer({
                   className="h-12 gap-2 rounded-2xl bg-primary px-8 text-base font-bold text-primary-foreground shadow-lg shadow-primary/30 hover:bg-primary-700"
                 >
                   <Play className="h-5 w-5 fill-current" />
-                  Iniciar sessão
+                  Iniciar sessÃ£o
                 </Button>
               )
             ) : isRunning ? (
               <>
                 <button
                   type="button"
-                  title="Pausar (espaço)"
-                  aria-label="Pausar (espaço)"
+                  title="Pausar (espaÃ§o)"
+                  aria-label="Pausar (espaÃ§o)"
                   onClick={() => pause()}
-                  className="flex h-14 w-14 items-center justify-center rounded-full border border-white/15 bg-white/10 text-white backdrop-blur-sm transition-transform hover:scale-105"
+                  className="flex h-12 items-center justify-center gap-2 rounded-full border border-white/15 bg-white/10 px-5 text-sm font-semibold text-white backdrop-blur-sm transition-transform hover:scale-105"
                 >
                   <Pause className="h-6 w-6" />
+                  Pausar
                 </button>
                 {!revisionMode ? (
                   <button
@@ -428,15 +462,15 @@ export function PomodoroTimer({
                 >
                   <StopCircle className="h-5 w-5" />
                   {finishingRevision
-                    ? "Concluindo…"
+                    ? "Concluindoâ€¦"
                     : phase === "pausa"
                       ? "Encerrar pausa"
-                      : revisionMode ? "Concluir revisão" : "Encerrar e salvar"}
+                      : revisionMode ? "Concluir revisÃ£o" : "Finalizar sessÃ£o"}
                 </button>
                 <button
                   type="button"
-                  title="Cancelar sessão"
-                  aria-label="Cancelar sessão"
+                  title="Cancelar sessÃ£o"
+                  aria-label="Cancelar sessÃ£o"
                   onClick={confirmReset}
                   className="flex h-12 w-12 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white/50 transition-transform hover:scale-105 hover:text-white/80"
                 >
@@ -447,12 +481,13 @@ export function PomodoroTimer({
               <>
                 <button
                   type="button"
-                  title="Retomar (espaço)"
-                  aria-label="Retomar (espaço)"
+                  title="Retomar (espaÃ§o)"
+                  aria-label="Retomar (espaÃ§o)"
                   onClick={resume}
-                  className="flex h-16 w-16 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg shadow-primary/40 transition-transform hover:scale-105"
+                  className="flex h-12 items-center justify-center gap-2 rounded-full bg-primary px-5 text-sm font-bold text-primary-foreground shadow-lg shadow-primary/40 transition-transform hover:scale-105"
                 >
-                  <Play className="h-7 w-7 fill-current" />
+                  <Play className="h-5 w-5 fill-current" />
+                  Continuar
                 </button>
                 <button
                   type="button"
@@ -462,10 +497,10 @@ export function PomodoroTimer({
                 >
                   <StopCircle className="h-4 w-4" />
                   {finishingRevision
-                    ? "Concluindo…"
+                    ? "Concluindoâ€¦"
                     : phase === "pausa"
                       ? "Encerrar pausa"
-                      : revisionMode ? "Concluir revisão" : "Encerrar e salvar"}
+                      : revisionMode ? "Concluir revisÃ£o" : "Finalizar sessÃ£o"}
                 </button>
                 <button
                   type="button"
@@ -481,7 +516,7 @@ export function PomodoroTimer({
           </div>
 
           {isActive ? (
-            <p className="mt-6 text-[11px] text-white/30">Atalho: barra de espaço para pausar/retomar</p>
+            <p className="mt-6 text-[11px] text-white/30">Atalho: barra de espaÃ§o para pausar/retomar</p>
           ) : null}
         </div>
       </div>
@@ -507,4 +542,10 @@ export function PomodoroTimer({
       {confirmDialog}
     </>
   );
+
+  if (isActive && immersive && typeof document !== "undefined") {
+    return createPortal(content, document.body);
+  }
+
+  return content;
 }

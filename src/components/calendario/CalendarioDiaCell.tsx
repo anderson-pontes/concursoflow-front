@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils";
 import type { CalendarioDia, DiaStatus, PlanejadoItem } from "@/lib/calendario/types";
 import { STATUS_CELL_CLASS, STATUS_DOT_CLASS, STATUS_LABEL } from "@/lib/calendario/constants";
 import { fmtMinutosEstudo } from "@/lib/calendario/format";
-import { getDisciplinaPalette } from "@/components/disciplinas/disciplinaPalettes";
+import { getDisciplinaColor, getDisciplinaPalette } from "@/components/disciplinas/disciplinaPalettes";
 
 type Props = {
   dia: CalendarioDia | null;
@@ -115,6 +115,7 @@ export function CalendarioDiaCell({ dia, diaNumero, isCurrentMonth, isToday, onC
               <div
                 key={disciplina.disciplinaId}
                 className={cn("min-w-0 rounded-md border px-1.5 py-1 shadow-sm", palette.calendarItem)}
+                style={{ backgroundColor: getDisciplinaColor(disciplina.disciplinaId).soft, borderColor: getDisciplinaColor(disciplina.disciplinaId).color, color: getDisciplinaColor(disciplina.disciplinaId).onSoft }}
               >
                 <p className="truncate text-[11px] font-semibold leading-tight sm:text-xs">
                   {disciplina.nome}

@@ -4,7 +4,7 @@ import { CalendarDays, ChevronLeft, ChevronRight, Check } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { getDisciplinaPalette } from "@/components/disciplinas/disciplinaPalettes";
+import { getDisciplinaColor, getDisciplinaPalette } from "@/components/disciplinas/disciplinaPalettes";
 import { useCalendarioMensal } from "@/hooks/useCalendarioMensal";
 import { fmtMesAno } from "@/lib/calendario/format";
 import { calendarioHref } from "@/lib/calendario/urlParams";
@@ -76,7 +76,7 @@ export function DashboardMiniCalendar({ concursoId, disciplineNames, timezone = 
         const hasStudy = (row?.minutos_realizados ?? 0) > 0;
         const hasPlan = (row?.minutos_planejados ?? 0) > 0;
         const label = `${fmtDateBR(iso)}${iso === today ? ", hoje" : ""}${hasPlan ? `, ${duration(row!.minutos_planejados)} planejados` : ""}${hasStudy ? `, ${duration(row!.minutos_realizados)} estudados` : ""}`;
-        return <button type="button" key={iso} aria-label={label} aria-pressed={selected === iso} aria-current={iso === today ? "date" : undefined} title={label} onClick={() => setSelected(iso)} className={cn("flex min-h-11 min-w-0 flex-col items-center justify-center rounded-lg border border-transparent px-0.5 text-xs tabular-nums transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring", selected === iso && "border-primary/50 bg-primary/10 font-semibold", iso === today && "ring-1 ring-primary ring-inset")}><span>{day}</span><span className="flex min-h-2 items-center gap-0.5" aria-hidden="true">{disciplines.slice(0, 3).map(id => <span key={id} className={cn("size-1.5 rounded-full", getDisciplinaPalette(id).progressFill)} />)}{hasStudy && <Check className="size-2.5 text-success" />}</span></button>;
+        return <button type="button" key={iso} aria-label={label} aria-pressed={selected === iso} aria-current={iso === today ? "date" : undefined} title={label} onClick={() => setSelected(iso)} className={cn("flex min-h-11 min-w-0 flex-col items-center justify-center rounded-lg border border-transparent px-0.5 text-xs tabular-nums transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring", selected === iso && "border-primary/50 bg-primary/10 font-semibold", iso === today && "ring-1 ring-primary ring-inset")}><span>{day}</span><span className="flex min-h-2 items-center gap-0.5" aria-hidden="true">{disciplines.slice(0, 3).map(id => <span key={id} className={cn("size-1.5 rounded-full", getDisciplinaPalette(id).progressFill)} style={{backgroundColor:getDisciplinaColor(id).color}} />)}{hasStudy && <Check className="size-2.5 text-success" />}</span></button>;
       })}</div>
       <p className="mt-2 text-xs text-muted-foreground">Pontos: disciplinas planejadas · ✓: estudo registrado</p>
       {selected ? <div className="mt-3 border-t border-border pt-3"><h3 className="mb-2 text-xs font-semibold">Sessões de {fmtDateBR(selected)}</h3>{selectedLoading ? <Skeleton className="h-16" aria-label="Carregando sessões do dia" /> : detail.isError ? <div role="alert" className="space-y-2 text-xs"><p>Não foi possível carregar as sessões deste dia.</p><Button variant="outline" size="sm" onClick={() => void detail.refetch()}>Tentar novamente</Button></div> : <>

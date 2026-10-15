@@ -27,7 +27,7 @@ export function SelectField({ value, onValueChange, options, placeholder = "Sele
   return (
     <Select value={selectValue} onValueChange={(next) => onValueChange(next === EMPTY_VALUE ? "" : next)} disabled={disabled}>
       <SelectTrigger id={id} aria-label={ariaLabel} className={cn(className)}>
-        <SelectValue placeholder={placeholder} />
+        <SelectValue className="min-w-0 flex-1 text-left line-clamp-2" placeholder={placeholder} />
       </SelectTrigger>
       <SelectContent>
         {options.map((option) => (

@@ -20,6 +20,22 @@ export type DisciplinaPalette = {
   calendarMuted: string;
 };
 
+/** Shared semantic colors used wherever a discipline is represented. The index is
+ * derived from the stable discipline id, so it never changes between renders. */
+export type DisciplinaColor = { color: string; soft: string; onSoft: string };
+
+export const DISCIPLINA_COLORS: DisciplinaColor[] = [
+  { color: "#6366F1", soft: "#EEF2FF", onSoft: "#3730A3" },
+  { color: "#0891B2", soft: "#ECFEFF", onSoft: "#155E75" },
+  { color: "#8B5CF6", soft: "#F5F3FF", onSoft: "#5B21B6" },
+  { color: "#F59E0B", soft: "#FFFBEB", onSoft: "#92400E" },
+  { color: "#10B981", soft: "#ECFDF5", onSoft: "#065F46" },
+  { color: "#EC4899", soft: "#FDF2F8", onSoft: "#9D174D" },
+  { color: "#06B6D4", soft: "#ECFEFF", onSoft: "#164E63" },
+  { color: "#7C3AED", soft: "#F5F3FF", onSoft: "#4C1D95" },
+  { color: "#D97706", soft: "#FFFBEB", onSoft: "#78350F" },
+];
+
 export const DISCIPLINA_PALETTES: DisciplinaPalette[] = [
   {
     cardBg: "bg-gradient-to-br from-sky-50 to-white dark:from-sky-950/40 dark:to-card",
@@ -127,4 +143,8 @@ export function getDisciplinaPaletteIndex(id: string): number {
 
 export function getDisciplinaPalette(id: string): DisciplinaPalette {
   return DISCIPLINA_PALETTES[getDisciplinaPaletteIndex(id)] ?? DISCIPLINA_PALETTES[0]!;
+}
+
+export function getDisciplinaColor(id: string): DisciplinaColor {
+  return DISCIPLINA_COLORS[getDisciplinaPaletteIndex(id)] ?? DISCIPLINA_COLORS[0]!;
 }

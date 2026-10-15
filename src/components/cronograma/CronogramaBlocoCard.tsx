@@ -11,7 +11,6 @@ import {
   blocoDurationMinutes,
   fmtBlocoMinutos,
   getTipo,
-  getTipoDot,
   getTipoSurface,
 } from "@/lib/cronograma/constants";
 import type { Bloco } from "@/lib/cronograma/types";
@@ -22,6 +21,7 @@ import {
   resolvePomodoroTopicoId,
 } from "@/lib/pomodoro/launchFromCronograma";
 import { cn } from "@/lib/utils";
+import { DisciplineColorIndicator, disciplineColorStyle } from "@/components/disciplinas/DisciplineColorIndicator";
 
 
 export type CronogramaBlocoCardProps = {
@@ -80,13 +80,14 @@ export function CronogramaBlocoCard({
       role="article"
       aria-label={`Bloco de estudo: ${disciplinaNome}`}
       className={cn(
-        "relative min-w-0 overflow-hidden rounded-xl border border-border border-l-4 p-3 shadow-sm",
+        "relative min-w-0 overflow-hidden rounded-xl border border-border border-l-4 p-3 shadow-sm transition-shadow hover:shadow-md",
         getTipoSurface(bloco.tipo),
         expirado && "border-amber-300/80 opacity-90 dark:border-amber-700/60",
       )}
+      style={disciplineColorStyle(bloco.disciplina_id)}
     >
       <div className="flex items-center gap-1.5">
-        <span className={cn("h-2 w-2 shrink-0 rounded-full", getTipoDot(bloco.tipo))} />
+        <DisciplineColorIndicator disciplinaId={bloco.disciplina_id} shape="dot" label={`Cor de ${disciplinaNome}`} />
         <p className="line-clamp-2 break-words text-sm font-semibold text-card-foreground" title={disciplinaNome}>
           {disciplinaNome}
         </p>
@@ -150,7 +151,7 @@ export function CronogramaBlocoCard({
           aria-label={minutos >= 1 ? `Play Pomodoro ${diaLabel}` : "Duração inválida"}
           disabled={minutos < 1}
           onClick={() => launchPomodoroFromBloco(navigate, { ...bloco, data_referencia: occurrenceDate }, minutos)}
-          className="inline-flex min-h-10 min-w-0 flex-1 items-center justify-center gap-1.5 rounded-md border border-primary-300 bg-primary-50 px-2.5 text-xs font-semibold text-primary-700 transition hover:bg-primary-100 disabled:cursor-not-allowed disabled:opacity-50 dark:border-primary-700 dark:bg-primary-950/40 dark:text-primary-300 dark:hover:bg-primary-900/50"
+          className="inline-flex min-h-10 w-fit min-w-0 items-center justify-center gap-1.5 rounded-md border border-primary-300 bg-primary-50 px-3 text-xs font-semibold text-primary-700 transition hover:bg-primary-100 disabled:cursor-not-allowed disabled:opacity-50 dark:border-primary-700 dark:bg-primary-950/40 dark:text-primary-300 dark:hover:bg-primary-900/50"
         >
           <Play className="h-3.5 w-3.5 fill-current" />
           <span>Estudar</span>

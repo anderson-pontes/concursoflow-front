@@ -8,6 +8,7 @@ import { DIAS, diaAbrev } from "@/lib/cronograma/constants";
 import type { Bloco } from "@/lib/cronograma/types";
 import { hojeISO } from "@/lib/cronograma/types";
 import { cn } from "@/lib/utils";
+import { DisciplineColorIndicator, disciplineColorStyle } from "@/components/disciplinas/DisciplineColorIndicator";
 
 type Props = {
   isLoading: boolean;
@@ -59,8 +60,8 @@ export function CronogramaWeekGrid({ isLoading, totalBlocos, diaHoje, grouped, d
         <div className="relative" style={{ height: (lastHour - firstHour) * scale }}>{Array.from({length:lastHour-firstHour}, (_, index) => <span key={index} className="absolute left-1 text-xs tabular-nums text-muted-foreground" style={{top:index*scale}}>{String(firstHour+index).padStart(2,"0")}:00</span>)}</div>
         {DIAS.map((day,index) => <div key={day} className="relative min-w-0 border-l border-border" style={{height:(lastHour-firstHour)*scale}}>
           {Array.from({length:lastHour-firstHour},(_,hour) => <div key={hour} className="absolute inset-x-0 border-t border-border/60" style={{top:hour*scale}} />)}
-          {layouts[index].timed.map(({bloco,start,end,lane}) => <button key={`${bloco.id}-${bloco.data}`} className={cn("absolute overflow-hidden rounded-lg border border-border border-l-4 p-1.5 text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary",getTipoSurface(bloco.tipo))} style={{top:(start-firstHour*60)/60*scale,height:(end-start)/60*scale-4,left:`${lane/layouts[index].lanes*100}%`,width:`${100/layouts[index].lanes}%`}} onClick={() => onRegistro ? onRegistro(bloco) : onEdit(bloco)} title={`${disciplinaNome(bloco.disciplina_id)} · ${bloco.hora_inicio}–${bloco.hora_fim} · ${getTipo(bloco.tipo).label}`}>
-            <span className="block line-clamp-2 break-words text-xs font-semibold">{disciplinaNome(bloco.disciplina_id)}</span><span className="block text-xs tabular-nums">{bloco.hora_inicio.slice(0,5)}–{bloco.hora_fim.slice(0,5)}</span><span className="block truncate text-xs text-muted-foreground">{getTipo(bloco.tipo).label} · Planejado</span>
+          {layouts[index].timed.map(({bloco,start,end,lane}) => <button key={`${bloco.id}-${bloco.data}`} className={cn("absolute overflow-hidden rounded-lg border border-border border-l-4 p-1.5 text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary",getTipoSurface(bloco.tipo))} style={{...disciplineColorStyle(bloco.disciplina_id),top:(start-firstHour*60)/60*scale,height:(end-start)/60*scale-4,left:`${lane/layouts[index].lanes*100}%`,width:`${100/layouts[index].lanes}%`}} onClick={() => onRegistro ? onRegistro(bloco) : onEdit(bloco)} title={`${disciplinaNome(bloco.disciplina_id)} · ${bloco.hora_inicio}–${bloco.hora_fim} · ${getTipo(bloco.tipo).label}`}>
+            <span className="mb-1 flex items-center gap-1"><DisciplineColorIndicator disciplinaId={bloco.disciplina_id} shape="dot" label={`Cor de ${disciplinaNome(bloco.disciplina_id)}`} /><span className="block line-clamp-2 break-words text-xs font-semibold">{disciplinaNome(bloco.disciplina_id)}</span></span><span className="block text-xs tabular-nums">{bloco.hora_inicio.slice(0,5)}–{bloco.hora_fim.slice(0,5)}</span><span className="block truncate text-xs text-muted-foreground">{getTipo(bloco.tipo).label} · Planejado</span>
           </button>)}
         </div>)}
       </div> : null}

@@ -9,8 +9,9 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { History } from "lucide-react";
 import type { SessaoEstudoRow } from "@/lib/historico/types";
 import { fmtMinutosEstudo } from "@/lib/calendario/format";
+import { DisciplineColorIndicator } from "@/components/disciplinas/DisciplineColorIndicator";
 
-type Row = SessaoEstudoRow & { _disciplina: string };
+type Row = SessaoEstudoRow & { _disciplina: string; _disciplina_id: string };
 
 type Props = {
   items: SessaoEstudoRow[];
@@ -34,6 +35,7 @@ export function HistoricoSessoesTable({
       items.map((r) => ({
         ...r,
         _disciplina: disciplinaMap.get(r.disciplina_id) ?? r.disciplina_id.slice(0, 8),
+        _disciplina_id: r.disciplina_id,
       })),
     [items, disciplinaMap],
   );
@@ -44,6 +46,7 @@ export function HistoricoSessoesTable({
         id: "disciplina",
         accessorFn: (r) => r._disciplina,
         header: "Disciplina",
+        cell: ({ row }) => <span className="flex items-center gap-2"><DisciplineColorIndicator disciplinaId={row.original._disciplina_id} shape="dot" />{row.original._disciplina}</span>,
       },
       {
         id: "data",
@@ -121,7 +124,7 @@ export function HistoricoSessoesTable({
             <li key={row.id} className="rounded-xl border border-border bg-card p-4 shadow-sm">
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
-                  <p className="truncate text-sm font-semibold text-card-foreground">{row._disciplina}</p>
+                  <p className="flex items-center gap-2 truncate text-sm font-semibold text-card-foreground"><DisciplineColorIndicator disciplinaId={row._disciplina_id} shape="dot" />{row._disciplina}</p>
                   <p className="mt-1 text-xs capitalize text-muted-foreground">{row.tipo}</p>
                 </div>
                 <span className="shrink-0 text-xs text-muted-foreground">
