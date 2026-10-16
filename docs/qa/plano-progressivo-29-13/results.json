@@ -1,0 +1,273 @@
+[
+  {
+    "scenario": "restore-advanced-draft-network-failure-retry-preserves-choices",
+    "passed": true
+  },
+  {
+    "scenario": "real-catalog-create-back-cache-save",
+    "passed": true,
+    "renderTimes": {
+      "openToResultsMs": 1114,
+      "smallSelectionToRadiosMs": 34,
+      "largeSelectionToRadiosMs": 102
+    },
+    "requests": [
+      {
+        "path": "/api/v1/concursos",
+        "search": "",
+        "method": "GET",
+        "status": 200,
+        "bytes": 2391,
+        "ms": 14
+      },
+      {
+        "path": "/api/v1/catalogo/editais",
+        "search": "?search=QA+Plano&page=1&page_size=8&sort=recent&resumo=true",
+        "method": "GET",
+        "status": 200,
+        "bytes": 4796,
+        "ms": 32
+      },
+      {
+        "path": "/api/v1/catalogo/editais/filtros",
+        "search": "?search=QA+Plano",
+        "method": "GET",
+        "status": 200,
+        "bytes": 625,
+        "ms": 45
+      },
+      {
+        "path": "/api/v1/telemetry/preference",
+        "search": "",
+        "method": "GET",
+        "status": 200,
+        "bytes": 19,
+        "ms": 7
+      },
+      {
+        "path": "/api/v1/telemetry/events",
+        "search": "",
+        "method": "POST",
+        "status": 202,
+        "bytes": 75,
+        "ms": 7
+      },
+      {
+        "path": "/api/v1/telemetry/events",
+        "search": "",
+        "method": "POST",
+        "status": 202,
+        "bytes": 75,
+        "ms": 4
+      },
+      {
+        "path": "/api/v1/catalogo/editais/44310da5-c8a7-4435-88f1-81ad7fbdacec",
+        "search": "?resumo=true",
+        "method": "GET",
+        "status": 200,
+        "bytes": 1168,
+        "ms": 13
+      },
+      {
+        "path": "/api/v1/telemetry/events",
+        "search": "",
+        "method": "POST",
+        "status": 202,
+        "bytes": 75,
+        "ms": 16
+      },
+      {
+        "path": "/api/v1/catalogo/editais/selecao/validar",
+        "search": "",
+        "method": "POST",
+        "status": 200,
+        "bytes": 79,
+        "ms": 9
+      },
+      {
+        "path": "/api/v1/catalogo/editais/d6f7697c-07fd-4899-afd6-0513fdf8d5ac",
+        "search": "?resumo=true",
+        "method": "GET",
+        "status": 200,
+        "bytes": 3566,
+        "ms": 19
+      },
+      {
+        "path": "/api/v1/catalogo/editais/selecao/validar",
+        "search": "",
+        "method": "POST",
+        "status": 200,
+        "bytes": 79,
+        "ms": 11
+      },
+      {
+        "path": "/api/v1/catalogo/editais/d6f7697c-07fd-4899-afd6-0513fdf8d5ac/versoes/02519fce-5b3a-4c84-8d38-7241bf3ac55a/cargos/3a26fdbd-23f9-44af-b636-f793e9a42797",
+        "search": "",
+        "method": "GET",
+        "status": 200,
+        "bytes": 197781,
+        "ms": 32
+      },
+      {
+        "path": "/api/v1/telemetry/events",
+        "search": "",
+        "method": "POST",
+        "status": 202,
+        "bytes": 75,
+        "ms": 4
+      },
+      {
+        "path": "/api/v1/telemetry/events",
+        "search": "",
+        "method": "POST",
+        "status": 202,
+        "bytes": 75,
+        "ms": 10
+      },
+      {
+        "path": "/api/v1/catalogo/editais/selecao/validar",
+        "search": "",
+        "method": "POST",
+        "status": 200,
+        "bytes": 79,
+        "ms": 13
+      },
+      {
+        "path": "/api/v1/concursos",
+        "search": "",
+        "method": "GET",
+        "status": 200,
+        "bytes": 2391,
+        "ms": 10
+      },
+      {
+        "path": "/api/v1/catalogo/editais",
+        "search": "?search=QA+Plano&page=1&page_size=8&sort=recent&resumo=true",
+        "method": "GET",
+        "status": 200,
+        "bytes": 4796,
+        "ms": 27
+      },
+      {
+        "path": "/api/v1/catalogo/editais/filtros",
+        "search": "?search=QA+Plano",
+        "method": "GET",
+        "status": 200,
+        "bytes": 625,
+        "ms": 36
+      },
+      {
+        "path": "/api/v1/telemetry/preference",
+        "search": "",
+        "method": "GET",
+        "status": 200,
+        "bytes": 19,
+        "ms": 4
+      },
+      {
+        "path": "/api/v1/telemetry/events",
+        "search": "",
+        "method": "POST",
+        "status": 202,
+        "bytes": 75,
+        "ms": 6
+      },
+      {
+        "path": "/api/v1/catalogo/editais/d6f7697c-07fd-4899-afd6-0513fdf8d5ac",
+        "search": "?resumo=true",
+        "method": "GET",
+        "status": 200,
+        "bytes": 3566,
+        "ms": 17
+      },
+      {
+        "path": "/api/v1/catalogo/editais/d6f7697c-07fd-4899-afd6-0513fdf8d5ac/versoes/02519fce-5b3a-4c84-8d38-7241bf3ac55a/cargos/3a26fdbd-23f9-44af-b636-f793e9a42797",
+        "search": "",
+        "method": "GET",
+        "status": 200,
+        "bytes": 197781,
+        "ms": 36
+      },
+      {
+        "path": "/api/v1/telemetry/events",
+        "search": "",
+        "method": "POST",
+        "status": 202,
+        "bytes": 75,
+        "ms": 5
+      },
+      {
+        "path": "/api/v1/telemetry/events",
+        "search": "",
+        "method": "POST",
+        "status": 202,
+        "bytes": 75,
+        "ms": 9
+      },
+      {
+        "path": "/api/v1/concursos/planejamento/preview",
+        "search": "",
+        "method": "POST",
+        "status": 200,
+        "bytes": 22868,
+        "ms": 12
+      },
+      {
+        "path": "/api/v1/telemetry/events",
+        "search": "",
+        "method": "POST",
+        "status": 202,
+        "bytes": 75,
+        "ms": 5
+      },
+      {
+        "path": "/api/v1/concursos/planejamento/confirmar",
+        "search": "",
+        "method": "POST",
+        "status": 201,
+        "bytes": 23046,
+        "ms": 1537
+      },
+      {
+        "path": "/api/v1/telemetry/events",
+        "search": "",
+        "method": "POST",
+        "status": 202,
+        "bytes": 75,
+        "ms": 8
+      },
+      {
+        "path": "/api/v1/concursos",
+        "search": "",
+        "method": "GET",
+        "status": 200,
+        "bytes": 2869,
+        "ms": 13
+      },
+      {
+        "path": "/api/v1/telemetry/events",
+        "search": "",
+        "method": "POST",
+        "status": 202,
+        "bytes": 75,
+        "ms": 15
+      },
+      {
+        "path": "/api/v1/telemetry/events",
+        "search": "",
+        "method": "POST",
+        "status": 202,
+        "bytes": 75,
+        "ms": 4
+      }
+    ]
+  },
+  {
+    "scenario": "mobile-real-http-failure-retry",
+    "passed": true
+  },
+  {
+    "scenario": "production-build-timer-utf8",
+    "passed": true
+  }
+]

@@ -207,7 +207,7 @@ export async function listarEditaisPublicados(search = ""): Promise<EditalCatalo
   return (await paginarEditaisPublicados({ search, pageSize: 50 })).items;
 }
 
-export async function paginarEditaisPublicados(params: { search?: string; page?: number; pageSize?: number; sort?: "recent"; signal?: AbortSignal } & Partial<CatalogFilters> = {}): Promise<EditalCatalogoPage> {
+export async function paginarEditaisPublicados(params: { search?: string; page?: number; pageSize?: number; sort?: "recent"; signal?: AbortSignal; resumo?: boolean } & Partial<CatalogFilters> = {}): Promise<EditalCatalogoPage> {
   const { search = "", page = 1, pageSize = 12, sort = "recent", signal } = params;
   const query = new URLSearchParams();
   if (search) query.set("search", search);
@@ -215,6 +215,7 @@ export async function paginarEditaisPublicados(params: { search?: string; page?:
   query.set("page", String(page));
   query.set("page_size", String(pageSize));
   query.set("sort", sort);
+  if (params.resumo) query.set("resumo", "true");
   const { data } = await api.get<PageEnvelope<RawEdital> | RawEdital[]>("/catalogo/editais", {
     params: query,
     signal,
@@ -275,6 +276,15 @@ export async function salvarClassificacaoVersao(
 
 export async function obterEditalPublicado(id: string): Promise<EditalCatalogo> {
   return normalize((await api.get<RawEdital>(`/catalogo/editais/${id}`)).data, true);
+}
+
+export async function obterResumoEditalPublicado(id: string, signal?: AbortSignal): Promise<EditalCatalogo> {
+  return normalize((await api.get<RawEdital>(`/catalogo/editais/${id}`, { params: { resumo: true }, signal })).data, true);
+}
+
+export async function obterConteudoCargo(editalId: string, versionId: string, cargoId: string, signal?: AbortSignal): Promise<EditalCargoCatalogo> {
+  const { data } = await api.get<EditalCargoCatalogo>(`/catalogo/editais/${editalId}/versoes/${versionId}/cargos/${cargoId}`, { signal });
+  return { ...data, disciplinas: data.disciplinas.map((disciplina) => ({ ...disciplina, topicos: disciplina.topicos.map((topico) => ({ ...topico, ordem: topico.ordem ?? topico.numero_ordem ?? 0 })) })) };
 }
 
 export async function ativarEdital(params: {

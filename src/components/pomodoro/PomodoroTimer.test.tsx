@@ -32,6 +32,12 @@ function renderTimer(compact = false) {
 }
 
 describe("PomodoroTimer durante a pausa", () => {
+  it("exibe o início da sessão com acentuação UTF-8 correta", () => {
+    usePomodoroSessionStore.setState({ hasSession: false, isRunning: false });
+    renderTimer();
+    expect(screen.getByRole("button", { name: "Iniciar sessão" })).toBeInTheDocument();
+    expect(document.body.textContent).not.toMatch(/sessÃ|CronÃ|espaÃ/);
+  });
   beforeEach(() => {
     vi.clearAllMocks();
     vi.mocked(api.get).mockResolvedValue({ data: [] });
@@ -97,7 +103,7 @@ describe("PomodoroTimer durante a pausa", () => {
     const user = userEvent.setup();
     renderTimer();
 
-    await user.click(screen.getByRole("button", { name: "Encerrar e salvar" }));
+    await user.click(screen.getByRole("button", { name: "Finalizar sessão" }));
 
     expect(screen.getByRole("dialog", { name: "Registro de estudo" })).toBeInTheDocument();
   });

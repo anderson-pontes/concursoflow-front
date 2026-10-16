@@ -82,12 +82,14 @@ export function useCatalogDiscovery(_legacyOnContextChange?: () => void) {
   React.useEffect(() => setDraftSearch(query.search), [query.search]);
 
   const result = useQuery({
-    queryKey: ["catalogo-editais", "public", query],
-    queryFn: ({ signal }) => paginarEditaisPublicados({ ...query, signal }),
+    queryKey: ["catalogo-editais", "public", "resumo", query],
+    queryFn: ({ signal }) => paginarEditaisPublicados({ ...query, signal, resumo: true }),
+    staleTime: 60_000,
   });
   const facets = useQuery({
     queryKey: ["catalogo-editais", "public", "filters", { search: query.search, ...appliedFilters(query) }],
     queryFn: ({ signal }) => obterFiltrosCatalogo({ search: query.search, ...appliedFilters(query), signal }),
+    staleTime: 60_000,
   });
 
   React.useEffect(() => {

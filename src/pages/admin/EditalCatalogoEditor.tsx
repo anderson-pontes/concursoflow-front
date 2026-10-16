@@ -116,7 +116,7 @@ export function EditalCatalogoEditor() {
     await salvarClassificacaoVersao(id, versao.id, classificationInput(classificationValue));
     // A later upload/publication failure must not replay the old revision.
     setClassification({ versionId: versao.id, value: { ...classificationValue, revision: classificationValue.revision + 1 }, dirty: false });
-    void qc.invalidateQueries({ queryKey: ["catalogo-editais", "public"] });
+    void qc.invalidateQueries({ queryKey: ["catalogo-editais", "public"] }); void qc.invalidateQueries({ queryKey: ["catalogo-edital", "public"] });
   };
 
   React.useEffect(() => {
@@ -180,7 +180,7 @@ export function EditalCatalogoEditor() {
         return updated;
       } finally { saving.current = false; }
     },
-    onSuccess: (updated) => { setConflict(false); setPendingEditalFile(null); setScheduleDraft(null); ownSnapshot.current = updated; qc.setQueryData(["admin-edital", id], updated); void qc.invalidateQueries({ queryKey: ["admin-editais"] }); void qc.invalidateQueries({ queryKey: ["catalogo-editais", "public"] }); void qc.invalidateQueries({ queryKey: ["avisos"] }); toast.success(editable ? "Rascunho salvo." : "Cronograma atualizado."); },
+    onSuccess: (updated) => { setConflict(false); setPendingEditalFile(null); setScheduleDraft(null); ownSnapshot.current = updated; qc.setQueryData(["admin-edital", id], updated); void qc.invalidateQueries({ queryKey: ["admin-editais"] }); void qc.invalidateQueries({ queryKey: ["catalogo-editais", "public"] }); void qc.invalidateQueries({ queryKey: ["catalogo-edital", "public"] }); void qc.invalidateQueries({ queryKey: ["avisos"] }); toast.success(editable ? "Rascunho salvo." : "Cronograma atualizado."); },
     onError: handleSaveError,
   });
   const publishMutation = useMutation({

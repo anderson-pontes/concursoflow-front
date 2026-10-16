@@ -65,7 +65,7 @@ function CatalogCards({ items, selectedId, onSelect, onViewDetails, className }:
 function catalogMetrics(item: EditalCatalogo) {
   return {
     cargos: item.versao_atual?.cargos.length ?? 0,
-    disciplinas: item.versao_atual?.cargos.reduce((sum, cargo) => sum + cargo.disciplinas.length, 0) ?? 0,
+    disciplinas: item.versao_atual?.cargos.reduce((sum, cargo) => sum + (cargo.disciplinas_total ?? cargo.disciplinas.length), 0) ?? 0,
   };
 }
 

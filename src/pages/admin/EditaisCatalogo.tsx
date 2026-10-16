@@ -46,7 +46,7 @@ export function EditaisCatalogo() {
   const hasFilters = Object.values(filters).some(Boolean);
   React.useEffect(() => setPage(1), [deferred]);
   const query = useQuery({ queryKey: ["admin-editais", deferred, page], queryFn: () => paginarEditaisAdmin({ search: deferred.search.trim(), orgao: deferred.orgao.trim(), cargo: deferred.cargo.trim(), ano: deferred.ano ? Number(deferred.ano) : null, status: deferred.status, page, pageSize: 15 }) });
-  const archiveMutation = useMutation({ mutationFn: arquivarEdital, onSuccess: () => { setArchiveTarget(null); void queryClient.invalidateQueries({ queryKey: ["admin-editais"] }); toast.success("Edital arquivado."); }, onError: () => toast.error("Não foi possível arquivar o edital.") });
+  const archiveMutation = useMutation({ mutationFn: arquivarEdital, onSuccess: () => { setArchiveTarget(null); void queryClient.invalidateQueries({ queryKey: ["admin-editais"] }); void queryClient.invalidateQueries({ queryKey: ["catalogo-editais", "public"] }); void queryClient.invalidateQueries({ queryKey: ["catalogo-edital", "public"] }); toast.success("Edital arquivado."); }, onError: () => toast.error("Não foi possível arquivar o edital.") });
   React.useEffect(() => { if (query.data && page > Math.max(1, query.data.total_pages)) setPage(Math.max(1, query.data.total_pages)); }, [page, query.data]);
   const items = query.data?.items ?? [];
 
