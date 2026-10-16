@@ -56,9 +56,9 @@ export function AuthShell({ children, logoAsLink = false }: AuthShellProps) {
       </div>
 
       {/* Desktop — coluna hero */}
-      <aside className="auth-hero-gradient relative hidden h-[100dvh] w-1/2 flex-col overflow-hidden md:flex">
-        <div className="pointer-events-none absolute -right-20 -top-20 h-80 w-80 rounded-full bg-white/10" />
-        <div className="pointer-events-none absolute -bottom-16 -left-16 h-52 w-52 rounded-full bg-white/[0.06]" />
+      <aside className="auth-hero-gradient relative hidden h-[100dvh] w-[55%] flex-col overflow-hidden md:flex">
+        <div className="pointer-events-none absolute -right-20 -top-20 h-80 w-80 rounded-full bg-cyan-300/15 blur-2xl" />
+        <div className="pointer-events-none absolute -bottom-16 -left-16 h-52 w-52 rounded-full bg-violet-200/20 blur-xl" />
         <div className="pointer-events-none absolute left-1/3 top-1/2 h-64 w-64 -translate-y-1/2 rounded-full bg-primary-300/20 blur-3xl" />
 
         <div className="relative z-10 flex h-full min-h-0 flex-col">
@@ -106,7 +106,7 @@ export function AuthShell({ children, logoAsLink = false }: AuthShellProps) {
       </aside>
 
       {/* Coluna formulário */}
-      <main ref={mainRef} className="auth-form-col-scroll relative flex min-h-0 w-full flex-1 flex-col overflow-y-auto bg-surface md:h-[100dvh] md:w-1/2">
+      <main ref={mainRef} className="auth-form-col-scroll relative flex min-h-0 w-full flex-1 flex-col overflow-y-auto bg-slate-50 dark:bg-background md:h-[100dvh] md:w-[45%]">
         <div className="flex min-h-full shrink-0 flex-col items-center justify-start px-4 py-8 sm:px-6 md:justify-center md:px-12 lg:px-16">
           <div className="w-full max-w-[420px]">{children}</div>
         </div>

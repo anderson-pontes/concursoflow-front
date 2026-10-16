@@ -24,6 +24,7 @@ const emptyPage = {
   concurso: { id: "concurso-novo", status: "ativo" },
   as_of: { local_date: "2026-09-19", timezone: "America/Sao_Paulo" },
   progresso_global: { dominados: 0, total: 0, percentual: 0, texto: "0 de 0 topicos dominados" },
+  indicadores: { estudados: 0, revisoes_pendentes: 0, topicos_prioritarios: 0 },
   disciplinas: [],
   items: [],
   page: { next_cursor: null, has_more: false, limit: 30, result_count: 0 },

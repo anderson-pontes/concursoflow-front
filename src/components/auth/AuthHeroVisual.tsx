@@ -77,6 +77,13 @@ export function AuthHeroVisual({ className }: { className?: string }) {
         </span>
         <span className="text-xs font-semibold text-primary-foreground">Próximo bloco · 25 min</span>
       </div>
+
+      <div className="absolute -left-5 top-[42%] hidden rounded-xl border border-white/30 bg-white/95 px-3 py-2 shadow-lg sm:block">
+        <p className="text-[10px] font-semibold uppercase tracking-wide text-cyan-700">Cronograma</p>
+        <div className="mt-1 flex items-end gap-1" aria-hidden="true">
+          {[40, 70, 52, 88, 62].map((height, index) => <span key={height} className={cn("w-1.5 rounded-full", index === 3 ? "bg-emerald-500" : "bg-cyan-500/70")} style={{ height }} />)}
+        </div>
+      </div>
     </div>
   );
 }

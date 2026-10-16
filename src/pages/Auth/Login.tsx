@@ -173,8 +173,8 @@ export function Login() {
       ) : (
         <>
           <div className="mb-8">
-            <h1 className="text-2xl font-bold text-foreground sm:text-[28px]">Entrar na sua conta</h1>
-            <p className="mt-1.5 text-sm text-muted-foreground">Acesse sua conta para continuar estudando.</p>
+            <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-[28px]">Bem-vindo de volta!</h1>
+            <p className="mt-1.5 text-sm text-muted-foreground">Continue sua jornada até a aprovação.</p>
           </div>
 
           <form

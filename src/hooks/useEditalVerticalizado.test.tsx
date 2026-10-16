@@ -10,7 +10,7 @@ import type { EditalConsulta, EditalVerticalizadoPage } from "@/types/editalVert
 vi.mock("@/services/editalVerticalizado", () => ({ consultarEditalVerticalizado: vi.fn() }));
 
 const query: EditalConsulta = { disciplina_ids: [], status: [], dominios: [], sort: "ordem_edital", limit: 30 };
-const page = (cursor: string | null, hasMore: boolean): EditalVerticalizadoPage => ({ contract_version: "1", concurso: { id: "concurso-a", status: "ativo" }, as_of: { local_date: "2026-09-18", timezone: "America/Sao_Paulo" }, progresso_global: { dominados: 0, total: 0, percentual: 0, texto: "0 de 0 topicos dominados" }, disciplinas: [], items: [], page: { next_cursor: cursor, has_more: hasMore, limit: 30, result_count: 0 } });
+const page = (cursor: string | null, hasMore: boolean): EditalVerticalizadoPage => ({ contract_version: "1", concurso: { id: "concurso-a", status: "ativo" }, as_of: { local_date: "2026-09-18", timezone: "America/Sao_Paulo" }, progresso_global: { dominados: 0, total: 0, percentual: 0, texto: "0 de 0 topicos dominados" }, indicadores: { estudados: 0, revisoes_pendentes: 0, topicos_prioritarios: 0 }, disciplinas: [], items: [], page: { next_cursor: cursor, has_more: hasMore, limit: 30, result_count: 0 } });
 
 function wrapperFor(client: QueryClient) {
   return function Wrapper({ children }: { children: React.ReactNode }) { return <QueryClientProvider client={client}>{children}</QueryClientProvider>; };
