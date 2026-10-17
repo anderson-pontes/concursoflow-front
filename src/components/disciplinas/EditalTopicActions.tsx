@@ -144,6 +144,7 @@ export function EditalTopicActions(props: Props) {
         <Button
           data-edital-topic={props.item.id}
           size="sm"
+          className="h-8 gap-1.5 px-2.5 text-xs"
           variant={primary.id === "open_topic" ? "outline" : "default"}
           disabled={primary.state === "disabled" || launchingRef.current}
           title={primary.reason ? disabledReasons[primary.reason] : undefined}

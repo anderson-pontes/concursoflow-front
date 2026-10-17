@@ -71,7 +71,7 @@ export function EditalDiscoveryFilters({
 
   return (
     <div className="space-y-3">
-      <div className="hidden grid-cols-4 gap-3 lg:grid">
+      <div className="hidden flex-wrap items-end gap-2 lg:flex">
         <DisciplinePopover
           disciplines={disciplines}
           selected={value.disciplineIds}
@@ -83,26 +83,7 @@ export function EditalDiscoveryFilters({
           options={statusOptions}
           onChange={(status) => onApply({ ...value, status: status as EditalAppliedFilters["status"] })}
         />
-        <AttentionPopover
-          neverStudied={value.neverStudied}
-          overdue={value.overdue}
-          onApply={(attention) => onApply({ ...value, ...attention })}
-        />
-        <SingleSelect
-          label="Ordenar por"
-          value={value.sort}
-          options={editalSortOptions}
-          onChange={(sort) => onApply({ ...value, sort: sort as EditalSort })}
-        />
-        <SingleSelect
-          label="Domínio"
-          value={value.domain}
-          options={[
-            { value: "todos", label: "Todos" },
-            ...[1, 2, 3, 4, 5].map((domain) => ({ value: String(domain), label: `${domain} de 5` })),
-          ]}
-          onChange={(domain) => onApply({ ...value, domain })}
-        />
+        <AdvancedFilters value={value} filterCount={filterCount} onApply={onApply} />
       </div>
 
       <div className="lg:hidden">
@@ -180,6 +161,28 @@ export function EditalDiscoveryFilters({
   );
 }
 
+function AdvancedFilters({ value, filterCount, onApply }: { value: EditalAppliedFilters; filterCount: number; onApply: (next: EditalAppliedFilters) => void }) {
+  return (
+    <Popover>
+      <PopoverTrigger asChild>
+        <Button type="button" variant="outline" className="h-10 gap-2">
+          <SlidersHorizontal className="h-4 w-4" aria-hidden="true" />
+          Filtros{filterCount ? ` (${filterCount})` : ""}
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent align="end" className="w-80 space-y-4">
+        <fieldset className="space-y-2">
+          <legend className="text-sm font-medium">Atenção</legend>
+          <CheckRow label="Nunca estudados" checked={value.neverStudied} onChange={(neverStudied) => onApply({ ...value, neverStudied })} />
+          <CheckRow label="Revisão atrasada" checked={value.overdue} onChange={(overdue) => onApply({ ...value, overdue })} />
+        </fieldset>
+        <SingleSelect label="Domínio" value={value.domain} options={[{ value: "todos", label: "Todos" }, ...[1, 2, 3, 4, 5].map((domain) => ({ value: String(domain), label: `${domain} de 5` }))]} onChange={(domain) => onApply({ ...value, domain })} />
+        <SingleSelect label="Ordenar por" value={value.sort} options={editalSortOptions} onChange={(sort) => onApply({ ...value, sort: sort as EditalSort })} />
+      </PopoverContent>
+    </Popover>
+  );
+}
+
 function DisciplinePopover({ disciplines, selected, onApply }: { disciplines: DisciplineOption[]; selected: string[]; onApply: (ids: string[]) => void }) {
   const [open, setOpen] = React.useState(false);
   const [draft, setDraft] = React.useState(selected);
@@ -196,14 +199,6 @@ function DisciplinePopover({ disciplines, selected, onApply }: { disciplines: Di
       </PopoverContent>
     </Popover>
   );
-}
-
-function AttentionPopover({ neverStudied, overdue, onApply }: { neverStudied: boolean; overdue: boolean; onApply: (value: Pick<EditalAppliedFilters, "neverStudied" | "overdue">) => void }) {
-  const [open, setOpen] = React.useState(false);
-  const [draft, setDraft] = React.useState({ neverStudied, overdue });
-  const count = Number(neverStudied) + Number(overdue);
-  const changeOpen = (next: boolean) => { if (next) setDraft({ neverStudied, overdue }); setOpen(next); };
-  return <Popover open={open} onOpenChange={changeOpen}><div className="space-y-1.5"><Label>Atenção</Label><PopoverTrigger asChild><Button type="button" variant="outline" className="w-full justify-between font-normal">{count ? `${count} selecionado(s)` : "Todas"}<SlidersHorizontal className="h-4 w-4" aria-hidden="true" /></Button></PopoverTrigger></div><PopoverContent align="start"><fieldset className="space-y-3"><legend className="sr-only">Filtros de atenção</legend><CheckRow label="Nunca estudados" checked={draft.neverStudied} onChange={(value) => setDraft((current) => ({ ...current, neverStudied: value }))} /><CheckRow label="Revisão atrasada" checked={draft.overdue} onChange={(value) => setDraft((current) => ({ ...current, overdue: value }))} /></fieldset><div className="flex justify-end gap-2 border-t pt-2"><Button type="button" variant="ghost" size="sm" onClick={() => setOpen(false)}>Cancelar</Button><Button type="button" size="sm" onClick={() => { onApply(draft); setOpen(false); }}>Aplicar</Button></div></PopoverContent></Popover>;
 }
 
 function CheckboxGroup({ label, options, selected, onChange }: { label: string; options: Array<{ value: string; label: string }>; selected: string[]; onChange: (values: string[]) => void }) {

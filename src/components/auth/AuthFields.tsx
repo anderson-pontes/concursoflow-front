@@ -1,5 +1,5 @@
 import React from "react";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, LockKeyhole, Mail } from "lucide-react";
 import type { UseFormRegisterReturn } from "react-hook-form";
 
 import googleIcon from "@/assets/icons/google.svg";
@@ -52,7 +52,7 @@ export function AuthEmailField({ id, registration, error, label = "E-mail" }: Au
         variant="auth"
         label={label}
         error={hasError}
-        leftSlot="✉️"
+        leftSlot={<Mail className="h-4 w-4" />}
         aria-invalid={hasError}
         aria-describedby={hasError ? `${id}-error` : undefined}
         {...registration}
@@ -92,7 +92,7 @@ export function AuthPasswordField({
         variant="auth"
         label={label}
         error={hasError}
-        leftSlot="🔒"
+        leftSlot={<LockKeyhole className="h-4 w-4" />}
         aria-invalid={hasError}
         aria-describedby={hasError ? `${id}-error` : undefined}
         rightSlot={

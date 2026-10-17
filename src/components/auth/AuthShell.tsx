@@ -4,7 +4,7 @@ import { useLocation } from "react-router-dom";
 import markPreload from "@/assets/brand/click-edital-mark.svg";
 import { AuthHeroVisual } from "@/components/auth/AuthHeroVisual";
 import { ClickEditalLogo } from "@/components/branding/ClickEditalLogo";
-import { cn } from "@/lib/utils";
+import { BookOpenCheck, CalendarDays, Target } from "lucide-react";
 
 type AuthShellProps = {
   children: React.ReactNode;
@@ -12,9 +12,9 @@ type AuthShellProps = {
 };
 
 const HERO_FEATURES = [
-  { tone: "bg-success text-white", icon: "✓", text: "Cronograma e disciplinas no mesmo lugar" },
-  { tone: "bg-warning text-white", icon: "⏱", text: "Pomodoro, revisões e flashcards" },
-  { tone: "bg-white/20 text-white", icon: "◎", text: "Progresso do edital visível todo dia" },
+  { icon: CalendarDays, text: "Planejamento inteligente" },
+  { icon: BookOpenCheck, text: "Revisões e acompanhamento" },
+  { icon: Target, text: "Evolução do aprendizado" },
 ] as const;
 
 /**
@@ -69,7 +69,7 @@ export function AuthShell({ children, logoAsLink = false }: AuthShellProps) {
             <div className="h-8" aria-hidden />
           </div>
 
-          <div className="flex min-h-0 flex-1 flex-col overflow-hidden px-8 lg:px-10">
+          <div className="grid min-h-0 flex-1 grid-rows-[auto_minmax(0,1fr)] gap-4 overflow-hidden px-8 lg:px-10">
             <h2 className="auth-hero-headline max-w-[420px] text-2xl font-extrabold leading-tight text-white lg:text-3xl">
               Sua aprovação começa com{" "}
               <span className="border-b-[3px] border-white/40 pb-0.5">organização</span>.
@@ -78,27 +78,24 @@ export function AuthShell({ children, logoAsLink = false }: AuthShellProps) {
               Planeje o edital, acompanhe disciplinas e mantenha o ritmo até a prova — com Click Edital.
             </p>
 
-            <div className="flex min-h-0 flex-1 flex-col justify-center overflow-hidden py-6">
+            <div className="flex min-h-0 items-center justify-center overflow-hidden py-3">
               <AuthHeroVisual />
             </div>
           </div>
 
-          <div className="auth-hero-features mt-auto flex shrink-0 flex-col gap-2 px-8 pb-8 lg:px-10">
+          <div className="auth-hero-features mt-auto grid shrink-0 grid-cols-3 gap-2 px-8 pb-8 lg:px-10">
             {HERO_FEATURES.map((item) => (
               <div
                 key={item.text}
-                className="auth-hero-feature-item flex items-center gap-3 rounded-xl border border-white/15 bg-white/10 px-4 py-2.5 backdrop-blur-md transition-transform hover:translate-x-1 hover:bg-white/15"
+                className="auth-hero-feature-item flex min-w-0 flex-col items-start gap-2 rounded-xl border border-white/15 bg-white/10 px-3 py-3 backdrop-blur-md"
               >
                 <span
-                  className={cn(
-                    "flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold",
-                    item.tone,
-                  )}
+                  className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-white/15 text-white"
                   aria-hidden
                 >
-                  {item.icon}
+                  <item.icon className="h-4 w-4" />
                 </span>
-                <span className="text-[13px] font-medium text-white">{item.text}</span>
+                <span className="text-xs font-medium leading-snug text-white">{item.text}</span>
               </div>
             ))}
           </div>

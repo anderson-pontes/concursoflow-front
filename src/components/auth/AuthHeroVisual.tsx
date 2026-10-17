@@ -14,16 +14,14 @@ export function AuthHeroVisual({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        "relative mx-auto w-full max-w-[360px] motion-safe:animate-[auth-hero-rise_0.7s_ease-out_both]",
+        "mx-auto grid w-full max-w-[430px] grid-cols-[minmax(0,1fr)_108px] items-center gap-3 motion-safe:animate-[auth-hero-rise_0.7s_ease-out_both]",
         className,
       )}
       aria-hidden
     >
-      <div className="pointer-events-none absolute -left-8 top-6 h-28 w-28 rounded-full bg-white/15 blur-2xl" />
-      <div className="pointer-events-none absolute -right-6 bottom-4 h-24 w-24 rounded-full bg-primary-300/40 blur-2xl" />
 
       {/* Card principal — preview do plano */}
-      <div className="relative overflow-hidden rounded-2xl border border-white/25 bg-white/95 p-5 shadow-2xl shadow-black/20 backdrop-blur-md">
+      <div className="overflow-hidden rounded-2xl border border-white/25 bg-white/95 p-5 shadow-2xl shadow-black/20 backdrop-blur-md">
         <div className="flex items-start gap-3">
           <img
             src={markSrc}
@@ -68,7 +66,7 @@ export function AuthHeroVisual({ className }: { className?: string }) {
       </div>
 
       {/* Chip flutuante — próximo bloco */}
-      <div className="absolute -bottom-3 -right-2 flex items-center gap-2 rounded-xl border border-white/30 bg-primary px-3 py-2 shadow-lg motion-safe:animate-[auth-chip-float_3s_ease-in-out_infinite] sm:-right-4">
+      <div className="flex items-center gap-2 rounded-xl border border-white/30 bg-primary px-3 py-2 shadow-lg">
         <span
           className="flex h-5 w-5 items-center justify-center rounded-md bg-white/20 text-[10px] font-bold text-primary-foreground"
           aria-hidden
@@ -78,7 +76,7 @@ export function AuthHeroVisual({ className }: { className?: string }) {
         <span className="text-xs font-semibold text-primary-foreground">Próximo bloco · 25 min</span>
       </div>
 
-      <div className="absolute -left-5 top-[42%] hidden rounded-xl border border-white/30 bg-white/95 px-3 py-2 shadow-lg sm:block">
+      <div className="rounded-xl border border-white/30 bg-white/95 px-3 py-2 shadow-lg">
         <p className="text-[10px] font-semibold uppercase tracking-wide text-cyan-700">Cronograma</p>
         <div className="mt-1 flex items-end gap-1" aria-hidden="true">
           {[40, 70, 52, 88, 62].map((height, index) => <span key={height} className={cn("w-1.5 rounded-full", index === 3 ? "bg-emerald-500" : "bg-cyan-500/70")} style={{ height }} />)}
