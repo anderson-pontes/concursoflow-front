@@ -1,0 +1,316 @@
+{
+  "mocked": true,
+  "productionWrites": false,
+  "results": [
+    {
+      "profile": "375-light",
+      "route": "/dashboard",
+      "passed": true,
+      "geometry": {
+        "count": 1,
+        "header": {
+          "left": 0,
+          "right": 375,
+          "top": 0,
+          "bottom": 65,
+          "height": 65
+        },
+        "main": {
+          "left": 0,
+          "right": 375,
+          "top": 65,
+          "bottom": 812,
+          "height": 747
+        },
+        "current": "Dashboard",
+        "breadcrumb": "Visão geralDashboard",
+        "docX": false,
+        "mainX": false,
+        "docY": false,
+        "controls": [
+          {
+            "name": "Abrir menu",
+            "left": 16,
+            "right": 60,
+            "top": 10,
+            "bottom": 54,
+            "height": 44
+          },
+          {
+            "name": "Buscar páginas (Ctrl+K)",
+            "left": 211,
+            "right": 255,
+            "top": 10,
+            "bottom": 54,
+            "height": 44
+          },
+          {
+            "name": "Notificações",
+            "left": 263,
+            "right": 307,
+            "top": 10,
+            "bottom": 54,
+            "height": 44
+          },
+          {
+            "name": "Menu do usuário",
+            "left": 315,
+            "right": 359,
+            "top": 10,
+            "bottom": 54,
+            "height": 44
+          }
+        ]
+      }
+    },
+    {
+      "profile": "375-light",
+      "route": "/cronograma",
+      "passed": true,
+      "geometry": {
+        "count": 1,
+        "header": {
+          "left": 0,
+          "right": 375,
+          "top": 0,
+          "bottom": 65,
+          "height": 65
+        },
+        "main": {
+          "left": 0,
+          "right": 375,
+          "top": 65,
+          "bottom": 812,
+          "height": 747
+        },
+        "current": "Cronograma",
+        "breadcrumb": "EstudosCronograma",
+        "docX": false,
+        "mainX": false,
+        "docY": false,
+        "controls": [
+          {
+            "name": "Abrir menu",
+            "left": 16,
+            "right": 60,
+            "top": 10,
+            "bottom": 54,
+            "height": 44
+          },
+          {
+            "name": "Buscar páginas (Ctrl+K)",
+            "left": 211,
+            "right": 255,
+            "top": 10,
+            "bottom": 54,
+            "height": 44
+          },
+          {
+            "name": "Notificações",
+            "left": 263,
+            "right": 307,
+            "top": 10,
+            "bottom": 54,
+            "height": 44
+          },
+          {
+            "name": "Menu do usuário",
+            "left": 315,
+            "right": 359,
+            "top": 10,
+            "bottom": 54,
+            "height": 44
+          }
+        ]
+      }
+    },
+    {
+      "profile": "375-light",
+      "route": "/disciplinas?view=edital",
+      "passed": true,
+      "geometry": {
+        "count": 1,
+        "header": {
+          "left": 0,
+          "right": 375,
+          "top": 0,
+          "bottom": 65,
+          "height": 65
+        },
+        "main": {
+          "left": 0,
+          "right": 375,
+          "top": 65,
+          "bottom": 812,
+          "height": 747
+        },
+        "current": "Edital Verticalizado",
+        "breadcrumb": "EstudosEdital Verticalizado",
+        "docX": false,
+        "mainX": false,
+        "docY": false,
+        "controls": [
+          {
+            "name": "Abrir menu",
+            "left": 16,
+            "right": 60,
+            "top": 10,
+            "bottom": 54,
+            "height": 44
+          },
+          {
+            "name": "Buscar páginas (Ctrl+K)",
+            "left": 211,
+            "right": 255,
+            "top": 10,
+            "bottom": 54,
+            "height": 44
+          },
+          {
+            "name": "Notificações",
+            "left": 263,
+            "right": 307,
+            "top": 10,
+            "bottom": 54,
+            "height": 44
+          },
+          {
+            "name": "Menu do usuário",
+            "left": 315,
+            "right": 359,
+            "top": 10,
+            "bottom": 54,
+            "height": 44
+          }
+        ]
+      }
+    },
+    {
+      "profile": "375-light",
+      "route": "/disciplinas?view=cards",
+      "passed": true,
+      "geometry": {
+        "count": 1,
+        "header": {
+          "left": 0,
+          "right": 375,
+          "top": 0,
+          "bottom": 65,
+          "height": 65
+        },
+        "main": {
+          "left": 0,
+          "right": 375,
+          "top": 65,
+          "bottom": 812,
+          "height": 747
+        },
+        "current": "Disciplinas",
+        "breadcrumb": "EstudosDisciplinas",
+        "docX": false,
+        "mainX": false,
+        "docY": false,
+        "controls": [
+          {
+            "name": "Abrir menu",
+            "left": 16,
+            "right": 60,
+            "top": 10,
+            "bottom": 54,
+            "height": 44
+          },
+          {
+            "name": "Buscar páginas (Ctrl+K)",
+            "left": 211,
+            "right": 255,
+            "top": 10,
+            "bottom": 54,
+            "height": 44
+          },
+          {
+            "name": "Notificações",
+            "left": 263,
+            "right": 307,
+            "top": 10,
+            "bottom": 54,
+            "height": 44
+          },
+          {
+            "name": "Menu do usuário",
+            "left": 315,
+            "right": 359,
+            "top": 10,
+            "bottom": 54,
+            "height": 44
+          }
+        ]
+      }
+    },
+    {
+      "profile": "375-light",
+      "route": "/admin/editais/00000000-0000-4000-8000-000000000001/editar",
+      "passed": true,
+      "geometry": {
+        "count": 1,
+        "header": {
+          "left": 0,
+          "right": 375,
+          "top": 0,
+          "bottom": 65,
+          "height": 65
+        },
+        "main": {
+          "left": 0,
+          "right": 375,
+          "top": 65,
+          "bottom": 812,
+          "height": 747
+        },
+        "current": "Editar edital",
+        "breadcrumb": "AdministraçãoCatálogo de editaisEditar edital",
+        "docX": false,
+        "mainX": false,
+        "docY": false,
+        "controls": [
+          {
+            "name": "Abrir menu",
+            "left": 16,
+            "right": 60,
+            "top": 10,
+            "bottom": 54,
+            "height": 44
+          },
+          {
+            "name": "Buscar páginas (Ctrl+K)",
+            "left": 211,
+            "right": 255,
+            "top": 10,
+            "bottom": 54,
+            "height": 44
+          },
+          {
+            "name": "Notificações",
+            "left": 263,
+            "right": 307,
+            "top": 10,
+            "bottom": 54,
+            "height": 44
+          },
+          {
+            "name": "Menu do usuário",
+            "left": 315,
+            "right": 359,
+            "top": 10,
+            "bottom": 54,
+            "height": 44
+          }
+        ]
+      }
+    },
+    {
+      "profile": "375-light",
+      "controls": true,
+      "passed": true
+    }
+  ]
+}

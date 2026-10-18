@@ -32,4 +32,24 @@ describe("Header Indigo Focus", () => {
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
     expect(trigger).toHaveFocus();
   });
+  it('usa a mesma navegação contextual ao alternar edital e disciplinas pela pesquisa',async()=>{
+    render(<MemoryRouter initialEntries={['/disciplinas?view=edital']}><Header/></MemoryRouter>);
+    const breadcrumb=screen.getByRole('navigation',{name:'Breadcrumb'});
+    expect(breadcrumb).toHaveTextContent('Estudos');
+    expect(breadcrumb).toHaveTextContent('Edital Verticalizado');
+    expect(within(breadcrumb).queryByRole('link',{name:'Estudos'})).not.toBeInTheDocument();
+    await userEvent.click(screen.getByRole('button',{name:'Buscar páginas (Ctrl+K)'}));
+    await userEvent.type(screen.getByLabelText('Nome da página'),'disciplinas');
+    await userEvent.click(within(screen.getByRole('dialog')).getByRole('button',{name:'Disciplinas'}));
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    expect(breadcrumb.querySelector('[aria-current=page]')).toHaveTextContent('Disciplinas');
+  });
+  it('oferece link válido ao pai de uma página interna e preserva o controle mobile',async()=>{
+    const onOpenSidebar=vi.fn();
+    render(<MemoryRouter initialEntries={['/admin/editais/123/editar']}><Header onOpenSidebar={onOpenSidebar}/></MemoryRouter>);
+    expect(screen.getByRole('link',{name:'Catálogo de editais'})).toHaveAttribute('href','/admin/editais');
+    expect(screen.getByRole('navigation',{name:'Breadcrumb'}).querySelector('[aria-current=page]')).toHaveTextContent('Editar edital');
+    await userEvent.click(screen.getByRole('button',{name:'Abrir menu'}));
+    expect(onOpenSidebar).toHaveBeenCalledOnce();
+  });
 });
