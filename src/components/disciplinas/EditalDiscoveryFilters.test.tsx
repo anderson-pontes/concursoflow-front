@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 
@@ -38,13 +38,13 @@ describe("EditalDiscoveryFilters", () => {
       />,
     );
 
-    await user.click(screen.getByRole("button", { name: "Filtros" }));
+    await user.click(within(screen.getByRole("group", { name: "Filtros mobile" })).getByRole("button", { name: "Filtros" }));
     await user.click(screen.getByText("Direito"));
     expect(onApply).not.toHaveBeenCalled();
     await user.click(screen.getByRole("button", { name: "Cancelar" }));
     expect(onApply).not.toHaveBeenCalled();
 
-    await user.click(screen.getByRole("button", { name: "Filtros" }));
+    await user.click(within(screen.getByRole("group", { name: "Filtros mobile" })).getByRole("button", { name: "Filtros" }));
     await user.click(screen.getByText("Direito"));
     await user.click(screen.getByRole("button", { name: "Aplicar filtros" }));
     expect(onApply).toHaveBeenCalledWith({ ...emptyFilters, disciplineIds: ["direito"] });

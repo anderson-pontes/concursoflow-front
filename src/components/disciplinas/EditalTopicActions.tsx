@@ -42,6 +42,7 @@ type Props = {
   returnTo: string;
   returnState: EditalReturnState;
   onRegister: (item: TopicoEditalItem) => void;
+  presentation?: "card" | "table";
 };
 
 const labels: Record<EditalActionId, string> = {
@@ -140,12 +141,12 @@ export function EditalTopicActions(props: Props) {
 
   return (
     <>
-      <div className="flex min-w-max items-center justify-end gap-1.5">
+      <div className={`flex min-w-0 items-center gap-1.5 ${props.presentation === "card" ? "w-full" : "justify-end"}`}>
         <Button
           data-edital-topic={props.item.id}
           size="sm"
-          className="h-8 gap-1.5 px-2.5 text-xs"
-          variant={primary.id === "open_topic" ? "outline" : "default"}
+          className={props.presentation === "card" ? "min-h-11 min-w-0 flex-1 gap-2" : "h-9 gap-1.5 whitespace-nowrap px-2.5 text-xs"}
+          variant={props.presentation === "card" ? "secondary" : "outline"}
           disabled={primary.state === "disabled" || launchingRef.current}
           title={primary.reason ? disabledReasons[primary.reason] : undefined}
           onClick={() => runAction(primary)}
@@ -156,7 +157,7 @@ export function EditalTopicActions(props: Props) {
         {secondary.length ? (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-9 w-9" aria-label={`Mais ações para ${props.item.descricao}`}>
+              <Button variant="ghost" size="icon" className={props.presentation === "card" ? "h-11 w-11 shrink-0" : "h-9 w-9 shrink-0"} aria-label={`Mais ações para ${props.item.descricao}`}>
                 <MoreHorizontal aria-hidden="true" />
               </Button>
             </DropdownMenuTrigger>

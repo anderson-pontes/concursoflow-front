@@ -1,7 +1,7 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { MemoryRouter, useLocation } from "react-router-dom";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { EditalVerticalizadoOverview } from "@/components/disciplinas/EditalVerticalizadoOverview";
 import { useEditalVerticalizado } from "@/hooks/useEditalVerticalizado";
@@ -41,6 +41,7 @@ function NavigationStateProbe() {
 }
 
 describe("EditalVerticalizadoOverview", () => {
+  afterEach(() => vi.useRealTimers());
   const createClient = () => new QueryClient({ defaultOptions: { queries: { retry: false } } });
   beforeEach(() => {
     vi.clearAllMocks();
@@ -106,7 +107,8 @@ describe("EditalVerticalizadoOverview", () => {
       </QueryClientProvider>,
     );
 
-    await user.click(screen.getByRole("button", { name: /Constituicao/ }));
+    expect(screen.getByRole("button", { name: "Estudar agora" })).toBeVisible();
+    await user.click(screen.getByRole("button", { name: "Detalhes de Constituicao" }));
     await user.click(screen.getByRole("button", { name: "Mais ações para Constituicao" }));
     await user.click(screen.getByRole("menuitem", { name: "Abrir tópico" }));
     const navigation = screen.getByTestId("navigation-state").textContent ?? "";
@@ -114,5 +116,43 @@ describe("EditalVerticalizadoOverview", () => {
     expect(navigation).toContain('"editalReturnTo":"/disciplinas?view=edital&expandida=topico-1"');
     expect(navigation).toContain('"editalSearch":"constitucional"');
     expect(navigation).toContain('"editalFocusId":"topico-1"');
+  });
+
+  it("separa cabeçalho e indicadores e preserva a escolha explícita de tabela no mobile", async () => {
+    const user = (await import("@testing-library/user-event")).default.setup();
+    render(<QueryClientProvider client={createClient()}><MemoryRouter initialEntries={["/disciplinas?view=edital"]}><EditalVerticalizadoOverview concursoId="concurso-novo" /><LocationProbe /></MemoryRouter></QueryClientProvider>);
+    const title = screen.getByRole("heading", { name: "Edital Verticalizado", level: 1 });
+    const indicators = screen.getByRole("group", { name: "Indicadores do edital" });
+    expect(title.closest("header")?.parentElement).toBe(indicators.parentElement);
+    expect(indicators.closest('[data-slot="card-header"]')).toBeNull();
+    expect(screen.getByRole("button", { name: "Cards" })).toHaveAttribute("aria-pressed", "true");
+    await user.click(screen.getByRole("button", { name: "Tabela" }));
+    expect(screen.getByTestId("location")).toHaveTextContent("layout=table");
+    expect(screen.getByRole("button", { name: "Tabela" })).toHaveAttribute("aria-pressed", "true");
+  });
+
+  it("aplica somente a última busca após 350ms e cancela a busca pendente ao limpar", () => {
+    vi.useFakeTimers();
+    const { unmount } = render(<QueryClientProvider client={createClient()}><MemoryRouter><EditalVerticalizadoOverview concursoId="concurso-novo" /></MemoryRouter></QueryClientProvider>);
+    const input = screen.getByRole("searchbox", { name: "Buscar tópico no edital" });
+    expect(screen.queryByRole("button", { name: "Buscar" })).not.toBeInTheDocument();
+    fireEvent.change(input, { target: { value: "direito" } });
+    act(() => vi.advanceTimersByTime(349));
+    expect(vi.mocked(useEditalVerticalizado).mock.lastCall?.[1].search).toBeUndefined();
+    fireEvent.change(input, { target: { value: "  direito   constitucional  " } });
+    act(() => vi.advanceTimersByTime(349));
+    expect(vi.mocked(useEditalVerticalizado).mock.lastCall?.[1].search).toBeUndefined();
+    act(() => vi.advanceTimersByTime(1));
+    expect(vi.mocked(useEditalVerticalizado).mock.lastCall?.[1].search).toBe("direito constitucional");
+    fireEvent.change(input, { target: { value: "busca pendente" } });
+    fireEvent.click(screen.getByRole("button", { name: "Remover filtro Busca: direito constitucional" }));
+    act(() => vi.advanceTimersByTime(350));
+    expect(input).toHaveValue("");
+    expect(vi.mocked(useEditalVerticalizado).mock.lastCall?.[1].search).toBeUndefined();
+    fireEvent.change(input, { target: { value: "não reaplicar após sair" } });
+    unmount();
+    const calls = vi.mocked(useEditalVerticalizado).mock.calls.length;
+    act(() => vi.advanceTimersByTime(350));
+    expect(useEditalVerticalizado).toHaveBeenCalledTimes(calls);
   });
 });

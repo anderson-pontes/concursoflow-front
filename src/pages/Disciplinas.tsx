@@ -51,9 +51,15 @@ export function Disciplinas() {
   const contextResolved = useConcursoContextResolved();
   const contextError = useConcursoContextError();
   const concursoId = concursoAtivoId ?? "";
-  const viewMode = useUiStore((s) => s.disciplinasViewMode);
+  const savedViewMode = useUiStore((s) => s.disciplinasViewMode);
   const setViewMode = useUiStore((s) => s.setDisciplinasViewMode);
   const [pageParams, setPageParams] = useSearchParams();
+  // The URL identifies the page; a persisted display preference must not select
+  // the Edital page when the user opens Disciplinas from the sidebar.
+  const requestedView = pageParams.get("view");
+  const viewMode = requestedView === "edital" ? "edital"
+    : requestedView === "table" || requestedView === "cards" ? requestedView
+    : savedViewMode === "table" ? "table" : "cards";
 
   const [search, setSearch] = React.useState("");
   const [filterSeg, setFilterSeg] = React.useState<FilterSeg>("todas");
@@ -61,12 +67,6 @@ export function Disciplinas() {
   const [modalMode, setModalMode] = React.useState<"create" | "edit">("create");
   const [editingDisciplina, setEditingDisciplina] = React.useState<Disciplina | null>(null);
   const [page, setPage] = React.useState(1);
-
-  React.useEffect(() => {
-    if (viewMode === "edital" && !concursoId) {
-      setViewMode("cards");
-    }
-  }, [concursoId, setViewMode, viewMode]);
 
   React.useEffect(() => {
     const requestedView = pageParams.get("view");
@@ -183,17 +183,17 @@ export function Disciplinas() {
   if (contextStatus === "hydrating") return <PageSkeleton cards={3} rows={2} />;
 
   if (contextStatus === "no_contest") {
-    return <div className="space-y-6 pb-10"><header><h1 className="text-2xl font-semibold tracking-tight text-foreground">Disciplinas &amp; Tópicos</h1><p className="text-sm text-muted-foreground">Escolha um concurso para organizar o conteúdo correto.</p></header><BannerSemConcurso /></div>;
+    return <div className="space-y-6 pb-10"><header><h1 className="text-2xl font-semibold tracking-tight text-foreground">{viewMode === "edital" ? "Edital Verticalizado" : "Disciplinas & Tópicos"}</h1><p className="text-sm text-muted-foreground">Escolha um concurso para organizar o conteúdo correto.</p></header><BannerSemConcurso /></div>;
   }
 
   if (contextStatus === "error") {
     const retry = pageQuery.refetch;
-    return <div className="space-y-6 pb-10"><header><h1 className="text-2xl font-semibold tracking-tight text-foreground">Disciplinas &amp; Tópicos</h1></header><div role="alert" className="rounded-xl border border-destructive/30 bg-card p-8 text-center"><h2 className="font-semibold">Não foi possível carregar as disciplinas</h2><p className="mt-1 text-sm text-muted-foreground">O conteúdo anterior foi ocultado. Tente novamente.</p><Button className="mt-5" onClick={() => void Promise.all([qc.invalidateQueries({ queryKey: ["concursos"] }), retry()])}>Tentar novamente</Button></div></div>;
+    return <div className="space-y-6 pb-10"><header><h1 className="text-2xl font-semibold tracking-tight text-foreground">{viewMode === "edital" ? "Edital Verticalizado" : "Disciplinas & Tópicos"}</h1></header><div role="alert" className="rounded-xl border border-destructive/30 bg-card p-8 text-center"><h2 className="font-semibold">Não foi possível carregar o conteúdo</h2><p className="mt-1 text-sm text-muted-foreground">O conteúdo anterior foi ocultado. Tente novamente.</p><Button className="mt-5" onClick={() => void Promise.all([qc.invalidateQueries({ queryKey: ["concursos"] }), retry()])}>Tentar novamente</Button></div></div>;
   }
 
   return (
-    <div className="min-h-full space-y-6 pb-10">
-      <DisciplinasToolbar
+    <div className="min-h-full min-w-0 space-y-6 pb-10">
+      {viewMode !== "edital" ? <DisciplinasToolbar
         search={search}
         onSearchChange={(value) => { setSearch(value); setPage(1); }}
         filterSeg={filterSeg}
@@ -204,7 +204,7 @@ export function Disciplinas() {
         isCreating={createMutation.isPending}
         viewMode={viewMode}
         onViewModeChange={changeViewMode}
-      />
+      /> : null}
 
       {loadingDisciplinas ? (
         <div className="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-4 xl:grid-cols-3">

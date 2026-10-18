@@ -38,4 +38,22 @@ describe("useEditalVerticalizado", () => {
     rerender({ id: "concurso-b" });
     await waitFor(() => expect(consultarEditalVerticalizado).toHaveBeenCalledTimes(2));
   });
+
+  it("mantém resultados durante a busca no mesmo concurso, sem expor dados ao trocar de concurso", async () => {
+    vi.mocked(consultarEditalVerticalizado).mockImplementation((_id, current) => current.search ? new Promise(() => {}) : Promise.resolve(page(null, false)));
+    const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+    const { result, rerender, unmount } = renderHook(({ id, search }) => useEditalVerticalizado(id, { ...query, search }), {
+      initialProps: { id: "concurso-a", search: undefined as string | undefined }, wrapper: wrapperFor(client),
+    });
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    rerender({ id: "concurso-a", search: "constitucional" });
+    expect(result.current.isPlaceholderData).toBe(true);
+    expect(result.current.data?.pages[0]?.concurso.id).toBe("concurso-a");
+    expect(result.current.isLoading).toBe(false);
+    rerender({ id: "concurso-b", search: "constitucional" });
+    expect(result.current.data).toBeUndefined();
+    expect(result.current.isLoading).toBe(true);
+    unmount();
+    client.clear();
+  });
 });

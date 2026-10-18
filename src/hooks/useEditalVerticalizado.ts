@@ -9,6 +9,9 @@ export function useEditalVerticalizado(concursoId: string, query: EditalConsulta
     initialPageParam: null as string | null,
     getNextPageParam: (lastPage) => lastPage.page.has_more ? lastPage.page.next_cursor ?? undefined : undefined,
     enabled: Boolean(concursoId),
+    // Keep the search input mounted while refining the current contest. Never
+    // carry another contest's results into the newly selected context.
+    placeholderData: (previous, previousQuery) => previousQuery?.queryKey[1] === concursoId ? previous : undefined,
     staleTime: 30_000,
   });
 }

@@ -23,6 +23,7 @@ describe('barras de cumprimento diário', () => {
     const exceeded = screen.getByRole('button',{name:/12\/10\/2026.*Meta superada/});
     expect(exceeded).toHaveTextContent('125%');
     expect(exceeded.querySelector('.study-progress-track')).toHaveStyle('--study-fill: 100%');
+    expect(screen.getByRole('button',{name:/13\/10\/2026.*Estudo realizado sem planejamento/}).querySelector('.study-progress-track')).toHaveStyle('--study-fill: 0%');
     expect(screen.getByRole('button',{name:/13\/10\/2026.*Estudo realizado sem planejamento/})).toHaveTextContent('Sem meta');
   });
   it('abre tooltip por teclado com data, tempos, restante e situação e fecha com Escape', async () => {

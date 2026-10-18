@@ -47,18 +47,24 @@ export function Dashboard() {
  if(!concursoId)return <div className="space-y-6"><h1 className="text-2xl font-semibold">Painel</h1><BannerSemConcurso/></div>;
  if(contests.isLoading)return <PageSkeleton cards={4} rows={2}/>;
  if(!contest)return <div className="space-y-6"><h1 className="text-2xl font-semibold">Painel</h1><BannerSemConcurso/></div>;
- return <div className="space-y-5 pb-8">
-  <DashboardContextHeader contest={contest} daysUntilExam={days}/>
-  <div className="flex flex-wrap items-center justify-between gap-3">{!contest.data_prova?<Link to="/concursos" className="text-sm font-medium text-primary underline">Cadastrar data da prova</Link>:<span className="text-xs text-muted-foreground">Acompanhamento do concurso ativo</span>}<div className="flex flex-wrap items-center gap-3"><SelectField aria-label="Período do dashboard" className="w-44" value={period} onValueChange={v=>setPeriod(v as DashboardPeriod)} options={[{value:'week',label:'Esta semana'},{value:'month',label:'Este mês'},{value:'30days',label:'Últimos 30 dias'}]}/><p className="text-xs text-muted-foreground">{formatNumericDate(range.inicio)} a {formatNumericDate(range.fim)}</p></div></div>
+ return <div className="min-w-0 space-y-5 pb-8">
+  <DashboardContextHeader contest={contest} daysUntilExam={days}><div className="flex min-w-0 flex-wrap items-center gap-2"><SelectField aria-label="Período do dashboard" className="w-40" value={period} onValueChange={v=>setPeriod(v as DashboardPeriod)} options={[{value:'week',label:'Esta semana'},{value:'month',label:'Este mês'},{value:'30days',label:'Últimos 30 dias'}]}/><p className="text-xs text-muted-foreground">{formatNumericDate(range.inicio)} a {formatNumericDate(range.fim)}</p></div>{!contest.data_prova&&<Link to="/concursos" className="text-xs font-medium text-primary underline">Cadastrar data da prova</Link>}</DashboardContextHeader>
+  <section aria-labelledby="dashboard-evolution" className="space-y-3"><h2 id="dashboard-evolution" className="text-base font-semibold">Como estou evoluindo?</h2>
   <AnalyticsState cause={analysis.error} loading={analysis.isLoading} error={analysis.isError} retry={()=>void analysis.refetch()}/>
   {!analysis.isError&&analysis.data&&<DashboardPeriodKpis data={analysis.data}/>}
-  <div data-dashboard-row="actions" className="grid items-start gap-4 xl:items-stretch xl:grid-cols-2">
+  </section>
+  <section aria-labelledby="dashboard-now" className="space-y-3"><h2 id="dashboard-now" className="text-base font-semibold">O que estudar agora?</h2>
+  <div data-dashboard-row="actions" className="grid items-start gap-4 lg:items-stretch lg:grid-cols-2">
    {next.isLoading?<Skeleton className="h-48 rounded-xl"/>:<NextActionCard compact study={next.data} state={actionState} isError={next.isError} onRetry={()=>void next.refetch()} onStart={()=>trackTelemetry('next_action_started',{action_type:'study',source:'dashboard'})} onManual={()=>{if(!next.data)return;const s=next.data;setPrefill({disciplinaId:s.disciplina_id,topicoId:s.topico_id,blocoId:s.fonte==='bloco_semanal'?s.item_id:undefined,itemId:s.fonte==='cronograma_item'?s.item_id:undefined,dataReferencia:s.data});trackTelemetry('manual_study_opened',{source:'dashboard'});}} replanUrl={`/planos/${concursoId}/replanejar`}/>}
    {analysis.isLoading?<Skeleton className="h-48 rounded-xl"/>:<DashboardTodayPlan items={todayPlan} onRegister={register} error={analysis.isError} retry={()=>void analysis.refetch()}/>}
   </div>
-  {!analysis.isError&&analysis.data&&<><DashboardDailyCharts data={analysis.data}/><DashboardDisciplineCharts data={analysis.data}/></>}
-  <div data-dashboard-row="tracking" className="grid items-start gap-4 xl:items-stretch xl:grid-cols-2"><HeatmapCard className="flex flex-col xl:h-full xl:self-stretch" data={heatmap.data??[]} scopeLabel="Concurso ativo" endDate={today} isLoading={heatmap.isLoading} isError={heatmap.isError} onRetry={()=>void heatmap.refetch()}/><DashboardMiniCalendar timezone={timezone} concursoId={concursoId} disciplineNames={new Map(analysis.data?.disciplinas.map(d=>[d.id,d.nome]))}/></div>
-  <div data-dashboard-row="complementary" className="grid items-start gap-4 xl:items-stretch xl:grid-cols-3">{reviews.isLoading?<Skeleton className="h-36 rounded-xl"/>:<UrgentReviewsCard reviews={reviews.data?.items??[]} total={reviews.data?.total??0} isError={reviews.isError} onRetry={()=>void reviews.refetch()}/>}<DashboardComplementary summary={summary} notices={notices}/></div>
+  </section>
+  {!analysis.isError&&analysis.data&&<DashboardDailyCharts data={analysis.data}/>}
+  <section aria-labelledby="dashboard-improve" className="space-y-4"><h2 id="dashboard-improve" className="text-base font-semibold">Onde posso melhorar?</h2>
+  {!analysis.isError&&analysis.data&&<DashboardDisciplineCharts data={analysis.data}/>}
+  <div data-dashboard-row="complementary" className="grid items-start gap-4 lg:items-stretch lg:grid-cols-3">{reviews.isLoading?<Skeleton className="h-36 rounded-xl"/>:<UrgentReviewsCard reviews={reviews.data?.items??[]} total={reviews.data?.total??0} isError={reviews.isError} onRetry={()=>void reviews.refetch()}/>}<DashboardComplementary summary={summary} notices={notices}/></div>
+  <div data-dashboard-row="tracking" className="grid items-start gap-4 lg:items-stretch lg:grid-cols-2"><HeatmapCard className="flex flex-col lg:h-full lg:self-stretch" data={heatmap.data??[]} scopeLabel="Concurso ativo" endDate={today} isLoading={heatmap.isLoading} isError={heatmap.isError} onRetry={()=>void heatmap.refetch()}/><DashboardMiniCalendar timezone={timezone} concursoId={concursoId} disciplineNames={new Map(analysis.data?.disciplinas.map(d=>[d.id,d.nome]))}/></div>
+  </section>
   {prefill&&<React.Suspense fallback={null}><RegistroEstudoModal open onClose={()=>setPrefill(null)} defaultDisciplinaId={prefill.disciplinaId} defaultBlocoId={prefill.blocoId} defaultCronogramaItemId={prefill.itemId} defaultDataReferencia={prefill.dataReferencia} defaultConcursoId={concursoId} defaultTopicos={prefill.topicoId?[{id:prefill.topicoId,nome:''}]:null}/></React.Suspense>}
  </div>;
 }

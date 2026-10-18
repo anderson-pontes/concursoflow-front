@@ -29,7 +29,7 @@ export function UserDropdown({ compact = false }: { compact?: boolean }) {
         <DropdownMenuTrigger asChild>
           <button
             type="button"
-            className="flex min-h-11 shrink-0 items-center gap-2 rounded-lg px-1 text-left transition hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            className="flex min-h-11 min-w-11 shrink-0 items-center justify-center gap-2 rounded-lg px-1 text-left transition hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
             aria-label="Menu do usuário"
           >
             <Avatar name={user.name} avatarUrl={user.avatar_url} size={compact ? "sm" : "md"} className="ring-0" />

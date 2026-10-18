@@ -24,6 +24,11 @@ beforeEach(() => {
 afterEach(() => { vi.useRealTimers(); vi.restoreAllMocks(); });
 
 describe("mini calendário independente do período", () => {
+  it("identifica revisão somente quando o planejamento informa o modo de revisão", async () => {
+    vi.mocked(fetchCalendarioMes).mockResolvedValue({ ...response(2026, 12), dias: [{ ...day, planejado: day.planejado.map(item=>({...item,modo:'revisao' as const})) }] });
+    setup();
+    expect(await screen.findByRole('button',{name:/31\/12\/2026.*revisão programada/})).toBeInTheDocument();
+  });
   it("Hoje usa o fuso do usuário ao atravessar meia-noite UTC e mudar de ano", async () => {
     vi.setSystemTime(new Date("2027-01-01T01:00:00Z"));
     vi.mocked(fetchCalendarioMes).mockImplementation(async ({ ano, mes }) => ({ ...response(ano, mes), timezone: "America/Sao_Paulo" }));

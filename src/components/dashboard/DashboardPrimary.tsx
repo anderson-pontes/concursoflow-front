@@ -12,6 +12,8 @@ import type { Bloco } from "@/lib/cronograma/types";
 import { cn } from "@/lib/utils";
 import { DashboardCard, DashboardCardHeader, DashboardCardBody, DashboardCardActions } from "@/components/dashboard/DashboardCard";
 import { formatDashboardDuration } from "@/lib/dashboard/analysis";
+import { DisciplineColorIndicator } from "@/components/disciplinas/DisciplineColorIndicator";
+import { studySurface } from "@/lib/ui/studySurface";
 
 export type DashboardContest = {
   nome: string;
@@ -61,7 +63,7 @@ function formatHours(hours: number): string {
   return rest ? `${fullHours}h ${rest}min` : `${fullHours}h`;
 }
 
-export function DashboardContextHeader({ contest, daysUntilExam }: { contest: DashboardContest; daysUntilExam: number | null }) {
+export function DashboardContextHeader({ contest, daysUntilExam, children }: { contest: DashboardContest; daysUntilExam: number | null; children?: React.ReactNode }) {
   const examLabel = daysUntilExam === null
     ? "Data da prova ainda não informada"
     : daysUntilExam > 0
@@ -71,17 +73,18 @@ export function DashboardContextHeader({ contest, daysUntilExam }: { contest: Da
         : `Prova realizada há ${Math.abs(daysUntilExam)} dias`;
 
   return (
-    <header className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+    <header className="grid min-w-0 gap-3 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-start">
       <div className="min-w-0">
         <p className="text-xs font-semibold uppercase tracking-wide text-primary">Concurso ativo</p>
-        <h1 className="mt-1 truncate text-2xl font-bold tracking-tight text-foreground">{contest.nome}</h1>
-        <p className="mt-1 text-sm text-muted-foreground">{contest.orgao}{contest.cargo ? ` · ${contest.cargo}` : ""}</p>
+        <h1 className="mt-1 break-words text-2xl font-semibold tracking-tight text-foreground [overflow-wrap:anywhere]">{contest.nome}</h1>
+        <p className="mt-1 break-words text-sm text-muted-foreground">{[contest.orgao !== contest.nome ? contest.orgao : null, contest.cargo].filter(Boolean).join(' · ')}</p>
       </div>
-      <Badge variant="outline" className="h-auto min-h-10 max-w-full flex-wrap justify-start whitespace-normal px-3 py-2 text-sm sm:justify-center">
+      <div className="flex min-w-0 flex-col items-start gap-2 lg:items-end"><Badge variant="outline" className="h-auto max-w-full flex-wrap justify-start whitespace-normal border-0 bg-muted px-2.5 py-1.5 text-xs font-medium">
         <Target aria-hidden="true" />
         {examLabel}
         {contest.data_prova ? <span className="font-normal text-muted-foreground">· {formatExamDate(contest.data_prova)}</span> : null}
       </Badge>
+      {children}</div>
     </header>
   );
 }
@@ -118,18 +121,18 @@ export function NextActionCard({
       })
     : null;
 
-  if (compact) return <DashboardCard aria-labelledby="next-action-title" className="border-primary/30 bg-gradient-to-br from-primary/10 via-card to-card">
-    <DashboardCardHeader className="xl:min-h-0"><CardTitle><h2 id="next-action-title">Próxima sessão</h2></CardTitle><CardDescription>Seu próximo estudo no planejamento</CardDescription></DashboardCardHeader>
+  if (compact) return <DashboardCard aria-labelledby="next-action-title" className={`border-transparent ${studySurface('indigo')}`}>
+    <DashboardCardHeader><CardTitle><h3 id="next-action-title">Próxima sessão</h3></CardTitle><CardDescription>Seu próximo estudo no planejamento</CardDescription></DashboardCardHeader>
     <DashboardCardBody>
-      {isError ? <p role="alert" className="text-sm text-muted-foreground">Não foi possível carregar a próxima ação. Tente novamente.</p> : study ? <div className="space-y-3">
-        <p className="break-words text-lg font-semibold">{study.disciplina_nome}</p>
+      {isError ? <p role="alert" className="text-sm text-muted-foreground">Não foi possível carregar a próxima ação. Tente novamente.</p> : study ? <div className="flex flex-1 flex-col justify-center gap-3">
+        <p className="flex min-w-0 items-start gap-2 text-lg font-semibold [overflow-wrap:anywhere]"><DisciplineColorIndicator disciplinaId={study.disciplina_id}/>{study.disciplina_nome}</p>
         {study.topico_nome && <p className="break-words text-sm text-muted-foreground">{study.topico_nome}</p>}
-        <dl className="grid grid-cols-2 gap-3 rounded-lg border border-primary/10 bg-card/70 p-3 text-sm"><div><dt className="text-xs text-muted-foreground">Data</dt><dd className="mt-1 font-medium">{formatStudyDate(study.data)}</dd></div><div><dt className="text-xs text-muted-foreground">Duração</dt><dd className="mt-1 font-medium">{formatDashboardDuration(study.duracao_minutos)}</dd></div></dl>
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs"><span className="inline-flex items-center gap-1.5"><Clock3 className="size-4" aria-hidden/>{formatStudyDate(study.data)} · {formatDashboardDuration(study.duracao_minutos)}</span><Badge variant="outline" className="border-primary/20 bg-card/60">No planejamento</Badge></div>
       </div> : <p className="text-sm text-muted-foreground">Planejamento concluído por enquanto. Ajuste o cronograma para receber uma nova recomendação.</p>}
-      <DashboardCardActions className="flex-col items-stretch">
+      <DashboardCardActions className="items-center border-primary/15">
         {isError && <Button type="button" onClick={onRetry}>Tentar novamente</Button>}
         {launchUrl && <Button asChild><Link to={launchUrl} onClick={onStart}><Play aria-hidden="true"/>Iniciar estudo</Link></Button>}
-        <div className="flex flex-wrap gap-2">{study && <Button type="button" variant="outline" className="flex-1" onClick={onManual}>Registrar manualmente</Button>}<Button asChild variant="outline" className="flex-1"><Link to={replanUrl}><RefreshCw aria-hidden="true"/>Replanejar</Link></Button></div>
+        {study && <Button type="button" variant="ghost" onClick={onManual}>Registrar manualmente</Button>}<Button asChild variant="ghost"><Link to={replanUrl}><RefreshCw aria-hidden="true"/>Replanejar</Link></Button>
       </DashboardCardActions>
     </DashboardCardBody>
   </DashboardCard>;
@@ -221,7 +224,7 @@ export function WeeklyGoalCard({ hours, goalHours, questions, isError, onRetry }
 
 export function UrgentReviewsCard({ reviews, total, isError, onRetry }: { reviews: PendingReview[]; total: number; isError: boolean; onRetry: () => void }) {
  const overviewUrl=reviews.some(r=>r.dias_atraso>0)?'/revisoes?grupo=atrasadas':'/revisoes?grupo=hoje';
- return <DashboardCard aria-labelledby="urgent-reviews-title"><DashboardCardHeader><div className="flex flex-wrap items-center justify-between gap-2"><CardTitle className="flex items-center gap-2"><BookOpenCheck className="size-5 text-primary" aria-hidden/><h2 id="urgent-reviews-title">Revisões urgentes</h2></CardTitle><Badge variant="secondary">{total}</Badge></div><CardDescription>Revisões previstas e em atraso</CardDescription></DashboardCardHeader><DashboardCardBody>
+ return <DashboardCard aria-labelledby="urgent-reviews-title"><DashboardCardHeader><div className="flex flex-wrap items-center justify-between gap-2"><CardTitle className="flex items-center gap-2"><span className={`rounded-lg p-2 ${studySurface('coral')}`}><BookOpenCheck className="size-4" aria-hidden/></span><h2 id="urgent-reviews-title">Revisões urgentes</h2></CardTitle><Badge variant="outline">{total}</Badge></div><CardDescription>Revisões previstas e em atraso</CardDescription></DashboardCardHeader><DashboardCardBody>
   {isError?<div><p role="alert" className="text-sm text-muted-foreground">Não foi possível carregar as revisões.</p><Button variant="outline" size="sm" className="mt-3" onClick={onRetry}>Tentar novamente</Button></div>:reviews.length?<ul className="divide-y divide-border">{reviews.slice(0,3).map(r=><li key={r.topico_id} className="flex items-center gap-3 py-2"><div className="min-w-0 flex-1"><strong className="block break-words text-sm">{r.topico_nome}</strong><span className="break-words text-xs text-muted-foreground">{r.disciplina_nome}{r.dias_atraso>0?` · ${r.dias_atraso} dia(s) em atraso`:' · revisar hoje'}</span></div><Button asChild size="sm" variant="outline"><Link to={buildReviewCenterUrl(r)}>Revisar</Link></Button></li>)}</ul>:<p className="text-sm text-muted-foreground">Nenhuma revisão urgente no concurso ativo.</p>}
   <DashboardCardActions><Button asChild variant="ghost" className="ml-auto"><Link to={overviewUrl}>Ver todas</Link></Button></DashboardCardActions>
  </DashboardCardBody></DashboardCard>;

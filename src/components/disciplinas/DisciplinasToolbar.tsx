@@ -64,7 +64,7 @@ export function DisciplinasToolbar({
             Disciplinas & Tópicos
           </h1>
           <p className="text-sm text-muted-foreground">
-            Catálogo do plano · progresso no concurso ativo
+            Gerencie e organize suas disciplinas e tópicos.
           </p>
         </div>
         <button

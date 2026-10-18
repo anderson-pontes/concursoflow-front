@@ -44,6 +44,9 @@ export function EditalDiscoveryFilters({
   onApply,
   onRemoveSearch,
   onClear,
+  searchControl,
+  resultSummary,
+  resultActions,
 }: {
   disciplines: DisciplineOption[];
   value: EditalAppliedFilters;
@@ -51,6 +54,9 @@ export function EditalDiscoveryFilters({
   onApply: (next: EditalAppliedFilters) => void;
   onRemoveSearch: () => void;
   onClear: () => void;
+  searchControl?: React.ReactNode;
+  resultSummary?: React.ReactNode;
+  resultActions?: React.ReactNode;
 }) {
   const [sheetOpen, setSheetOpen] = React.useState(false);
   const [draft, setDraft] = React.useState(value);
@@ -70,8 +76,10 @@ export function EditalDiscoveryFilters({
   };
 
   return (
-    <div className="space-y-3">
-      <div className="hidden flex-wrap items-end gap-2 lg:flex">
+    <div className="min-w-0 space-y-2">
+      <div className="grid min-w-0 gap-2 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
+      {searchControl}
+      <div role="group" aria-label="Filtros desktop" className="hidden items-end gap-2 lg:flex">
         <DisciplinePopover
           disciplines={disciplines}
           selected={value.disciplineIds}
@@ -79,17 +87,20 @@ export function EditalDiscoveryFilters({
         />
         <SingleSelect
           label="Situação"
+          compact
           value={value.status}
           options={statusOptions}
           onChange={(status) => onApply({ ...value, status: status as EditalAppliedFilters["status"] })}
         />
         <AdvancedFilters value={value} filterCount={filterCount} onApply={onApply} />
       </div>
-
-      <div className="lg:hidden">
+      </div>
+      <div className="grid min-w-0 grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-1.5 sm:gap-2 lg:grid-cols-[minmax(0,1fr)_auto]">
+        {resultSummary}
+      <div role="group" aria-label="Filtros mobile" className="shrink-0 lg:hidden">
         <Sheet open={sheetOpen} onOpenChange={openSheet}>
           <SheetTrigger asChild>
-            <Button type="button" variant="outline" className="w-full justify-center">
+            <Button type="button" variant="outline" className="min-h-11 justify-center gap-1.5 px-2 sm:px-3">
               <SlidersHorizontal className="h-4 w-4" aria-hidden="true" />
               Filtros{filterCount ? ` (${filterCount})` : ""}
             </Button>
@@ -142,6 +153,8 @@ export function EditalDiscoveryFilters({
           </SheetContent>
         </Sheet>
       </div>
+      {resultActions ? <div className="min-w-0 justify-self-end">{resultActions}</div> : null}
+      </div>
 
       {(appliedSearch || filterCount > 0 || value.sort !== "ordem_edital") ? (
         <div className="flex flex-wrap items-center gap-2" aria-label="Filtros aplicados">
@@ -165,7 +178,7 @@ function AdvancedFilters({ value, filterCount, onApply }: { value: EditalApplied
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button type="button" variant="outline" className="h-10 gap-2">
+        <Button type="button" variant="outline" className="min-h-11 gap-2">
           <SlidersHorizontal className="h-4 w-4" aria-hidden="true" />
           Filtros{filterCount ? ` (${filterCount})` : ""}
         </Button>
@@ -189,9 +202,8 @@ function DisciplinePopover({ disciplines, selected, onApply }: { disciplines: Di
   const changeOpen = (next: boolean) => { if (next) setDraft(selected); setOpen(next); };
   return (
     <Popover open={open} onOpenChange={changeOpen}>
-      <div className="space-y-1.5">
-        <Label>Disciplina</Label>
-        <PopoverTrigger asChild><Button type="button" variant="outline" className="w-full justify-between font-normal">{selected.length ? `${selected.length} selecionada(s)` : "Todas"}<SlidersHorizontal className="h-4 w-4" aria-hidden="true" /></Button></PopoverTrigger>
+      <div className="min-w-0">
+        <PopoverTrigger asChild><Button type="button" variant="outline" aria-label="Filtrar por disciplina" className="min-h-11 w-full justify-between font-normal">{selected.length ? `${selected.length} disciplina(s)` : "Disciplina"}<SlidersHorizontal className="h-4 w-4" aria-hidden="true" /></Button></PopoverTrigger>
       </div>
       <PopoverContent align="start" className="w-80">
         <CheckboxGroup label="Selecionar disciplinas" options={disciplines.map((item) => ({ value: item.id, label: item.nome }))} selected={draft} onChange={setDraft} />
@@ -209,11 +221,11 @@ function CheckRow({ label, checked, onChange }: { label: string; checked: boolea
   return <label className="flex min-h-11 items-center gap-3 rounded-lg px-2 text-sm hover:bg-muted"><Checkbox checked={checked} onCheckedChange={(value) => onChange(value === true)} /><span>{label}</span></label>;
 }
 
-function SingleSelect({ label, value, options, onChange }: { label: string; value: string; options: Array<{ value: string; label: string }>; onChange: (value: string) => void }) {
-  const id = `edital-filter-${label.toLowerCase().replaceAll(" ", "-")}`;
-  return <div className="space-y-1.5"><Label htmlFor={id}>{label}</Label><Select value={value} onValueChange={onChange}><SelectTrigger id={id}><SelectValue /></SelectTrigger><SelectContent>{options.map((option) => <SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>)}</SelectContent></Select></div>;
+function SingleSelect({ label, value, options, onChange, compact = false }: { label: string; value: string; options: Array<{ value: string; label: string }>; onChange: (value: string) => void; compact?: boolean }) {
+  const id = React.useId();
+  return <div className="min-w-0 space-y-1.5"><Label htmlFor={id} className={compact ? "sr-only" : undefined}>{label}</Label><Select value={value} onValueChange={onChange}><SelectTrigger id={id} className="min-h-11"><SelectValue />{compact && value === "todos" ? <span className="sr-only">as situações</span> : null}</SelectTrigger><SelectContent>{options.map((option) => <SelectItem key={option.value} value={option.value}>{compact && option.value === "todos" ? "Todas as situações" : option.label}</SelectItem>)}</SelectContent></Select></div>;
 }
 
 function FilterChip({ label, onRemove }: { label: string; onRemove: () => void }) {
-  return <Button type="button" variant="secondary" size="sm" className="max-w-full gap-1.5" onClick={onRemove} aria-label={`Remover filtro ${label}`}><span className="truncate">{label}</span><X className="h-3.5 w-3.5" aria-hidden="true" /></Button>;
+  return <Button type="button" variant="secondary" size="sm" className="min-h-11 max-w-full gap-1.5 sm:min-h-9" onClick={onRemove} aria-label={`Remover filtro ${label}`}><span className="truncate">{label}</span><X className="h-3.5 w-3.5 shrink-0" aria-hidden="true" /></Button>;
 }
