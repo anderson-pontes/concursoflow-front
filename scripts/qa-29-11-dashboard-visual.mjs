@@ -7,7 +7,8 @@ import puppeteer from "puppeteer";
 const baseUrl = process.env.QA_BASE_URL || "http://127.0.0.1:3000";
 assert.ok(["127.0.0.1", "localhost"].includes(new URL(baseUrl).hostname));
 const v2 = process.env.QA_VARIANT === "v2";
-const output = new URL(v2 ? "../docs/qa/dashboard-v2/" : "../docs/qa/dashboard-29-11/", import.meta.url);
+const scrollAudit=process.env.QA_SCROLL_AUDIT==='1';
+const output = new URL(scrollAudit?"../docs/qa/layout-scroll-dashboard/":v2 ? "../docs/qa/dashboard-v2/" : "../docs/qa/dashboard-29-11/", import.meta.url);
 await mkdir(output, { recursive: true });
 const id = index => `29110000-0000-4000-8000-${String(index).padStart(12, "0")}`;
 const contest = { id: id(1), nome: "Concurso QA Dashboard", orgao: "Órgão QA", cargo: "Analista", data_prova: null };
@@ -86,6 +87,7 @@ try {
       await page.waitForFunction(() => document.body.innerText.includes("Tempo estudado") || document.body.innerText.includes("Tentar novamente"));
       const audit = await page.evaluate(() => ({ overflow: document.documentElement.scrollWidth > innerWidth + 1 || document.querySelector('main').scrollWidth > document.querySelector('main').clientWidth+1, text: document.querySelector("main")?.innerText ?? "", dark: document.documentElement.classList.contains("dark"), charts: document.querySelectorAll(".recharts-wrapper").length, kpis: document.querySelector('[aria-label="Indicadores de desempenho"]') ? getComputedStyle(document.querySelector('[aria-label="Indicadores de desempenho"]')).gridTemplateColumns.split(' ').length : null }));
       assert.equal(audit.overflow, false, "overflow horizontal");
+      if(scrollAudit)assert.equal(await page.evaluate(()=>document.documentElement.scrollHeight>document.documentElement.clientHeight+1),false,'documento não deve rolar junto do main');
       assert.equal(audit.dark, profile.theme === "dark");
       assert.equal(errors.length, 0, errors.join("; "));
       if (profile.scenario === "data") { assert.ok(audit.text.includes("2h 30min"), "KPI duração real"); assert.ok(/10[,\.]0%/.test(audit.text), "taxa ponderada"); }

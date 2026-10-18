@@ -1,0 +1,902 @@
+{
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "document": {
+    "height": 900,
+    "client": 900
+  },
+  "nodes": [
+    {
+      "tag": "HTML",
+      "id": "",
+      "slot": null,
+      "section": null,
+      "class": "dark",
+      "top": 0,
+      "bottom": 900,
+      "height": 900,
+      "client": 900,
+      "scroll": 900,
+      "overflow": "visible",
+      "minHeight": "0px",
+      "display": "block",
+      "hidden": false
+    },
+    {
+      "tag": "BODY",
+      "id": "",
+      "slot": null,
+      "section": null,
+      "class": "min-h-screen bg-background text-foreground",
+      "top": 0,
+      "bottom": 900,
+      "height": 900,
+      "client": 900,
+      "scroll": 900,
+      "overflow": "visible",
+      "minHeight": "900px",
+      "display": "block",
+      "hidden": false
+    },
+    {
+      "tag": "DIV",
+      "id": "root",
+      "slot": null,
+      "section": null,
+      "class": "",
+      "top": 0,
+      "bottom": 900,
+      "height": 900,
+      "client": 900,
+      "scroll": 900,
+      "overflow": "visible",
+      "minHeight": "0px",
+      "display": "block",
+      "hidden": false
+    },
+    {
+      "tag": "DIV",
+      "id": "",
+      "slot": null,
+      "section": null,
+      "class": "flex h-[100dvh] overflow-hidden bg-background",
+      "top": 0,
+      "bottom": 900,
+      "height": 900,
+      "client": 900,
+      "scroll": 900,
+      "overflow": "hidden",
+      "minHeight": "0px",
+      "display": "flex",
+      "hidden": false
+    },
+    {
+      "tag": "MAIN",
+      "id": "main-content",
+      "slot": null,
+      "section": null,
+      "class": "relative min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto p-4 md:p-6",
+      "top": 65,
+      "bottom": 900,
+      "height": 835,
+      "client": 835,
+      "scroll": 8433,
+      "overflow": "auto",
+      "minHeight": "0px",
+      "display": "block",
+      "hidden": false
+    },
+    {
+      "tag": "DIV",
+      "id": "",
+      "slot": null,
+      "section": null,
+      "class": "min-w-0 space-y-5 pb-10",
+      "top": 89,
+      "bottom": 8474.25,
+      "height": 8385.25,
+      "client": 8385,
+      "scroll": 8385,
+      "overflow": "visible",
+      "minHeight": "0px",
+      "display": "block",
+      "hidden": false
+    },
+    {
+      "tag": "DIV",
+      "id": "",
+      "slot": "tabs",
+      "section": null,
+      "class": "flex gap-2 data-[orientation=horizontal]:flex-col",
+      "top": 421.25,
+      "bottom": 8434.25,
+      "height": 8013,
+      "client": 8013,
+      "scroll": 8013,
+      "overflow": "visible",
+      "minHeight": "0px",
+      "display": "flex",
+      "hidden": false
+    },
+    {
+      "tag": "DIV",
+      "id": "radix-:r23:-content-calendario",
+      "slot": "tabs-content",
+      "section": null,
+      "class": "flex-1 text-sm outline-none min-w-0 space-y-4",
+      "top": 481.25,
+      "bottom": 8434.25,
+      "height": 7953,
+      "client": 7953,
+      "scroll": 7953,
+      "overflow": "visible",
+      "minHeight": "auto",
+      "display": "block",
+      "hidden": false
+    },
+    {
+      "tag": "DIV",
+      "id": "",
+      "slot": null,
+      "section": "agenda-layout",
+      "class": "grid min-w-0 items-start gap-4 min-[1440px]:grid-cols-[minmax(0,1fr)_minmax(240px,25%)]",
+      "top": 481.25,
+      "bottom": 8082.25,
+      "height": 7601,
+      "client": 7601,
+      "scroll": 7601,
+      "overflow": "visible",
+      "minHeight": "0px",
+      "display": "grid",
+      "hidden": false
+    },
+    {
+      "tag": "DIV",
+      "id": "",
+      "slot": null,
+      "section": "weekly-overview",
+      "class": "grid min-w-0 items-start gap-4",
+      "top": 8098.25,
+      "bottom": 8434.25,
+      "height": 336,
+      "client": 336,
+      "scroll": 336,
+      "overflow": "visible",
+      "minHeight": "0px",
+      "display": "grid",
+      "hidden": false
+    },
+    {
+      "tag": "DIV",
+      "id": "radix-:r23:-content-disciplinas",
+      "slot": "tabs-content",
+      "section": null,
+      "class": "flex-1 text-sm outline-none",
+      "top": 0,
+      "bottom": 0,
+      "height": 0,
+      "client": 0,
+      "scroll": 0,
+      "overflow": "visible",
+      "minHeight": "0px",
+      "display": "none",
+      "hidden": true
+    },
+    {
+      "tag": "DIV",
+      "id": "radix-:r23:-content-atividades",
+      "slot": "tabs-content",
+      "section": null,
+      "class": "flex-1 text-sm outline-none space-y-4",
+      "top": 0,
+      "bottom": 0,
+      "height": 0,
+      "client": 0,
+      "scroll": 0,
+      "overflow": "visible",
+      "minHeight": "0px",
+      "display": "none",
+      "hidden": true
+    },
+    {
+      "tag": "DIV",
+      "id": "radix-:r23:-content-desempenho",
+      "slot": "tabs-content",
+      "section": null,
+      "class": "flex-1 text-sm outline-none",
+      "top": 0,
+      "bottom": 0,
+      "height": 0,
+      "client": 0,
+      "scroll": 0,
+      "overflow": "visible",
+      "minHeight": "0px",
+      "display": "none",
+      "hidden": true
+    },
+    {
+      "tag": "SECTION",
+      "id": "",
+      "slot": null,
+      "section": null,
+      "class": "",
+      "top": 900,
+      "bottom": 900,
+      "height": 0,
+      "client": 0,
+      "scroll": 0,
+      "overflow": "visible",
+      "minHeight": "0px",
+      "display": "block",
+      "hidden": false
+    }
+  ],
+  "scrollables": [
+    {
+      "tag": "A",
+      "id": "",
+      "class": "sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[300] focus:rounded-lg focus:bg-primary focus:px-4 focus:py-2.5 focus:text-sm focus:font-semibold focus:text-primary-foreground focus:outline-none focus:ring-2 focus:ring-ring",
+      "client": 1,
+      "scroll": 24,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "NAV",
+      "id": "",
+      "class": "sidebar-nav-scroll flex flex-1 flex-col overflow-y-auto overflow-x-hidden py-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
+      "client": 646,
+      "scroll": 762,
+      "overflow": "auto"
+    },
+    {
+      "tag": "MAIN",
+      "id": "main-content",
+      "class": "relative min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto p-4 md:p-6",
+      "client": 835,
+      "scroll": 8433,
+      "overflow": "auto"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    }
+  ]
+}

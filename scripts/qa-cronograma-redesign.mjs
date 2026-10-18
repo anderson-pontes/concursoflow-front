@@ -6,9 +6,11 @@ import puppeteer from 'puppeteer';
 // Fixtures locais interceptadas; nenhuma chamada ou escrita em produção.
 const base=process.env.QA_BASE_URL||'http://127.0.0.1:4175';
 assert.ok(['localhost','127.0.0.1'].includes(new URL(base).hostname));
-const output=new URL('../docs/qa/cronograma-refinement-v2/',import.meta.url);
+const scrollMatrix=process.env.QA_SCROLL_MATRIX==='1';
+const scrollAudit=process.env.QA_SCROLL_AUDIT==='1'||scrollMatrix;
+const output=new URL(scrollAudit?'../docs/qa/cronograma-scroll/':'../docs/qa/cronograma-refinement-v2/',import.meta.url);
 await mkdir(output,{recursive:true});
-const profiles=[...[320,375,768,1024,1440,1920].flatMap(width=>['light','dark'].map(theme=>({name:`${width}-${theme}`,width,theme,empty:false}))),{name:'empty-light',width:1440,theme:'light',empty:true},{name:'empty-mobile-dark',width:320,theme:'dark',empty:true}];
+const profiles=scrollMatrix?[[1920,1080],[1440,900],[1366,768],[768,1024],[375,812],[320,700]].flatMap(([width,height])=>['light','dark'].flatMap(theme=>[3,80].map(count=>({name:`${width}-${theme}-${count}`,width,height,theme,count,empty:false})))):[...[320,375,768,1024,1440,1920].flatMap(width=>['light','dark'].map(theme=>({name:`${width}-${theme}`,width,theme,empty:false}))),{name:'empty-light',width:1440,theme:'light',empty:true},{name:'empty-mobile-dark',width:320,theme:'dark',empty:true}];
 const days=['seg','ter','qua','qui','sex','sab','dom'];
 const names=['Língua Portuguesa','Tecnologia da Informação e Segurança de Redes com identificação extensa','Direito Constitucional','Direito Administrativo'];
 const disciplines=names.map((nome,index)=>({id:`disc-${index}`,nome,concurso_ids:['contest']}));
@@ -25,15 +27,63 @@ async function click(page,text) {
 async function capture(page,name) {
   await page.screenshot({path:fileURLToPath(new URL(`${name}.png`,output))});
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1||document.querySelector('main').scrollWidth>document.querySelector('main').clientWidth+1),false,`${name}: overflow`);
+  if(scrollMatrix)await checkScroll(page,name);
+}
+async function checkScroll(page,name) {
+  const audit=await page.evaluate(()=>({documentOverflow:document.documentElement.scrollHeight>document.documentElement.clientHeight+1,documentTop:document.scrollingElement.scrollTop,headerTop:document.querySelector('#main-content').parentElement.querySelector('header').getBoundingClientRect().top,nested:[...document.querySelectorAll('main *')].filter(n=>n.clientHeight>0&&n.scrollHeight>n.clientHeight+2&&['auto','scroll'].includes(getComputedStyle(n).overflowY)).map(n=>({tag:n.tagName,class:n.className}))}));
+  assert.equal(audit.documentOverflow,false,`${name}: rolagem externa`);
+  assert.equal(audit.documentTop,0,`${name}: documento se moveu`);
+  assert.equal(audit.headerTop,0,`${name}: header se moveu`);
+  assert.deepEqual(audit.nested,[],`${name}: rolagem vertical aninhada`);
+}
+async function exerciseScroll(page,profile) {
+  const scrollable=await page.$eval('main',n=>n.scrollHeight>n.clientHeight+1);
+  if(scrollable) {
+    await page.evaluate(()=>{const main=document.querySelector('main');main.scrollTop=0;main.querySelector('button')?.focus({preventScroll:true});});
+    await page.keyboard.press('PageDown');
+    await page.waitForFunction(()=>document.querySelector('main').scrollTop>0);
+    await checkScroll(page,'PageDown');
+    await page.$eval('main',n=>n.scrollTop=0);
+    await page.mouse.move(profile.width-40,profile.height/2);
+    await page.mouse.wheel({deltaY:500});
+    await page.waitForFunction(()=>document.querySelector('main').scrollTop>0);
+    await checkScroll(page,'mouse');
+  }
+  await page.$eval('main',n=>n.scrollTop=n.scrollHeight);
+  const tail=await page.evaluate(()=>{
+    const main=document.querySelector('main'),end=main.querySelector('[data-cronograma-section="weekly-overview"]');
+    const expected=parseFloat(getComputedStyle(main).paddingBottom)+parseFloat(getComputedStyle(main.firstElementChild).paddingBottom);
+    return {scrollable:main.scrollHeight>main.clientHeight+1,gap:main.scrollHeight-(end.getBoundingClientRect().bottom-main.getBoundingClientRect().top+main.scrollTop),expected};
+  });
+  if(tail.scrollable)assert.ok(Math.abs(tail.gap-tail.expected)<=2,`espaço ao final: ${JSON.stringify(tail)}`);
+  await capture(page,`${profile.name}-bottom`);
+  await click(page,'Próxima semana');await page.waitForNetworkIdle({idleTime:100});await checkScroll(page,'semana seguinte');
+  await click(page,'Semana anterior');await page.waitForNetworkIdle({idleTime:100});
+  await click(page,'Adicionar atividade');await page.waitForSelector('[role=dialog]');await page.keyboard.press('Escape');await page.waitForFunction(()=>!document.querySelector('[role=dialog]'));
+  await page.click('[aria-label^="Mais ações de"]');await page.waitForSelector('[role=menu]');await page.keyboard.press('Escape');
+  if(profile.width>=768) {
+    await page.click('[aria-label="Recolher menu"]');await page.waitForFunction(()=>document.querySelector('[aria-label="Expandir menu"]'));
+    await page.click('[aria-label="Expandir menu"]');
+  }else{
+    await page.click('[aria-label="Abrir menu"]');await page.waitForFunction(()=>document.querySelector('[aria-label="Abrir menu"]').getAttribute('aria-expanded')==='true');
+    await page.keyboard.press('Escape');await page.waitForFunction(()=>document.querySelector('[aria-label="Abrir menu"]').getAttribute('aria-expanded')==='false');
+  }
+  await click(page,'Mensal');await page.waitForSelector('[aria-label="Calendário mensal de estudos"]');await capture(page,`${profile.name}-month`);
+  await click(page,'Lista');await capture(page,`${profile.name}-list`);
+  await click(page,'Calendário');await click(page,'Semanal');
+  const topics=await page.$$eval('[role=article]',nodes=>nodes.slice(0,3).map(n=>n.textContent.match(/Assunto distinto \d+/)?.[0]));
+  assert.equal(new Set(topics).size,3,'assuntos distintos nos cards de Português');
+  assert.ok(topics.every(Boolean),'assuntos associados visíveis');
+  await checkScroll(page,'retorno semanal');
 }
 try {
-  for(const profile of profiles) {
+  for(const profile of profiles.filter(p=>!process.env.QA_PROFILE||p.name===process.env.QA_PROFILE)) {
     const few=profile.width===320||profile.width===1440;
     const currentPlan={...plan,disciplinas:few?plan.disciplinas.slice(0,1):plan.disciplinas};
-    const currentBlocks=blocks.map(b=>({...b,disciplina_id:few?disciplines[0].id:b.disciplina_id}));
+    const currentBlocks=scrollMatrix?Array.from({length:profile.count},(_,i)=>({...blocks[i%blocks.length],id:`scroll-${i}`,dia_semana:profile.count===3?'seg':days[i%7],disciplina_id:disciplines[0].id,topico_ids:[`scrolltopic-${i}`],topico_nomes:[`Assunto distinto ${i+1}: concordância e interpretação`]})):blocks.map(b=>({...b,disciplina_id:few?disciplines[0].id:b.disciplina_id}));
     const context=await browser.createBrowserContext(),page=await context.newPage(),errors=[],requests=[];
     page.on('pageerror',e=>errors.push(e.message));
-    await page.setViewport({width:profile.width,height:1000});
+    await page.setViewport({width:profile.width,height:profile.height??1000});
     await page.emulateMediaFeatures([{name:'prefers-reduced-motion',value:'reduce'}]);
     await page.evaluateOnNewDocument(theme=>{
       localStorage.setItem('theme',theme);
@@ -54,7 +104,7 @@ try {
         const start=new Date(`${url.searchParams.get('inicio')}T12:00:00`);
         return request.respond(json(profile.empty?[]:currentBlocks.map(b=>{const d=new Date(start);d.setDate(d.getDate()+days.indexOf(b.dia_semana));return {...b,data:d.toISOString().slice(0,10),fonte:'bloco_semanal',bloco_cronograma_id:b.id,topico_nome:b.topico_nomes[0],topico_nomes:[],vigencia_inicio:d.toISOString().slice(0,10),vigencia_fim:d.toISOString().slice(0,10),vigencia_indeterminada:false};})));
       }
-      if(path==='/cronograma/planejamento/plan/resumo')return request.respond(json({minutos_planejados_semana:profile.empty?0:600,minutos_estudados_semana:profile.empty?0:145,disciplinas_count:currentPlan.disciplinas.length,atividades_planejadas:profile.empty?0:16,atividades_concluidas:0,progresso_pct:0,questoes_total:0,acertos:0,erros:0,rendimento_pct:0,disciplinas:currentPlan.disciplinas.map((d,i)=>({disciplina_id:d.disciplina_id,minutos_planejados:profile.empty?0:currentBlocks.filter(b=>b.disciplina_id===d.disciplina_id).reduce((sum,b)=>sum+b.duracao_minutos,0),minutos_estudados:profile.empty?0:few?145:[90,35,20,0][i],sessoes_semana:profile.empty?0:currentBlocks.filter(b=>b.disciplina_id===d.disciplina_id).length,progresso_pct:0}))}));
+      if(path==='/cronograma/planejamento/plan/resumo')return request.respond(json({minutos_planejados_semana:profile.empty?0:scrollMatrix?currentBlocks.reduce((sum,b)=>sum+b.duracao_minutos,0):600,minutos_estudados_semana:profile.empty?0:145,disciplinas_count:currentPlan.disciplinas.length,atividades_planejadas:profile.empty?0:currentBlocks.length,atividades_concluidas:0,progresso_pct:0,questoes_total:0,acertos:0,erros:0,rendimento_pct:0,disciplinas:currentPlan.disciplinas.map((d,i)=>({disciplina_id:d.disciplina_id,minutos_planejados:profile.empty?0:currentBlocks.filter(b=>b.disciplina_id===d.disciplina_id).reduce((sum,b)=>sum+b.duracao_minutos,0),minutos_estudados:profile.empty?0:few?145:[90,35,20,0][i],sessoes_semana:profile.empty?0:currentBlocks.filter(b=>b.disciplina_id===d.disciplina_id).length,progresso_pct:0}))}));
       if(path==='/dashboard/resumo')return request.respond(json({meta_horas:2,horas_semana:profile.empty?0:145/60,questoes_semana:0}));
       if(path==='/calendario/mes')return request.respond(json({ano:Number(url.searchParams.get('ano')),mes:Number(url.searchParams.get('mes')),dias:[],resumo_mes:{}}));
       if(path==='/notifications/unread-count')return request.respond(json({count:0}));
@@ -74,7 +124,17 @@ try {
       assert.ok(Math.abs(placement.lower.left-placement.layout.left)<1&&Math.abs(placement.lower.right-placement.layout.right)<1,'resumos ocupam largura total');
       assert.ok(placement.lower.top>=placement.layout.bottom,'resumos abaixo da agenda e consulta rápida');
       assert.ok(!placement.sidebar.includes('Disciplinas da semana')&&!placement.sidebar.includes('Atividades da semana'),'lateral compacta');
+      if(scrollAudit) {
+        const geometry=await page.evaluate(()=>({viewport:{width:innerWidth,height:innerHeight},document:{height:document.documentElement.scrollHeight,client:document.documentElement.clientHeight},nodes:[...document.querySelectorAll('html,body,#root,#root>div,#root>section,main,main>div,[data-slot=tabs],[data-slot=tabs-content],[data-cronograma-section]')].map(n=>{const r=n.getBoundingClientRect(),s=getComputedStyle(n);return {tag:n.tagName,id:n.id,slot:n.getAttribute('data-slot'),section:n.getAttribute('data-cronograma-section'),class:n.className,top:r.top,bottom:r.bottom,height:r.height,client:n.clientHeight,scroll:n.scrollHeight,overflow:s.overflowY,minHeight:s.minHeight,display:s.display,hidden:n.hidden};}),scrollables:[...document.querySelectorAll('*')].filter(n=>n.clientHeight>0&&n.scrollHeight>n.clientHeight+1&&['auto','scroll','hidden'].includes(getComputedStyle(n).overflowY)).map(n=>({tag:n.tagName,id:n.id,class:n.className,client:n.clientHeight,scroll:n.scrollHeight,overflow:getComputedStyle(n).overflowY}))}));
+        await writeFile(new URL(`${profile.name}-geometry.json`,output),JSON.stringify(geometry,null,2));
+        if(!scrollMatrix)console.log(JSON.stringify(geometry,null,2));
+      }
       await capture(page,profile.name);
+      if(scrollMatrix) {
+        await exerciseScroll(page,profile);assert.deepEqual(errors,[]);
+        results.push({profile:profile.name,passed:true,documentScroll:false,nestedScroll:false});
+        await context.close();continue;
+      }
       await page.evaluate(()=>document.querySelector('[data-cronograma-section="agenda-layout"]').scrollIntoView({block:'start'}));
       await capture(page,`${profile.name}-agenda`);
       if(!profile.empty) {

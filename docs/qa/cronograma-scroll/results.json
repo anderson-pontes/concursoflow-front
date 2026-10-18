@@ -1,0 +1,150 @@
+{
+  "mocked": true,
+  "productionWrites": false,
+  "results": [
+    {
+      "profile": "1920-light-3",
+      "passed": true,
+      "documentScroll": false,
+      "nestedScroll": false
+    },
+    {
+      "profile": "1920-light-80",
+      "passed": true,
+      "documentScroll": false,
+      "nestedScroll": false
+    },
+    {
+      "profile": "1920-dark-3",
+      "passed": true,
+      "documentScroll": false,
+      "nestedScroll": false
+    },
+    {
+      "profile": "1920-dark-80",
+      "passed": true,
+      "documentScroll": false,
+      "nestedScroll": false
+    },
+    {
+      "profile": "1440-light-3",
+      "passed": true,
+      "documentScroll": false,
+      "nestedScroll": false
+    },
+    {
+      "profile": "1440-light-80",
+      "passed": true,
+      "documentScroll": false,
+      "nestedScroll": false
+    },
+    {
+      "profile": "1440-dark-3",
+      "passed": true,
+      "documentScroll": false,
+      "nestedScroll": false
+    },
+    {
+      "profile": "1440-dark-80",
+      "passed": true,
+      "documentScroll": false,
+      "nestedScroll": false
+    },
+    {
+      "profile": "1366-light-3",
+      "passed": true,
+      "documentScroll": false,
+      "nestedScroll": false
+    },
+    {
+      "profile": "1366-light-80",
+      "passed": true,
+      "documentScroll": false,
+      "nestedScroll": false
+    },
+    {
+      "profile": "1366-dark-3",
+      "passed": true,
+      "documentScroll": false,
+      "nestedScroll": false
+    },
+    {
+      "profile": "1366-dark-80",
+      "passed": true,
+      "documentScroll": false,
+      "nestedScroll": false
+    },
+    {
+      "profile": "768-light-3",
+      "passed": true,
+      "documentScroll": false,
+      "nestedScroll": false
+    },
+    {
+      "profile": "768-light-80",
+      "passed": true,
+      "documentScroll": false,
+      "nestedScroll": false
+    },
+    {
+      "profile": "768-dark-3",
+      "passed": true,
+      "documentScroll": false,
+      "nestedScroll": false
+    },
+    {
+      "profile": "768-dark-80",
+      "passed": true,
+      "documentScroll": false,
+      "nestedScroll": false
+    },
+    {
+      "profile": "375-light-3",
+      "passed": true,
+      "documentScroll": false,
+      "nestedScroll": false
+    },
+    {
+      "profile": "375-light-80",
+      "passed": true,
+      "documentScroll": false,
+      "nestedScroll": false
+    },
+    {
+      "profile": "375-dark-3",
+      "passed": true,
+      "documentScroll": false,
+      "nestedScroll": false
+    },
+    {
+      "profile": "375-dark-80",
+      "passed": true,
+      "documentScroll": false,
+      "nestedScroll": false
+    },
+    {
+      "profile": "320-light-3",
+      "passed": true,
+      "documentScroll": false,
+      "nestedScroll": false
+    },
+    {
+      "profile": "320-light-80",
+      "passed": true,
+      "documentScroll": false,
+      "nestedScroll": false
+    },
+    {
+      "profile": "320-dark-3",
+      "passed": true,
+      "documentScroll": false,
+      "nestedScroll": false
+    },
+    {
+      "profile": "320-dark-80",
+      "passed": true,
+      "documentScroll": false,
+      "nestedScroll": false
+    }
+  ]
+}

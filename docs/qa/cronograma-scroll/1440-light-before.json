@@ -1,0 +1,390 @@
+{
+  "viewport": {
+    "width": 1440,
+    "height": 1000
+  },
+  "document": {
+    "height": 2862,
+    "client": 1000
+  },
+  "nodes": [
+    {
+      "tag": "HTML",
+      "id": "",
+      "slot": null,
+      "section": null,
+      "class": "",
+      "top": 0,
+      "bottom": 1000,
+      "height": 1000,
+      "client": 1000,
+      "scroll": 2862,
+      "overflow": "visible",
+      "minHeight": "0px",
+      "display": "block",
+      "hidden": false
+    },
+    {
+      "tag": "BODY",
+      "id": "",
+      "slot": null,
+      "section": null,
+      "class": "min-h-screen bg-background text-foreground",
+      "top": 0,
+      "bottom": 1000,
+      "height": 1000,
+      "client": 1000,
+      "scroll": 1000,
+      "overflow": "visible",
+      "minHeight": "1000px",
+      "display": "block",
+      "hidden": false
+    },
+    {
+      "tag": "DIV",
+      "id": "root",
+      "slot": null,
+      "section": null,
+      "class": "",
+      "top": 0,
+      "bottom": 1000,
+      "height": 1000,
+      "client": 1000,
+      "scroll": 1000,
+      "overflow": "visible",
+      "minHeight": "0px",
+      "display": "block",
+      "hidden": false
+    },
+    {
+      "tag": "DIV",
+      "id": "",
+      "slot": null,
+      "section": null,
+      "class": "flex h-[100dvh] overflow-hidden bg-background",
+      "top": 0,
+      "bottom": 1000,
+      "height": 1000,
+      "client": 1000,
+      "scroll": 1000,
+      "overflow": "hidden",
+      "minHeight": "0px",
+      "display": "flex",
+      "hidden": false
+    },
+    {
+      "tag": "MAIN",
+      "id": "main-content",
+      "slot": null,
+      "section": null,
+      "class": "min-w-0 flex-1 overflow-x-hidden overflow-y-auto p-4 md:p-6",
+      "top": 65,
+      "bottom": 1000,
+      "height": 935,
+      "client": 935,
+      "scroll": 3319,
+      "overflow": "auto",
+      "minHeight": "auto",
+      "display": "block",
+      "hidden": false
+    },
+    {
+      "tag": "DIV",
+      "id": "",
+      "slot": null,
+      "section": null,
+      "class": "min-w-0 space-y-5 pb-10",
+      "top": 89,
+      "bottom": 3360.25,
+      "height": 3271.25,
+      "client": 3271,
+      "scroll": 3271,
+      "overflow": "visible",
+      "minHeight": "0px",
+      "display": "block",
+      "hidden": false
+    },
+    {
+      "tag": "DIV",
+      "id": "",
+      "slot": "tabs",
+      "section": null,
+      "class": "flex gap-2 data-[orientation=horizontal]:flex-col",
+      "top": 421.25,
+      "bottom": 3320.25,
+      "height": 2899,
+      "client": 2899,
+      "scroll": 2899,
+      "overflow": "visible",
+      "minHeight": "0px",
+      "display": "flex",
+      "hidden": false
+    },
+    {
+      "tag": "DIV",
+      "id": "radix-:r23:-content-calendario",
+      "slot": "tabs-content",
+      "section": null,
+      "class": "flex-1 text-sm outline-none min-w-0 space-y-4",
+      "top": 481.25,
+      "bottom": 3320.25,
+      "height": 2839,
+      "client": 2839,
+      "scroll": 2839,
+      "overflow": "visible",
+      "minHeight": "auto",
+      "display": "block",
+      "hidden": false
+    },
+    {
+      "tag": "DIV",
+      "id": "",
+      "slot": null,
+      "section": "agenda-layout",
+      "class": "grid min-w-0 items-start gap-4 min-[1440px]:grid-cols-[minmax(0,1fr)_minmax(240px,25%)]",
+      "top": 481.25,
+      "bottom": 2968.25,
+      "height": 2487,
+      "client": 2487,
+      "scroll": 2487,
+      "overflow": "visible",
+      "minHeight": "0px",
+      "display": "grid",
+      "hidden": false
+    },
+    {
+      "tag": "DIV",
+      "id": "",
+      "slot": null,
+      "section": "weekly-overview",
+      "class": "grid min-w-0 items-start gap-4",
+      "top": 2984.25,
+      "bottom": 3320.25,
+      "height": 336,
+      "client": 336,
+      "scroll": 336,
+      "overflow": "visible",
+      "minHeight": "0px",
+      "display": "grid",
+      "hidden": false
+    },
+    {
+      "tag": "DIV",
+      "id": "radix-:r23:-content-disciplinas",
+      "slot": "tabs-content",
+      "section": null,
+      "class": "flex-1 text-sm outline-none",
+      "top": 0,
+      "bottom": 0,
+      "height": 0,
+      "client": 0,
+      "scroll": 0,
+      "overflow": "visible",
+      "minHeight": "0px",
+      "display": "none",
+      "hidden": true
+    },
+    {
+      "tag": "DIV",
+      "id": "radix-:r23:-content-atividades",
+      "slot": "tabs-content",
+      "section": null,
+      "class": "flex-1 text-sm outline-none space-y-4",
+      "top": 0,
+      "bottom": 0,
+      "height": 0,
+      "client": 0,
+      "scroll": 0,
+      "overflow": "visible",
+      "minHeight": "0px",
+      "display": "none",
+      "hidden": true
+    },
+    {
+      "tag": "DIV",
+      "id": "radix-:r23:-content-desempenho",
+      "slot": "tabs-content",
+      "section": null,
+      "class": "flex-1 text-sm outline-none",
+      "top": 0,
+      "bottom": 0,
+      "height": 0,
+      "client": 0,
+      "scroll": 0,
+      "overflow": "visible",
+      "minHeight": "0px",
+      "display": "none",
+      "hidden": true
+    },
+    {
+      "tag": "SECTION",
+      "id": "",
+      "slot": null,
+      "section": null,
+      "class": "",
+      "top": 1000,
+      "bottom": 1000,
+      "height": 0,
+      "client": 0,
+      "scroll": 0,
+      "overflow": "visible",
+      "minHeight": "0px",
+      "display": "block",
+      "hidden": false
+    }
+  ],
+  "scrollables": [
+    {
+      "tag": "A",
+      "id": "",
+      "class": "sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[300] focus:rounded-lg focus:bg-primary focus:px-4 focus:py-2.5 focus:text-sm focus:font-semibold focus:text-primary-foreground focus:outline-none focus:ring-2 focus:ring-ring",
+      "client": 1,
+      "scroll": 24,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "NAV",
+      "id": "",
+      "class": "sidebar-nav-scroll flex flex-1 flex-col overflow-y-auto overflow-x-hidden py-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
+      "client": 746,
+      "scroll": 762,
+      "overflow": "auto"
+    },
+    {
+      "tag": "MAIN",
+      "id": "main-content",
+      "class": "min-w-0 flex-1 overflow-x-hidden overflow-y-auto p-4 md:p-6",
+      "client": 935,
+      "scroll": 3319,
+      "overflow": "auto"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SPAN",
+      "id": "",
+      "class": "sr-only",
+      "client": 1,
+      "scroll": 20,
+      "overflow": "hidden"
+    }
+  ]
+}

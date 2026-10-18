@@ -6,7 +6,8 @@ import puppeteer from "puppeteer";
 // Browser-only fixtures: requests never reach a backend or modify real data.
 const base = process.env.QA_BASE_URL ?? "http://127.0.0.1:4175";
 const mobileV4 = process.env.QA_VARIANT === "v4";
-const output = fileURLToPath(new URL(`../docs/qa/edital-${mobileV4 ? "v4" : "v3"}/`, import.meta.url));
+const scrollAudit=process.env.QA_SCROLL_AUDIT==='1';
+const output = fileURLToPath(new URL(scrollAudit?'../docs/qa/layout-scroll-edital/':`../docs/qa/edital-${mobileV4 ? "v4" : "v3"}/`, import.meta.url));
 const contests = [1, 2].map((n) => ({ id: `00000000-0000-4000-8000-00000000000${n}`, nome: `Concurso ${n}`, orgao: n === 1 ? "Tribunal Regional — acompanhamento do edital" : "Segundo concurso", cargo: "Analista Judiciário — Área Administrativa", status: "ativo", data_prova: null }));
 const discipline = { id: "00000000-0000-4000-8000-000000000010", nome: "Português e interpretação de textos administrativos e legislativos", ordem: 1 };
 const topic = {
@@ -85,6 +86,7 @@ try {
     }
     assert.equal(audit.columns, width >= 1024 ? 4 : 2);
     assert.equal(audit.mainOverflow || audit.pageOverflow, false, JSON.stringify(audit));
+    if(scrollAudit)assert.equal(await page.evaluate(()=>document.documentElement.scrollHeight>document.documentElement.clientHeight+1),false,'documento não deve rolar junto do main');
     assert.ok(audit.grid.y >= audit.header.y + audit.header.h - 1);
     assert.deepEqual(audit.headings, ["Edital Verticalizado"]);
     assert.equal(audit.table, width >= 1024);

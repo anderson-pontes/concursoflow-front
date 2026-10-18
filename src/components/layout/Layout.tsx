@@ -74,13 +74,14 @@ function AuthenticatedLayout({ children }: { children: React.ReactNode }) {
       <ContextTelemetryObserver />
       <div
         className={cn(
-          "flex min-w-0 flex-1 flex-col overflow-hidden transition-[margin-left] duration-[250ms] [transition-timing-function:cubic-bezier(0.4,0,0.2,1)]",
+          "flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden transition-[margin-left] duration-[250ms] [transition-timing-function:cubic-bezier(0.4,0,0.2,1)]",
           sidebarCollapsed ? "md:ml-[72px]" : "md:ml-[260px]",
         )}
       >
         <Header mobileSidebarOpen={mobileSidebarOpen} onOpenSidebar={() => setMobileSidebarOpen(true)} />
         <PomodoroSessionBadge />
-        <main id="main-content" className="min-w-0 flex-1 overflow-x-hidden overflow-y-auto p-4 md:p-6">
+        {/* Keep absolute accessibility text inside this scroll container. */}
+        <main id="main-content" className="relative min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto p-4 md:p-6">
           {children}
         </main>
       </div>
