@@ -91,10 +91,11 @@ describe("gerenciamento incremental do cronograma", () => {
   it("mostra planejado separado de realizado e não recria o assistente ao adicionar", async () => {
     plan = { ...emptyPlan(), disciplinas: disciplinas.slice(0, 3).map((d, ordem) => ({ disciplina_id: d.id, nome: d.nome, ordem })) };
     setup();
-    expect(await screen.findByText("3h")).toBeInTheDocument();
-    const studied = screen.getByText("Horas estudadas na semana").parentElement!;
+    const indicators=await screen.findByLabelText('Indicadores do cronograma');
+    expect(within(indicators).getByText("3h")).toBeInTheDocument();
+    const studied = screen.getByText("Horas estudadas na semana").closest('section')!;
     expect(within(studied).getByText("0 min")).toBeInTheDocument();
-    const progress = screen.getByText("Progresso das atividades").parentElement!;
+    const progress = screen.getByText("Progresso das atividades").closest('section')!;
     expect(within(progress).getByText("0%")).toBeInTheDocument();
     await userEvent.click(screen.getByRole("button", { name: "Adicionar disciplinas" }));
     expect(screen.getByRole("dialog", { name: "Adicionar disciplinas ao cronograma" })).toBeInTheDocument();

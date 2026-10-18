@@ -8,20 +8,20 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
-  blocoDurationMinutes,
   fmtBlocoMinutos,
   getTipo,
-  getTipoSurface,
 } from "@/lib/cronograma/constants";
 import type { Bloco } from "@/lib/cronograma/types";
-import { blocoTopicoIds, blocoVigenciaExpirada, fmtDateBR } from "@/lib/cronograma/types";
+import { blocoVigenciaExpirada, fmtDateBR } from "@/lib/cronograma/types";
 import {
   buildDisciplinaDashboardUrl,
   launchPomodoroFromBloco,
   resolvePomodoroTopicoId,
 } from "@/lib/pomodoro/launchFromCronograma";
 import { cn } from "@/lib/utils";
-import { DisciplineColorIndicator, disciplineColorStyle } from "@/components/disciplinas/DisciplineColorIndicator";
+import {studySurface} from "@/lib/ui/studySurface";
+import {activityMinutes} from "@/lib/cronograma/activityPresentation";
+import { DisciplineColorIndicator } from "@/components/disciplinas/DisciplineColorIndicator";
 
 
 export type CronogramaBlocoCardProps = {
@@ -52,16 +52,11 @@ export function CronogramaBlocoCard({
   estenderPending = false,
 }: CronogramaBlocoCardProps) {
   const navigate = useNavigate();
-  const minutos = bloco.duracao_minutos ?? blocoDurationMinutes(bloco.hora_inicio, bloco.hora_fim);
+  const minutos = activityMinutes(bloco);
   const legacyItem = bloco.fonte === "cronograma_item" && !bloco.bloco_cronograma_id;
 
   const badge = getTipo(bloco.tipo);
-  const topicoIds = blocoTopicoIds(bloco);
-  const topicoResumo =
-    bloco.topico_nome ??
-    (bloco.topico_nomes && bloco.topico_nomes.length > 1
-      ? `${bloco.topico_nomes.length} tópicos`
-      : bloco.topico_nomes?.[0] ?? null);
+  const topics=bloco.topico_nomes?.filter(Boolean).length ? bloco.topico_nomes.filter(Boolean) : bloco.topico_nome ? [bloco.topico_nome] : [];
   const launchTopicoId = resolvePomodoroTopicoId(bloco);
   const canEstender =
     bloco.modo_criacao === "simplificada" &&
@@ -69,89 +64,35 @@ export function CronogramaBlocoCard({
     Boolean(bloco.vigencia_fim) &&
     !bloco.vigencia_indeterminada &&
     Boolean(onEstender);
-  const expirado = blocoVigenciaExpirada(bloco);
-  const modoBadge =
-    bloco.tipo === "revisao"
-      ? { label: "revisão", cls: "bg-review/10 text-review-foreground" }
-      : { label: "aprendizado", cls: "bg-primary-100 text-primary-700 dark:bg-primary-900/40 dark:text-primary-300" };
-
+  const avulsa=Boolean(bloco.vigencia_inicio && bloco.vigencia_inicio===bloco.vigencia_fim) || (bloco.fonte==='cronograma_item'&&!bloco.bloco_cronograma_id);
+  const recurrenceEnd=!avulsa&&!bloco.vigencia_indeterminada?bloco.vigencia_fim:null;
+  const expirado=Boolean(recurrenceEnd)&&blocoVigenciaExpirada(bloco);
   return (
     <div
       role="article"
       aria-label={`Bloco de estudo: ${disciplinaNome}`}
-      className={cn(
-        "relative min-w-0 overflow-hidden rounded-xl border border-border border-l-4 p-3 shadow-sm transition-shadow hover:shadow-md",
-        getTipoSurface(bloco.tipo),
-        expirado && "border-amber-300/80 opacity-90 dark:border-amber-700/60",
-      )}
-      style={disciplineColorStyle(bloco.disciplina_id)}
+      className="flex min-w-0 flex-col gap-1.5 rounded-xl border border-border bg-card p-3 shadow-sm transition-shadow hover:shadow-md focus-within:ring-2 focus-within:ring-ring/50"
     >
-      <div className="flex items-center gap-1.5">
-        <DisciplineColorIndicator disciplinaId={bloco.disciplina_id} shape="dot" label={`Cor de ${disciplinaNome}`} />
-        <p className="line-clamp-2 break-words text-sm font-semibold text-card-foreground" title={disciplinaNome}>
-          {disciplinaNome}
-        </p>
+      <div className="flex min-w-0 flex-wrap items-start justify-between gap-2">
+        <div className="flex min-w-0 flex-1 items-start gap-2"><DisciplineColorIndicator disciplinaId={bloco.disciplina_id} className="h-5"/><p className="min-w-0 text-sm font-semibold leading-snug [overflow-wrap:anywhere]">{disciplinaNome}</p></div>
+        {expirado&&<details className="max-w-full text-xs"><summary className={`cursor-pointer rounded-full px-2 py-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${studySurface('amber')}`}>Recorrência encerrada</summary><p className="mt-2 max-w-xs leading-relaxed text-muted-foreground">A repetição terminou em {fmtDateBR(recurrenceEnd)}. Isso não indica conclusão nem atraso desta atividade.</p></details>}
       </div>
-      <p className="mt-1 text-xs text-muted-foreground">{diaLabel}{occurrenceDate ? ` · ${fmtDateBR(occurrenceDate)}` : ""} · Planejado</p>
-      {topicoResumo ? (
-        <p
-          className="mt-0.5 truncate pl-3.5 text-xs text-muted-foreground"
-          title={bloco.topico_nomes?.join(", ") || topicoResumo}
-        >
-          {topicoResumo}
-        </p>
-      ) : null}
-      <p
-        className={cn("mt-1 truncate pl-3.5 text-xs font-bold tabular-nums sm:text-xs", "text-foreground")}
-        title={`${bloco.hora_inicio}–${bloco.hora_fim} · ${fmtBlocoMinutos(minutos)}`}
-      >
-        <span className="sm:hidden">
-          {bloco.hora_inicio ? bloco.hora_inicio.slice(0, 5) : "Sem horário"} · {fmtBlocoMinutos(minutos)}
-        </span>
-        <span className="hidden sm:inline">
-          {bloco.hora_inicio ? `${bloco.hora_inicio}–${bloco.hora_fim}` : "Sem horário definido"} · {fmtBlocoMinutos(minutos)}
-        </span>
-      </p>
-      <div className="mt-1.5 flex flex-wrap gap-1">
-        <span className={cn("inline-flex max-w-full truncate rounded-full px-1.5 py-0.5 text-xs font-semibold sm:px-2 sm:text-xs", badge.cls)}>
-          {badge.label}
-        </span>
-        {bloco.modo_criacao === "simplificada" ? (
-          <span className="inline-flex rounded-full bg-sky-100 px-1.5 py-0.5 text-xs font-semibold text-sky-700 dark:bg-sky-900/40 dark:text-sky-300 sm:px-2 sm:text-xs">
-            simp.
-          </span>
-        ) : null}
-        {expirado ? (
-          <span className="inline-flex rounded-full bg-amber-100 px-1.5 py-0.5 text-xs font-semibold text-amber-800 dark:bg-amber-900/40 dark:text-amber-200 sm:px-2 sm:text-xs">
-            expirado
-          </span>
-        ) : null}
-        {topicoIds.length > 0 ? (
-          <span className={cn("inline-flex max-w-full truncate rounded-full px-1.5 py-0.5 text-xs font-semibold sm:px-2 sm:text-xs", modoBadge.cls)}>
-            {modoBadge.label}
-          </span>
-        ) : null}
-      </div>
-      {bloco.vigencia_fim && !bloco.vigencia_indeterminada ? (
-        <p
-          className={cn(
-            "mt-1 truncate pl-3.5 text-xs",
-            expirado ? "font-medium text-amber-700 dark:text-amber-300" : "text-muted-foreground",
-          )}
-          title={`${expirado ? "Expirou em" : "Até"} ${fmtDateBR(bloco.vigencia_fim)}`}
-        >
-          {expirado ? "Expirou" : "Até"} {fmtDateBR(bloco.vigencia_fim)}
-        </p>
-      ) : null}
-
-      <div className="mt-2 flex items-center gap-1.5">
+      {topics.length===1&&<p className="break-words text-xs leading-snug text-muted-foreground">{topics[0]}</p>}
+      {topics.length>1&&<details className="text-xs text-muted-foreground"><summary className="cursor-pointer rounded leading-snug focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring [overflow-wrap:anywhere]">{topics[0]} · +{topics.length-1} {topics.length===2?'assunto':'assuntos'}</summary><ul className="mt-2 list-inside list-disc space-y-1 leading-relaxed">{topics.map((topic,index)=><li key={index} className="break-words">{topic}</li>)}</ul></details>}
+      <p className="text-xs leading-relaxed text-muted-foreground">{diaLabel}{occurrenceDate ? `, ${fmtDateBR(occurrenceDate).slice(0,5)}` : ''} · {fmtBlocoMinutos(minutos)} · {bloco.hora_inicio ? `${bloco.hora_inicio.slice(0,5)}–${bloco.hora_fim.slice(0,5)}` : 'Sem horário'}<span className="sr-only">{occurrenceDate?` · Data completa: ${fmtDateBR(occurrenceDate)}`:''}</span></p>
+      {recurrenceEnd&&!expirado&&<p className="text-xs text-muted-foreground">Repete até {fmtDateBR(recurrenceEnd)}</p>}
+      <div className="mt-1 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2 border-t border-border pt-1.5">
+        <div className="flex min-w-0 flex-wrap items-center gap-1">
+        <span className="rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">{badge.label}</span>
+        <span className={cn("rounded-full px-2 py-0.5 text-xs font-medium", bloco.ativo ? studySurface('indigo') : 'bg-muted text-muted-foreground')}>{bloco.ativo ? 'Planejada' : 'Inativa'}</span>
+        </div><div className="flex items-center gap-1">
         <button
           type="button"
           title={minutos >= 1 ? `Estudar no Pomodoro (${fmtBlocoMinutos(minutos)})` : "Duração inválida"}
           aria-label={minutos >= 1 ? `Play Pomodoro ${diaLabel}` : "Duração inválida"}
           disabled={minutos < 1}
           onClick={() => launchPomodoroFromBloco(navigate, { ...bloco, data_referencia: occurrenceDate }, minutos)}
-          className="inline-flex min-h-10 w-fit min-w-0 items-center justify-center gap-1.5 rounded-md border border-primary-300 bg-primary-50 px-3 text-xs font-semibold text-primary-700 transition hover:bg-primary-100 disabled:cursor-not-allowed disabled:opacity-50 dark:border-primary-700 dark:bg-primary-950/40 dark:text-primary-300 dark:hover:bg-primary-900/50"
+          className="inline-flex min-h-10 w-fit min-w-0 items-center justify-center gap-1.5 rounded-md border border-primary/25 bg-primary/10 px-3 text-xs font-semibold text-primary transition hover:bg-primary/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
         >
           <Play className="h-3.5 w-3.5 fill-current" />
           <span>Estudar</span>
@@ -197,6 +138,7 @@ export function CronogramaBlocoCard({
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
+        </div>
       </div>
     </div>
   );

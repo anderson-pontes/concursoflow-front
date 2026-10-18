@@ -16,6 +16,7 @@ export const pageLinks = [
 ] as const;
 
 export function pageBreadcrumb(path: string): { label: string; parent?: { label: string; to: string } } {
+  if (path === "/cronograma") return {label:"Cronograma",parent:{label:"Estudos",to:"/dashboard"}};
   if (path.startsWith("/admin/editais")) return { label: path === "/admin/editais" ? "Catálogo de editais" : "Editar edital", parent: { label: "Administração", to: "/admin/editais" } };
   if (path.startsWith("/admin/usuarios")) return { label: path === "/admin/usuarios" ? "Gestão de usuários" : "Detalhes do usuário", parent: { label: "Administração", to: "/admin/usuarios" } };
   if (path.startsWith("/disciplinas/")) return { label: "Detalhes da disciplina", parent: { label: "Disciplinas", to: "/disciplinas" } };

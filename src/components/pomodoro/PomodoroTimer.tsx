@@ -1,5 +1,6 @@
 ﻿import React from "react";
 import { createPortal } from "react-dom";
+import {Link} from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Play, Pause, Square, RotateCcw, Save, StopCircle, Minimize2 } from "lucide-react";
 
@@ -33,6 +34,7 @@ type RegistroSnapshot = {
 
 type PomodoroTimerProps = {
   compact?: boolean;
+  configureUrl?: string;
   onActiveChange?: (active: boolean) => void;
   disciplinaNome?: string;
   topicoNome?: string;
@@ -43,6 +45,7 @@ type PomodoroTimerProps = {
 
 export function PomodoroTimer({
   compact = false,
+  configureUrl,
   onActiveChange,
   disciplinaNome,
   topicoNome,
@@ -309,11 +312,12 @@ export function PomodoroTimer({
       {compact ? <div className="rounded-xl border border-border bg-card p-4 text-card-foreground">
         <h2 className="text-base font-semibold">Cronômetro de estudo</h2>
         <p className="mt-1 text-xs text-muted-foreground">{MODE_LABELS[mode]} · Mesma sessão do Pomodoro</p>
-        <div className="relative mx-auto my-4 size-48"><CircularArc progress={isActive ? arcProgress : 0} size={192} stroke={9} className="stroke-primary" /><div className="absolute inset-0 flex flex-col items-center justify-center"><ResponsiveTimerText value={isActive ? displayTime : idleTime} compact /><span className="mt-1 text-xs text-muted-foreground">{isActive ? isRunning ? "Estudando" : "Pausado" : "Pronto para iniciar"}</span></div></div>
-        <p className="mb-3 break-words text-center text-sm">{contextLabel || "Selecione uma atividade para estudar"}</p>
+        {isActive ? <div className="relative mx-auto my-4 size-48"><CircularArc progress={arcProgress} size={192} stroke={9} className="stroke-primary" /><div className="absolute inset-0 flex flex-col items-center justify-center"><ResponsiveTimerText value={displayTime} compact /><span className="mt-1 text-xs text-muted-foreground">{isRunning ? "Estudando" : "Pausado"}</span></div></div> : <p className="my-3 text-xs text-muted-foreground">Pronto para iniciar</p>}
+        <p className="mb-3 break-words text-sm leading-relaxed">{contextLabel || "Selecione uma atividade para estudar"}</p>
         <div className="flex flex-wrap justify-center gap-2">
-          {!hasSession ? <Button disabled={!canStart} onClick={start}><Play />Iniciar</Button> : <><Button variant="outline" onClick={isRunning ? pause : resume}>{isRunning ? <Pause /> : <Play />}{isRunning ? "Pausar" : "Retomar"}</Button><Button onClick={finishCurrentPhase}>{phase === "pausa" ? "Encerrar pausa" : "Finalizar sessão"}</Button><Button variant="ghost" onClick={confirmReset}>Cancelar</Button></>}
+          {!hasSession ? <div className="flex w-full flex-wrap items-center justify-between gap-2"><span className="text-2xl font-semibold tabular-nums text-primary">{idleTime}</span><Button disabled={!canStart} onClick={start}><Play />Iniciar</Button></div> : <><Button variant="outline" onClick={isRunning ? pause : resume}>{isRunning ? <Pause /> : <Play />}{isRunning ? "Pausar" : "Retomar"}</Button><Button onClick={finishCurrentPhase}>{phase === "pausa" ? "Encerrar pausa" : "Finalizar sessão"}</Button><Button variant="ghost" onClick={confirmReset}>Cancelar</Button></>}
         </div>
+        {configureUrl&&<Link to={configureUrl} className="mt-2 inline-flex min-h-10 items-center rounded text-xs text-muted-foreground hover:text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">Configurar Pomodoro</Link>}
       </div> : <>
       {isActive && immersive ? <div className="fixed inset-0 z-[170] bg-black/55 backdrop-blur-md" aria-hidden="true" /> : null}
       <div

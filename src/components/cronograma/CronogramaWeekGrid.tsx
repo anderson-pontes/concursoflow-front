@@ -1,103 +1,49 @@
-import { Pencil, Plus } from "lucide-react";
-import { layoutDay } from "./temporalLayout";
-import { getTipo, getTipoSurface } from "@/lib/cronograma/constants";
-
-import { CronogramaBlocoCard } from "@/components/cronograma/CronogramaBlocoCard";
-import { Skeleton } from "@/components/ui/skeleton";
-import { DIAS, diaAbrev } from "@/lib/cronograma/constants";
-import type { Bloco } from "@/lib/cronograma/types";
-import { hojeISO } from "@/lib/cronograma/types";
-import { cn } from "@/lib/utils";
-import { DisciplineColorIndicator, disciplineColorStyle } from "@/components/disciplinas/DisciplineColorIndicator";
+import {useState} from 'react';
+import {Plus} from 'lucide-react';
+import {CronogramaBlocoCard} from '@/components/cronograma/CronogramaBlocoCard';
+import {Button} from '@/components/ui/button';
+import {Skeleton} from '@/components/ui/skeleton';
+import {activityMinutes} from '@/lib/cronograma/activityPresentation';
+import {formatStudyMinutes} from '@/components/cronograma/PlanejamentoDisciplinas';
+import {DIAS, diaAbrev, diaLabels} from '@/lib/cronograma/constants';
+import {hojeISO, fmtDateBR, type Bloco} from '@/lib/cronograma/types';
+import {cn} from '@/lib/utils';
 
 type Props = {
-  isLoading: boolean;
-  totalBlocos: number;
-  diaHoje: Bloco["dia_semana"];
-  grouped: Record<Bloco["dia_semana"], Bloco[]>;
-  disciplinaNome: (id: string) => string;
-  deletePending: boolean;
-  extendPending: boolean;
-  onEdit: (bloco: Bloco) => void;
-  onRemove: (bloco: Bloco, diaLabel: string) => void;
-  onExtend: (bloco: Bloco) => void;
-  onAdd?: (day: Bloco["dia_semana"]) => void;
-  onDuplicate?: (bloco: Bloco) => void;
-  onRegistro?: (bloco: Bloco) => void;
-  occurrenceDate?: (day: Bloco["dia_semana"]) => string;
+  isLoading: boolean; totalBlocos: number; diaHoje: Bloco['dia_semana'];
+  grouped: Record<Bloco['dia_semana'], Bloco[]>; disciplinaNome: (id: string) => string;
+  deletePending: boolean; extendPending: boolean;
+  onEdit: (bloco: Bloco) => void; onRemove: (bloco: Bloco, diaLabel: string) => void; onExtend: (bloco: Bloco) => void;
+  onAdd?: (day: Bloco['dia_semana']) => void; onDuplicate?: (bloco: Bloco) => void; onRegistro?: (bloco: Bloco) => void;
+  occurrenceDate?: (day: Bloco['dia_semana']) => string;
 };
 
-export function CronogramaWeekGrid({ isLoading, totalBlocos, diaHoje, grouped, disciplinaNome, deletePending, extendPending, onEdit, onRemove, onExtend, onAdd, onDuplicate, onRegistro, occurrenceDate }: Props) {
-  if (isLoading) {
-    return (
-      <div className="grid grid-cols-2 gap-2 pb-1 sm:grid-cols-4 xl:grid-cols-7 xl:gap-3">
-        {DIAS.map((dia) => <Skeleton key={dia} className="h-40 rounded-xl" />)}
-      </div>
-    );
-  }
-  if (totalBlocos === 0 && !onAdd) return null;
-
-  const layouts = DIAS.map(day => {
-    const layout = layoutDay(grouped[day] ?? []);
-    // A narrow day column cannot safely show several simultaneous titles.
-    // Keep those occurrences in the detailed agenda with all their actions.
-    const dense = layout.lanes > 1;
-    const detailed = layout.timed.filter(event => dense || disciplinaNome(event.bloco.disciplina_id).length > 32);
-    return { ...layout, timed: layout.timed.filter(event => !detailed.includes(event)), agenda: [...layout.agenda, ...detailed.map(event => event.bloco)] };
-  });
-  const events = layouts.flatMap(day => day.timed);
-  const firstHour = Math.min(7, ...events.map(event => Math.floor(event.start / 60)));
-  const lastHour = Math.max(20, ...events.map(event => Math.ceil(event.end / 60)));
-  const scale = 80;
-  return (
-    <>
-    <section className="hidden min-w-0 rounded-xl border border-border bg-card xl:block" aria-label="Calendário semanal por horário">
-      <div className="grid grid-cols-[48px_repeat(7,minmax(0,1fr))] border-b border-border">
-        <span className="p-2 text-xs text-muted-foreground">Hora</span>
-        {DIAS.map(day => <div key={day} className={cn("min-w-0 border-l border-border p-2 text-center text-xs", (occurrenceDate ? occurrenceDate(day) === hojeISO() : day === diaHoje) && "bg-primary/5")}><p className="font-semibold">{diaAbrev[day]}</p><p className="text-muted-foreground">{occurrenceDate?.(day)?.slice(5).split("-").reverse().join("/")}</p>{onAdd && <button className="mt-1 inline-flex min-h-10 items-center gap-1 text-primary" aria-label={`Adicionar atividade ${diaAbrev[day]}`} onClick={() => onAdd(day)}><Plus className="size-4" /><span>Adicionar</span></button>}</div>)}
-      </div>
-      {events.length > 0 ? <div className="grid grid-cols-[48px_repeat(7,minmax(0,1fr))]">
-        <div className="relative" style={{ height: (lastHour - firstHour) * scale }}>{Array.from({length:lastHour-firstHour}, (_, index) => <span key={index} className="absolute left-1 text-xs tabular-nums text-muted-foreground" style={{top:index*scale}}>{String(firstHour+index).padStart(2,"0")}:00</span>)}</div>
-        {DIAS.map((day,index) => <div key={day} className="relative min-w-0 border-l border-border" style={{height:(lastHour-firstHour)*scale}}>
-          {Array.from({length:lastHour-firstHour},(_,hour) => <div key={hour} className="absolute inset-x-0 border-t border-border/60" style={{top:hour*scale}} />)}
-          {layouts[index].timed.map(({bloco,start,end,lane}) => <button key={`${bloco.id}-${bloco.data}`} className={cn("absolute overflow-hidden rounded-lg border border-border border-l-4 p-1.5 text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary",getTipoSurface(bloco.tipo))} style={{...disciplineColorStyle(bloco.disciplina_id),top:(start-firstHour*60)/60*scale,height:(end-start)/60*scale-4,left:`${lane/layouts[index].lanes*100}%`,width:`${100/layouts[index].lanes}%`}} onClick={() => onRegistro ? onRegistro(bloco) : onEdit(bloco)} title={`${disciplinaNome(bloco.disciplina_id)} · ${bloco.hora_inicio}–${bloco.hora_fim} · ${getTipo(bloco.tipo).label}`}>
-            <span className="mb-1 flex items-center gap-1"><DisciplineColorIndicator disciplinaId={bloco.disciplina_id} shape="dot" label={`Cor de ${disciplinaNome(bloco.disciplina_id)}`} /><span className="block line-clamp-2 break-words text-xs font-semibold">{disciplinaNome(bloco.disciplina_id)}</span></span><span className="block text-xs tabular-nums">{bloco.hora_inicio.slice(0,5)}–{bloco.hora_fim.slice(0,5)}</span><span className="block truncate text-xs text-muted-foreground">{getTipo(bloco.tipo).label} · Planejado</span>
-          </button>)}
-        </div>)}
-      </div> : null}
-      {layouts.some(day => day.agenda.length > 0) && <div className="border-t border-border p-4"><h3 className="mb-3 text-sm font-semibold">Agenda detalhada</h3><div className="grid gap-3 md:grid-cols-2">{layouts.flatMap(day => day.agenda).map(bloco => <CronogramaBlocoCard key={`${bloco.id}-${bloco.data}`} bloco={bloco} disciplinaNome={disciplinaNome(bloco.disciplina_id)} diaLabel={diaAbrev[bloco.dia_semana]} occurrenceDate={bloco.data ?? occurrenceDate?.(bloco.dia_semana)} onEdit={() => onEdit(bloco)} onDelete={() => onRemove(bloco,diaAbrev[bloco.dia_semana])} onRegistro={onRegistro ? () => onRegistro(bloco) : undefined} onDuplicate={onDuplicate ? () => onDuplicate(bloco) : undefined} />)}</div></div>}
-    </section>
-    <div className="grid grid-cols-1 gap-3 pb-1 md:grid-cols-2 xl:hidden" role="list" aria-label="Dias da semana">
-      {DIAS.map((dia) => {
-        const isHoje = occurrenceDate ? occurrenceDate(dia) === hojeISO() : dia === diaHoje;
-        const items = grouped[dia] ?? [];
-        return (
-          <div key={dia} role="listitem" className={cn("min-w-0 rounded-xl border p-2.5 sm:p-3", isHoje ? "border-primary-400 bg-primary-50/60 shadow-sm dark:border-primary-600 dark:bg-primary-950/30" : "border-border bg-card") }>
-            <div className="mb-2 flex items-center justify-between gap-1">
-              <span className={cn("flex min-w-0 flex-wrap items-center gap-1 text-xs font-semibold uppercase tracking-wide", isHoje ? "text-primary-700 dark:text-primary-300" : "text-muted-foreground") }>
-                <span>{diaAbrev[dia]}</span>
-                {isHoje ? <span className="rounded-full bg-primary px-1.5 py-0.5 text-xs font-bold normal-case text-primary-foreground">hoje</span> : null}
-              </span>
-              <div className="flex shrink-0 items-center gap-1">
-                {items.length === 1 ? (
-                  <button type="button" title={`Editar ${diaAbrev[dia]}`} aria-label={`Editar bloco de ${diaAbrev[dia]}`} onClick={() => onEdit(items[0])} className="flex h-10 w-10 items-center justify-center rounded-md border border-border text-muted-foreground hover:bg-muted">
-                    <Pencil className="h-4 w-4" />
-                  </button>
-                ) : null}
-                {items.length > 0 ? <span className="rounded-full bg-muted px-1.5 text-xs font-medium tabular-nums text-muted-foreground">{items.length}</span> : null}
-              </div>
-            </div>
-            <div className="space-y-2">
-              {onAdd && <button type="button" aria-label={`Adicionar atividade ${diaAbrev[dia]}`} onClick={() => onAdd(dia)} className="flex min-h-11 w-full items-center justify-center gap-1 rounded-lg border border-dashed border-border text-xs text-primary hover:bg-muted"><Plus className="size-4" />Adicionar atividade</button>}
-              {items.map((bloco) => (
-                <CronogramaBlocoCard key={`${bloco.id}-${bloco.data ?? ""}`} bloco={bloco} disciplinaNome={disciplinaNome(bloco.disciplina_id)} diaLabel={diaAbrev[dia]} onEdit={() => onEdit(bloco)} onDelete={() => onRemove(bloco, diaAbrev[dia])} occurrenceDate={bloco.data ?? occurrenceDate?.(dia)} onDuplicate={onDuplicate ? () => onDuplicate(bloco) : undefined} onRegistro={onRegistro ? () => onRegistro(bloco) : undefined} deletePending={deletePending} estenderPending={extendPending} onEstender={bloco.grupo_id ? () => onExtend(bloco) : undefined} />
-              ))}
-              {items.length === 0 ? <p className="py-4 text-center text-xs text-muted-foreground">Sem blocos</p> : null}
-            </div>
-          </div>
-        );
+export function CronogramaWeekGrid({isLoading, totalBlocos, diaHoje, grouped, disciplinaNome, deletePending, extendPending, onEdit, onRemove, onExtend, onAdd, onDuplicate, onRegistro, occurrenceDate}: Props) {
+  const [selected, setSelected] = useState<Bloco['dia_semana'] | null>(null);
+  if (isLoading) return <div className="grid gap-3 sm:grid-cols-2" aria-label="Carregando agenda">{DIAS.slice(0,4).map(day=><Skeleton key={day} className="h-40 rounded-xl"/>)}</div>;
+  if (!totalBlocos && !onAdd) return null;
+  const days = selected ? [selected] : DIAS.filter(day=>grouped[day]?.length);
+  return <section className="min-w-0 space-y-4" aria-label="Agenda semanal">
+    <div className="grid grid-cols-7 gap-1 sm:gap-2" role="group" aria-label="Selecionar dia da semana">
+      {DIAS.map(day=>{
+        const today = occurrenceDate ? occurrenceDate(day)===hojeISO() : day===diaHoje;
+        const count = grouped[day]?.length ?? 0;
+        const minutes=(grouped[day]??[]).reduce((sum,b)=>sum+activityMinutes(b),0);
+        const compactTime=minutes<60?`${minutes}m`:formatStudyMinutes(minutes).replace("min","");
+        return <button key={day} type="button" aria-pressed={selected===day} aria-current={today?'date':undefined} aria-label={`${diaLabels[day]}, ${count} atividades, ${formatStudyMinutes(minutes)}${today?', hoje':''}`} onClick={()=>setSelected(day)} className={cn('flex min-h-20 min-w-0 flex-col items-center justify-center gap-1 rounded-lg border px-1 py-2 text-xs transition-colors hover:border-primary/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring', selected===day?'border-primary bg-primary text-primary-foreground ring-2 ring-primary/25':today?'border-primary/30 bg-primary/10 text-primary':'border-border bg-card text-foreground', selected!==day&&!today&&!count&&'border-dashed bg-muted/30 text-muted-foreground')}>
+          <span className="font-medium">{today?"Hoje":diaAbrev[day]}</span><span className="text-base font-semibold tabular-nums">{occurrenceDate?.(day)?.slice(8,10) ?? '·'}</span><span className="whitespace-nowrap text-[10px] tabular-nums opacity-80">{count}<span className="hidden md:inline"> ativ.</span>·{compactTime}</span>
+        </button>;
       })}
     </div>
-    </>
-  );
+    <div className="flex flex-wrap items-center justify-between gap-2"><h3 className="text-sm font-semibold">{selected?diaLabels[selected]:'Agenda da semana'}</h3><Button size="sm" variant="ghost" aria-pressed={!selected} onClick={()=>setSelected(null)}>Mostrar todos os dias</Button></div>
+    {!days.length && <p className="rounded-lg border border-dashed border-border p-5 text-sm text-muted-foreground">Nenhuma atividade nesta semana. Selecione um dia para adicionar.</p>}
+    {days.map(day=>{
+      const items=[...(grouped[day]??[])].sort((a,b)=>(a.hora_inicio||'99:99').localeCompare(b.hora_inicio||'99:99'));
+      return <section key={day} className="min-w-0 space-y-3" aria-label={`Atividades de ${diaLabels[day]}`}>
+        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border pb-2"><p className="text-sm font-medium">{diaLabels[day]}{occurrenceDate&&<span className="ml-2 text-xs font-normal text-muted-foreground">{fmtDateBR(occurrenceDate(day))}</span>}</p>{onAdd&&<Button variant="ghost" size="sm" aria-label={`Adicionar atividade ${diaAbrev[day]}`} onClick={()=>onAdd(day)}><Plus className="size-4" aria-hidden/>Adicionar</Button>}</div>
+        <div className="grid items-stretch gap-3 md:grid-cols-2">{items.map(bloco=><CronogramaBlocoCard key={`${bloco.id}-${bloco.data??''}`} bloco={bloco} disciplinaNome={disciplinaNome(bloco.disciplina_id)} diaLabel={diaAbrev[day]} occurrenceDate={bloco.data??occurrenceDate?.(day)} onEdit={()=>onEdit(bloco)} onDelete={()=>onRemove(bloco,diaAbrev[day])} onDuplicate={onDuplicate?()=>onDuplicate(bloco):undefined} onRegistro={onRegistro?()=>onRegistro(bloco):undefined} onEstender={bloco.grupo_id?()=>onExtend(bloco):undefined} deletePending={deletePending} estenderPending={extendPending}/>)}</div>
+        {!items.length&&<p className="py-2 text-sm text-muted-foreground">Sem atividades neste dia.</p>}
+      </section>;
+    })}
+  </section>;
 }

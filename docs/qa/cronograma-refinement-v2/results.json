@@ -1,0 +1,76 @@
+{
+  "mocked": true,
+  "productionWrites": false,
+  "results": [
+    {
+      "profile": "320-light",
+      "passed": true,
+      "overflow": false
+    },
+    {
+      "profile": "320-dark",
+      "passed": true,
+      "overflow": false
+    },
+    {
+      "profile": "375-light",
+      "passed": true,
+      "overflow": false
+    },
+    {
+      "profile": "375-dark",
+      "passed": true,
+      "overflow": false
+    },
+    {
+      "profile": "768-light",
+      "passed": true,
+      "overflow": false
+    },
+    {
+      "profile": "768-dark",
+      "passed": true,
+      "overflow": false
+    },
+    {
+      "profile": "1024-light",
+      "passed": true,
+      "overflow": false
+    },
+    {
+      "profile": "1024-dark",
+      "passed": true,
+      "overflow": false
+    },
+    {
+      "profile": "1440-light",
+      "passed": true,
+      "overflow": false
+    },
+    {
+      "profile": "1440-dark",
+      "passed": true,
+      "overflow": false
+    },
+    {
+      "profile": "1920-light",
+      "passed": true,
+      "overflow": false
+    },
+    {
+      "profile": "1920-dark",
+      "passed": true,
+      "overflow": false
+    },
+    {
+      "profile": "empty-light",
+      "passed": true,
+      "overflow": false
+    },
+    {
+      "profile": "empty-mobile-dark",
+      "passed": true,
+      "overflow": false
+    }
+  ]
+}

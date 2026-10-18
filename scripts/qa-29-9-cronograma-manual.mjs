@@ -3,8 +3,9 @@ import { mkdir, writeFile } from "node:fs/promises";
 import puppeteer from "puppeteer";
 
 // Exclusivamente localhost, APIs interceptadas. Não acessa dados de produção.
-const baseUrl = "http://127.0.0.1:3000";
-const output = new URL("../docs/qa/cronograma-manual/", import.meta.url);
+const baseUrl = process.env.QA_BASE_URL || "http://127.0.0.1:3000";
+assert.ok(['127.0.0.1','localhost'].includes(new URL(baseUrl).hostname));
+const output = new URL(process.env.QA_VARIANT === 'redesign' ? "../docs/qa/cronograma-redesign/incremental/" : "../docs/qa/cronograma-manual/", import.meta.url);
 await mkdir(output, { recursive: true });
 const browser = await puppeteer.launch({ headless: true, args: ["--no-sandbox"] });
 const results = [];
