@@ -7,6 +7,7 @@ import {
   Clock,
   FileText,
   Target,
+  ListChecks,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -62,18 +63,6 @@ export function DisciplinaDashboard() {
     if (renomearTopico.isPending) return;
     if (!editing || editing.descricao === editBaseline.current || await requestConfirmation({ title: "Descartar altera\u00e7\u00f5es?", description: "O nome do tópico ainda n\u00e3o foi salvo.", confirmLabel: "Descartar", cancelLabel: "Continuar editando", variant: "destructive" })) setEditing(null);
   };
-  const [menuRow, setMenuRow] = React.useState<string | null>(null);
-  const menuRef = React.useRef<HTMLDivElement>(null);
-
-  React.useEffect(() => {
-    if (!menuRow) return;
-    const fn = (e: MouseEvent) => {
-      if (!menuRef.current?.contains(e.target as Node)) setMenuRow(null);
-    };
-    document.addEventListener("mousedown", fn);
-    return () => document.removeEventListener("mousedown", fn);
-  }, [menuRow]);
-
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ["disciplina-dashboard", disciplinaId, isDemoMode ? "demo" : "live"],
     enabled: Boolean(disciplinaId),
@@ -225,9 +214,9 @@ export function DisciplinaDashboard() {
   const k = data?.kpis;
 
   return (
-    <div className="mx-auto max-w-6xl space-y-8 pb-10">
+    <div className="min-w-0 w-full space-y-5 pb-8">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
+        <div className="min-w-0 flex-1">
           <Link
             to={editalNavigation?.editalReturnTo ?? "/disciplinas"}
             state={editalNavigation?.editalReturnState}
@@ -236,10 +225,10 @@ export function DisciplinaDashboard() {
             <ArrowLeft className="h-4 w-4" />
             Disciplinas
           </Link>
-          <h1 className="text-2xl font-semibold tracking-tight text-foreground">
+          <h1 className="text-xl font-semibold tracking-tight text-foreground [overflow-wrap:anywhere] sm:text-2xl">
             {isLoading ? "Carregando…" : data?.nome ?? "Disciplina"}
           </h1>
-          <p className="mt-1 text-sm text-muted-foreground">Dashboard de desempenho e edital verticalizado</p>
+          <p className="mt-1 text-sm text-muted-foreground">Acompanhe seu desempenho e organize os tópicos do edital.</p>
         </div>
         <button
           type="button"
@@ -247,7 +236,7 @@ export function DisciplinaDashboard() {
             setRegistroTopicosPrefill(null);
             setOpenRegistro(true);
           }}
-          className="inline-flex items-center justify-center rounded-lg bg-primary-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-primary-700 focus-visible:outline focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-900"
+          className="inline-flex shrink-0 items-center justify-center rounded-lg bg-primary-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-primary-700 focus-visible:outline focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-900"
         >
           Adicionar Estudo
         </button>
@@ -275,61 +264,31 @@ export function DisciplinaDashboard() {
       ) : null}
 
       {k ? (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
-          <KpiCard title="Tempo de estudo">
-            <div className="flex items-center gap-2">
-              <Clock className="h-8 w-8 text-primary-500" />
-              <span className="text-2xl font-bold text-foreground">{fmtHoras(k.tempo_estudo_horas)}</span>
-            </div>
-            <p className="mt-1 text-xs text-muted-foreground">Sessões registradas nesta disciplina</p>
+        <div data-discipline-kpis className="discipline-kpis grid grid-cols-2 items-stretch gap-3 xl:grid-cols-5 xl:gap-4">
+          <KpiCard title="Tempo de estudo" icon={Clock} tone="indigo" className="col-span-2 xl:col-span-1">
+            <strong className="text-2xl tabular-nums">{fmtHoras(k.tempo_estudo_horas)}</strong>
+            <p className="mt-2 text-xs leading-relaxed text-muted-foreground">Sessões registradas nesta disciplina</p>
           </KpiCard>
-
-          <KpiCard title="Desempenho geral">
-            <div className="flex items-center gap-2">
-              <Target className="h-8 w-8 text-success-foreground" />
-              <span className="text-2xl font-bold text-foreground">{k.desempenho_geral_pct}%</span>
-            </div>
-            <p className="mt-2 text-xs text-muted-foreground">
-              <span className="font-medium text-success-foreground">{k.questoes_certas_total} certas</span>
-              {" · "}
-              <span className="font-medium text-destructive">{k.questoes_erradas_total} erradas</span>
-            </p>
+          <KpiCard title="Desempenho geral" icon={Target} tone="emerald">
+            <strong className="text-2xl tabular-nums">{k.questoes_resolvidas_total > 0 ? `${k.desempenho_geral_pct}%` : "Sem questões"}</strong>
+            <p className="mt-2 text-xs leading-relaxed text-muted-foreground">{k.questoes_certas_total} certas · {k.questoes_erradas_total} erradas</p>
           </KpiCard>
-
-          <KpiCard title="Progresso no edital">
-            <div className="flex items-center gap-2">
-              <BookOpen className="h-8 w-8 text-primary-500" />
-              <span className="text-2xl font-bold text-foreground">{k.progresso_edital_pct}%</span>
-            </div>
-            <p className="mt-1 text-xs text-muted-foreground">
-              {k.topicos_concluidos} concluídos · {k.topicos_pendentes} pendentes ({k.topicos_total} tópicos)
-            </p>
+          <KpiCard title="Progresso no edital" icon={BookOpen} tone="violet">
+            <strong className="text-2xl tabular-nums">{k.progresso_edital_pct}%</strong>
+            <p className="mt-2 text-xs leading-relaxed text-muted-foreground">{k.topicos_concluidos} concluídos · {k.topicos_pendentes} pendentes ({k.topicos_total} tópicos)</p>
           </KpiCard>
-
-          <KpiCard title="Questões resolvidas">
-            <div className="text-2xl font-bold text-foreground">{k.questoes_resolvidas_total}</div>
-            <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-xs">
-              <span className="text-success-foreground">Certas {k.questoes_certas_total}</span>
-              <span className="text-destructive">Erradas {k.questoes_erradas_total}</span>
-              <span className="text-muted-foreground">Branco {k.questoes_branco_total}</span>
-            </div>
+          <KpiCard title="Questões resolvidas" icon={ListChecks} tone="blue">
+            <strong className="text-2xl tabular-nums">{k.questoes_resolvidas_total}</strong>
+            <p className="mt-2 text-xs leading-relaxed text-muted-foreground">{k.questoes_certas_total} certas · {k.questoes_erradas_total} erradas · {k.questoes_branco_total} em branco</p>
           </KpiCard>
-
-          <KpiCard title="Páginas estudadas">
-            <div className="flex items-center gap-2">
-              <FileText className="h-8 w-8 text-info-foreground" />
-              <span className="text-2xl font-bold text-foreground">
-                {(k.paginas_lidas_total ?? 0).toLocaleString("pt-BR")}
-              </span>
-            </div>
-            <p className="mt-1 text-xs text-muted-foreground">Soma dos blocos de páginas nos registros de estudo</p>
+          <KpiCard title="Páginas estudadas" icon={FileText} tone="amber">
+            <strong className="text-2xl tabular-nums">{(k.paginas_lidas_total ?? 0).toLocaleString("pt-BR")}</strong>
+            <p className="mt-2 text-xs leading-relaxed text-muted-foreground">Soma dos blocos de páginas nos registros de estudo</p>
           </KpiCard>
         </div>
       ) : isLoading ? (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
-          {[1, 2, 3, 4, 5].map((i) => (
-            <div key={i} className="h-28 animate-pulse rounded-xl bg-muted bg-card" />
-          ))}
+        <div className="grid grid-cols-2 gap-3 xl:grid-cols-5" role="status" aria-label="Carregando indicadores">
+          {[1,2,3,4,5].map(i => <div key={i} className={`h-28 animate-pulse rounded-xl bg-muted ${i === 1 ? "col-span-2 xl:col-span-1" : ""}`} />)}
         </div>
       ) : null}
 
@@ -340,9 +299,6 @@ export function DisciplinaDashboard() {
         isDemoMode={isDemoMode}
         topicosModalOpen={topicosModalOpen}
         onTopicosModalOpenChange={setTopicosModalOpen}
-        menuRow={menuRow}
-        onMenuRowChange={setMenuRow}
-        menuRef={menuRef}
         toggleConcluido={toggleConcluido}
         criarTopicos={criarTopicos}
         excluirTopico={excluirTopico}

@@ -1,0 +1,1455 @@
+{
+  "mocked": true,
+  "productionWrites": false,
+  "results": [
+    {
+      "width": 1920,
+      "theme": "light",
+      "passed": true,
+      "geometry": {
+        "mainWidth": 1660,
+        "mainScroll": 1660,
+        "container": {
+          "width": 1610,
+          "scroll": 1610,
+          "x": "auto",
+          "contain": "none",
+          "position": "relative"
+        },
+        "outside": [],
+        "docX": false,
+        "mainX": false,
+        "docY": false,
+        "scrolling": [
+          "MAIN:relative min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto p-4 md:p-6"
+        ],
+        "rowDisplay": "table-row",
+        "names": [
+          {
+            "text": "Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. ",
+            "client": 68,
+            "scroll": 68,
+            "clamp": "none"
+          },
+          {
+            "text": "Ortografia e acentuação.",
+            "client": 23,
+            "scroll": 23,
+            "clamp": "none"
+          },
+          {
+            "text": "Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. ",
+            "client": 159,
+            "scroll": 159,
+            "clamp": "none"
+          },
+          {
+            "text": "Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. ",
+            "client": 319,
+            "scroll": 319,
+            "clamp": "none"
+          },
+          {
+            "text": "PalavraExtensaabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuv",
+            "client": 159,
+            "scroll": 159,
+            "clamp": "none"
+          }
+        ],
+        "tableScroll": false
+      },
+      "kpiAudit": {
+        "rects": [
+          {
+            "x": 284,
+            "y": 193,
+            "w": 309.59375,
+            "h": 161
+          },
+          {
+            "x": 609.59375,
+            "y": 193,
+            "w": 309.59375,
+            "h": 161
+          },
+          {
+            "x": 935.1875,
+            "y": 193,
+            "w": 309.609375,
+            "h": 161
+          },
+          {
+            "x": 1260.796875,
+            "y": 193,
+            "w": 309.59375,
+            "h": 161
+          },
+          {
+            "x": 1586.390625,
+            "y": 193,
+            "w": 309.609375,
+            "h": 161
+          }
+        ],
+        "colors": [
+          "color(srgb 0.951686 0.949216 0.992863)",
+          "color(srgb 0.931373 0.971176 0.958824)",
+          "color(srgb 0.964039 0.945922 0.995059)",
+          "color(srgb 0.946196 0.965686 0.997529)",
+          "color(srgb 0.989569 0.962667 0.931647)"
+        ],
+        "contrast": [
+          16.09292056620921,
+          16.09292056620921,
+          12.256646473776657,
+          16.476107648169492,
+          16.476107648169492,
+          12.54848837889156,
+          16.09434611900565,
+          16.09434611900565,
+          12.257732199427497,
+          16.452907045625096,
+          16.452907045625096,
+          12.530818398964959,
+          16.52180855080794,
+          16.52180855080794,
+          12.583294976293653
+        ],
+        "height": 161
+      },
+      "titleOverflow": false,
+      "zeroProgress": true,
+      "mutations": []
+    },
+    {
+      "width": 1920,
+      "theme": "dark",
+      "passed": true,
+      "geometry": {
+        "mainWidth": 1660,
+        "mainScroll": 1660,
+        "container": {
+          "width": 1610,
+          "scroll": 1610,
+          "x": "auto",
+          "contain": "none",
+          "position": "relative"
+        },
+        "outside": [],
+        "docX": false,
+        "mainX": false,
+        "docY": false,
+        "scrolling": [
+          "MAIN:relative min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto p-4 md:p-6"
+        ],
+        "rowDisplay": "table-row",
+        "names": [
+          {
+            "text": "Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. ",
+            "client": 68,
+            "scroll": 68,
+            "clamp": "none"
+          },
+          {
+            "text": "Ortografia e acentuação.",
+            "client": 23,
+            "scroll": 23,
+            "clamp": "none"
+          },
+          {
+            "text": "Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. ",
+            "client": 159,
+            "scroll": 159,
+            "clamp": "none"
+          },
+          {
+            "text": "Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. ",
+            "client": 319,
+            "scroll": 319,
+            "clamp": "none"
+          },
+          {
+            "text": "PalavraExtensaabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuv",
+            "client": 159,
+            "scroll": 159,
+            "clamp": "none"
+          }
+        ],
+        "tableScroll": false
+      },
+      "kpiAudit": {
+        "rects": [
+          {
+            "x": 284,
+            "y": 193,
+            "w": 309.59375,
+            "h": 161
+          },
+          {
+            "x": 609.59375,
+            "y": 193,
+            "w": 309.59375,
+            "h": 161
+          },
+          {
+            "x": 935.1875,
+            "y": 193,
+            "w": 309.609375,
+            "h": 161
+          },
+          {
+            "x": 1260.796875,
+            "y": 193,
+            "w": 309.59375,
+            "h": 161
+          },
+          {
+            "x": 1586.390625,
+            "y": 193,
+            "w": 309.609375,
+            "h": 161
+          }
+        ],
+        "colors": [
+          "color(srgb 0.121882 0.115059 0.185882)",
+          "color(srgb 0.106784 0.129059 0.166941)",
+          "color(srgb 0.130392 0.115333 0.186157)",
+          "color(srgb 0.0919608 0.117529 0.184784)",
+          "color(srgb 0.145765 0.123569 0.137843)"
+        ],
+        "contrast": [
+          15.033890610471772,
+          15.033890610471772,
+          12.407302513259236,
+          14.756433538088048,
+          14.756433538088048,
+          12.178320281001255,
+          14.958744063382934,
+          14.958744063382934,
+          12.345284904729567,
+          15.175116981721263,
+          15.175116981721263,
+          12.523855064847032,
+          14.638013660909909,
+          14.638013660909909,
+          12.080589675012359
+        ],
+        "height": 161
+      },
+      "titleOverflow": false,
+      "zeroProgress": true,
+      "mutations": []
+    },
+    {
+      "width": 1440,
+      "theme": "light",
+      "passed": true,
+      "geometry": {
+        "mainWidth": 1180,
+        "mainScroll": 1180,
+        "container": {
+          "width": 1130,
+          "scroll": 1500,
+          "x": "auto",
+          "contain": "none",
+          "position": "relative"
+        },
+        "outside": [],
+        "docX": false,
+        "mainX": false,
+        "docY": false,
+        "scrolling": [
+          "MAIN:relative min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto p-4 md:p-6"
+        ],
+        "rowDisplay": "table-row",
+        "names": [
+          {
+            "text": "Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. ",
+            "client": 68,
+            "scroll": 68,
+            "clamp": "none"
+          },
+          {
+            "text": "Ortografia e acentuação.",
+            "client": 23,
+            "scroll": 23,
+            "clamp": "none"
+          },
+          {
+            "text": "Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. ",
+            "client": 182,
+            "scroll": 182,
+            "clamp": "none"
+          },
+          {
+            "text": "Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. ",
+            "client": 364,
+            "scroll": 364,
+            "clamp": "none"
+          },
+          {
+            "text": "PalavraExtensaabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuv",
+            "client": 182,
+            "scroll": 182,
+            "clamp": "none"
+          }
+        ],
+        "tableScroll": true
+      },
+      "kpiAudit": {
+        "rects": [
+          {
+            "x": 284,
+            "y": 193,
+            "w": 213.59375,
+            "h": 161
+          },
+          {
+            "x": 513.59375,
+            "y": 193,
+            "w": 213.59375,
+            "h": 161
+          },
+          {
+            "x": 743.1875,
+            "y": 193,
+            "w": 213.609375,
+            "h": 161
+          },
+          {
+            "x": 972.796875,
+            "y": 193,
+            "w": 213.59375,
+            "h": 161
+          },
+          {
+            "x": 1202.390625,
+            "y": 193,
+            "w": 213.609375,
+            "h": 161
+          }
+        ],
+        "colors": [
+          "color(srgb 0.951686 0.949216 0.992863)",
+          "color(srgb 0.931373 0.971176 0.958824)",
+          "color(srgb 0.964039 0.945922 0.995059)",
+          "color(srgb 0.946196 0.965686 0.997529)",
+          "color(srgb 0.989569 0.962667 0.931647)"
+        ],
+        "contrast": [
+          16.09292056620921,
+          16.09292056620921,
+          12.256646473776657,
+          16.476107648169492,
+          16.476107648169492,
+          12.54848837889156,
+          16.09434611900565,
+          16.09434611900565,
+          12.257732199427497,
+          16.452907045625096,
+          16.452907045625096,
+          12.530818398964959,
+          16.52180855080794,
+          16.52180855080794,
+          12.583294976293653
+        ],
+        "height": 161
+      },
+      "titleOverflow": false,
+      "zeroProgress": true,
+      "mutations": [
+        {
+          "path": "/disciplinas/00000000-0000-4000-8000-000000000001/topicos/reordenar",
+          "order": [
+            "topic-1",
+            "topic-0",
+            "topic-2",
+            "topic-3",
+            "topic-4"
+          ]
+        },
+        {
+          "path": "/disciplinas/00000000-0000-4000-8000-000000000001/topicos/reordenar",
+          "order": [
+            "topic-0",
+            "topic-1",
+            "topic-2",
+            "topic-3",
+            "topic-4"
+          ]
+        }
+      ]
+    },
+    {
+      "width": 1440,
+      "theme": "dark",
+      "passed": true,
+      "geometry": {
+        "mainWidth": 1180,
+        "mainScroll": 1180,
+        "container": {
+          "width": 1130,
+          "scroll": 1500,
+          "x": "auto",
+          "contain": "none",
+          "position": "relative"
+        },
+        "outside": [],
+        "docX": false,
+        "mainX": false,
+        "docY": false,
+        "scrolling": [
+          "MAIN:relative min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto p-4 md:p-6"
+        ],
+        "rowDisplay": "table-row",
+        "names": [
+          {
+            "text": "Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. ",
+            "client": 68,
+            "scroll": 68,
+            "clamp": "none"
+          },
+          {
+            "text": "Ortografia e acentuação.",
+            "client": 23,
+            "scroll": 23,
+            "clamp": "none"
+          },
+          {
+            "text": "Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. ",
+            "client": 182,
+            "scroll": 182,
+            "clamp": "none"
+          },
+          {
+            "text": "Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. ",
+            "client": 364,
+            "scroll": 364,
+            "clamp": "none"
+          },
+          {
+            "text": "PalavraExtensaabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuv",
+            "client": 182,
+            "scroll": 182,
+            "clamp": "none"
+          }
+        ],
+        "tableScroll": true
+      },
+      "kpiAudit": {
+        "rects": [
+          {
+            "x": 284,
+            "y": 193,
+            "w": 213.59375,
+            "h": 161
+          },
+          {
+            "x": 513.59375,
+            "y": 193,
+            "w": 213.59375,
+            "h": 161
+          },
+          {
+            "x": 743.1875,
+            "y": 193,
+            "w": 213.609375,
+            "h": 161
+          },
+          {
+            "x": 972.796875,
+            "y": 193,
+            "w": 213.59375,
+            "h": 161
+          },
+          {
+            "x": 1202.390625,
+            "y": 193,
+            "w": 213.609375,
+            "h": 161
+          }
+        ],
+        "colors": [
+          "color(srgb 0.121882 0.115059 0.185882)",
+          "color(srgb 0.106784 0.129059 0.166941)",
+          "color(srgb 0.130392 0.115333 0.186157)",
+          "color(srgb 0.0919608 0.117529 0.184784)",
+          "color(srgb 0.145765 0.123569 0.137843)"
+        ],
+        "contrast": [
+          15.033890610471772,
+          15.033890610471772,
+          12.407302513259236,
+          14.756433538088048,
+          14.756433538088048,
+          12.178320281001255,
+          14.958744063382934,
+          14.958744063382934,
+          12.345284904729567,
+          15.175116981721263,
+          15.175116981721263,
+          12.523855064847032,
+          14.638013660909909,
+          14.638013660909909,
+          12.080589675012359
+        ],
+        "height": 161
+      },
+      "titleOverflow": false,
+      "zeroProgress": true,
+      "mutations": []
+    },
+    {
+      "width": 1366,
+      "theme": "light",
+      "passed": true,
+      "geometry": {
+        "mainWidth": 1106,
+        "mainScroll": 1106,
+        "container": {
+          "width": 1056,
+          "scroll": 1500,
+          "x": "auto",
+          "contain": "none",
+          "position": "relative"
+        },
+        "outside": [],
+        "docX": false,
+        "mainX": false,
+        "docY": false,
+        "scrolling": [
+          "MAIN:relative min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto p-4 md:p-6"
+        ],
+        "rowDisplay": "table-row",
+        "names": [
+          {
+            "text": "Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. ",
+            "client": 68,
+            "scroll": 68,
+            "clamp": "none"
+          },
+          {
+            "text": "Ortografia e acentuação.",
+            "client": 23,
+            "scroll": 23,
+            "clamp": "none"
+          },
+          {
+            "text": "Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. ",
+            "client": 182,
+            "scroll": 182,
+            "clamp": "none"
+          },
+          {
+            "text": "Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. ",
+            "client": 364,
+            "scroll": 364,
+            "clamp": "none"
+          },
+          {
+            "text": "PalavraExtensaabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuv",
+            "client": 182,
+            "scroll": 182,
+            "clamp": "none"
+          }
+        ],
+        "tableScroll": true
+      },
+      "kpiAudit": {
+        "rects": [
+          {
+            "x": 284,
+            "y": 193,
+            "w": 198.796875,
+            "h": 161
+          },
+          {
+            "x": 498.796875,
+            "y": 193,
+            "w": 198.796875,
+            "h": 161
+          },
+          {
+            "x": 713.59375,
+            "y": 193,
+            "w": 198.796875,
+            "h": 161
+          },
+          {
+            "x": 928.390625,
+            "y": 193,
+            "w": 198.796875,
+            "h": 161
+          },
+          {
+            "x": 1143.1875,
+            "y": 193,
+            "w": 198.8125,
+            "h": 161
+          }
+        ],
+        "colors": [
+          "color(srgb 0.951686 0.949216 0.992863)",
+          "color(srgb 0.931373 0.971176 0.958824)",
+          "color(srgb 0.964039 0.945922 0.995059)",
+          "color(srgb 0.946196 0.965686 0.997529)",
+          "color(srgb 0.989569 0.962667 0.931647)"
+        ],
+        "contrast": [
+          16.09292056620921,
+          16.09292056620921,
+          12.256646473776657,
+          16.476107648169492,
+          16.476107648169492,
+          12.54848837889156,
+          16.09434611900565,
+          16.09434611900565,
+          12.257732199427497,
+          16.452907045625096,
+          16.452907045625096,
+          12.530818398964959,
+          16.52180855080794,
+          16.52180855080794,
+          12.583294976293653
+        ],
+        "height": 161
+      },
+      "titleOverflow": false,
+      "zeroProgress": true,
+      "mutations": []
+    },
+    {
+      "width": 1366,
+      "theme": "dark",
+      "passed": true,
+      "geometry": {
+        "mainWidth": 1106,
+        "mainScroll": 1106,
+        "container": {
+          "width": 1056,
+          "scroll": 1500,
+          "x": "auto",
+          "contain": "none",
+          "position": "relative"
+        },
+        "outside": [],
+        "docX": false,
+        "mainX": false,
+        "docY": false,
+        "scrolling": [
+          "MAIN:relative min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto p-4 md:p-6"
+        ],
+        "rowDisplay": "table-row",
+        "names": [
+          {
+            "text": "Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. ",
+            "client": 68,
+            "scroll": 68,
+            "clamp": "none"
+          },
+          {
+            "text": "Ortografia e acentuação.",
+            "client": 23,
+            "scroll": 23,
+            "clamp": "none"
+          },
+          {
+            "text": "Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. ",
+            "client": 182,
+            "scroll": 182,
+            "clamp": "none"
+          },
+          {
+            "text": "Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. ",
+            "client": 364,
+            "scroll": 364,
+            "clamp": "none"
+          },
+          {
+            "text": "PalavraExtensaabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuv",
+            "client": 182,
+            "scroll": 182,
+            "clamp": "none"
+          }
+        ],
+        "tableScroll": true
+      },
+      "kpiAudit": {
+        "rects": [
+          {
+            "x": 284,
+            "y": 193,
+            "w": 198.796875,
+            "h": 161
+          },
+          {
+            "x": 498.796875,
+            "y": 193,
+            "w": 198.796875,
+            "h": 161
+          },
+          {
+            "x": 713.59375,
+            "y": 193,
+            "w": 198.796875,
+            "h": 161
+          },
+          {
+            "x": 928.390625,
+            "y": 193,
+            "w": 198.796875,
+            "h": 161
+          },
+          {
+            "x": 1143.1875,
+            "y": 193,
+            "w": 198.8125,
+            "h": 161
+          }
+        ],
+        "colors": [
+          "color(srgb 0.121882 0.115059 0.185882)",
+          "color(srgb 0.106784 0.129059 0.166941)",
+          "color(srgb 0.130392 0.115333 0.186157)",
+          "color(srgb 0.0919608 0.117529 0.184784)",
+          "color(srgb 0.145765 0.123569 0.137843)"
+        ],
+        "contrast": [
+          15.033890610471772,
+          15.033890610471772,
+          12.407302513259236,
+          14.756433538088048,
+          14.756433538088048,
+          12.178320281001255,
+          14.958744063382934,
+          14.958744063382934,
+          12.345284904729567,
+          15.175116981721263,
+          15.175116981721263,
+          12.523855064847032,
+          14.638013660909909,
+          14.638013660909909,
+          12.080589675012359
+        ],
+        "height": 161
+      },
+      "titleOverflow": false,
+      "zeroProgress": true,
+      "mutations": []
+    },
+    {
+      "width": 1024,
+      "theme": "light",
+      "passed": true,
+      "geometry": {
+        "mainWidth": 764,
+        "mainScroll": 764,
+        "container": {
+          "width": 714,
+          "scroll": 714,
+          "x": "auto",
+          "contain": "none",
+          "position": "relative"
+        },
+        "outside": [],
+        "docX": false,
+        "mainX": false,
+        "docY": false,
+        "scrolling": [
+          "MAIN:relative min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto p-4 md:p-6"
+        ],
+        "rowDisplay": "grid",
+        "names": [
+          {
+            "text": "Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. ",
+            "client": 68,
+            "scroll": 68,
+            "clamp": "none"
+          },
+          {
+            "text": "Ortografia e acentuação.",
+            "client": 23,
+            "scroll": 23,
+            "clamp": "none"
+          },
+          {
+            "text": "Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. ",
+            "client": 159,
+            "scroll": 159,
+            "clamp": "none"
+          },
+          {
+            "text": "Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. ",
+            "client": 296,
+            "scroll": 296,
+            "clamp": "none"
+          },
+          {
+            "text": "PalavraExtensaabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuv",
+            "client": 159,
+            "scroll": 159,
+            "clamp": "none"
+          }
+        ],
+        "tableScroll": false
+      },
+      "kpiAudit": {
+        "rects": [
+          {
+            "x": 284,
+            "y": 225,
+            "w": 716,
+            "h": 141.5
+          },
+          {
+            "x": 284,
+            "y": 378.5,
+            "w": 352,
+            "h": 141.5
+          },
+          {
+            "x": 648,
+            "y": 378.5,
+            "w": 352,
+            "h": 141.5
+          },
+          {
+            "x": 284,
+            "y": 532,
+            "w": 352,
+            "h": 141.5
+          },
+          {
+            "x": 648,
+            "y": 532,
+            "w": 352,
+            "h": 141.5
+          }
+        ],
+        "colors": [
+          "color(srgb 0.951686 0.949216 0.992863)",
+          "color(srgb 0.931373 0.971176 0.958824)",
+          "color(srgb 0.964039 0.945922 0.995059)",
+          "color(srgb 0.946196 0.965686 0.997529)",
+          "color(srgb 0.989569 0.962667 0.931647)"
+        ],
+        "contrast": [
+          16.09292056620921,
+          16.09292056620921,
+          12.256646473776657,
+          16.476107648169492,
+          16.476107648169492,
+          12.54848837889156,
+          16.09434611900565,
+          16.09434611900565,
+          12.257732199427497,
+          16.452907045625096,
+          16.452907045625096,
+          12.530818398964959,
+          16.52180855080794,
+          16.52180855080794,
+          12.583294976293653
+        ],
+        "height": 448.5
+      },
+      "titleOverflow": false,
+      "zeroProgress": true,
+      "mutations": []
+    },
+    {
+      "width": 1024,
+      "theme": "dark",
+      "passed": true,
+      "geometry": {
+        "mainWidth": 764,
+        "mainScroll": 764,
+        "container": {
+          "width": 714,
+          "scroll": 714,
+          "x": "auto",
+          "contain": "none",
+          "position": "relative"
+        },
+        "outside": [],
+        "docX": false,
+        "mainX": false,
+        "docY": false,
+        "scrolling": [
+          "MAIN:relative min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto p-4 md:p-6"
+        ],
+        "rowDisplay": "grid",
+        "names": [
+          {
+            "text": "Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. ",
+            "client": 68,
+            "scroll": 68,
+            "clamp": "none"
+          },
+          {
+            "text": "Ortografia e acentuação.",
+            "client": 23,
+            "scroll": 23,
+            "clamp": "none"
+          },
+          {
+            "text": "Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. ",
+            "client": 159,
+            "scroll": 159,
+            "clamp": "none"
+          },
+          {
+            "text": "Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. ",
+            "client": 296,
+            "scroll": 296,
+            "clamp": "none"
+          },
+          {
+            "text": "PalavraExtensaabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuv",
+            "client": 159,
+            "scroll": 159,
+            "clamp": "none"
+          }
+        ],
+        "tableScroll": false
+      },
+      "kpiAudit": {
+        "rects": [
+          {
+            "x": 284,
+            "y": 225,
+            "w": 716,
+            "h": 141.5
+          },
+          {
+            "x": 284,
+            "y": 378.5,
+            "w": 352,
+            "h": 141.5
+          },
+          {
+            "x": 648,
+            "y": 378.5,
+            "w": 352,
+            "h": 141.5
+          },
+          {
+            "x": 284,
+            "y": 532,
+            "w": 352,
+            "h": 141.5
+          },
+          {
+            "x": 648,
+            "y": 532,
+            "w": 352,
+            "h": 141.5
+          }
+        ],
+        "colors": [
+          "color(srgb 0.121882 0.115059 0.185882)",
+          "color(srgb 0.106784 0.129059 0.166941)",
+          "color(srgb 0.130392 0.115333 0.186157)",
+          "color(srgb 0.0919608 0.117529 0.184784)",
+          "color(srgb 0.145765 0.123569 0.137843)"
+        ],
+        "contrast": [
+          15.033890610471772,
+          15.033890610471772,
+          12.407302513259236,
+          14.756433538088048,
+          14.756433538088048,
+          12.178320281001255,
+          14.958744063382934,
+          14.958744063382934,
+          12.345284904729567,
+          15.175116981721263,
+          15.175116981721263,
+          12.523855064847032,
+          14.638013660909909,
+          14.638013660909909,
+          12.080589675012359
+        ],
+        "height": 448.5
+      },
+      "titleOverflow": false,
+      "zeroProgress": true,
+      "mutations": []
+    },
+    {
+      "width": 768,
+      "theme": "light",
+      "passed": true,
+      "geometry": {
+        "mainWidth": 508,
+        "mainScroll": 508,
+        "container": {
+          "width": 458,
+          "scroll": 458,
+          "x": "auto",
+          "contain": "none",
+          "position": "relative"
+        },
+        "outside": [],
+        "docX": false,
+        "mainX": false,
+        "docY": false,
+        "scrolling": [
+          "MAIN:relative min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto p-4 md:p-6"
+        ],
+        "rowDisplay": "grid",
+        "names": [
+          {
+            "text": "Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. ",
+            "client": 91,
+            "scroll": 91,
+            "clamp": "none"
+          },
+          {
+            "text": "Ortografia e acentuação.",
+            "client": 23,
+            "scroll": 23,
+            "clamp": "none"
+          },
+          {
+            "text": "Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. ",
+            "client": 273,
+            "scroll": 273,
+            "clamp": "none"
+          },
+          {
+            "text": "Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. ",
+            "client": 546,
+            "scroll": 546,
+            "clamp": "none"
+          },
+          {
+            "text": "PalavraExtensaabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuv",
+            "client": 250,
+            "scroll": 250,
+            "clamp": "none"
+          }
+        ],
+        "tableScroll": false
+      },
+      "kpiAudit": {
+        "rects": [
+          {
+            "x": 284,
+            "y": 277,
+            "w": 460,
+            "h": 141.5
+          },
+          {
+            "x": 284,
+            "y": 430.5,
+            "w": 224,
+            "h": 161
+          },
+          {
+            "x": 520,
+            "y": 430.5,
+            "w": 224,
+            "h": 161
+          },
+          {
+            "x": 284,
+            "y": 603.5,
+            "w": 224,
+            "h": 161
+          },
+          {
+            "x": 520,
+            "y": 603.5,
+            "w": 224,
+            "h": 161
+          }
+        ],
+        "colors": [
+          "color(srgb 0.951686 0.949216 0.992863)",
+          "color(srgb 0.931373 0.971176 0.958824)",
+          "color(srgb 0.964039 0.945922 0.995059)",
+          "color(srgb 0.946196 0.965686 0.997529)",
+          "color(srgb 0.989569 0.962667 0.931647)"
+        ],
+        "contrast": [
+          16.09292056620921,
+          16.09292056620921,
+          12.256646473776657,
+          16.476107648169492,
+          16.476107648169492,
+          12.54848837889156,
+          16.09434611900565,
+          16.09434611900565,
+          12.257732199427497,
+          16.452907045625096,
+          16.452907045625096,
+          12.530818398964959,
+          16.52180855080794,
+          16.52180855080794,
+          12.583294976293653
+        ],
+        "height": 487.5
+      },
+      "titleOverflow": false,
+      "zeroProgress": true,
+      "mutations": []
+    },
+    {
+      "width": 768,
+      "theme": "dark",
+      "passed": true,
+      "geometry": {
+        "mainWidth": 508,
+        "mainScroll": 508,
+        "container": {
+          "width": 458,
+          "scroll": 458,
+          "x": "auto",
+          "contain": "none",
+          "position": "relative"
+        },
+        "outside": [],
+        "docX": false,
+        "mainX": false,
+        "docY": false,
+        "scrolling": [
+          "MAIN:relative min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto p-4 md:p-6"
+        ],
+        "rowDisplay": "grid",
+        "names": [
+          {
+            "text": "Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. ",
+            "client": 91,
+            "scroll": 91,
+            "clamp": "none"
+          },
+          {
+            "text": "Ortografia e acentuação.",
+            "client": 23,
+            "scroll": 23,
+            "clamp": "none"
+          },
+          {
+            "text": "Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. ",
+            "client": 273,
+            "scroll": 273,
+            "clamp": "none"
+          },
+          {
+            "text": "Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. ",
+            "client": 546,
+            "scroll": 546,
+            "clamp": "none"
+          },
+          {
+            "text": "PalavraExtensaabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuv",
+            "client": 250,
+            "scroll": 250,
+            "clamp": "none"
+          }
+        ],
+        "tableScroll": false
+      },
+      "kpiAudit": {
+        "rects": [
+          {
+            "x": 284,
+            "y": 277,
+            "w": 460,
+            "h": 141.5
+          },
+          {
+            "x": 284,
+            "y": 430.5,
+            "w": 224,
+            "h": 161
+          },
+          {
+            "x": 520,
+            "y": 430.5,
+            "w": 224,
+            "h": 161
+          },
+          {
+            "x": 284,
+            "y": 603.5,
+            "w": 224,
+            "h": 161
+          },
+          {
+            "x": 520,
+            "y": 603.5,
+            "w": 224,
+            "h": 161
+          }
+        ],
+        "colors": [
+          "color(srgb 0.121882 0.115059 0.185882)",
+          "color(srgb 0.106784 0.129059 0.166941)",
+          "color(srgb 0.130392 0.115333 0.186157)",
+          "color(srgb 0.0919608 0.117529 0.184784)",
+          "color(srgb 0.145765 0.123569 0.137843)"
+        ],
+        "contrast": [
+          15.033890610471772,
+          15.033890610471772,
+          12.407302513259236,
+          14.756433538088048,
+          14.756433538088048,
+          12.178320281001255,
+          14.958744063382934,
+          14.958744063382934,
+          12.345284904729567,
+          15.175116981721263,
+          15.175116981721263,
+          12.523855064847032,
+          14.638013660909909,
+          14.638013660909909,
+          12.080589675012359
+        ],
+        "height": 487.5
+      },
+      "titleOverflow": false,
+      "zeroProgress": true,
+      "mutations": []
+    },
+    {
+      "width": 375,
+      "theme": "light",
+      "passed": true,
+      "geometry": {
+        "mainWidth": 375,
+        "mainScroll": 375,
+        "container": {
+          "width": 341,
+          "scroll": 341,
+          "x": "auto",
+          "contain": "none",
+          "position": "relative"
+        },
+        "outside": [],
+        "docX": false,
+        "mainX": false,
+        "docY": false,
+        "scrolling": [
+          "MAIN:relative min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto p-4 md:p-6"
+        ],
+        "rowDisplay": "grid",
+        "names": [
+          {
+            "text": "Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. ",
+            "client": 114,
+            "scroll": 114,
+            "clamp": "none"
+          },
+          {
+            "text": "Ortografia e acentuação.",
+            "client": 23,
+            "scroll": 23,
+            "clamp": "none"
+          },
+          {
+            "text": "Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. ",
+            "client": 341,
+            "scroll": 341,
+            "clamp": "none"
+          },
+          {
+            "text": "Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. ",
+            "client": 683,
+            "scroll": 683,
+            "clamp": "none"
+          },
+          {
+            "text": "PalavraExtensaabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuv",
+            "client": 341,
+            "scroll": 341,
+            "clamp": "none"
+          }
+        ],
+        "tableScroll": false
+      },
+      "kpiAudit": {
+        "rects": [
+          {
+            "x": 16,
+            "y": 285,
+            "w": 343,
+            "h": 95.59375
+          },
+          {
+            "x": 16,
+            "y": 392.59375,
+            "w": 165.5,
+            "h": 137.1875
+          },
+          {
+            "x": 193.5,
+            "y": 392.59375,
+            "w": 165.5,
+            "h": 137.1875
+          },
+          {
+            "x": 16,
+            "y": 541.78125,
+            "w": 165.5,
+            "h": 153.984375
+          },
+          {
+            "x": 193.5,
+            "y": 541.78125,
+            "w": 165.5,
+            "h": 153.984375
+          }
+        ],
+        "colors": [
+          "color(srgb 0.951686 0.949216 0.992863)",
+          "color(srgb 0.931373 0.971176 0.958824)",
+          "color(srgb 0.964039 0.945922 0.995059)",
+          "color(srgb 0.946196 0.965686 0.997529)",
+          "color(srgb 0.989569 0.962667 0.931647)"
+        ],
+        "contrast": [
+          16.09292056620921,
+          16.09292056620921,
+          12.256646473776657,
+          16.476107648169492,
+          16.476107648169492,
+          12.54848837889156,
+          16.09434611900565,
+          16.09434611900565,
+          12.257732199427497,
+          16.452907045625096,
+          16.452907045625096,
+          12.530818398964959,
+          16.52180855080794,
+          16.52180855080794,
+          12.583294976293653
+        ],
+        "height": 410.765625
+      },
+      "titleOverflow": false,
+      "zeroProgress": true,
+      "mutations": []
+    },
+    {
+      "width": 375,
+      "theme": "dark",
+      "passed": true,
+      "geometry": {
+        "mainWidth": 375,
+        "mainScroll": 375,
+        "container": {
+          "width": 341,
+          "scroll": 341,
+          "x": "auto",
+          "contain": "none",
+          "position": "relative"
+        },
+        "outside": [],
+        "docX": false,
+        "mainX": false,
+        "docY": false,
+        "scrolling": [
+          "MAIN:relative min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto p-4 md:p-6"
+        ],
+        "rowDisplay": "grid",
+        "names": [
+          {
+            "text": "Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. ",
+            "client": 114,
+            "scroll": 114,
+            "clamp": "none"
+          },
+          {
+            "text": "Ortografia e acentuação.",
+            "client": 23,
+            "scroll": 23,
+            "clamp": "none"
+          },
+          {
+            "text": "Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. ",
+            "client": 341,
+            "scroll": 341,
+            "clamp": "none"
+          },
+          {
+            "text": "Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. Compreensão e interpretação de textos de gêneros variados, reconhecimento das características estruturais e linguísticas, identificação de informações explícitas e implícitas e relações de sentido. ",
+            "client": 683,
+            "scroll": 683,
+            "clamp": "none"
+          },
+          {
+            "text": "PalavraExtensaabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuvabcdefghijklmnopqrstuv",
+            "client": 341,
+            "scroll": 341,
+            "clamp": "none"
+          }
+        ],
+        "tableScroll": false
+      },
+      "kpiAudit": {
+        "rects": [
+          {
+            "x": 16,
+            "y": 285,
+            "w": 343,
+            "h": 95.59375
+          },
+          {
+            "x": 16,
+            "y": 392.59375,
+            "w": 165.5,
+            "h": 137.1875
+          },
+          {
+            "x": 193.5,
+            "y": 392.59375,
+            "w": 165.5,
+            "h": 137.1875
+          },
+          {
+            "x": 16,
+            "y": 541.78125,
+            "w": 165.5,
+            "h": 153.984375
+          },
+          {
+            "x": 193.5,
+            "y": 541.78125,
+            "w": 165.5,
+            "h": 153.984375
+          }
+        ],
+        "colors": [
+          "color(srgb 0.121882 0.115059 0.185882)",
+          "color(srgb 0.106784 0.129059 0.166941)",
+          "color(srgb 0.130392 0.115333 0.186157)",
+          "color(srgb 0.0919608 0.117529 0.184784)",
+          "color(srgb 0.145765 0.123569 0.137843)"
+        ],
+        "contrast": [
+          15.033890610471772,
+          15.033890610471772,
+          12.407302513259236,
+          14.756433538088048,
+          14.756433538088048,
+          12.178320281001255,
+          14.958744063382934,
+          14.958744063382934,
+          12.345284904729567,
+          15.175116981721263,
+          15.175116981721263,
+          12.523855064847032,
+          14.638013660909909,
+          14.638013660909909,
+          12.080589675012359
+        ],
+        "height": 410.765625
+      },
+      "titleOverflow": false,
+      "zeroProgress": true,
+      "mutations": []
+    }
+  ]
+}
