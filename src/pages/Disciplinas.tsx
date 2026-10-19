@@ -1,4 +1,4 @@
-﻿import React from "react";
+import React from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
@@ -37,7 +37,7 @@ type DisciplinaPage = {
   page: number;
   page_size: number;
   total_pages: number;
-  summary: { total: number; em_progresso: number; no_concurso: number; fora_concurso: number; progresso_medio: number };
+  summary: { total: number; em_progresso: number; no_concurso: number; fora_concurso: number; progresso_medio: number; topicos_total?: number; topicos_concluidos?: number };
 };
 
 function isLinkedToConcurso(d: Disciplina, concursoId: string) {
@@ -58,8 +58,8 @@ export function Disciplinas() {
   // the Edital page when the user opens Disciplinas from the sidebar.
   const requestedView = pageParams.get("view");
   const viewMode = requestedView === "edital" ? "edital"
-    : requestedView === "table" || requestedView === "cards" ? requestedView
-    : savedViewMode === "table" ? "table" : "cards";
+    : requestedView === "table" || requestedView === "cards" || requestedView === "list" ? requestedView
+    : savedViewMode === "table" || savedViewMode === "list" ? savedViewMode : "cards";
 
   const [search, setSearch] = React.useState("");
   const [filterSeg, setFilterSeg] = React.useState<FilterSeg>("todas");
@@ -70,12 +70,11 @@ export function Disciplinas() {
 
   React.useEffect(() => {
     const requestedView = pageParams.get("view");
-    if ((requestedView === "cards" || requestedView === "table" || (requestedView === "edital" && concursoId)) && viewMode !== requestedView) setViewMode(requestedView);
+    if ((requestedView === "cards" || requestedView === "list" || requestedView === "table" || (requestedView === "edital" && concursoId)) && viewMode !== requestedView) setViewMode(requestedView);
   }, [concursoId, pageParams, setViewMode, viewMode]);
 
-  const changeViewMode = (value: "cards" | "table" | "edital") => {
+  const changeViewMode = (value: "cards" | "list" | "table" | "edital") => {
     setViewMode(value);
-    setPage(1);
     const next = new URLSearchParams(pageParams);
     next.set("view", value);
     setPageParams(next);
@@ -97,6 +96,9 @@ export function Disciplinas() {
         })
       ).data as DisciplinaPage,
     enabled: contextResolved && Boolean(concursoId) && viewMode !== "edital",
+    // Keep the controls mounted while searching/paging within this contest.
+    // Never retain data from a different active contest.
+    placeholderData: (previous, previousQuery) => previousQuery?.queryKey[3] === (concursoId || null) ? previous : undefined,
   });
   React.useEffect(() => {
     if (pageQuery.data && pageQuery.data.total_pages > 0 && page > pageQuery.data.total_pages) {
@@ -138,7 +140,7 @@ export function Disciplinas() {
   });
 
   const summary = pageQuery.data?.summary
-    ? { n: pageQuery.data.summary.total, emProg: pageQuery.data.summary.em_progresso, noConcurso: pageQuery.data.summary.no_concurso, fora: pageQuery.data.summary.fora_concurso, media: pageQuery.data.summary.progresso_medio }
+    ? { n: pageQuery.data.summary.total, emProg: pageQuery.data.summary.em_progresso, noConcurso: pageQuery.data.summary.no_concurso, fora: pageQuery.data.summary.fora_concurso, media: pageQuery.data.summary.progresso_medio, topicosTotal:pageQuery.data.summary.topicos_total, topicosConcluidos:pageQuery.data.summary.topicos_concluidos }
     : { n: 0, emProg: 0, noConcurso: 0, fora: 0, media: 0 };
 
   const openCreate = () => {
@@ -194,6 +196,7 @@ export function Disciplinas() {
   return (
     <div className="min-h-full min-w-0 space-y-6 pb-10">
       {viewMode !== "edital" ? <DisciplinasToolbar
+        updating={pageQuery.isFetching}
         search={search}
         onSearchChange={(value) => { setSearch(value); setPage(1); }}
         filterSeg={filterSeg}
@@ -253,8 +256,8 @@ export function Disciplinas() {
         />
       ) : null}
 
-      {!loadingDisciplinas && disciplinas.length > 0 && viewMode === "cards" ? (
-        <div className="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-4 xl:grid-cols-3">
+      {!loadingDisciplinas && disciplinas.length > 0 && (viewMode === "cards" || viewMode === "list") ? (
+        <div className={viewMode === "list" ? "space-y-3" : "grid grid-cols-1 items-stretch gap-3 md:grid-cols-2 md:gap-4 xl:grid-cols-3"}>
           {disciplinas.map((disciplina, index) => {
             const total = disciplina.topicos_total ?? 0;
             const estudados = disciplina.topicos_estudados ?? 0;
@@ -264,6 +267,7 @@ export function Disciplinas() {
               <DisciplinaCard
                 key={disciplina.id}
                 index={index}
+                compact={viewMode === "list"}
                 disciplina={disciplina}
                 stats={stats}
                 inConcurso={inConcurso}

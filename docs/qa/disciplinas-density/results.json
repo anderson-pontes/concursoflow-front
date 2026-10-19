@@ -1,0 +1,714 @@
+{
+  "mocked": true,
+  "productionWrites": false,
+  "results": [
+    {
+      "width": 1920,
+      "theme": "light",
+      "passed": true,
+      "geometry": {
+        "docX": false,
+        "mainX": false,
+        "docY": false,
+        "scrolls": 1
+      },
+      "density": {
+        "commonHeights": [
+          76.25,
+          76.25
+        ],
+        "rowCount": 9,
+        "cardBorder": "1px",
+        "names": [
+          {
+            "scroll": 23,
+            "client": 23
+          },
+          {
+            "scroll": 68,
+            "client": 68
+          },
+          {
+            "scroll": 23,
+            "client": 23
+          },
+          {
+            "scroll": 23,
+            "client": 23
+          },
+          {
+            "scroll": 23,
+            "client": 23
+          },
+          {
+            "scroll": 23,
+            "client": 23
+          },
+          {
+            "scroll": 23,
+            "client": 23
+          },
+          {
+            "scroll": 23,
+            "client": 23
+          },
+          {
+            "scroll": 23,
+            "client": 23
+          }
+        ]
+      },
+      "queries": 5,
+      "mutations": []
+    },
+    {
+      "width": 1920,
+      "theme": "dark",
+      "passed": true,
+      "geometry": {
+        "docX": false,
+        "mainX": false,
+        "docY": false,
+        "scrolls": 1
+      },
+      "density": {
+        "commonHeights": [
+          76.25,
+          76.25
+        ],
+        "rowCount": 9,
+        "cardBorder": "1px",
+        "names": [
+          {
+            "scroll": 23,
+            "client": 23
+          },
+          {
+            "scroll": 68,
+            "client": 68
+          },
+          {
+            "scroll": 23,
+            "client": 23
+          },
+          {
+            "scroll": 23,
+            "client": 23
+          },
+          {
+            "scroll": 23,
+            "client": 23
+          },
+          {
+            "scroll": 23,
+            "client": 23
+          },
+          {
+            "scroll": 23,
+            "client": 23
+          },
+          {
+            "scroll": 23,
+            "client": 23
+          },
+          {
+            "scroll": 23,
+            "client": 23
+          }
+        ]
+      },
+      "queries": 5,
+      "mutations": []
+    },
+    {
+      "width": 1440,
+      "theme": "light",
+      "passed": true,
+      "geometry": {
+        "docX": false,
+        "mainX": false,
+        "docY": false,
+        "scrolls": 1
+      },
+      "density": {
+        "commonHeights": [
+          76.25,
+          76.25
+        ],
+        "rowCount": 9,
+        "cardBorder": "1px",
+        "names": [
+          {
+            "scroll": 46,
+            "client": 46
+          },
+          {
+            "scroll": 91,
+            "client": 91
+          },
+          {
+            "scroll": 23,
+            "client": 23
+          },
+          {
+            "scroll": 23,
+            "client": 23
+          },
+          {
+            "scroll": 23,
+            "client": 23
+          },
+          {
+            "scroll": 23,
+            "client": 23
+          },
+          {
+            "scroll": 23,
+            "client": 23
+          },
+          {
+            "scroll": 23,
+            "client": 23
+          },
+          {
+            "scroll": 23,
+            "client": 23
+          }
+        ]
+      },
+      "queries": 7,
+      "mutations": []
+    },
+    {
+      "width": 1440,
+      "theme": "dark",
+      "passed": true,
+      "geometry": {
+        "docX": false,
+        "mainX": false,
+        "docY": false,
+        "scrolls": 1
+      },
+      "density": {
+        "commonHeights": [
+          76.25,
+          76.25
+        ],
+        "rowCount": 9,
+        "cardBorder": "1px",
+        "names": [
+          {
+            "scroll": 46,
+            "client": 46
+          },
+          {
+            "scroll": 91,
+            "client": 91
+          },
+          {
+            "scroll": 23,
+            "client": 23
+          },
+          {
+            "scroll": 23,
+            "client": 23
+          },
+          {
+            "scroll": 23,
+            "client": 23
+          },
+          {
+            "scroll": 23,
+            "client": 23
+          },
+          {
+            "scroll": 23,
+            "client": 23
+          },
+          {
+            "scroll": 23,
+            "client": 23
+          },
+          {
+            "scroll": 23,
+            "client": 23
+          }
+        ]
+      },
+      "queries": 5,
+      "mutations": []
+    },
+    {
+      "width": 1366,
+      "theme": "light",
+      "passed": true,
+      "geometry": {
+        "docX": false,
+        "mainX": false,
+        "docY": false,
+        "scrolls": 1
+      },
+      "density": {
+        "commonHeights": [
+          76.25,
+          76.25
+        ],
+        "rowCount": 9,
+        "cardBorder": "1px",
+        "names": [
+          {
+            "scroll": 46,
+            "client": 46
+          },
+          {
+            "scroll": 91,
+            "client": 91
+          },
+          {
+            "scroll": 23,
+            "client": 23
+          },
+          {
+            "scroll": 23,
+            "client": 23
+          },
+          {
+            "scroll": 23,
+            "client": 23
+          },
+          {
+            "scroll": 23,
+            "client": 23
+          },
+          {
+            "scroll": 23,
+            "client": 23
+          },
+          {
+            "scroll": 23,
+            "client": 23
+          },
+          {
+            "scroll": 23,
+            "client": 23
+          }
+        ]
+      },
+      "queries": 5,
+      "mutations": []
+    },
+    {
+      "width": 1366,
+      "theme": "dark",
+      "passed": true,
+      "geometry": {
+        "docX": false,
+        "mainX": false,
+        "docY": false,
+        "scrolls": 1
+      },
+      "density": {
+        "commonHeights": [
+          76.25,
+          76.25
+        ],
+        "rowCount": 9,
+        "cardBorder": "1px",
+        "names": [
+          {
+            "scroll": 46,
+            "client": 46
+          },
+          {
+            "scroll": 91,
+            "client": 91
+          },
+          {
+            "scroll": 23,
+            "client": 23
+          },
+          {
+            "scroll": 23,
+            "client": 23
+          },
+          {
+            "scroll": 23,
+            "client": 23
+          },
+          {
+            "scroll": 23,
+            "client": 23
+          },
+          {
+            "scroll": 23,
+            "client": 23
+          },
+          {
+            "scroll": 23,
+            "client": 23
+          },
+          {
+            "scroll": 23,
+            "client": 23
+          }
+        ]
+      },
+      "queries": 5,
+      "mutations": []
+    },
+    {
+      "width": 1024,
+      "theme": "light",
+      "passed": true,
+      "geometry": {
+        "docX": false,
+        "mainX": false,
+        "docY": false,
+        "scrolls": 1
+      },
+      "density": {
+        "commonHeights": [
+          95.75,
+          95.75
+        ],
+        "rowCount": 9,
+        "cardBorder": "1px",
+        "names": [
+          {
+            "scroll": 114,
+            "client": 114
+          },
+          {
+            "scroll": 228,
+            "client": 228
+          },
+          {
+            "scroll": 23,
+            "client": 23
+          },
+          {
+            "scroll": 23,
+            "client": 23
+          },
+          {
+            "scroll": 23,
+            "client": 23
+          },
+          {
+            "scroll": 23,
+            "client": 23
+          },
+          {
+            "scroll": 23,
+            "client": 23
+          },
+          {
+            "scroll": 23,
+            "client": 23
+          },
+          {
+            "scroll": 23,
+            "client": 23
+          }
+        ]
+      },
+      "queries": 5,
+      "mutations": []
+    },
+    {
+      "width": 1024,
+      "theme": "dark",
+      "passed": true,
+      "geometry": {
+        "docX": false,
+        "mainX": false,
+        "docY": false,
+        "scrolls": 1
+      },
+      "density": {
+        "commonHeights": [
+          95.75,
+          95.75
+        ],
+        "rowCount": 9,
+        "cardBorder": "1px",
+        "names": [
+          {
+            "scroll": 114,
+            "client": 114
+          },
+          {
+            "scroll": 228,
+            "client": 228
+          },
+          {
+            "scroll": 23,
+            "client": 23
+          },
+          {
+            "scroll": 23,
+            "client": 23
+          },
+          {
+            "scroll": 23,
+            "client": 23
+          },
+          {
+            "scroll": 23,
+            "client": 23
+          },
+          {
+            "scroll": 23,
+            "client": 23
+          },
+          {
+            "scroll": 23,
+            "client": 23
+          },
+          {
+            "scroll": 23,
+            "client": 23
+          }
+        ]
+      },
+      "queries": 5,
+      "mutations": []
+    },
+    {
+      "width": 768,
+      "theme": "light",
+      "passed": true,
+      "geometry": {
+        "docX": false,
+        "mainX": false,
+        "docY": false,
+        "scrolls": 1
+      },
+      "density": {
+        "commonHeights": [
+          193.75,
+          193.75
+        ],
+        "rowCount": 9,
+        "cardBorder": "1px",
+        "names": [
+          {
+            "scroll": 46,
+            "client": 46
+          },
+          {
+            "scroll": 91,
+            "client": 91
+          },
+          {
+            "scroll": 23,
+            "client": 23
+          },
+          {
+            "scroll": 23,
+            "client": 23
+          },
+          {
+            "scroll": 23,
+            "client": 23
+          },
+          {
+            "scroll": 23,
+            "client": 23
+          },
+          {
+            "scroll": 23,
+            "client": 23
+          },
+          {
+            "scroll": 23,
+            "client": 23
+          },
+          {
+            "scroll": 23,
+            "client": 23
+          }
+        ]
+      },
+      "queries": 5,
+      "mutations": []
+    },
+    {
+      "width": 768,
+      "theme": "dark",
+      "passed": true,
+      "geometry": {
+        "docX": false,
+        "mainX": false,
+        "docY": false,
+        "scrolls": 1
+      },
+      "density": {
+        "commonHeights": [
+          193.75,
+          193.75
+        ],
+        "rowCount": 9,
+        "cardBorder": "1px",
+        "names": [
+          {
+            "scroll": 46,
+            "client": 46
+          },
+          {
+            "scroll": 91,
+            "client": 91
+          },
+          {
+            "scroll": 23,
+            "client": 23
+          },
+          {
+            "scroll": 23,
+            "client": 23
+          },
+          {
+            "scroll": 23,
+            "client": 23
+          },
+          {
+            "scroll": 23,
+            "client": 23
+          },
+          {
+            "scroll": 23,
+            "client": 23
+          },
+          {
+            "scroll": 23,
+            "client": 23
+          },
+          {
+            "scroll": 23,
+            "client": 23
+          }
+        ]
+      },
+      "queries": 5,
+      "mutations": []
+    },
+    {
+      "width": 375,
+      "theme": "light",
+      "passed": true,
+      "geometry": {
+        "docX": false,
+        "mainX": false,
+        "docY": false,
+        "scrolls": 1
+      },
+      "density": {
+        "commonHeights": [
+          213.25,
+          213.25
+        ],
+        "rowCount": 9,
+        "cardBorder": "1px",
+        "names": [
+          {
+            "scroll": 68,
+            "client": 68
+          },
+          {
+            "scroll": 137,
+            "client": 137
+          },
+          {
+            "scroll": 23,
+            "client": 23
+          },
+          {
+            "scroll": 23,
+            "client": 23
+          },
+          {
+            "scroll": 23,
+            "client": 23
+          },
+          {
+            "scroll": 23,
+            "client": 23
+          },
+          {
+            "scroll": 23,
+            "client": 23
+          },
+          {
+            "scroll": 23,
+            "client": 23
+          },
+          {
+            "scroll": 23,
+            "client": 23
+          }
+        ]
+      },
+      "queries": 5,
+      "mutations": []
+    },
+    {
+      "width": 375,
+      "theme": "dark",
+      "passed": true,
+      "geometry": {
+        "docX": false,
+        "mainX": false,
+        "docY": false,
+        "scrolls": 1
+      },
+      "density": {
+        "commonHeights": [
+          213.25,
+          213.25
+        ],
+        "rowCount": 9,
+        "cardBorder": "1px",
+        "names": [
+          {
+            "scroll": 68,
+            "client": 68
+          },
+          {
+            "scroll": 137,
+            "client": 137
+          },
+          {
+            "scroll": 23,
+            "client": 23
+          },
+          {
+            "scroll": 23,
+            "client": 23
+          },
+          {
+            "scroll": 23,
+            "client": 23
+          },
+          {
+            "scroll": 23,
+            "client": 23
+          },
+          {
+            "scroll": 23,
+            "client": 23
+          },
+          {
+            "scroll": 23,
+            "client": 23
+          },
+          {
+            "scroll": 23,
+            "client": 23
+          }
+        ]
+      },
+      "queries": 5,
+      "mutations": []
+    }
+  ]
+}

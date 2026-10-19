@@ -1,3 +1,4 @@
+import { DisciplineIdentity, DisciplineSummary, disciplineStudyState } from "@/components/disciplinas/DisciplineVisual";
 import {useState} from 'react';
 import {apiUnavailableMessage} from '@/lib/apiQuery';
 import {Link} from 'react-router-dom';
@@ -10,7 +11,6 @@ import {Button} from '@/components/ui/button';
 import {DashboardStudyProgress} from '@/components/dashboard/DashboardStudyProgress';
 import {Skeleton} from '@/components/ui/skeleton';
 import {getDisciplinaColor} from '@/components/disciplinas/disciplinaPalettes';
-import {DisciplineColorIndicator} from '@/components/disciplinas/DisciplineColorIndicator';
 import {formatDashboardDuration as fmtMinutosEstudo} from '@/lib/dashboard/analysis';
 import {formatNumericDate} from '@/lib/dashboard/dates';
 import {percentBR,type DashboardAnalysis,type AnalysisDay,type AnalysisDiscipline} from '@/lib/dashboard/analysis';
@@ -50,7 +50,7 @@ function DisciplineBars({rows}:{rows:AnalysisDiscipline[]}) {
   <CardContent className="flex flex-1 flex-col gap-4">
    {!sorted.length?<DashboardEmptyPlot to="/disciplinas?view=edital" action="Abrir edital">Nenhuma disciplina cadastrada.</DashboardEmptyPlot>:<div className="space-y-4">{(expanded?sorted:sorted.slice(0,6)).map(d=>{
     const value=d.progresso_pct;
-    return <div key={d.id}><div className="mb-2 flex items-start justify-between gap-3"><Link to={`/disciplinas/${d.id}`} className="flex min-w-0 items-start gap-2 text-sm font-medium hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring [overflow-wrap:anywhere]"><DisciplineColorIndicator disciplinaId={d.id} shape="dot" label={`Cor de ${d.nome}`} />{d.nome}</Link><span className="shrink-0 text-xs tabular-nums">{percentBR(value)}</span></div><div role={value==null?undefined:'meter'} aria-label={`${d.nome}: progresso`} aria-valuenow={value??undefined} aria-valuemin={0} aria-valuemax={100} aria-valuetext={percentBR(value)} className="h-2 overflow-hidden rounded-full bg-muted"><div className="h-full rounded-full" style={{width:`${Math.max(0,Math.min(100,value??0))}%`,backgroundColor:getDisciplinaColor(d.id).color}}/></div><p className="mt-1 text-xs text-muted-foreground">{d.topicos_concluidos} de {d.topicos_total} tópicos dominados</p></div>;
+    return <DisciplineSummary key={d.id} id={d.id} name={d.nome} state={disciplineStudyState(d.topicos_total,d.topicos_concluidos,d.minutos_estudados>0?1:d.topicos_concluidos)} value={value} context={`${d.topicos_concluidos} / ${d.topicos_total}`} label="Progresso no edital"/>;
    })}</div>}
    <DashboardCardActions>{sorted.length>6&&<Button variant="ghost" onClick={()=>setExpanded(v=>!v)}>{expanded?'Mostrar menos':`Ver todas as ${sorted.length} disciplinas`}</Button>}<Link to="/disciplinas?view=edital" className="inline-flex min-h-10 items-center text-sm font-medium text-primary hover:underline">Abrir edital</Link></DashboardCardActions>
   </CardContent>
@@ -64,7 +64,7 @@ function TimeDistribution({rows}:{rows:AnalysisDiscipline[]}) {
   <CardContent className="flex flex-1 flex-col gap-4">
    {!sorted.length?<DashboardEmptyPlot to="/cronograma" action="Planejar estudos">Nenhum estudo registrado neste período.</DashboardEmptyPlot>:<>
     {sorted.length>1?<ChartContainer config={{tempo:{label:'Tempo estudado'}}} className="mx-auto h-48 w-full max-w-xs aspect-auto"><PieChart accessibilityLayer><Pie data={sorted} dataKey="minutos_estudados" nameKey="nome" innerRadius="55%" outerRadius="90%" strokeWidth={2} isAnimationActive={false}>{sorted.map(row=><Cell key={row.id} fill={getDisciplinaColor(row.id).color}/>)}</Pie><ChartTooltip content={({active,payload})=>{const row=payload?.[0]?.payload as AnalysisDiscipline|undefined;return active&&row?<div className="max-w-64 rounded-lg border bg-popover p-3 text-xs text-popover-foreground shadow-md"><p className="mb-1 font-medium">{row.nome}</p><p>{fmtMinutosEstudo(row.minutos_estudados)} · {percentBR(row.participacao_tempo_pct)} do tempo</p></div>:null;}}/></PieChart></ChartContainer>:<div className="h-3 overflow-hidden rounded-full bg-muted" aria-hidden><div className="h-full w-full rounded-full" style={{backgroundColor:getDisciplinaColor(sorted[0]!.id).color}}/></div>}
-    <ul className="space-y-3" aria-label="Tempo por disciplina">{(expanded?sorted:sorted.slice(0,6)).map(row=><li key={row.id} className="flex min-w-0 items-start justify-between gap-3"><Link to={`/disciplinas/${row.id}`} className="flex min-w-0 items-start gap-2 text-sm leading-relaxed hover:underline [overflow-wrap:anywhere]"><DisciplineColorIndicator disciplinaId={row.id} shape="dot"/>{row.nome}</Link><span className="shrink-0 text-right text-sm font-medium tabular-nums">{fmtMinutosEstudo(row.minutos_estudados)}<span className="block text-xs font-normal text-muted-foreground">{percentBR(row.participacao_tempo_pct)} do tempo</span></span></li>)}</ul>
+    <ul className="space-y-3" aria-label="Tempo por disciplina">{(expanded?sorted:sorted.slice(0,6)).map(row=><li key={row.id} className="flex min-w-0 items-start justify-between gap-3"><DisciplineIdentity id={row.id} name={row.nome} state={disciplineStudyState(row.topicos_total,row.topicos_concluidos,row.minutos_estudados>0?1:row.topicos_concluidos)}/><span className="shrink-0 text-right text-sm font-medium tabular-nums">{fmtMinutosEstudo(row.minutos_estudados)}<span className="block text-xs font-normal text-muted-foreground">{percentBR(row.participacao_tempo_pct)} do tempo</span></span></li>)}</ul>
    </>}
    <DashboardCardActions>{sorted.length>6&&<Button variant="ghost" onClick={()=>setExpanded(value=>!value)}>{expanded?'Mostrar menos':`Ver todas as ${sorted.length} disciplinas`}</Button>}<Link to="/estudos/historico" className="inline-flex min-h-10 items-center text-sm font-medium text-primary hover:underline">Ver histórico de estudos</Link></DashboardCardActions>
   </CardContent>

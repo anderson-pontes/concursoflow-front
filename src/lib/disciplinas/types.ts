@@ -11,6 +11,7 @@ export type Disciplina = {
   concurso_ids: string[];
   topicos_total?: number | null;
   topicos_estudados?: number | null;
+  topicos_iniciados?: number | null;
 };
 
 export type DisciplinaInput = {

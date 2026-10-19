@@ -19,6 +19,7 @@ export type DataTableProps<T> = {
   searchColumnId?: string;
   emptyMessage?: string;
   className?: string;
+  hideSearch?: boolean;
 };
 
 export function DataTable<T>({
@@ -28,6 +29,7 @@ export function DataTable<T>({
   searchColumnId,
   emptyMessage = "Nenhum registro encontrado.",
   className,
+  hideSearch = false,
 }: DataTableProps<T>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [globalFilter, setGlobalFilter] = React.useState("");
@@ -53,7 +55,7 @@ export function DataTable<T>({
 
   return (
     <div className={cn("min-w-0 space-y-4", className)}>
-      <div className="relative max-w-sm">
+      {!hideSearch && <div className="relative max-w-sm">
         <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         <input
           type="search"
@@ -63,7 +65,7 @@ export function DataTable<T>({
           aria-label={searchPlaceholder}
           className="min-h-11 w-full rounded-lg border border-border bg-surface py-2 pl-9 pr-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
         />
-      </div>
+      </div>}
       <div className="overflow-x-auto rounded-xl border border-border bg-card shadow-sm">
         <table className="w-full min-w-[640px] border-collapse text-left text-sm">
           <thead>

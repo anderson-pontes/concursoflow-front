@@ -1,203 +1,27 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import type { ColumnDef } from "@tanstack/react-table";
-import { BarChart3, Pencil, Trash2 } from "lucide-react";
-
 import { DataTable } from "@/components/ui/DataTable";
-import { useConfirmDialog } from "@/components/ui/confirm-dialog";
-import { getDisciplinaStatusLabel, getTopicosProgressFromCounts } from "@/components/disciplinas/disciplinaProgress";
-import { fmtPontos } from "@/lib/disciplinas/pontos";
+import { SelectField } from "@/components/ui/select-field";
+import { DisciplinaCard } from "./DisciplinaCard";
+import { DisciplineActions } from "./DisciplineActions";
+import { DisciplineIdentity, DisciplineProgress, DisciplineStatus, disciplineStudyState } from "./DisciplineVisual";
+import { getTopicosProgressFromCounts } from "./disciplinaProgress";
+import { fmtPontos, fmtPeso } from "@/lib/disciplinas/pontos";
 import type { Disciplina } from "@/lib/disciplinas/types";
-import { cn } from "@/lib/utils";
-
-export type DisciplinasDataTableProps = {
-  disciplinas: Disciplina[];
-  concursoId: string;
-  onEdit: (d: Disciplina) => void;
-  onToggleConcurso: (d: Disciplina) => void;
-  onConfirmDelete: (d: Disciplina) => Promise<void>;
-};
-
-export function DisciplinasDataTable({
-  disciplinas,
-  concursoId,
-  onEdit,
-  onToggleConcurso,
-  onConfirmDelete,
-}: DisciplinasDataTableProps) {
-  const { requestConfirmation, confirmDialog } = useConfirmDialog();
-  const columns = React.useMemo<ColumnDef<Disciplina>[]>(
-    () => [
-      {
-        id: "nome",
-        accessorKey: "nome",
-        header: "Disciplina",
-        cell: ({ row }) => (
-          <Link
-            to={`/disciplinas/${row.original.id}`}
-            className="font-semibold text-primary-700 hover:underline dark:text-primary-400"
-          >
-            {row.original.nome}
-          </Link>
-        ),
-      },
-      {
-        id: "prioridade",
-        accessorFn: (d) => d.prioridade_calculada ?? 0,
-        header: "Pontos",
-        meta: { hint: "Soma peso × (6 − domínio) dos assuntos" },
-        cell: ({ row }) => (
-          <span
-            className="font-mono text-xs font-semibold tabular-nums"
-            title="Prioridade = Σ peso × (6 − domínio)"
-          >
-            {row.original.prioridade_calculada ?? "—"}
-          </span>
-        ),
-      },
-      {
-        id: "peso",
-        accessorFn: (d) => d.total_pontos ?? d.peso ?? 0,
-        header: "Peso edital",
-        cell: ({ row }) => (
-          <span className="tabular-nums text-muted-foreground" title="Soma do peso dos assuntos (sem domínio)">
-            {fmtPontos(row.original.total_pontos ?? row.original.peso)}
-          </span>
-        ),
-      },
-      {
-        id: "topicos",
-        accessorFn: (d) => d.topicos_estudados ?? 0,
-        header: "Tópicos",
-        cell: ({ row }) => {
-          const total = row.original.topicos_total ?? 0;
-          const est = row.original.topicos_estudados ?? 0;
-          return (
-            <span className="tabular-nums text-muted-foreground">
-              {est}/{total}
-            </span>
-          );
-        },
-      },
-      {
-        id: "progresso",
-        accessorFn: (d) => {
-          const stats = getTopicosProgressFromCounts(d.topicos_total ?? 0, d.topicos_estudados ?? 0);
-          return stats.pct;
-        },
-        header: "Progresso",
-        cell: ({ row }) => {
-          const total = row.original.topicos_total ?? 0;
-          const est = row.original.topicos_estudados ?? 0;
-          const stats = getTopicosProgressFromCounts(total, est);
-          const pct = stats.pct;
-          return (
-            <div className="flex min-w-[100px] items-center gap-2">
-              <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-muted">
-                <div className="h-full rounded-full bg-primary-500" style={{ width: `${pct}%` }} />
-              </div>
-              <span className="text-xs tabular-nums text-muted-foreground">{pct}%</span>
-            </div>
-          );
-        },
-      },
-      {
-        id: "status",
-        accessorFn: (d) => getDisciplinaStatusLabel(getTopicosProgressFromCounts(d.topicos_total ?? 0, d.topicos_estudados ?? 0)).label,
-        header: "Status",
-        cell: ({ row }) => {
-          const stats = getTopicosProgressFromCounts(row.original.topicos_total ?? 0, row.original.topicos_estudados ?? 0);
-          const st = getDisciplinaStatusLabel(stats);
-          return (
-            <span
-              className={cn(
-                "inline-flex rounded-full px-2 py-0.5 text-[10px] font-semibold",
-                st.kind === "concluida"
-                  ? "bg-emerald-100 text-success-foreground dark:bg-emerald-900/40 dark:text-emerald-300"
-                  : st.kind === "em_progresso"
-                    ? "bg-primary-100 text-primary-700 dark:bg-primary-900/40 dark:text-primary-300"
-                    : "bg-muted text-muted-foreground",
-              )}
-            >
-              {st.label}
-            </span>
-          );
-        },
-      },
-      {
-        id: "acoes",
-        header: "Ações",
-        enableSorting: false,
-        cell: ({ row }) => {
-          const d = row.original;
-          const linked = concursoId && d.concurso_ids.includes(concursoId);
-          return (
-            <div className="flex items-center gap-1">
-              {concursoId ? (
-                <button
-                  type="button"
-                  title={linked ? "Remover do concurso" : "Vincular ao concurso"}
-                  onClick={() => onToggleConcurso(d)}
-                  className={cn(
-                    "rounded-md px-2 py-1 text-[10px] font-semibold",
-                    linked
-                      ? "bg-primary-100 text-primary-700 dark:bg-primary-900/40"
-                      : "border border-border text-muted-foreground hover:bg-muted",
-                  )}
-                >
-                  {linked ? "No concurso" : "Vincular"}
-                </button>
-              ) : null}
-              <button
-                type="button"
-                title="Editar"
-                onClick={() => onEdit(d)}
-                className="rounded-md p-1.5 text-muted-foreground hover:bg-muted"
-              >
-                <Pencil className="h-3.5 w-3.5" />
-              </button>
-              <button
-                type="button"
-                title="Excluir"
-                onClick={() => {
-                  void requestConfirmation({
-                    title: "Excluir disciplina?",
-                    description: `A disciplina “${d.nome}” será excluída. Esta ação não pode ser desfeita.`,
-                    confirmLabel: "Excluir disciplina",
-                    variant: "destructive",
-                  }).then((confirmed) => {
-                    if (confirmed) void onConfirmDelete(d);
-                  });
-                }}
-                className="rounded-md p-1.5 text-destructive hover:bg-rose-50 dark:hover:bg-rose-950/30"
-              >
-                <Trash2 className="h-3.5 w-3.5" />
-              </button>
-              <Link
-                to={`/disciplinas/${d.id}`}
-                title="Dashboard"
-                className="rounded-md p-1.5 text-muted-foreground hover:bg-muted"
-              >
-                <BarChart3 className="h-3.5 w-3.5" />
-              </Link>
-            </div>
-          );
-        },
-      },
-    ],
-    [concursoId, onConfirmDelete, onEdit, onToggleConcurso, requestConfirmation],
-  );
-
-  return (
-    <>
-      <DataTable
-        data={disciplinas}
-        columns={columns}
-        searchColumnId="nome"
-        searchPlaceholder="Filtrar na tabela…"
-        emptyMessage="Nenhuma disciplina neste filtro."
-      />
-      {confirmDialog}
-    </>
-  );
+export type DisciplinasDataTableProps={disciplinas:Disciplina[];concursoId:string;onEdit:(d:Disciplina)=>void;onToggleConcurso:(d:Disciplina)=>void;onConfirmDelete:(d:Disciplina)=>Promise<void>};
+const stats=(d:Disciplina)=>getTopicosProgressFromCounts(d.topicos_total??0,d.topicos_estudados??0);
+const state=(d:Disciplina)=>disciplineStudyState(d.topicos_total??0,d.topicos_estudados??0,d.topicos_iniciados??d.topicos_estudados??0);
+export function DisciplinasDataTable({disciplinas,concursoId,onEdit,onToggleConcurso,onConfirmDelete}:DisciplinasDataTableProps){
+ const [mobileSort,setMobileSort]=React.useState("nome");
+ const sorted=[...disciplinas].sort((a,b)=>mobileSort==="nome"?a.nome.localeCompare(b.nome,"pt-BR"):mobileSort==="prioridade"?(b.prioridade_calculada??0)-(a.prioridade_calculada??0):stats(b).pct-stats(a).pct);
+ const columns=React.useMemo<ColumnDef<Disciplina>[]>(()=>[
+  {id:"nome",accessorKey:"nome",header:"Disciplina",cell:({row})=><DisciplineIdentity id={row.original.id} name={row.original.nome} state={state(row.original)} context={row.original.concurso_ids.includes(concursoId)?"Vinculada ao concurso selecionado":<span className="discipline-link-outside">Fora do concurso selecionado</span>}/>},
+  {id:"prioridade",accessorFn:d=>d.prioridade_calculada??0,header:"Prioridade",cell:({row})=><span className="rounded-full bg-primary/10 px-2 py-1 text-xs font-semibold text-primary" title="Soma peso × (6 − domínio) dos tópicos">{fmtPontos(row.original.prioridade_calculada)}</span>},
+  {id:"peso",accessorFn:d=>d.total_pontos??d.peso??0,header:"Peso edital",cell:({row})=><span className="inline-flex rounded-md bg-muted px-2 py-1 text-xs font-medium tabular-nums text-muted-foreground">{fmtPeso(row.original.total_pontos??row.original.peso)}</span>},
+  {id:"topicos",accessorFn:d=>d.topicos_estudados??0,header:"Tópicos",cell:({row})=><span className="tabular-nums"><strong className={(row.original.topicos_estudados??0)>0?"text-success-text":"text-muted-foreground"}>{row.original.topicos_estudados??0}</strong>/{row.original.topicos_total??0}</span>},
+  {id:"progresso",accessorFn:d=>stats(d).pct,header:"Progresso",cell:({row})=><DisciplineProgress value={stats(row.original).pct} state={state(row.original)}/>},
+  {id:"status",accessorFn:d=>state(d),header:"Situação",cell:({row})=><DisciplineStatus state={state(row.original)}/>},
+  {id:"acoes",header:"Ações",enableSorting:false,cell:({row})=><DisciplineActions id={row.original.id} name={row.original.nome} canToggleConcurso={Boolean(concursoId)} inConcurso={row.original.concurso_ids.includes(concursoId)} onToggleConcurso={()=>onToggleConcurso(row.original)} onEdit={()=>onEdit(row.original)} onConfirmDelete={()=>onConfirmDelete(row.original)}/>},
+ ],[concursoId,onEdit,onToggleConcurso,onConfirmDelete]);
+ return <><div className="hidden lg:block"><DataTable className="discipline-table" hideSearch data={disciplinas} columns={columns} emptyMessage="Nenhuma disciplina neste filtro."/></div><div className="space-y-3 lg:hidden"><SelectField aria-label="Ordenar disciplinas nesta página" value={mobileSort} onValueChange={setMobileSort} options={[{value:"nome",label:"Nome: A–Z"},{value:"prioridade",label:"Maior prioridade"},{value:"progresso",label:"Maior progresso"}]}/>{sorted.map(d=><DisciplinaCard key={d.id} disciplina={d} stats={stats(d)} compact canToggleConcurso={Boolean(concursoId)} inConcurso={d.concurso_ids.includes(concursoId)} onToggleConcurso={()=>onToggleConcurso(d)} onEdit={()=>onEdit(d)} onConfirmDelete={()=>onConfirmDelete(d)}/>)}</div></>;
 }

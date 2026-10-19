@@ -1,8 +1,7 @@
+import { DisciplineSummary, disciplineStudyState } from "@/components/disciplinas/DisciplineVisual";
 import {BookOpen, Calendar, Clock, ListChecks} from 'lucide-react';
 import {Button} from '@/components/ui/button';
 import {Progress} from '@/components/ui/progress';
-import {DisciplineColorIndicator} from '@/components/disciplinas/DisciplineColorIndicator';
-import {getDisciplinaColor} from '@/components/disciplinas/disciplinaPalettes';
 import {formatStudyMinutes} from '@/components/cronograma/PlanejamentoDisciplinas';
 import {DIAS, diaAbrev} from '@/lib/cronograma/constants';
 import {type Bloco, type Planejamento, type PlanejamentoResumo} from '@/lib/cronograma/types';
@@ -31,7 +30,7 @@ export function CronogramaWeeklyOverview({plano,resumo,activities,onViewAll,load
       const stats=resumo?.disciplinas.find(s=>s.disciplina_id===d.disciplina_id);
       const planned=stats?.minutos_planejados??0, studied=stats?.minutos_estudados??0;
       const percent=planned>0?studied/planned*100:null;
-      return <li key={d.disciplina_id} className={cn("min-w-0 space-y-2",few?"flex flex-wrap items-center gap-x-4 gap-y-2":"border-b border-border pb-3 last:border-0 last:pb-0")}><p className="flex min-w-0 flex-1 items-start gap-2 text-sm font-semibold leading-snug [overflow-wrap:anywhere]"><DisciplineColorIndicator disciplinaId={d.disciplina_id} shape="dot" className="mt-1"/>{d.nome}</p><p className="shrink-0 text-xs tabular-nums">{stats?`${formatStudyMinutes(studied)} / ${formatStudyMinutes(planned)}`:'Sem dados da semana'}<span className="ml-2 text-muted-foreground">{stats&&percent!=null?`${Math.round(percent)}%`:''}</span></p><div role={percent==null?undefined:'meter'} aria-label={`Execução de ${d.nome}`} aria-valuenow={percent==null?undefined:Math.min(100,percent)} aria-valuemin={0} aria-valuemax={100} aria-valuetext={percent==null?'Sem carga planejada':`${Math.round(percent)}%`} className="h-1.5 w-full overflow-hidden rounded-full bg-muted"><div className="h-full rounded-full" style={{width:`${Math.max(0,Math.min(100,percent??0))}%`,backgroundColor:getDisciplinaColor(d.disciplina_id).color}}/></div></li>;
+      return <li key={d.disciplina_id} className="min-w-0"><DisciplineSummary id={d.disciplina_id} name={d.nome} state={disciplineStudyState(0,0,studied)} value={percent} label="Execução da carga semanal" context={stats?`${formatStudyMinutes(studied)} / ${formatStudyMinutes(planned)}`:'Sem dados da semana'}/></li>;
     })}</ul></section>
     <section className="min-w-0 rounded-xl border border-border bg-card p-4"><div className="flex flex-wrap items-center justify-between gap-2"><h2 className="text-base font-semibold">Distribuição da carga semanal</h2><Button variant="ghost" size="sm" onClick={onViewAll}>Ver lista completa</Button></div>
       <p className="mt-1 text-xs text-muted-foreground">{loading?'Carregando atividades…':error?'Atividades indisponíveis':`${activities.length} atividades · ${formatStudyMinutes(total)} planejadas`}</p>
