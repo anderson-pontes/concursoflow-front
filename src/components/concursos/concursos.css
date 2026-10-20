@@ -1,0 +1,8 @@
+.concursos-kpi { background: color-mix(in srgb, var(--study-tone) 10%, var(--card)); }
+.concursos-kpi > p { font-size: 1.875rem; line-height: 1.2; }
+.concurso-tone-indigo { --concurso-tone: var(--primary); --concurso-ink: var(--primary); }
+.concurso-tone-blue { --concurso-tone: var(--info); --concurso-ink: var(--info-text); }
+.concurso-tone-green { --concurso-tone: var(--success); --concurso-ink: var(--success-text); }
+.concurso-tone-purple { --concurso-tone: var(--study-violet); --concurso-ink: var(--study-violet-ink); }
+.concurso-tone-orange { --concurso-tone: var(--warning); --concurso-ink: var(--warning-foreground); }
+.concurso-soft-card { background: color-mix(in srgb, var(--concurso-tone) 6%, var(--card)); border-color: color-mix(in srgb, var(--concurso-tone) 20%, var(--border)); }

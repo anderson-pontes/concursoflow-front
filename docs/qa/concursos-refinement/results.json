@@ -1,0 +1,408 @@
+[
+  {
+    "width": 320,
+    "theme": "light",
+    "passed": true,
+    "dataGeometry": {
+      "overflow": false,
+      "contained": true,
+      "panelOverflow": false,
+      "buttons": [
+        {
+          "width": 44,
+          "height": 44,
+          "contained": true
+        },
+        {
+          "width": 114.75,
+          "height": 44,
+          "contained": true
+        },
+        {
+          "width": 163.25,
+          "height": 44,
+          "contained": true
+        }
+      ]
+    },
+    "single": 288,
+    "requests": 2
+  },
+  {
+    "width": 320,
+    "theme": "dark",
+    "passed": true,
+    "dataGeometry": {
+      "overflow": false,
+      "contained": true,
+      "panelOverflow": false,
+      "buttons": [
+        {
+          "width": 44,
+          "height": 44,
+          "contained": true
+        },
+        {
+          "width": 114.75,
+          "height": 44,
+          "contained": true
+        },
+        {
+          "width": 163.25,
+          "height": 44,
+          "contained": true
+        }
+      ]
+    },
+    "single": 288,
+    "requests": 2
+  },
+  {
+    "width": 375,
+    "theme": "light",
+    "passed": true,
+    "dataGeometry": {
+      "overflow": false,
+      "contained": true,
+      "panelOverflow": false,
+      "buttons": [
+        {
+          "width": 44,
+          "height": 44,
+          "contained": true
+        },
+        {
+          "width": 166.5,
+          "height": 44,
+          "contained": true
+        },
+        {
+          "width": 166.5,
+          "height": 44,
+          "contained": true
+        }
+      ]
+    },
+    "single": 343,
+    "requests": 9
+  },
+  {
+    "width": 375,
+    "theme": "dark",
+    "passed": true,
+    "dataGeometry": {
+      "overflow": false,
+      "contained": true,
+      "panelOverflow": false,
+      "buttons": [
+        {
+          "width": 44,
+          "height": 44,
+          "contained": true
+        },
+        {
+          "width": 166.5,
+          "height": 44,
+          "contained": true
+        },
+        {
+          "width": 166.5,
+          "height": 44,
+          "contained": true
+        }
+      ]
+    },
+    "single": 343,
+    "requests": 2
+  },
+  {
+    "width": 390,
+    "theme": "light",
+    "passed": true,
+    "dataGeometry": {
+      "overflow": false,
+      "contained": true,
+      "panelOverflow": false,
+      "buttons": [
+        {
+          "width": 44,
+          "height": 44,
+          "contained": true
+        },
+        {
+          "width": 174,
+          "height": 44,
+          "contained": true
+        },
+        {
+          "width": 174,
+          "height": 44,
+          "contained": true
+        }
+      ]
+    },
+    "single": 358,
+    "requests": 2
+  },
+  {
+    "width": 390,
+    "theme": "dark",
+    "passed": true,
+    "dataGeometry": {
+      "overflow": false,
+      "contained": true,
+      "panelOverflow": false,
+      "buttons": [
+        {
+          "width": 44,
+          "height": 44,
+          "contained": true
+        },
+        {
+          "width": 174,
+          "height": 44,
+          "contained": true
+        },
+        {
+          "width": 174,
+          "height": 44,
+          "contained": true
+        }
+      ]
+    },
+    "single": 358,
+    "requests": 2
+  },
+  {
+    "width": 768,
+    "theme": "light",
+    "passed": true,
+    "dataGeometry": {
+      "overflow": false,
+      "contained": true,
+      "panelOverflow": false,
+      "buttons": [
+        {
+          "width": 44,
+          "height": 44,
+          "contained": true
+        },
+        {
+          "width": 80.234375,
+          "height": 44,
+          "contained": true
+        },
+        {
+          "width": 163.25,
+          "height": 44,
+          "contained": true
+        }
+      ]
+    },
+    "single": 460,
+    "requests": 2
+  },
+  {
+    "width": 768,
+    "theme": "dark",
+    "passed": true,
+    "dataGeometry": {
+      "overflow": false,
+      "contained": true,
+      "panelOverflow": false,
+      "buttons": [
+        {
+          "width": 44,
+          "height": 44,
+          "contained": true
+        },
+        {
+          "width": 80.234375,
+          "height": 44,
+          "contained": true
+        },
+        {
+          "width": 163.25,
+          "height": 44,
+          "contained": true
+        }
+      ]
+    },
+    "single": 460,
+    "requests": 2
+  },
+  {
+    "width": 1024,
+    "theme": "light",
+    "passed": true,
+    "dataGeometry": {
+      "overflow": false,
+      "contained": true,
+      "panelOverflow": false,
+      "buttons": [
+        {
+          "width": 44,
+          "height": 44,
+          "contained": true
+        },
+        {
+          "width": 80.234375,
+          "height": 44,
+          "contained": true
+        },
+        {
+          "width": 163.25,
+          "height": 44,
+          "contained": true
+        }
+      ]
+    },
+    "single": 672,
+    "requests": 2
+  },
+  {
+    "width": 1024,
+    "theme": "dark",
+    "passed": true,
+    "dataGeometry": {
+      "overflow": false,
+      "contained": true,
+      "panelOverflow": false,
+      "buttons": [
+        {
+          "width": 44,
+          "height": 44,
+          "contained": true
+        },
+        {
+          "width": 80.234375,
+          "height": 44,
+          "contained": true
+        },
+        {
+          "width": 163.25,
+          "height": 44,
+          "contained": true
+        }
+      ]
+    },
+    "single": 672,
+    "requests": 2
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "passed": true,
+    "dataGeometry": {
+      "overflow": false,
+      "contained": true,
+      "panelOverflow": false,
+      "buttons": [
+        {
+          "width": 44,
+          "height": 44,
+          "contained": true
+        },
+        {
+          "width": 80.234375,
+          "height": 44,
+          "contained": true
+        },
+        {
+          "width": 163.25,
+          "height": 44,
+          "contained": true
+        }
+      ]
+    },
+    "single": 672,
+    "requests": 9
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "passed": true,
+    "dataGeometry": {
+      "overflow": false,
+      "contained": true,
+      "panelOverflow": false,
+      "buttons": [
+        {
+          "width": 44,
+          "height": 44,
+          "contained": true
+        },
+        {
+          "width": 80.234375,
+          "height": 44,
+          "contained": true
+        },
+        {
+          "width": 163.25,
+          "height": 44,
+          "contained": true
+        }
+      ]
+    },
+    "single": 672,
+    "requests": 2
+  },
+  {
+    "width": 1920,
+    "theme": "light",
+    "passed": true,
+    "dataGeometry": {
+      "overflow": false,
+      "contained": true,
+      "panelOverflow": false,
+      "buttons": [
+        {
+          "width": 44,
+          "height": 44,
+          "contained": true
+        },
+        {
+          "width": 80.234375,
+          "height": 44,
+          "contained": true
+        },
+        {
+          "width": 163.25,
+          "height": 44,
+          "contained": true
+        }
+      ]
+    },
+    "single": 672,
+    "requests": 2
+  },
+  {
+    "width": 1920,
+    "theme": "dark",
+    "passed": true,
+    "dataGeometry": {
+      "overflow": false,
+      "contained": true,
+      "panelOverflow": false,
+      "buttons": [
+        {
+          "width": 44,
+          "height": 44,
+          "contained": true
+        },
+        {
+          "width": 80.234375,
+          "height": 44,
+          "contained": true
+        },
+        {
+          "width": 163.25,
+          "height": 44,
+          "contained": true
+        }
+      ]
+    },
+    "single": 672,
+    "requests": 2
+  }
+]

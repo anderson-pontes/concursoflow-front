@@ -12,6 +12,7 @@ export type Concurso = {
   data_prova: string | null;
   status: string;
   created_at: string;
+  updated_at?: string | null;
 };
 
 export type ConcursoStatusFilter = "todos" | "ativos" | "encerrados";

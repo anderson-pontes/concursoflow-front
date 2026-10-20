@@ -1,0 +1,218 @@
+[
+  {
+    "width": 320,
+    "theme": "light",
+    "passed": true,
+    "geometry": {
+      "overflow": false,
+      "contained": true,
+      "panelOverflow": false,
+      "buttons": [
+        {
+          "width": 44,
+          "height": 44,
+          "contained": true
+        },
+        {
+          "width": 114.75,
+          "height": 44,
+          "contained": true
+        },
+        {
+          "width": 163.25,
+          "height": 44,
+          "contained": true
+        }
+      ]
+    }
+  },
+  {
+    "width": 320,
+    "theme": "dark",
+    "passed": true,
+    "geometry": {
+      "overflow": false,
+      "contained": true,
+      "panelOverflow": false,
+      "buttons": [
+        {
+          "width": 44,
+          "height": 44,
+          "contained": true
+        },
+        {
+          "width": 114.75,
+          "height": 44,
+          "contained": true
+        },
+        {
+          "width": 163.25,
+          "height": 44,
+          "contained": true
+        }
+      ]
+    }
+  },
+  {
+    "width": 375,
+    "theme": "light",
+    "passed": true,
+    "geometry": {
+      "overflow": false,
+      "contained": true,
+      "panelOverflow": false,
+      "buttons": [
+        {
+          "width": 44,
+          "height": 44,
+          "contained": true
+        },
+        {
+          "width": 166.5,
+          "height": 44,
+          "contained": true
+        },
+        {
+          "width": 166.5,
+          "height": 44,
+          "contained": true
+        }
+      ]
+    }
+  },
+  {
+    "width": 375,
+    "theme": "dark",
+    "passed": true,
+    "geometry": {
+      "overflow": false,
+      "contained": true,
+      "panelOverflow": false,
+      "buttons": [
+        {
+          "width": 44,
+          "height": 44,
+          "contained": true
+        },
+        {
+          "width": 166.5,
+          "height": 44,
+          "contained": true
+        },
+        {
+          "width": 166.5,
+          "height": 44,
+          "contained": true
+        }
+      ]
+    }
+  },
+  {
+    "width": 768,
+    "theme": "light",
+    "passed": true,
+    "geometry": {
+      "overflow": false,
+      "contained": true,
+      "panelOverflow": false,
+      "buttons": [
+        {
+          "width": 44,
+          "height": 44,
+          "contained": true
+        },
+        {
+          "width": 80.234375,
+          "height": 44,
+          "contained": true
+        },
+        {
+          "width": 163.25,
+          "height": 44,
+          "contained": true
+        }
+      ]
+    }
+  },
+  {
+    "width": 768,
+    "theme": "dark",
+    "passed": true,
+    "geometry": {
+      "overflow": false,
+      "contained": true,
+      "panelOverflow": false,
+      "buttons": [
+        {
+          "width": 44,
+          "height": 44,
+          "contained": true
+        },
+        {
+          "width": 80.234375,
+          "height": 44,
+          "contained": true
+        },
+        {
+          "width": 163.25,
+          "height": 44,
+          "contained": true
+        }
+      ]
+    }
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "passed": true,
+    "geometry": {
+      "overflow": false,
+      "contained": true,
+      "panelOverflow": false,
+      "buttons": [
+        {
+          "width": 44,
+          "height": 44,
+          "contained": true
+        },
+        {
+          "width": 80.234375,
+          "height": 44,
+          "contained": true
+        },
+        {
+          "width": 163.25,
+          "height": 44,
+          "contained": true
+        }
+      ]
+    }
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "passed": true,
+    "geometry": {
+      "overflow": false,
+      "contained": true,
+      "panelOverflow": false,
+      "buttons": [
+        {
+          "width": 44,
+          "height": 44,
+          "contained": true
+        },
+        {
+          "width": 80.234375,
+          "height": 44,
+          "contained": true
+        },
+        {
+          "width": 163.25,
+          "height": 44,
+          "contained": true
+        }
+      ]
+    }
+  }
+]

@@ -8,6 +8,7 @@ import { ConcursoCardSkeleton } from "@/components/concursos/ConcursoCardSkeleto
 import { ConcursoListCard } from "@/components/concursos/ConcursoListCard";
 import {
   ConcursosEmptyState,
+  ConcursosHeader,
   ConcursosSummaryBar,
   ConcursosToolbar,
 } from "@/components/concursos/ConcursosToolbar";
@@ -17,7 +18,7 @@ import {
   type Concurso,
   type ConcursoStatusFilter,
 } from "@/lib/concursos/types";
-import { isEncerradoStatus } from "@/lib/concursos/utils";
+import { getProximaProva, isEncerradoStatus } from "@/lib/concursos/utils";
 import { api } from "@/services/api";
 import { cn } from "@/lib/utils";
 import type { Disciplina } from "@/lib/disciplinas/types";
@@ -38,7 +39,7 @@ export function Concursos() {
     queryFn: async () => (await api.get("/concursos")).data as Concurso[],
   });
 
-  const { data: disciplinas = [] } = useQuery({
+  const { data: disciplinas = [], isSuccess: disciplinasLoaded } = useQuery({
     queryKey: ["disciplinas", "catalog"],
     queryFn: async () => (await api.get("/disciplinas")).data as Disciplina[],
   });
@@ -68,23 +69,6 @@ export function Concursos() {
 
   const [search, setSearch] = React.useState("");
   const [statusFilter, setStatusFilter] = React.useState<ConcursoStatusFilter>("todos");
-  const [pendingDeleteId, setPendingDeleteId] = React.useState<string | null>(null);
-  const deleteTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  const armDeletePrompt = (id: string) => {
-    if (deleteTimerRef.current) clearTimeout(deleteTimerRef.current);
-    setPendingDeleteId(id);
-    deleteTimerRef.current = setTimeout(() => {
-      setPendingDeleteId(null);
-      deleteTimerRef.current = null;
-    }, 3000);
-  };
-
-  React.useEffect(() => {
-    return () => {
-      if (deleteTimerRef.current) clearTimeout(deleteTimerRef.current);
-    };
-  }, []);
 
   const filteredConcursos = React.useMemo(() => {
     const list = concursos ?? [];
@@ -196,7 +180,6 @@ export function Concursos() {
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["concursos"] });
-      setPendingDeleteId(null);
     },
   });
 
@@ -210,35 +193,34 @@ export function Concursos() {
 
   return (
     <div className="min-h-full space-y-6 pb-8 font-sans">
+      <ConcursosHeader onCreate={openCreate} onChooseCatalog={() => navigate("/planos/novo")} />
+      <ConcursosSummaryBar totalCadastrados={totalCadastrados} totalAtivos={totalAtivos} proximaProva={getProximaProva(concursos ?? [])} loading={isLoading} unavailable={isError && !concursos} />
       <ConcursosToolbar
         search={search}
         statusFilter={statusFilter}
         onSearchChange={setSearch}
         onStatusFilterChange={setStatusFilter}
-        onCreate={openCreate}
-        onChooseCatalog={() => navigate("/planos/novo")}
       />
 
-      <ConcursosSummaryBar totalCadastrados={totalCadastrados} totalAtivos={totalAtivos} />
-
       {isError ? (
-        <div className="rounded-[12px] border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+        <div role="alert" className="rounded-xl border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
           {error instanceof Error ? error.message : "Erro ao carregar"}
         </div>
       ) : null}
 
       {showSkeleton ? (
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 min-[1200px]:grid-cols-3">
+        <div aria-label="Carregando concursos" className="grid grid-cols-1 gap-5 min-[900px]:grid-cols-2 min-[1440px]:grid-cols-3">
           {Array.from({ length: 6 }).map((_, i) => (
             <ConcursoCardSkeleton key={i} />
           ))}
         </div>
-      ) : !concursos?.length ? (
+      ) : isError && !concursos ? null : !concursos?.length ? (
         <ConcursosEmptyState onCreate={openCreate} onChooseCatalog={() => navigate("/planos/novo")} />
       ) : (
         <div
           className={cn(
-            "grid grid-cols-1 gap-5 md:grid-cols-2 min-[1200px]:grid-cols-3",
+            "grid grid-cols-1 items-stretch gap-5 min-[900px]:grid-cols-2 min-[1440px]:grid-cols-3",
+            filteredConcursos.length === 1 && "[&>article]:min-[900px]:col-span-2 [&>article]:min-[900px]:max-w-2xl",
             listRefreshing && "opacity-70 transition-opacity duration-200",
           )}
         >
@@ -250,9 +232,9 @@ export function Concursos() {
           {filteredConcursos.map((c) => {
             const count = disciplinasCountByConcurso.get(c.id) ?? 0;
             const cardTotals = {
-              disciplinasCount: count,
-              questoesTotal: 0,
-              acertoMedioPct: 0,
+              disciplinasCount: disciplinasLoaded ? count : null,
+              questoesTotal: null,
+              acertoMedioPct: null,
             };
 
             return (
@@ -260,16 +242,10 @@ export function Concursos() {
                 key={c.id}
                 concurso={c}
                 cardTotals={cardTotals}
-                pendingDeleteId={pendingDeleteId}
                 deletePending={deleteMutation.isPending}
                 onViewDetails={() => setDetalhe(c)}
                 onEdit={() => openEdit(c)}
-                onDeletePrompt={() => armDeletePrompt(c.id)}
                 onConfirmDelete={() => deleteMutation.mutate(c.id)}
-                onCancelDelete={() => {
-                  setPendingDeleteId(null);
-                  if (deleteTimerRef.current) clearTimeout(deleteTimerRef.current);
-                }}
               />
             );
           })}

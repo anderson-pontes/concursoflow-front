@@ -1,0 +1,98 @@
+[
+  {
+    "width": 375,
+    "theme": "light",
+    "passed": true,
+    "geometry": {
+      "docOverflow": false,
+      "mainOverflow": false,
+      "cards": [
+        {
+          "width": 343,
+          "x": 16,
+          "y": 780.5,
+          "height": 407,
+          "overflow": false,
+          "titleClipped": false
+        }
+      ],
+      "kpiHeights": [
+        145,
+        145,
+        145
+      ]
+    }
+  },
+  {
+    "width": 375,
+    "theme": "dark",
+    "passed": true,
+    "geometry": {
+      "docOverflow": false,
+      "mainOverflow": false,
+      "cards": [
+        {
+          "width": 343,
+          "x": 16,
+          "y": 780.5,
+          "height": 407,
+          "overflow": false,
+          "titleClipped": false
+        }
+      ],
+      "kpiHeights": [
+        145,
+        145,
+        145
+      ]
+    }
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "passed": true,
+    "geometry": {
+      "docOverflow": false,
+      "mainOverflow": false,
+      "cards": [
+        {
+          "width": 364,
+          "x": 284,
+          "y": 445.25,
+          "height": 415,
+          "overflow": false,
+          "titleClipped": false
+        }
+      ],
+      "kpiHeights": [
+        141.5,
+        141.5,
+        141.5
+      ]
+    }
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "passed": true,
+    "geometry": {
+      "docOverflow": false,
+      "mainOverflow": false,
+      "cards": [
+        {
+          "width": 364,
+          "x": 284,
+          "y": 445.25,
+          "height": 415,
+          "overflow": false,
+          "titleClipped": false
+        }
+      ],
+      "kpiHeights": [
+        141.5,
+        141.5,
+        141.5
+      ]
+    }
+  }
+]

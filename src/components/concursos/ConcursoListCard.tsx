@@ -1,190 +1,83 @@
 import { format, parseISO, isValid } from "date-fns";
-import { ptBR } from "date-fns/locale";
-
-import { acertoPctTextClass } from "@/lib/concursoProgressStorage";
+import { ArrowUpRight, BookOpen, CalendarDays, FileText, Landmark, ListChecks, MoreHorizontal, Pencil, Target, Trash2 } from "lucide-react";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { useConfirmDialog } from "@/components/ui/confirm-dialog";
 import type { Concurso } from "@/lib/concursos/types";
 import { isEncerradoStatus } from "@/lib/concursos/utils";
 import { resolvePublicUrl } from "@/lib/publicUrl";
+import { ConcursoTitle, ConcursoStatus } from "@/components/concursos/ConcursoPresentation";
 import { cn } from "@/lib/utils";
 
 export type ConcursoCardStats = {
-  disciplinasCount: number;
-  questoesTotal: number;
-  acertoMedioPct: number;
+  disciplinasCount: number | null;
+  questoesTotal: number | null;
+  acertoMedioPct: number | null;
 };
-
 type Props = {
   concurso: Concurso;
   cardTotals: ConcursoCardStats | null;
-  pendingDeleteId: string | null;
   deletePending: boolean;
   onViewDetails: () => void;
   onEdit: () => void;
-  onDeletePrompt: () => void;
   onConfirmDelete: () => void;
-  onCancelDelete: () => void;
 };
 
-function formatDataProva(value: string | null | undefined) {
-  if (!value) return null;
-  try {
-    const d = parseISO(value);
-    if (!isValid(d)) return value;
-    return format(d, "dd/MM/yyyy", { locale: ptBR });
-  } catch {
-    return value;
-  }
-}
-
-export function ConcursoListCard({
-  concurso: c,
-  cardTotals,
-  pendingDeleteId,
-  deletePending,
-  onViewDetails,
-  onEdit,
-  onDeletePrompt,
-  onConfirmDelete,
-  onCancelDelete,
-}: Props) {
-  const logo = resolvePublicUrl(c.logo_url);
-  const editalHref = resolvePublicUrl(c.edital_url);
+export function ConcursoListCard({ concurso: c, cardTotals, deletePending, onViewDetails, onEdit, onConfirmDelete }: Props) {
+  const { requestConfirmation, confirmDialog } = useConfirmDialog();
+  const logo = resolvePublicUrl(c.logo_url), editalHref = resolvePublicUrl(c.edital_url);
   const encerrado = isEncerradoStatus(c.status);
-  const cargoTitulo = c.cargo?.trim() || c.nome;
-  const orgaoBanca = [c.orgao, c.banca].filter(Boolean).join(" · ") || "—";
-  const dataProva = formatDataProva(c.data_prova);
+  const title = c.cargo?.trim() || c.nome;
+  const date = c.data_prova ? parseISO(c.data_prova) : null;
+  const dataProva = date && isValid(date) ? format(date, "dd/MM/yyyy") : null;
+  const stats = [
+    { label: "Disciplinas", icon: BookOpen, value: cardTotals?.disciplinasCount ?? "Sem dados", tone: "indigo" },
+    { label: "Questões", icon: ListChecks, value: cardTotals?.questoesTotal ?? "Sem dados", tone: "blue" },
+    { label: "Acertos", icon: Target, value: cardTotals?.questoesTotal === 0 ? "Sem questões" : cardTotals?.questoesTotal != null && cardTotals.questoesTotal > 0 && cardTotals.acertoMedioPct != null ? `${cardTotals.acertoMedioPct}%` : "Sem dados", tone: "green" },
+  ];
 
-  return (
-    <article
-      className={cn(
-        "group flex flex-col overflow-hidden rounded-2xl border-x border-b border-[1.5px] border-[var(--border-default)] bg-[var(--bg-surface)] transition-all duration-200 ease-out",
-        encerrado ? "border-t-[3px] border-t-muted-foreground" : "border-t-[3px] border-t-primary",
-        "shadow-card hover:-translate-y-0.5 hover:border-x-primary-200 hover:border-b-primary-200 hover:shadow-md",
-      )}
-    >
-      <div className="px-5 pb-0 pt-5">
-        <div className="flex items-start gap-3">
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-[10px] border border-[var(--border-default)] bg-primary-muted dark:bg-[var(--ap-brand-light)]">
-            {logo ? (
-              <img src={logo} alt="" className="h-full w-full object-cover" />
-            ) : (
-              <span className="text-2xl leading-none" aria-hidden>
-                🏛️
-              </span>
-            )}
+  return <>
+    <article data-concurso-card className={cn("flex min-w-0 flex-col overflow-hidden rounded-2xl border border-t-[3px] bg-card text-card-foreground shadow-sm", encerrado ? "border-border border-t-muted-foreground" : "border-border border-t-primary")}>
+      <div className="space-y-3 bg-muted/20 p-4 sm:p-5">
+        <div className="flex min-w-0 items-start gap-3 sm:gap-4">
+          <div className="flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-border bg-card text-primary">
+            {logo ? <img src={logo} alt="" className="size-full object-contain" /> : <Landmark className="size-6" aria-hidden />}
           </div>
-          <div className="min-w-0 flex-1">
-            <h3 className="line-clamp-1 text-base font-bold text-[var(--text-primary)]">{cargoTitulo}</h3>
-            <p className="mt-0.5 text-[13px] text-[var(--text-secondary)]">{orgaoBanca}</p>
-            <div className="mt-1.5 flex min-w-0 flex-wrap items-center gap-2">
-              {encerrado ? (
-                <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-muted px-2.5 py-1 text-xs font-semibold text-muted-foreground">
-                  Encerrado
-                </span>
-              ) : c.status === "suspenso" ? (
-                <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-warning/15 px-2.5 py-1 text-xs font-semibold text-warning">
-                  Suspenso
-                </span>
-              ) : (
-                <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-success/15 px-2.5 py-1 text-xs font-semibold text-success">
-                  <span className="concurso-dot-pulse h-1.5 w-1.5 shrink-0 rounded-full bg-success" aria-hidden />
-                  Ativo
-                </span>
-              )}
-              {dataProva ? (
-                <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-primary-muted px-2.5 py-1 text-[11px] font-semibold text-primary dark:bg-[var(--ap-brand-light)]">
-                  📅 {dataProva}
-                </span>
-              ) : null}
-            </div>
+          <div className="min-w-0 flex-1 space-y-1">
+            <h2 className="text-base font-bold leading-snug"><ConcursoTitle>{title}</ConcursoTitle></h2>
+            <p className="text-sm text-muted-foreground [overflow-wrap:anywhere]">{c.orgao || "Órgão não informado"}</p>
+            <p className="text-xs leading-relaxed text-muted-foreground [overflow-wrap:anywhere]">{c.banca ? `Banca: ${c.banca}` : "Banca não informada"}</p>
+          </div>
+          <div className="flex shrink-0 flex-col items-end gap-1">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild><Button variant="ghost" size="icon-lg" aria-label={`Ações do concurso ${title}`}><MoreHorizontal className="size-4" /></Button></DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onSelect={onEdit}><Pencil />Editar concurso</DropdownMenuItem>
+                {editalHref && <DropdownMenuItem asChild><a href={editalHref} target="_blank" rel="noreferrer"><FileText />Ver edital</a></DropdownMenuItem>}
+                <DropdownMenuItem variant="destructive" disabled={deletePending} onSelect={() => {
+                  void requestConfirmation({ title: "Excluir concurso?", description: `O concurso “${title}” será excluído. Esta ação não pode ser desfeita.`, confirmLabel: "Excluir concurso", variant: "destructive" }).then(ok => { if (ok) onConfirmDelete(); });
+                }}><Trash2 />Excluir concurso</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <ConcursoStatus status={c.status} />
           </div>
         </div>
+        <p className="flex items-center gap-2 text-xs text-muted-foreground"><CalendarDays className="size-4 shrink-0" aria-hidden />{dataProva ? `Prova: ${dataProva}` : "Data da prova não definida"}</p>
       </div>
-
-      <div className="mt-4 border-t border-[var(--border-subtle)] px-5 py-4">
-        <div className="grid grid-cols-3 gap-2 text-center sm:gap-3">
-          <div>
-            <p className="text-[11px] font-medium uppercase tracking-wide text-[var(--text-muted)]">Disciplinas</p>
-            <p className="mt-1 text-sm font-bold text-[var(--text-primary)]">
-              {cardTotals ? cardTotals.disciplinasCount : "—"}
-            </p>
-          </div>
-          <div>
-            <p className="text-[11px] font-medium uppercase tracking-wide text-[var(--text-muted)]">Questões</p>
-            <p className="mt-1 text-sm font-bold text-[var(--text-primary)]">
-              {cardTotals ? cardTotals.questoesTotal : "—"}
-            </p>
-          </div>
-          <div>
-            <p className="text-[11px] font-medium uppercase tracking-wide text-[var(--text-muted)]">% Acerto</p>
-            {cardTotals ? (
-              <p className={cn("mt-1 text-sm font-bold tabular-nums", acertoPctTextClass(cardTotals.acertoMedioPct))}>
-                {cardTotals.acertoMedioPct}%
-              </p>
-            ) : (
-              <p className="mt-1 text-sm font-bold text-[var(--text-primary)]">—</p>
-            )}
-          </div>
-        </div>
+      <div className="border-t border-border p-4 sm:px-5">
+        <dl className="grid grid-cols-3 gap-2">
+          {stats.map(({ label, icon: Icon, value, tone }) => <div key={label} className={`concurso-soft-card concurso-tone-${tone} min-w-0 rounded-xl border px-2.5 py-2 sm:px-3`}>
+            <dt className="flex flex-wrap items-center gap-1 text-xs text-muted-foreground"><Icon className="size-4 shrink-0 text-[var(--concurso-ink)]" aria-hidden />{label}</dt>
+            <dd className={cn("mt-1 tabular-nums [overflow-wrap:anywhere]", typeof value === "number" || String(value).endsWith("%") ? "text-xl font-bold" : "text-xs font-medium leading-relaxed")}>{value}</dd>
+          </div>)}
+        </dl>
       </div>
-
-      <div className="mt-auto flex flex-nowrap items-center gap-2 overflow-hidden border-t border-[var(--border-subtle)] px-5 py-4">
-        <button
-          type="button"
-          className="inline-flex min-h-10 min-w-fit shrink-0 items-center justify-center gap-1.5 whitespace-nowrap rounded-[10px] border border-[var(--border-default)] bg-[var(--bg-surface)] px-3 py-1.5 text-sm font-semibold text-[var(--text-primary)] hover:bg-[var(--bg-surface-hover)]"
-          onClick={onViewDetails}
-        >
-          Ver detalhes
-        </button>
-        <button
-          type="button"
-          className="inline-flex min-h-10 min-w-fit shrink-0 items-center justify-center gap-1.5 whitespace-nowrap rounded-[10px] border border-[var(--border-default)] bg-[var(--bg-surface)] px-3 py-1.5 text-sm font-semibold text-[var(--text-primary)] hover:bg-[var(--bg-surface-hover)]"
-          onClick={onEdit}
-        >
-          Editar
-        </button>
-        {editalHref ? (
-          <a
-            href={editalHref}
-            target="_blank"
-            rel="noreferrer"
-            className="inline-flex shrink-0 items-center gap-1 whitespace-nowrap rounded-full bg-primary-muted px-3 py-1.5 text-[13px] font-bold text-primary dark:bg-[var(--ap-brand-light)]"
-          >
-            Edital
-          </a>
-        ) : null}
-        <div className="ml-auto flex min-w-[36px] shrink-0 items-center justify-end">
-          {pendingDeleteId === c.id ? (
-            <div className="flex flex-nowrap items-center gap-1.5">
-              <button
-                type="button"
-                className="shrink-0 whitespace-nowrap rounded-lg bg-destructive px-2 py-1.5 text-[11px] font-bold text-white hover:bg-red-600"
-                onClick={onConfirmDelete}
-                disabled={deletePending}
-              >
-                Confirmar
-              </button>
-              <button
-                type="button"
-                className="shrink-0 whitespace-nowrap rounded-lg border border-[var(--border-default)] px-2 py-1.5 text-[11px] font-semibold text-[var(--text-secondary)]"
-                onClick={onCancelDelete}
-              >
-                Cancelar
-              </button>
-            </div>
-          ) : (
-            <button
-              type="button"
-              className="flex h-10 min-w-10 shrink-0 items-center justify-center rounded-lg p-2 text-lg leading-none text-[var(--text-muted)] hover:bg-destructive/10 hover:text-destructive"
-              aria-label="Excluir concurso"
-              onClick={onDeletePrompt}
-              disabled={deletePending}
-            >
-              🗑️
-            </button>
-          )}
-        </div>
+      <div className="mt-auto flex flex-wrap items-center gap-2 border-t border-border p-4 sm:px-5">
+        <Button className="min-w-0 flex-1" onClick={onViewDetails}>Ver detalhes<ArrowUpRight className="size-4" /></Button>
+        {editalHref && <a href={editalHref} target="_blank" rel="noreferrer" className={buttonVariants({ variant: "outline" })}><FileText className="size-4" />Ver edital</a>}
+        {!editalHref && <Button variant="outline" disabled title="Nenhum edital anexado"><FileText className="size-4" />Ver edital</Button>}
       </div>
     </article>
-  );
+    {confirmDialog}
+  </>;
 }
