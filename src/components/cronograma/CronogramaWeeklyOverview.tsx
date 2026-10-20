@@ -7,16 +7,16 @@ import {DIAS, diaAbrev} from '@/lib/cronograma/constants';
 import {type Bloco, type Planejamento, type PlanejamentoResumo} from '@/lib/cronograma/types';
 import {activityMinutes} from '@/lib/cronograma/activityPresentation';
 import {cn} from '@/lib/utils';
-import {studySurface, type StudyTone} from '@/lib/ui/studySurface';
+import {MetricCard, type MetricTone} from "@/components/ui/metric-card";
 
 export function CronogramaMetrics({plano, resumo}: {plano: Planejamento; resumo?: PlanejamentoResumo}) {
-  const rows: {label:string; value:string; Icon:typeof Clock; tone:StudyTone}[] = [
+  const rows: {label:string; value:string; Icon:typeof Clock; tone:MetricTone}[] = [
     {label:'Horas planejadas na semana', value:resumo?formatStudyMinutes(resumo.minutos_planejados_semana):'—', Icon:Calendar, tone:'indigo'},
-    {label:'Horas estudadas na semana', value:resumo?formatStudyMinutes(resumo.minutos_estudados_semana):'—', Icon:Clock, tone:'cyan'},
-    {label:'Disciplinas cadastradas', value:String(plano.disciplinas.length), Icon:BookOpen, tone:'violet'},
-    {label:'Progresso das atividades', value:resumo?`${resumo.progresso_pct.toFixed(0)}%`:'—', Icon:ListChecks, tone:'emerald'},
+    {label:'Horas estudadas na semana', value:resumo?formatStudyMinutes(resumo.minutos_estudados_semana):'—', Icon:Clock, tone:'green'},
+    {label:'Disciplinas cadastradas', value:String(plano.disciplinas.length), Icon:BookOpen, tone:'blue'},
+    {label:'Progresso das atividades', value:resumo?`${resumo.progresso_pct.toFixed(0)}%`:'—', Icon:ListChecks, tone:'purple'},
   ];
-  return <div className="grid grid-cols-1 items-stretch gap-3 sm:grid-cols-2 xl:grid-cols-4" aria-label="Indicadores do cronograma">{rows.map(({label,value,Icon,tone})=><section key={label} className={`flex min-w-0 flex-col gap-2 rounded-xl border border-transparent p-4 ${studySurface(tone)}`}><div className="flex items-start justify-between gap-2"><p className="text-xs font-medium leading-relaxed">{label}</p><Icon className="size-4 shrink-0" aria-hidden/></div><p className="text-2xl font-semibold tabular-nums">{value}</p>{tone==='emerald'&&resumo&&<Progress className="h-1.5 bg-current/10 [&_[data-slot=progress-indicator]]:bg-current" value={resumo.progresso_pct} aria-label={`${resumo.progresso_pct.toFixed(0)}% das atividades concluídas`}/>}</section>)}</div>;
+  return <div className="grid grid-cols-1 items-stretch gap-3 sm:grid-cols-2 xl:grid-cols-4" aria-label="Indicadores do cronograma">{rows.map(({label,value,Icon,tone})=><MetricCard as="section" key={label} label={label} value={value} icon={Icon} tone={tone}>{tone==='purple'&&resumo&&<Progress className="h-1.5" value={resumo.progresso_pct} aria-label={`${resumo.progresso_pct.toFixed(0)}% das atividades concluídas`}/>}</MetricCard>)}</div>;
 }
 
 type Props = {plano:Planejamento; resumo?:PlanejamentoResumo; activities:Bloco[]; onViewAll:()=>void; loading?:boolean; error?:boolean; onRetry?:()=>void};

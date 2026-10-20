@@ -1,0 +1,2844 @@
+{
+  "mocked": true,
+  "productionWrites": false,
+  "results": [
+    {
+      "width": 375,
+      "theme": "light",
+      "page": "reference",
+      "passed": true,
+      "geometry": {
+        "docX": false,
+        "docY": false,
+        "mainX": false
+      },
+      "metrics": [
+        {
+          "tone": "indigo",
+          "colors": [
+            "243,242,253",
+            "189,191,237",
+            "230,229,251",
+            "55,48,163"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            16.09292056620921,
+            16.09292056620921,
+            12.256646473776657
+          ],
+          "text": "Tempo de estudo2h 30minSessões registradas nesta disciplina"
+        },
+        {
+          "tone": "green",
+          "colors": [
+            "238,248,245",
+            "171,212,206",
+            "220,240,234",
+            "6,95,70"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            16.476107648169492,
+            16.476107648169492,
+            12.54848837889156
+          ],
+          "text": "Desempenho geral80%8 certas · 2 erradas"
+        },
+        {
+          "tone": "purple",
+          "colors": [
+            "246,241,254",
+            "200,189,239",
+            "237,227,252",
+            "91,33,182"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            16.09434611900565,
+            16.09434611900565,
+            12.257732199427497
+          ],
+          "text": "Progresso no edital17%1 concluídos · 5 pendentes (6 tópicos)"
+        },
+        {
+          "tone": "blue",
+          "colors": [
+            "241,246,254",
+            "184,207,242",
+            "228,238,254",
+            "29,78,216"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            16.452907045625096,
+            16.452907045625096,
+            12.530818398964959
+          ],
+          "text": "Questões resolvidas108 certas · 2 erradas · 0 em branco"
+        },
+        {
+          "tone": "orange",
+          "colors": [
+            "252,245,238",
+            "224,204,182",
+            "250,236,220",
+            "146,64,14"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            16.52180855080794,
+            16.52180855080794,
+            12.583294976293653
+          ],
+          "text": "Páginas estudadas30Soma dos blocos de páginas nos registros de estudo"
+        }
+      ]
+    },
+    {
+      "width": 375,
+      "theme": "light",
+      "page": "dashboard",
+      "passed": true,
+      "geometry": {
+        "docX": false,
+        "docY": false,
+        "mainX": false
+      },
+      "metrics": [
+        {
+          "tone": "indigo",
+          "colors": [
+            "243,242,253",
+            "189,191,237",
+            "230,229,251",
+            "55,48,163"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            16.09292056620921,
+            16.09292056620921,
+            12.256646473776657
+          ],
+          "text": "Tempo estudado2h 25minMeta do período: 10h"
+        },
+        {
+          "tone": "blue",
+          "colors": [
+            "241,246,254",
+            "184,207,242",
+            "228,238,254",
+            "29,78,216"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            16.452907045625096,
+            16.452907045625096,
+            12.530818398964959
+          ],
+          "text": "Questões respondidas10Acertos + erros · sem questões em branco"
+        },
+        {
+          "tone": "green",
+          "colors": [
+            "238,248,245",
+            "171,212,206",
+            "220,240,234",
+            "6,95,70"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            16.476107648169492,
+            16.476107648169492,
+            12.54848837889156
+          ],
+          "text": "Taxa de acertos80,0%8 acertos em 10 questões"
+        },
+        {
+          "tone": "purple",
+          "colors": [
+            "246,241,254",
+            "200,189,239",
+            "237,227,252",
+            "91,33,182"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            16.09434611900565,
+            16.09434611900565,
+            12.257732199427497
+          ],
+          "text": "Progresso do edital17,0%1 de 6 tópicos · acumulado atual"
+        }
+      ]
+    },
+    {
+      "width": 375,
+      "theme": "light",
+      "page": "cronograma",
+      "passed": true,
+      "geometry": {
+        "docX": false,
+        "docY": false,
+        "mainX": false
+      },
+      "metrics": [
+        {
+          "tone": "indigo",
+          "colors": [
+            "243,242,253",
+            "189,191,237",
+            "230,229,251",
+            "55,48,163"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            16.09292056620921,
+            16.09292056620921
+          ],
+          "text": "Horas planejadas na semana10h"
+        },
+        {
+          "tone": "green",
+          "colors": [
+            "238,248,245",
+            "171,212,206",
+            "220,240,234",
+            "6,95,70"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            16.476107648169492,
+            16.476107648169492
+          ],
+          "text": "Horas estudadas na semana2h 25min"
+        },
+        {
+          "tone": "blue",
+          "colors": [
+            "241,246,254",
+            "184,207,242",
+            "228,238,254",
+            "29,78,216"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            16.452907045625096,
+            16.452907045625096
+          ],
+          "text": "Disciplinas cadastradas1"
+        },
+        {
+          "tone": "purple",
+          "colors": [
+            "246,241,254",
+            "200,189,239",
+            "237,227,252",
+            "91,33,182"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            16.09434611900565,
+            16.09434611900565
+          ],
+          "text": "Progresso das atividades25%"
+        },
+        {
+          "tone": "indigo",
+          "colors": [
+            "243,242,253",
+            "189,191,237",
+            "230,229,251",
+            "55,48,163"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            16.09292056620921,
+            16.09292056620921
+          ],
+          "text": "Planejadas10h"
+        },
+        {
+          "tone": "green",
+          "colors": [
+            "238,248,245",
+            "171,212,206",
+            "220,240,234",
+            "6,95,70"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            16.476107648169492,
+            16.476107648169492
+          ],
+          "text": "Realizadas2h 25min"
+        }
+      ]
+    },
+    {
+      "width": 375,
+      "theme": "light",
+      "page": "edital",
+      "passed": true,
+      "geometry": {
+        "docX": false,
+        "docY": false,
+        "mainX": false
+      },
+      "metrics": [
+        {
+          "tone": "purple",
+          "colors": [
+            "246,241,254",
+            "200,189,239",
+            "237,227,252",
+            "91,33,182"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            16.09434611900565,
+            16.09434611900565,
+            12.257732199427497
+          ],
+          "text": "Progresso do edital17%1 de 6 tópicos dominados"
+        },
+        {
+          "tone": "blue",
+          "colors": [
+            "241,246,254",
+            "184,207,242",
+            "228,238,254",
+            "29,78,216"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            16.452907045625096,
+            16.452907045625096,
+            12.530818398964959
+          ],
+          "text": "Tópicos estudados2Com atividade registrada"
+        },
+        {
+          "tone": "orange",
+          "colors": [
+            "252,245,238",
+            "224,204,182",
+            "250,236,220",
+            "146,64,14"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            16.52180855080794,
+            16.52180855080794,
+            12.583294976293653
+          ],
+          "text": "Revisões pendentes0Vencidas ou para hoje"
+        },
+        {
+          "tone": "indigo",
+          "colors": [
+            "243,242,253",
+            "189,191,237",
+            "230,229,251",
+            "55,48,163"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            16.09292056620921,
+            16.09292056620921,
+            12.256646473776657
+          ],
+          "text": "Tópicos prioritários1Exigem atenção neste recorte"
+        }
+      ]
+    },
+    {
+      "width": 375,
+      "theme": "light",
+      "page": "disciplinas",
+      "passed": true,
+      "geometry": {
+        "docX": false,
+        "docY": false,
+        "mainX": false
+      },
+      "metrics": [
+        {
+          "tone": "indigo",
+          "colors": [
+            "243,242,253",
+            "189,191,237",
+            "230,229,251",
+            "55,48,163"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            16.09292056620921,
+            16.09292056620921,
+            12.256646473776657
+          ],
+          "text": "Total de disciplinas1No conjunto filtrado"
+        },
+        {
+          "tone": "blue",
+          "colors": [
+            "241,246,254",
+            "184,207,242",
+            "228,238,254",
+            "29,78,216"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            16.452907045625096,
+            16.452907045625096,
+            12.530818398964959
+          ],
+          "text": "Em andamento1Iniciadas e não concluídas"
+        },
+        {
+          "tone": "green",
+          "colors": [
+            "238,248,245",
+            "171,212,206",
+            "220,240,234",
+            "6,95,70"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            16.476107648169492,
+            16.476107648169492,
+            12.54848837889156
+          ],
+          "text": "Tópicos concluídos1/6Conteúdos dominados"
+        },
+        {
+          "tone": "purple",
+          "colors": [
+            "246,241,254",
+            "200,189,239",
+            "237,227,252",
+            "91,33,182"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            16.09434611900565,
+            16.09434611900565,
+            12.257732199427497
+          ],
+          "text": "Progresso geral17%Média das disciplinas filtradas"
+        }
+      ]
+    },
+    {
+      "width": 375,
+      "theme": "dark",
+      "page": "reference",
+      "passed": true,
+      "geometry": {
+        "docX": false,
+        "docY": false,
+        "mainX": false
+      },
+      "metrics": [
+        {
+          "tone": "indigo",
+          "colors": [
+            "31,29,47",
+            "73,72,105",
+            "41,41,63",
+            "199,210,254"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            15.033890610471772,
+            15.033890610471772,
+            12.407302513259236
+          ],
+          "text": "Tempo de estudo2h 30minSessões registradas nesta disciplina"
+        },
+        {
+          "tone": "green",
+          "colors": [
+            "27,33,43",
+            "59,85,88",
+            "33,48,53",
+            "167,243,208"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            14.756433538088048,
+            14.756433538088048,
+            12.178320281001255
+          ],
+          "text": "Desempenho geral80%8 certas · 2 erradas"
+        },
+        {
+          "tone": "purple",
+          "colors": [
+            "33,29,47",
+            "80,72,105",
+            "45,41,63",
+            "221,214,254"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            14.958744063382934,
+            14.958744063382934,
+            12.345284904729567
+          ],
+          "text": "Progresso no edital17%1 concluídos · 5 pendentes (6 tópicos)"
+        },
+        {
+          "tone": "blue",
+          "colors": [
+            "23,30,47",
+            "45,74,104",
+            "26,42,62",
+            "147,197,253"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            15.175116981721263,
+            15.175116981721263,
+            12.523855064847032
+          ],
+          "text": "Questões resolvidas108 certas · 2 erradas · 0 em branco"
+        },
+        {
+          "tone": "orange",
+          "colors": [
+            "37,32,35",
+            "94,80,61",
+            "53,45,38",
+            "253,230,138"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            14.638013660909909,
+            14.638013660909909,
+            12.080589675012359
+          ],
+          "text": "Páginas estudadas30Soma dos blocos de páginas nos registros de estudo"
+        }
+      ]
+    },
+    {
+      "width": 375,
+      "theme": "dark",
+      "page": "dashboard",
+      "passed": true,
+      "geometry": {
+        "docX": false,
+        "docY": false,
+        "mainX": false
+      },
+      "metrics": [
+        {
+          "tone": "indigo",
+          "colors": [
+            "31,29,47",
+            "73,72,105",
+            "41,41,63",
+            "199,210,254"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            15.033890610471772,
+            15.033890610471772,
+            12.407302513259236
+          ],
+          "text": "Tempo estudado2h 25minMeta do período: 10h"
+        },
+        {
+          "tone": "blue",
+          "colors": [
+            "23,30,47",
+            "45,74,104",
+            "26,42,62",
+            "147,197,253"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            15.175116981721263,
+            15.175116981721263,
+            12.523855064847032
+          ],
+          "text": "Questões respondidas10Acertos + erros · sem questões em branco"
+        },
+        {
+          "tone": "green",
+          "colors": [
+            "27,33,43",
+            "59,85,88",
+            "33,48,53",
+            "167,243,208"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            14.756433538088048,
+            14.756433538088048,
+            12.178320281001255
+          ],
+          "text": "Taxa de acertos80,0%8 acertos em 10 questões"
+        },
+        {
+          "tone": "purple",
+          "colors": [
+            "33,29,47",
+            "80,72,105",
+            "45,41,63",
+            "221,214,254"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            14.958744063382934,
+            14.958744063382934,
+            12.345284904729567
+          ],
+          "text": "Progresso do edital17,0%1 de 6 tópicos · acumulado atual"
+        }
+      ]
+    },
+    {
+      "width": 375,
+      "theme": "dark",
+      "page": "cronograma",
+      "passed": true,
+      "geometry": {
+        "docX": false,
+        "docY": false,
+        "mainX": false
+      },
+      "metrics": [
+        {
+          "tone": "indigo",
+          "colors": [
+            "31,29,47",
+            "73,72,105",
+            "41,41,63",
+            "199,210,254"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            15.033890610471772,
+            15.033890610471772
+          ],
+          "text": "Horas planejadas na semana10h"
+        },
+        {
+          "tone": "green",
+          "colors": [
+            "27,33,43",
+            "59,85,88",
+            "33,48,53",
+            "167,243,208"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            14.756433538088048,
+            14.756433538088048
+          ],
+          "text": "Horas estudadas na semana2h 25min"
+        },
+        {
+          "tone": "blue",
+          "colors": [
+            "23,30,47",
+            "45,74,104",
+            "26,42,62",
+            "147,197,253"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            15.175116981721263,
+            15.175116981721263
+          ],
+          "text": "Disciplinas cadastradas1"
+        },
+        {
+          "tone": "purple",
+          "colors": [
+            "33,29,47",
+            "80,72,105",
+            "45,41,63",
+            "221,214,254"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            14.958744063382934,
+            14.958744063382934
+          ],
+          "text": "Progresso das atividades25%"
+        },
+        {
+          "tone": "indigo",
+          "colors": [
+            "31,29,47",
+            "73,72,105",
+            "41,41,63",
+            "199,210,254"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            15.033890610471772,
+            15.033890610471772
+          ],
+          "text": "Planejadas10h"
+        },
+        {
+          "tone": "green",
+          "colors": [
+            "27,33,43",
+            "59,85,88",
+            "33,48,53",
+            "167,243,208"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            14.756433538088048,
+            14.756433538088048
+          ],
+          "text": "Realizadas2h 25min"
+        }
+      ]
+    },
+    {
+      "width": 375,
+      "theme": "dark",
+      "page": "edital",
+      "passed": true,
+      "geometry": {
+        "docX": false,
+        "docY": false,
+        "mainX": false
+      },
+      "metrics": [
+        {
+          "tone": "purple",
+          "colors": [
+            "33,29,47",
+            "80,72,105",
+            "45,41,63",
+            "221,214,254"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            14.958744063382934,
+            14.958744063382934,
+            12.345284904729567
+          ],
+          "text": "Progresso do edital17%1 de 6 tópicos dominados"
+        },
+        {
+          "tone": "blue",
+          "colors": [
+            "23,30,47",
+            "45,74,104",
+            "26,42,62",
+            "147,197,253"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            15.175116981721263,
+            15.175116981721263,
+            12.523855064847032
+          ],
+          "text": "Tópicos estudados2Com atividade registrada"
+        },
+        {
+          "tone": "orange",
+          "colors": [
+            "37,32,35",
+            "94,80,61",
+            "53,45,38",
+            "253,230,138"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            14.638013660909909,
+            14.638013660909909,
+            12.080589675012359
+          ],
+          "text": "Revisões pendentes0Vencidas ou para hoje"
+        },
+        {
+          "tone": "indigo",
+          "colors": [
+            "31,29,47",
+            "73,72,105",
+            "41,41,63",
+            "199,210,254"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            15.033890610471772,
+            15.033890610471772,
+            12.407302513259236
+          ],
+          "text": "Tópicos prioritários1Exigem atenção neste recorte"
+        }
+      ]
+    },
+    {
+      "width": 375,
+      "theme": "dark",
+      "page": "disciplinas",
+      "passed": true,
+      "geometry": {
+        "docX": false,
+        "docY": false,
+        "mainX": false
+      },
+      "metrics": [
+        {
+          "tone": "indigo",
+          "colors": [
+            "31,29,47",
+            "73,72,105",
+            "41,41,63",
+            "199,210,254"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            15.033890610471772,
+            15.033890610471772,
+            12.407302513259236
+          ],
+          "text": "Total de disciplinas1No conjunto filtrado"
+        },
+        {
+          "tone": "blue",
+          "colors": [
+            "23,30,47",
+            "45,74,104",
+            "26,42,62",
+            "147,197,253"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            15.175116981721263,
+            15.175116981721263,
+            12.523855064847032
+          ],
+          "text": "Em andamento1Iniciadas e não concluídas"
+        },
+        {
+          "tone": "green",
+          "colors": [
+            "27,33,43",
+            "59,85,88",
+            "33,48,53",
+            "167,243,208"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            14.756433538088048,
+            14.756433538088048,
+            12.178320281001255
+          ],
+          "text": "Tópicos concluídos1/6Conteúdos dominados"
+        },
+        {
+          "tone": "purple",
+          "colors": [
+            "33,29,47",
+            "80,72,105",
+            "45,41,63",
+            "221,214,254"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            14.958744063382934,
+            14.958744063382934,
+            12.345284904729567
+          ],
+          "text": "Progresso geral17%Média das disciplinas filtradas"
+        }
+      ]
+    },
+    {
+      "width": 768,
+      "theme": "light",
+      "page": "reference",
+      "passed": true,
+      "geometry": {
+        "docX": false,
+        "docY": false,
+        "mainX": false
+      },
+      "metrics": [
+        {
+          "tone": "indigo",
+          "colors": [
+            "243,242,253",
+            "189,191,237",
+            "230,229,251",
+            "55,48,163"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            16.09292056620921,
+            16.09292056620921,
+            12.256646473776657
+          ],
+          "text": "Tempo de estudo2h 30minSessões registradas nesta disciplina"
+        },
+        {
+          "tone": "green",
+          "colors": [
+            "238,248,245",
+            "171,212,206",
+            "220,240,234",
+            "6,95,70"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            16.476107648169492,
+            16.476107648169492,
+            12.54848837889156
+          ],
+          "text": "Desempenho geral80%8 certas · 2 erradas"
+        },
+        {
+          "tone": "purple",
+          "colors": [
+            "246,241,254",
+            "200,189,239",
+            "237,227,252",
+            "91,33,182"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            16.09434611900565,
+            16.09434611900565,
+            12.257732199427497
+          ],
+          "text": "Progresso no edital17%1 concluídos · 5 pendentes (6 tópicos)"
+        },
+        {
+          "tone": "blue",
+          "colors": [
+            "241,246,254",
+            "184,207,242",
+            "228,238,254",
+            "29,78,216"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            16.452907045625096,
+            16.452907045625096,
+            12.530818398964959
+          ],
+          "text": "Questões resolvidas108 certas · 2 erradas · 0 em branco"
+        },
+        {
+          "tone": "orange",
+          "colors": [
+            "252,245,238",
+            "224,204,182",
+            "250,236,220",
+            "146,64,14"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            16.52180855080794,
+            16.52180855080794,
+            12.583294976293653
+          ],
+          "text": "Páginas estudadas30Soma dos blocos de páginas nos registros de estudo"
+        }
+      ]
+    },
+    {
+      "width": 768,
+      "theme": "light",
+      "page": "dashboard",
+      "passed": true,
+      "geometry": {
+        "docX": false,
+        "docY": false,
+        "mainX": false
+      },
+      "metrics": [
+        {
+          "tone": "indigo",
+          "colors": [
+            "243,242,253",
+            "189,191,237",
+            "230,229,251",
+            "55,48,163"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            16.09292056620921,
+            16.09292056620921,
+            12.256646473776657
+          ],
+          "text": "Tempo estudado2h 25minMeta do período: 10h"
+        },
+        {
+          "tone": "blue",
+          "colors": [
+            "241,246,254",
+            "184,207,242",
+            "228,238,254",
+            "29,78,216"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            16.452907045625096,
+            16.452907045625096,
+            12.530818398964959
+          ],
+          "text": "Questões respondidas10Acertos + erros · sem questões em branco"
+        },
+        {
+          "tone": "green",
+          "colors": [
+            "238,248,245",
+            "171,212,206",
+            "220,240,234",
+            "6,95,70"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            16.476107648169492,
+            16.476107648169492,
+            12.54848837889156
+          ],
+          "text": "Taxa de acertos80,0%8 acertos em 10 questões"
+        },
+        {
+          "tone": "purple",
+          "colors": [
+            "246,241,254",
+            "200,189,239",
+            "237,227,252",
+            "91,33,182"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            16.09434611900565,
+            16.09434611900565,
+            12.257732199427497
+          ],
+          "text": "Progresso do edital17,0%1 de 6 tópicos · acumulado atual"
+        }
+      ]
+    },
+    {
+      "width": 768,
+      "theme": "light",
+      "page": "cronograma",
+      "passed": true,
+      "geometry": {
+        "docX": false,
+        "docY": false,
+        "mainX": false
+      },
+      "metrics": [
+        {
+          "tone": "indigo",
+          "colors": [
+            "243,242,253",
+            "189,191,237",
+            "230,229,251",
+            "55,48,163"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            16.09292056620921,
+            16.09292056620921
+          ],
+          "text": "Horas planejadas na semana10h"
+        },
+        {
+          "tone": "green",
+          "colors": [
+            "238,248,245",
+            "171,212,206",
+            "220,240,234",
+            "6,95,70"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            16.476107648169492,
+            16.476107648169492
+          ],
+          "text": "Horas estudadas na semana2h 25min"
+        },
+        {
+          "tone": "blue",
+          "colors": [
+            "241,246,254",
+            "184,207,242",
+            "228,238,254",
+            "29,78,216"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            16.452907045625096,
+            16.452907045625096
+          ],
+          "text": "Disciplinas cadastradas1"
+        },
+        {
+          "tone": "purple",
+          "colors": [
+            "246,241,254",
+            "200,189,239",
+            "237,227,252",
+            "91,33,182"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            16.09434611900565,
+            16.09434611900565
+          ],
+          "text": "Progresso das atividades25%"
+        },
+        {
+          "tone": "indigo",
+          "colors": [
+            "243,242,253",
+            "189,191,237",
+            "230,229,251",
+            "55,48,163"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            16.09292056620921,
+            16.09292056620921
+          ],
+          "text": "Planejadas10h"
+        },
+        {
+          "tone": "green",
+          "colors": [
+            "238,248,245",
+            "171,212,206",
+            "220,240,234",
+            "6,95,70"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            16.476107648169492,
+            16.476107648169492
+          ],
+          "text": "Realizadas2h 25min"
+        }
+      ]
+    },
+    {
+      "width": 768,
+      "theme": "light",
+      "page": "edital",
+      "passed": true,
+      "geometry": {
+        "docX": false,
+        "docY": false,
+        "mainX": false
+      },
+      "metrics": [
+        {
+          "tone": "purple",
+          "colors": [
+            "246,241,254",
+            "200,189,239",
+            "237,227,252",
+            "91,33,182"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            16.09434611900565,
+            16.09434611900565,
+            12.257732199427497
+          ],
+          "text": "Progresso do edital17%1 de 6 tópicos dominados"
+        },
+        {
+          "tone": "blue",
+          "colors": [
+            "241,246,254",
+            "184,207,242",
+            "228,238,254",
+            "29,78,216"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            16.452907045625096,
+            16.452907045625096,
+            12.530818398964959
+          ],
+          "text": "Tópicos estudados2Com atividade registrada"
+        },
+        {
+          "tone": "orange",
+          "colors": [
+            "252,245,238",
+            "224,204,182",
+            "250,236,220",
+            "146,64,14"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            16.52180855080794,
+            16.52180855080794,
+            12.583294976293653
+          ],
+          "text": "Revisões pendentes0Vencidas ou para hoje"
+        },
+        {
+          "tone": "indigo",
+          "colors": [
+            "243,242,253",
+            "189,191,237",
+            "230,229,251",
+            "55,48,163"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            16.09292056620921,
+            16.09292056620921,
+            12.256646473776657
+          ],
+          "text": "Tópicos prioritários1Exigem atenção neste recorte"
+        }
+      ]
+    },
+    {
+      "width": 768,
+      "theme": "light",
+      "page": "disciplinas",
+      "passed": true,
+      "geometry": {
+        "docX": false,
+        "docY": false,
+        "mainX": false
+      },
+      "metrics": [
+        {
+          "tone": "indigo",
+          "colors": [
+            "243,242,253",
+            "189,191,237",
+            "230,229,251",
+            "55,48,163"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            16.09292056620921,
+            16.09292056620921,
+            12.256646473776657
+          ],
+          "text": "Total de disciplinas1No conjunto filtrado"
+        },
+        {
+          "tone": "blue",
+          "colors": [
+            "241,246,254",
+            "184,207,242",
+            "228,238,254",
+            "29,78,216"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            16.452907045625096,
+            16.452907045625096,
+            12.530818398964959
+          ],
+          "text": "Em andamento1Iniciadas e não concluídas"
+        },
+        {
+          "tone": "green",
+          "colors": [
+            "238,248,245",
+            "171,212,206",
+            "220,240,234",
+            "6,95,70"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            16.476107648169492,
+            16.476107648169492,
+            12.54848837889156
+          ],
+          "text": "Tópicos concluídos1/6Conteúdos dominados"
+        },
+        {
+          "tone": "purple",
+          "colors": [
+            "246,241,254",
+            "200,189,239",
+            "237,227,252",
+            "91,33,182"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            16.09434611900565,
+            16.09434611900565,
+            12.257732199427497
+          ],
+          "text": "Progresso geral17%Média das disciplinas filtradas"
+        }
+      ]
+    },
+    {
+      "width": 768,
+      "theme": "dark",
+      "page": "reference",
+      "passed": true,
+      "geometry": {
+        "docX": false,
+        "docY": false,
+        "mainX": false
+      },
+      "metrics": [
+        {
+          "tone": "indigo",
+          "colors": [
+            "31,29,47",
+            "73,72,105",
+            "41,41,63",
+            "199,210,254"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            15.033890610471772,
+            15.033890610471772,
+            12.407302513259236
+          ],
+          "text": "Tempo de estudo2h 30minSessões registradas nesta disciplina"
+        },
+        {
+          "tone": "green",
+          "colors": [
+            "27,33,43",
+            "59,85,88",
+            "33,48,53",
+            "167,243,208"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            14.756433538088048,
+            14.756433538088048,
+            12.178320281001255
+          ],
+          "text": "Desempenho geral80%8 certas · 2 erradas"
+        },
+        {
+          "tone": "purple",
+          "colors": [
+            "33,29,47",
+            "80,72,105",
+            "45,41,63",
+            "221,214,254"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            14.958744063382934,
+            14.958744063382934,
+            12.345284904729567
+          ],
+          "text": "Progresso no edital17%1 concluídos · 5 pendentes (6 tópicos)"
+        },
+        {
+          "tone": "blue",
+          "colors": [
+            "23,30,47",
+            "45,74,104",
+            "26,42,62",
+            "147,197,253"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            15.175116981721263,
+            15.175116981721263,
+            12.523855064847032
+          ],
+          "text": "Questões resolvidas108 certas · 2 erradas · 0 em branco"
+        },
+        {
+          "tone": "orange",
+          "colors": [
+            "37,32,35",
+            "94,80,61",
+            "53,45,38",
+            "253,230,138"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            14.638013660909909,
+            14.638013660909909,
+            12.080589675012359
+          ],
+          "text": "Páginas estudadas30Soma dos blocos de páginas nos registros de estudo"
+        }
+      ]
+    },
+    {
+      "width": 768,
+      "theme": "dark",
+      "page": "dashboard",
+      "passed": true,
+      "geometry": {
+        "docX": false,
+        "docY": false,
+        "mainX": false
+      },
+      "metrics": [
+        {
+          "tone": "indigo",
+          "colors": [
+            "31,29,47",
+            "73,72,105",
+            "41,41,63",
+            "199,210,254"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            15.033890610471772,
+            15.033890610471772,
+            12.407302513259236
+          ],
+          "text": "Tempo estudado2h 25minMeta do período: 10h"
+        },
+        {
+          "tone": "blue",
+          "colors": [
+            "23,30,47",
+            "45,74,104",
+            "26,42,62",
+            "147,197,253"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            15.175116981721263,
+            15.175116981721263,
+            12.523855064847032
+          ],
+          "text": "Questões respondidas10Acertos + erros · sem questões em branco"
+        },
+        {
+          "tone": "green",
+          "colors": [
+            "27,33,43",
+            "59,85,88",
+            "33,48,53",
+            "167,243,208"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            14.756433538088048,
+            14.756433538088048,
+            12.178320281001255
+          ],
+          "text": "Taxa de acertos80,0%8 acertos em 10 questões"
+        },
+        {
+          "tone": "purple",
+          "colors": [
+            "33,29,47",
+            "80,72,105",
+            "45,41,63",
+            "221,214,254"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            14.958744063382934,
+            14.958744063382934,
+            12.345284904729567
+          ],
+          "text": "Progresso do edital17,0%1 de 6 tópicos · acumulado atual"
+        }
+      ]
+    },
+    {
+      "width": 768,
+      "theme": "dark",
+      "page": "cronograma",
+      "passed": true,
+      "geometry": {
+        "docX": false,
+        "docY": false,
+        "mainX": false
+      },
+      "metrics": [
+        {
+          "tone": "indigo",
+          "colors": [
+            "31,29,47",
+            "73,72,105",
+            "41,41,63",
+            "199,210,254"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            15.033890610471772,
+            15.033890610471772
+          ],
+          "text": "Horas planejadas na semana10h"
+        },
+        {
+          "tone": "green",
+          "colors": [
+            "27,33,43",
+            "59,85,88",
+            "33,48,53",
+            "167,243,208"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            14.756433538088048,
+            14.756433538088048
+          ],
+          "text": "Horas estudadas na semana2h 25min"
+        },
+        {
+          "tone": "blue",
+          "colors": [
+            "23,30,47",
+            "45,74,104",
+            "26,42,62",
+            "147,197,253"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            15.175116981721263,
+            15.175116981721263
+          ],
+          "text": "Disciplinas cadastradas1"
+        },
+        {
+          "tone": "purple",
+          "colors": [
+            "33,29,47",
+            "80,72,105",
+            "45,41,63",
+            "221,214,254"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            14.958744063382934,
+            14.958744063382934
+          ],
+          "text": "Progresso das atividades25%"
+        },
+        {
+          "tone": "indigo",
+          "colors": [
+            "31,29,47",
+            "73,72,105",
+            "41,41,63",
+            "199,210,254"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            15.033890610471772,
+            15.033890610471772
+          ],
+          "text": "Planejadas10h"
+        },
+        {
+          "tone": "green",
+          "colors": [
+            "27,33,43",
+            "59,85,88",
+            "33,48,53",
+            "167,243,208"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            14.756433538088048,
+            14.756433538088048
+          ],
+          "text": "Realizadas2h 25min"
+        }
+      ]
+    },
+    {
+      "width": 768,
+      "theme": "dark",
+      "page": "edital",
+      "passed": true,
+      "geometry": {
+        "docX": false,
+        "docY": false,
+        "mainX": false
+      },
+      "metrics": [
+        {
+          "tone": "purple",
+          "colors": [
+            "33,29,47",
+            "80,72,105",
+            "45,41,63",
+            "221,214,254"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            14.958744063382934,
+            14.958744063382934,
+            12.345284904729567
+          ],
+          "text": "Progresso do edital17%1 de 6 tópicos dominados"
+        },
+        {
+          "tone": "blue",
+          "colors": [
+            "23,30,47",
+            "45,74,104",
+            "26,42,62",
+            "147,197,253"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            15.175116981721263,
+            15.175116981721263,
+            12.523855064847032
+          ],
+          "text": "Tópicos estudados2Com atividade registrada"
+        },
+        {
+          "tone": "orange",
+          "colors": [
+            "37,32,35",
+            "94,80,61",
+            "53,45,38",
+            "253,230,138"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            14.638013660909909,
+            14.638013660909909,
+            12.080589675012359
+          ],
+          "text": "Revisões pendentes0Vencidas ou para hoje"
+        },
+        {
+          "tone": "indigo",
+          "colors": [
+            "31,29,47",
+            "73,72,105",
+            "41,41,63",
+            "199,210,254"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            15.033890610471772,
+            15.033890610471772,
+            12.407302513259236
+          ],
+          "text": "Tópicos prioritários1Exigem atenção neste recorte"
+        }
+      ]
+    },
+    {
+      "width": 768,
+      "theme": "dark",
+      "page": "disciplinas",
+      "passed": true,
+      "geometry": {
+        "docX": false,
+        "docY": false,
+        "mainX": false
+      },
+      "metrics": [
+        {
+          "tone": "indigo",
+          "colors": [
+            "31,29,47",
+            "73,72,105",
+            "41,41,63",
+            "199,210,254"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            15.033890610471772,
+            15.033890610471772,
+            12.407302513259236
+          ],
+          "text": "Total de disciplinas1No conjunto filtrado"
+        },
+        {
+          "tone": "blue",
+          "colors": [
+            "23,30,47",
+            "45,74,104",
+            "26,42,62",
+            "147,197,253"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            15.175116981721263,
+            15.175116981721263,
+            12.523855064847032
+          ],
+          "text": "Em andamento1Iniciadas e não concluídas"
+        },
+        {
+          "tone": "green",
+          "colors": [
+            "27,33,43",
+            "59,85,88",
+            "33,48,53",
+            "167,243,208"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            14.756433538088048,
+            14.756433538088048,
+            12.178320281001255
+          ],
+          "text": "Tópicos concluídos1/6Conteúdos dominados"
+        },
+        {
+          "tone": "purple",
+          "colors": [
+            "33,29,47",
+            "80,72,105",
+            "45,41,63",
+            "221,214,254"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            14.958744063382934,
+            14.958744063382934,
+            12.345284904729567
+          ],
+          "text": "Progresso geral17%Média das disciplinas filtradas"
+        }
+      ]
+    },
+    {
+      "width": 1440,
+      "theme": "light",
+      "page": "reference",
+      "passed": true,
+      "geometry": {
+        "docX": false,
+        "docY": false,
+        "mainX": false
+      },
+      "metrics": [
+        {
+          "tone": "indigo",
+          "colors": [
+            "243,242,253",
+            "189,191,237",
+            "230,229,251",
+            "55,48,163"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            16.09292056620921,
+            16.09292056620921,
+            12.256646473776657
+          ],
+          "text": "Tempo de estudo2h 30minSessões registradas nesta disciplina"
+        },
+        {
+          "tone": "green",
+          "colors": [
+            "238,248,245",
+            "171,212,206",
+            "220,240,234",
+            "6,95,70"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            16.476107648169492,
+            16.476107648169492,
+            12.54848837889156
+          ],
+          "text": "Desempenho geral80%8 certas · 2 erradas"
+        },
+        {
+          "tone": "purple",
+          "colors": [
+            "246,241,254",
+            "200,189,239",
+            "237,227,252",
+            "91,33,182"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            16.09434611900565,
+            16.09434611900565,
+            12.257732199427497
+          ],
+          "text": "Progresso no edital17%1 concluídos · 5 pendentes (6 tópicos)"
+        },
+        {
+          "tone": "blue",
+          "colors": [
+            "241,246,254",
+            "184,207,242",
+            "228,238,254",
+            "29,78,216"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            16.452907045625096,
+            16.452907045625096,
+            12.530818398964959
+          ],
+          "text": "Questões resolvidas108 certas · 2 erradas · 0 em branco"
+        },
+        {
+          "tone": "orange",
+          "colors": [
+            "252,245,238",
+            "224,204,182",
+            "250,236,220",
+            "146,64,14"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            16.52180855080794,
+            16.52180855080794,
+            12.583294976293653
+          ],
+          "text": "Páginas estudadas30Soma dos blocos de páginas nos registros de estudo"
+        }
+      ]
+    },
+    {
+      "width": 1440,
+      "theme": "light",
+      "page": "dashboard",
+      "passed": true,
+      "geometry": {
+        "docX": false,
+        "docY": false,
+        "mainX": false
+      },
+      "metrics": [
+        {
+          "tone": "indigo",
+          "colors": [
+            "243,242,253",
+            "189,191,237",
+            "230,229,251",
+            "55,48,163"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            16.09292056620921,
+            16.09292056620921,
+            12.256646473776657
+          ],
+          "text": "Tempo estudado2h 25minMeta do período: 10h"
+        },
+        {
+          "tone": "blue",
+          "colors": [
+            "241,246,254",
+            "184,207,242",
+            "228,238,254",
+            "29,78,216"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            16.452907045625096,
+            16.452907045625096,
+            12.530818398964959
+          ],
+          "text": "Questões respondidas10Acertos + erros · sem questões em branco"
+        },
+        {
+          "tone": "green",
+          "colors": [
+            "238,248,245",
+            "171,212,206",
+            "220,240,234",
+            "6,95,70"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            16.476107648169492,
+            16.476107648169492,
+            12.54848837889156
+          ],
+          "text": "Taxa de acertos80,0%8 acertos em 10 questões"
+        },
+        {
+          "tone": "purple",
+          "colors": [
+            "246,241,254",
+            "200,189,239",
+            "237,227,252",
+            "91,33,182"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            16.09434611900565,
+            16.09434611900565,
+            12.257732199427497
+          ],
+          "text": "Progresso do edital17,0%1 de 6 tópicos · acumulado atual"
+        }
+      ]
+    },
+    {
+      "width": 1440,
+      "theme": "light",
+      "page": "cronograma",
+      "passed": true,
+      "geometry": {
+        "docX": false,
+        "docY": false,
+        "mainX": false
+      },
+      "metrics": [
+        {
+          "tone": "indigo",
+          "colors": [
+            "243,242,253",
+            "189,191,237",
+            "230,229,251",
+            "55,48,163"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            16.09292056620921,
+            16.09292056620921
+          ],
+          "text": "Horas planejadas na semana10h"
+        },
+        {
+          "tone": "green",
+          "colors": [
+            "238,248,245",
+            "171,212,206",
+            "220,240,234",
+            "6,95,70"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            16.476107648169492,
+            16.476107648169492
+          ],
+          "text": "Horas estudadas na semana2h 25min"
+        },
+        {
+          "tone": "blue",
+          "colors": [
+            "241,246,254",
+            "184,207,242",
+            "228,238,254",
+            "29,78,216"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            16.452907045625096,
+            16.452907045625096
+          ],
+          "text": "Disciplinas cadastradas1"
+        },
+        {
+          "tone": "purple",
+          "colors": [
+            "246,241,254",
+            "200,189,239",
+            "237,227,252",
+            "91,33,182"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            16.09434611900565,
+            16.09434611900565
+          ],
+          "text": "Progresso das atividades25%"
+        },
+        {
+          "tone": "indigo",
+          "colors": [
+            "243,242,253",
+            "189,191,237",
+            "230,229,251",
+            "55,48,163"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            16.09292056620921,
+            16.09292056620921
+          ],
+          "text": "Planejadas10h"
+        },
+        {
+          "tone": "green",
+          "colors": [
+            "238,248,245",
+            "171,212,206",
+            "220,240,234",
+            "6,95,70"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            16.476107648169492,
+            16.476107648169492
+          ],
+          "text": "Realizadas2h 25min"
+        }
+      ]
+    },
+    {
+      "width": 1440,
+      "theme": "light",
+      "page": "edital",
+      "passed": true,
+      "geometry": {
+        "docX": false,
+        "docY": false,
+        "mainX": false
+      },
+      "metrics": [
+        {
+          "tone": "purple",
+          "colors": [
+            "246,241,254",
+            "200,189,239",
+            "237,227,252",
+            "91,33,182"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            16.09434611900565,
+            16.09434611900565,
+            12.257732199427497
+          ],
+          "text": "Progresso do edital17%1 de 6 tópicos dominados"
+        },
+        {
+          "tone": "blue",
+          "colors": [
+            "241,246,254",
+            "184,207,242",
+            "228,238,254",
+            "29,78,216"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            16.452907045625096,
+            16.452907045625096,
+            12.530818398964959
+          ],
+          "text": "Tópicos estudados2Com atividade registrada"
+        },
+        {
+          "tone": "orange",
+          "colors": [
+            "252,245,238",
+            "224,204,182",
+            "250,236,220",
+            "146,64,14"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            16.52180855080794,
+            16.52180855080794,
+            12.583294976293653
+          ],
+          "text": "Revisões pendentes0Vencidas ou para hoje"
+        },
+        {
+          "tone": "indigo",
+          "colors": [
+            "243,242,253",
+            "189,191,237",
+            "230,229,251",
+            "55,48,163"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            16.09292056620921,
+            16.09292056620921,
+            12.256646473776657
+          ],
+          "text": "Tópicos prioritários1Exigem atenção neste recorte"
+        }
+      ]
+    },
+    {
+      "width": 1440,
+      "theme": "light",
+      "page": "disciplinas",
+      "passed": true,
+      "geometry": {
+        "docX": false,
+        "docY": false,
+        "mainX": false
+      },
+      "metrics": [
+        {
+          "tone": "indigo",
+          "colors": [
+            "243,242,253",
+            "189,191,237",
+            "230,229,251",
+            "55,48,163"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            16.09292056620921,
+            16.09292056620921,
+            12.256646473776657
+          ],
+          "text": "Total de disciplinas1No conjunto filtrado"
+        },
+        {
+          "tone": "blue",
+          "colors": [
+            "241,246,254",
+            "184,207,242",
+            "228,238,254",
+            "29,78,216"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            16.452907045625096,
+            16.452907045625096,
+            12.530818398964959
+          ],
+          "text": "Em andamento1Iniciadas e não concluídas"
+        },
+        {
+          "tone": "green",
+          "colors": [
+            "238,248,245",
+            "171,212,206",
+            "220,240,234",
+            "6,95,70"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            16.476107648169492,
+            16.476107648169492,
+            12.54848837889156
+          ],
+          "text": "Tópicos concluídos1/6Conteúdos dominados"
+        },
+        {
+          "tone": "purple",
+          "colors": [
+            "246,241,254",
+            "200,189,239",
+            "237,227,252",
+            "91,33,182"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            16.09434611900565,
+            16.09434611900565,
+            12.257732199427497
+          ],
+          "text": "Progresso geral17%Média das disciplinas filtradas"
+        }
+      ]
+    },
+    {
+      "width": 1440,
+      "theme": "dark",
+      "page": "reference",
+      "passed": true,
+      "geometry": {
+        "docX": false,
+        "docY": false,
+        "mainX": false
+      },
+      "metrics": [
+        {
+          "tone": "indigo",
+          "colors": [
+            "31,29,47",
+            "73,72,105",
+            "41,41,63",
+            "199,210,254"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            15.033890610471772,
+            15.033890610471772,
+            12.407302513259236
+          ],
+          "text": "Tempo de estudo2h 30minSessões registradas nesta disciplina"
+        },
+        {
+          "tone": "green",
+          "colors": [
+            "27,33,43",
+            "59,85,88",
+            "33,48,53",
+            "167,243,208"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            14.756433538088048,
+            14.756433538088048,
+            12.178320281001255
+          ],
+          "text": "Desempenho geral80%8 certas · 2 erradas"
+        },
+        {
+          "tone": "purple",
+          "colors": [
+            "33,29,47",
+            "80,72,105",
+            "45,41,63",
+            "221,214,254"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            14.958744063382934,
+            14.958744063382934,
+            12.345284904729567
+          ],
+          "text": "Progresso no edital17%1 concluídos · 5 pendentes (6 tópicos)"
+        },
+        {
+          "tone": "blue",
+          "colors": [
+            "23,30,47",
+            "45,74,104",
+            "26,42,62",
+            "147,197,253"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            15.175116981721263,
+            15.175116981721263,
+            12.523855064847032
+          ],
+          "text": "Questões resolvidas108 certas · 2 erradas · 0 em branco"
+        },
+        {
+          "tone": "orange",
+          "colors": [
+            "37,32,35",
+            "94,80,61",
+            "53,45,38",
+            "253,230,138"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            14.638013660909909,
+            14.638013660909909,
+            12.080589675012359
+          ],
+          "text": "Páginas estudadas30Soma dos blocos de páginas nos registros de estudo"
+        }
+      ]
+    },
+    {
+      "width": 1440,
+      "theme": "dark",
+      "page": "dashboard",
+      "passed": true,
+      "geometry": {
+        "docX": false,
+        "docY": false,
+        "mainX": false
+      },
+      "metrics": [
+        {
+          "tone": "indigo",
+          "colors": [
+            "31,29,47",
+            "73,72,105",
+            "41,41,63",
+            "199,210,254"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            15.033890610471772,
+            15.033890610471772,
+            12.407302513259236
+          ],
+          "text": "Tempo estudado2h 25minMeta do período: 10h"
+        },
+        {
+          "tone": "blue",
+          "colors": [
+            "23,30,47",
+            "45,74,104",
+            "26,42,62",
+            "147,197,253"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            15.175116981721263,
+            15.175116981721263,
+            12.523855064847032
+          ],
+          "text": "Questões respondidas10Acertos + erros · sem questões em branco"
+        },
+        {
+          "tone": "green",
+          "colors": [
+            "27,33,43",
+            "59,85,88",
+            "33,48,53",
+            "167,243,208"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            14.756433538088048,
+            14.756433538088048,
+            12.178320281001255
+          ],
+          "text": "Taxa de acertos80,0%8 acertos em 10 questões"
+        },
+        {
+          "tone": "purple",
+          "colors": [
+            "33,29,47",
+            "80,72,105",
+            "45,41,63",
+            "221,214,254"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            14.958744063382934,
+            14.958744063382934,
+            12.345284904729567
+          ],
+          "text": "Progresso do edital17,0%1 de 6 tópicos · acumulado atual"
+        }
+      ]
+    },
+    {
+      "width": 1440,
+      "theme": "dark",
+      "page": "cronograma",
+      "passed": true,
+      "geometry": {
+        "docX": false,
+        "docY": false,
+        "mainX": false
+      },
+      "metrics": [
+        {
+          "tone": "indigo",
+          "colors": [
+            "31,29,47",
+            "73,72,105",
+            "41,41,63",
+            "199,210,254"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            15.033890610471772,
+            15.033890610471772
+          ],
+          "text": "Horas planejadas na semana10h"
+        },
+        {
+          "tone": "green",
+          "colors": [
+            "27,33,43",
+            "59,85,88",
+            "33,48,53",
+            "167,243,208"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            14.756433538088048,
+            14.756433538088048
+          ],
+          "text": "Horas estudadas na semana2h 25min"
+        },
+        {
+          "tone": "blue",
+          "colors": [
+            "23,30,47",
+            "45,74,104",
+            "26,42,62",
+            "147,197,253"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            15.175116981721263,
+            15.175116981721263
+          ],
+          "text": "Disciplinas cadastradas1"
+        },
+        {
+          "tone": "purple",
+          "colors": [
+            "33,29,47",
+            "80,72,105",
+            "45,41,63",
+            "221,214,254"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            14.958744063382934,
+            14.958744063382934
+          ],
+          "text": "Progresso das atividades25%"
+        },
+        {
+          "tone": "indigo",
+          "colors": [
+            "31,29,47",
+            "73,72,105",
+            "41,41,63",
+            "199,210,254"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            15.033890610471772,
+            15.033890610471772
+          ],
+          "text": "Planejadas10h"
+        },
+        {
+          "tone": "green",
+          "colors": [
+            "27,33,43",
+            "59,85,88",
+            "33,48,53",
+            "167,243,208"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            14.756433538088048,
+            14.756433538088048
+          ],
+          "text": "Realizadas2h 25min"
+        }
+      ]
+    },
+    {
+      "width": 1440,
+      "theme": "dark",
+      "page": "edital",
+      "passed": true,
+      "geometry": {
+        "docX": false,
+        "docY": false,
+        "mainX": false
+      },
+      "metrics": [
+        {
+          "tone": "purple",
+          "colors": [
+            "33,29,47",
+            "80,72,105",
+            "45,41,63",
+            "221,214,254"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            14.958744063382934,
+            14.958744063382934,
+            12.345284904729567
+          ],
+          "text": "Progresso do edital17%1 de 6 tópicos dominados"
+        },
+        {
+          "tone": "blue",
+          "colors": [
+            "23,30,47",
+            "45,74,104",
+            "26,42,62",
+            "147,197,253"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            15.175116981721263,
+            15.175116981721263,
+            12.523855064847032
+          ],
+          "text": "Tópicos estudados2Com atividade registrada"
+        },
+        {
+          "tone": "orange",
+          "colors": [
+            "37,32,35",
+            "94,80,61",
+            "53,45,38",
+            "253,230,138"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            14.638013660909909,
+            14.638013660909909,
+            12.080589675012359
+          ],
+          "text": "Revisões pendentes0Vencidas ou para hoje"
+        },
+        {
+          "tone": "indigo",
+          "colors": [
+            "31,29,47",
+            "73,72,105",
+            "41,41,63",
+            "199,210,254"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            15.033890610471772,
+            15.033890610471772,
+            12.407302513259236
+          ],
+          "text": "Tópicos prioritários1Exigem atenção neste recorte"
+        }
+      ]
+    },
+    {
+      "width": 1440,
+      "theme": "dark",
+      "page": "disciplinas",
+      "passed": true,
+      "geometry": {
+        "docX": false,
+        "docY": false,
+        "mainX": false
+      },
+      "metrics": [
+        {
+          "tone": "indigo",
+          "colors": [
+            "31,29,47",
+            "73,72,105",
+            "41,41,63",
+            "199,210,254"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            15.033890610471772,
+            15.033890610471772,
+            12.407302513259236
+          ],
+          "text": "Total de disciplinas1No conjunto filtrado"
+        },
+        {
+          "tone": "blue",
+          "colors": [
+            "23,30,47",
+            "45,74,104",
+            "26,42,62",
+            "147,197,253"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            15.175116981721263,
+            15.175116981721263,
+            12.523855064847032
+          ],
+          "text": "Em andamento1Iniciadas e não concluídas"
+        },
+        {
+          "tone": "green",
+          "colors": [
+            "27,33,43",
+            "59,85,88",
+            "33,48,53",
+            "167,243,208"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            14.756433538088048,
+            14.756433538088048,
+            12.178320281001255
+          ],
+          "text": "Tópicos concluídos1/6Conteúdos dominados"
+        },
+        {
+          "tone": "purple",
+          "colors": [
+            "33,29,47",
+            "80,72,105",
+            "45,41,63",
+            "221,214,254"
+          ],
+          "border": "1px",
+          "radius": "16px",
+          "cursor": "auto",
+          "contrast": [
+            14.958744063382934,
+            14.958744063382934,
+            12.345284904729567
+          ],
+          "text": "Progresso geral17%Média das disciplinas filtradas"
+        }
+      ]
+    }
+  ]
+}

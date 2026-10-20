@@ -1,0 +1,7 @@
+.discipline-tone-blue, .metric-tone-blue { --study-tone: var(--info); --study-ink: var(--info-text); }
+.discipline-kpi, .metric-card { background: color-mix(in srgb, var(--study-tone) 7%, var(--card)); border-color: color-mix(in srgb, var(--study-tone) 25%, var(--border)); }
+.discipline-kpi:hover { border-color: color-mix(in srgb, var(--study-tone) 50%, var(--border)); }
+.discipline-kpi-icon, .metric-card-icon { background: color-mix(in srgb, var(--study-tone) 14%, var(--card)); color: var(--study-ink); }
+.discipline-kpi > div:last-child p, .metric-card-description { color: color-mix(in srgb, var(--foreground) 75%, var(--muted-foreground)); }
+.metric-card [data-slot="progress-indicator"] { background:var(--study-tone); }
+.metric-card [data-slot="progress"] { background:color-mix(in srgb,var(--study-tone) 18%,var(--card)); }

@@ -24,7 +24,7 @@ const SelectTrigger = React.forwardRef<
   >
     {children}
     <SelectPrimitive.Icon asChild>
-      <ChevronDown className="h-4 w-4 opacity-50" />
+      <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
     </SelectPrimitive.Icon>
   </SelectPrimitive.Trigger>
 ));
@@ -117,7 +117,9 @@ const SelectItem = React.forwardRef<
         <Check className="h-4 w-4 text-primary" />
       </SelectPrimitive.ItemIndicator>
     </span>
-    <SelectPrimitive.ItemText className="min-w-0 whitespace-normal break-words">{children}</SelectPrimitive.ItemText>
+    <span className="min-w-0 whitespace-normal [overflow-wrap:anywhere]">
+      <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
+    </span>
   </SelectPrimitive.Item>
 ));
 SelectItem.displayName = SelectPrimitive.Item.displayName;

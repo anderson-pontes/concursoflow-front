@@ -121,7 +121,7 @@ export function NextActionCard({
       })
     : null;
 
-  if (compact) return <DashboardCard aria-labelledby="next-action-title" className={`border-transparent ${studySurface('indigo')}`}>
+  if (compact) return <DashboardCard aria-labelledby="next-action-title" className="border-border bg-card">
     <DashboardCardHeader><CardTitle><h3 id="next-action-title">Próxima sessão</h3></CardTitle><CardDescription>Seu próximo estudo no planejamento</CardDescription></DashboardCardHeader>
     <DashboardCardBody>
       {isError ? <p role="alert" className="text-sm text-muted-foreground">Não foi possível carregar a próxima ação. Tente novamente.</p> : study ? <div className="flex flex-1 flex-col justify-center gap-3">
@@ -138,7 +138,7 @@ export function NextActionCard({
   </DashboardCard>;
 
   return (
-    <Card className="border-primary/30 bg-gradient-to-br from-primary/10 via-card to-card" aria-labelledby="next-action-title">
+    <Card className="border-border bg-card" aria-labelledby="next-action-title">
       <CardHeader>
         <div>
           <p className="text-xs font-semibold uppercase tracking-wide text-primary">{compact ? "Próxima sessão" : "Próxima ação"}</p>

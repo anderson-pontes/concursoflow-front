@@ -40,10 +40,6 @@
 }
 
 /* Functional surfaces reuse the light/dark study tokens. */
-.discipline-tone-blue { --study-tone: var(--info); --study-ink: var(--info-text); }
-.discipline-kpi { background: color-mix(in srgb, var(--study-tone) 7%, var(--card)); border-color: color-mix(in srgb, var(--study-tone) 25%, var(--border)); }
-.discipline-kpi:hover { border-color: color-mix(in srgb, var(--study-tone) 50%, var(--border)); }
-.discipline-kpi-icon { background: color-mix(in srgb, var(--study-tone) 14%, var(--card)); color: var(--study-ink); }
 .discipline-progress { background: color-mix(in srgb, var(--study-tone) 6%, var(--card)); border-color: color-mix(in srgb, var(--study-tone) 25%, var(--border)); color: var(--study-ink); }
 .discipline-progress [data-slot="progress"] { background: color-mix(in srgb, var(--study-tone) 18%, var(--card)); }
 .discipline-progress [data-slot="progress-indicator"] { background: var(--study-tone); }
@@ -82,4 +78,3 @@
   .discipline-kpis .discipline-kpi:first-child > div:first-child { margin-bottom: 0; }
   .discipline-kpis .discipline-kpi:first-child > div:last-child { min-width: 0; text-align: right; }
 }
-.discipline-kpi > div:last-child p { color: color-mix(in srgb, var(--foreground) 75%, var(--muted-foreground)); }

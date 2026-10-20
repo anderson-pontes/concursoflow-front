@@ -23,11 +23,14 @@ type SelectFieldProps = {
 export function SelectField({ value, onValueChange, options, placeholder = "Selecione", disabled, className, id, "aria-label": ariaLabel }: SelectFieldProps) {
   const hasEmptyOption = options.some((option) => option.value === "");
   const selectValue = value === "" && hasEmptyOption ? EMPTY_VALUE : value || undefined;
+  const selectedLabel = options.find((option) => option.value === value)?.label;
 
   return (
     <Select value={selectValue} onValueChange={(next) => onValueChange(next === EMPTY_VALUE ? "" : next)} disabled={disabled}>
       <SelectTrigger id={id} aria-label={ariaLabel} className={cn(className)}>
-        <SelectValue className="min-w-0 flex-1 text-left line-clamp-2" placeholder={placeholder} />
+        <span className="min-w-0 flex-1 truncate text-left" title={selectedLabel}>
+          <SelectValue placeholder={placeholder} />
+        </span>
       </SelectTrigger>
       <SelectContent>
         {options.map((option) => (

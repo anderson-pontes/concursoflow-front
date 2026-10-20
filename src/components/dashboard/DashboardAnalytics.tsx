@@ -14,7 +14,7 @@ import {getDisciplinaColor} from '@/components/disciplinas/disciplinaPalettes';
 import {formatDashboardDuration as fmtMinutosEstudo} from '@/lib/dashboard/analysis';
 import {formatNumericDate} from '@/lib/dashboard/dates';
 import {percentBR,type DashboardAnalysis,type AnalysisDay,type AnalysisDiscipline} from '@/lib/dashboard/analysis';
-import {studySurface, type StudyTone} from '@/lib/ui/studySurface';
+import {MetricCard, type MetricTone} from "@/components/ui/metric-card";
 
 export function AnalyticsState({loading,error,retry,cause}:{loading:boolean;error:boolean;retry:()=>void;cause?:unknown}) {
  return loading?<div className="grid grid-cols-2 gap-3 lg:grid-cols-4" aria-label="Carregando indicadores">{[0,1,2,3].map(i=><Skeleton key={i} className="h-32 rounded-xl"/>)}</div>:error?<Card><CardContent className="pt-2"><p role="alert" className="text-sm">{apiUnavailableMessage(cause) ?? 'Não foi possível carregar os dados deste período.'}</p><Button className="mt-3" variant="outline" onClick={retry}>Tentar novamente</Button></CardContent></Card>:null;
@@ -23,11 +23,11 @@ export function DashboardPeriodKpis({data}:{data:DashboardAnalysis}) {
  const t=data.totais;
  const rows=[
   {label:'Tempo estudado',value:fmtMinutosEstudo(t.minutos_estudados),sub:t.meta_periodo_minutos==null?'Meta não definida · período selecionado':`Meta do período: ${fmtMinutosEstudo(t.meta_periodo_minutos)}`,Icon:Clock3,tone:'indigo'},
-  {label:'Questões respondidas',value:t.questoes_total.toLocaleString('pt-BR'),sub:'Acertos + erros · sem questões em branco',Icon:ListChecks,tone:'amber'},
-  {label:'Taxa de acertos',value:percentBR(t.questoes_total>0?t.acertos_pct:null),sub:`${t.acertos.toLocaleString('pt-BR')} acertos em ${t.questoes_total.toLocaleString('pt-BR')} questões`,Icon:CheckCheck,tone:'emerald'},
-  {label:'Progresso do edital',value:percentBR(t.topicos_total>0?t.progresso_edital_pct:null),sub:`${t.topicos_concluidos} de ${t.topicos_total} tópicos · acumulado atual`,Icon:BookOpen,tone:'violet'},
+  {label:'Questões respondidas',value:t.questoes_total.toLocaleString('pt-BR'),sub:'Acertos + erros · sem questões em branco',Icon:ListChecks,tone:'blue'},
+  {label:'Taxa de acertos',value:percentBR(t.questoes_total>0?t.acertos_pct:null),sub:`${t.acertos.toLocaleString('pt-BR')} acertos em ${t.questoes_total.toLocaleString('pt-BR')} questões`,Icon:CheckCheck,tone:'green'},
+  {label:'Progresso do edital',value:percentBR(t.topicos_total>0?t.progresso_edital_pct:null),sub:`${t.topicos_concluidos} de ${t.topicos_total} tópicos · acumulado atual`,Icon:BookOpen,tone:'purple'},
  ];
- return <div aria-label="Indicadores de desempenho" className="grid min-w-0 auto-rows-fr grid-cols-2 gap-3 lg:grid-cols-4">{rows.map(({label,value,sub,Icon,tone})=><div key={label} className={`flex min-w-0 flex-col rounded-xl p-3 sm:p-4 ${studySurface(tone as StudyTone)}`}><div className="flex min-w-0 items-start justify-between gap-2"><h2 className="min-h-8 min-w-0 text-xs font-medium leading-4">{label}</h2><Icon className="size-4 shrink-0" aria-hidden/></div><p className="my-2 break-words text-2xl font-semibold tabular-nums tracking-tight">{value}</p><p className="mt-auto text-xs leading-relaxed">{sub}</p></div>)}</div>;
+ return <div aria-label="Indicadores de desempenho" className="grid min-w-0 auto-rows-fr grid-cols-2 gap-3 lg:grid-cols-4">{rows.map(({label,value,sub,Icon,tone})=><MetricCard key={label} label={label} labelAs="h2" value={value} description={sub} icon={Icon} tone={tone as MetricTone}/>)}</div>;
 }
 function DailyTooltip({day,accuracy}:{day?:AnalysisDay;accuracy:boolean}) {
  if(!day)return null;

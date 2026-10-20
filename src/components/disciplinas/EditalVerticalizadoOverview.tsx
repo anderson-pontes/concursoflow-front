@@ -18,7 +18,7 @@ import { RegistroEstudoModal } from "@/components/estudos/RegistroEstudoModal";
 import { useEditalVerticalizado } from "@/hooks/useEditalVerticalizado";
 import { usePomodoroConfigSync } from "@/hooks/usePomodoroConfigSync";
 import { resolvePersistedFocusMinutes } from "@/lib/pomodoro/duration";
-import { studySurface } from "@/lib/ui/studySurface";
+import {MetricCard, type MetricTone} from "@/components/ui/metric-card";
 import type { EditalConsulta, EditalSort, TopicoEditalItem, TopicoStatus } from "@/types/editalVerticalizado";
 
 const statusLabels: Record<TopicoStatus, string> = { nao_iniciado: "Não iniciado", em_andamento: "Em andamento", revisao: "Em revisão", dominado: "Dominado" };
@@ -256,12 +256,9 @@ function StatusBadge({ status }: { status: TopicoStatus }) { const styles: Recor
 function DomainIndicator({ domain, compact = false }: { domain: number; compact?: boolean }) { const color = domain <= 1 ? "text-rose-500" : domain === 2 ? "text-amber-500" : domain === 3 ? "text-cyan-600" : domain === 4 ? "text-indigo-600" : "text-emerald-600"; return <span className="inline-flex items-center gap-1" title={`Domínio ${domain} de 5`} aria-label={`Domínio ${domain} de 5`}>{[1, 2, 3, 4, 5].map((level) => level <= domain ? <Circle key={level} className={`h-2.5 w-2.5 fill-current ${color}`} /> : <Circle key={level} className="h-2.5 w-2.5 text-muted-foreground/30" />)}{compact ? null : <span className="ml-1 text-xs font-semibold">{domain}/5</span>}</span>; }
 function DateLabel({ value, emptyLabel }: { value: string | null; emptyLabel: string }) { return value ? <span>{formatDate(value)}</span> : <span title={emptyLabel} className="text-muted-foreground">—</span>; }
 function ReviewLabel({ item }: { item: TopicoEditalItem }) { if (!item.proxima_revisao_em) return <span title="Nenhuma revisão programada" className="text-muted-foreground">—</span>; const tone = item.revisao_atrasada ? "bg-rose-100 text-rose-800 dark:bg-rose-900/40 dark:text-rose-200" : "bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-200"; return <Badge className={tone}>{item.revisao_atrasada ? "Vencida" : formatDate(item.proxima_revisao_em)}</Badge>; }
-function IndicatorCard({ icon: Icon, tone, label, value, detail, progress }: { icon: typeof Trophy; tone: "indigo" | "cyan" | "amber" | "violet"; label: string; value: string; detail: string; progress?: number }) {
-  return <div className={`flex min-w-0 flex-col rounded-xl p-3 sm:p-4 ${studySurface(tone)}`}>
-    <div className="flex min-w-0 items-start justify-between gap-2"><p className="min-h-8 min-w-0 text-xs font-medium leading-4 [overflow-wrap:anywhere]">{label}</p><Icon className="h-4 w-4 shrink-0" aria-hidden="true" /></div>
-    <p className="mt-1 break-words text-2xl font-semibold tabular-nums tracking-tight">{value}</p>
-    <div className="mt-auto pt-2">{progress !== undefined ? <Progress value={progress} aria-label={label} className="mb-2 h-1.5 bg-indigo-200 dark:bg-indigo-900 [&_[data-slot=progress-indicator]]:bg-indigo-600 dark:[&_[data-slot=progress-indicator]]:bg-indigo-300" /> : null}<p className="min-h-8 text-xs leading-4 [overflow-wrap:anywhere]">{detail}</p></div>
-  </div>;
+function IndicatorCard({ icon, tone, label, value, detail, progress }: { icon: typeof Trophy; tone: "indigo" | "cyan" | "amber" | "violet"; label: string; value: string; detail: string; progress?: number }) {
+ const metricTones:Record<typeof tone,MetricTone>={indigo:"purple",cyan:"blue",amber:"orange",violet:"indigo"};
+ return <MetricCard label={label} value={value} description={detail} icon={icon} tone={metricTones[tone]}>{progress !== undefined && <Progress value={progress} aria-label={label} className="h-1.5"/>}</MetricCard>;
 }
 
 function AttentionReasons({ item, compact = false }: { item: TopicoEditalItem; compact?: boolean }) { if (!item.razoes_atencao.length) return <span className="text-xs text-muted-foreground">Sem sinalizações</span>; return <ul aria-label="Motivos de atenção" className={compact ? "flex flex-wrap gap-2 text-xs" : "space-y-1 text-xs"}>{item.razoes_atencao.map((reason) => <li key={reason} className={`flex min-w-0 items-start gap-1.5 ${compact ? "rounded-md px-2 py-1 leading-relaxed " + (reason === "REVISAO_ATRASADA" ? "bg-rose-50 text-rose-800 dark:bg-rose-950/60 dark:text-rose-200" : "bg-amber-50 text-amber-800 dark:bg-amber-950/60 dark:text-amber-200") : ""}`}><AlertCircle aria-hidden="true" className={`mt-0.5 h-3.5 w-3.5 shrink-0 ${compact ? "" : "text-warning"}`} /><span>{reason === "PESO_DOMINIO" ? compact ? `Prioridade ${item.prioridade}` : `Prioridade ${item.prioridade}, calculada pelo peso ${item.peso} e domínio ${item.dominio}` : reasonLabels[reason]}{reason === "REVISAO_ATRASADA" && item.dias_atraso ? ` (${item.dias_atraso} dias)` : ""}</span></li>)}</ul>; }

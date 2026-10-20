@@ -1,4 +1,5 @@
-﻿import React from "react";
+import "@/components/ui/metric-card.css";
+import React from "react";
 import type { LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 const tones = {

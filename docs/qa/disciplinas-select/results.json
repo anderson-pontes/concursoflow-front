@@ -1,0 +1,386 @@
+[
+  {
+    "width": 320,
+    "theme": "light",
+    "passed": true,
+    "geometry": {
+      "height": 44,
+      "iconWidth": 16,
+      "iconContained": true,
+      "ellipsis": "ellipsis",
+      "title": "RFB — AUDITOR nomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacos",
+      "overlap": false,
+      "overflow": false
+    },
+    "popup": {
+      "contained": true,
+      "overflow": false,
+      "options": [
+        {
+          "overflow": false,
+          "text": "Concurso ativo…"
+        },
+        {
+          "overflow": false,
+          "text": "RFB — AUDITOR nomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacos"
+        },
+        {
+          "overflow": false,
+          "text": "TRT — Analista"
+        }
+      ]
+    }
+  },
+  {
+    "width": 320,
+    "theme": "dark",
+    "passed": true,
+    "geometry": {
+      "height": 44,
+      "iconWidth": 16,
+      "iconContained": true,
+      "ellipsis": "ellipsis",
+      "title": "RFB — AUDITOR nomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacos",
+      "overlap": false,
+      "overflow": false
+    },
+    "popup": {
+      "contained": true,
+      "overflow": false,
+      "options": [
+        {
+          "overflow": false,
+          "text": "Concurso ativo…"
+        },
+        {
+          "overflow": false,
+          "text": "RFB — AUDITOR nomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacos"
+        },
+        {
+          "overflow": false,
+          "text": "TRT — Analista"
+        }
+      ]
+    }
+  },
+  {
+    "width": 375,
+    "theme": "light",
+    "passed": true,
+    "geometry": {
+      "height": 44,
+      "iconWidth": 16,
+      "iconContained": true,
+      "ellipsis": "ellipsis",
+      "title": "RFB — AUDITOR nomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacos",
+      "overlap": false,
+      "overflow": false
+    },
+    "popup": {
+      "contained": true,
+      "overflow": false,
+      "options": [
+        {
+          "overflow": false,
+          "text": "Concurso ativo…"
+        },
+        {
+          "overflow": false,
+          "text": "RFB — AUDITOR nomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacos"
+        },
+        {
+          "overflow": false,
+          "text": "TRT — Analista"
+        }
+      ]
+    }
+  },
+  {
+    "width": 375,
+    "theme": "dark",
+    "passed": true,
+    "geometry": {
+      "height": 44,
+      "iconWidth": 16,
+      "iconContained": true,
+      "ellipsis": "ellipsis",
+      "title": "RFB — AUDITOR nomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacos",
+      "overlap": false,
+      "overflow": false
+    },
+    "popup": {
+      "contained": true,
+      "overflow": false,
+      "options": [
+        {
+          "overflow": false,
+          "text": "Concurso ativo…"
+        },
+        {
+          "overflow": false,
+          "text": "RFB — AUDITOR nomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacos"
+        },
+        {
+          "overflow": false,
+          "text": "TRT — Analista"
+        }
+      ]
+    }
+  },
+  {
+    "width": 768,
+    "theme": "light",
+    "passed": true,
+    "geometry": {
+      "height": 44,
+      "iconWidth": 16,
+      "iconContained": true,
+      "ellipsis": "ellipsis",
+      "title": "RFB — AUDITOR nomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacos",
+      "overlap": false,
+      "overflow": false
+    },
+    "popup": {
+      "contained": true,
+      "overflow": false,
+      "options": [
+        {
+          "overflow": false,
+          "text": "Concurso ativo…"
+        },
+        {
+          "overflow": false,
+          "text": "RFB — AUDITOR nomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacos"
+        },
+        {
+          "overflow": false,
+          "text": "TRT — Analista"
+        }
+      ]
+    }
+  },
+  {
+    "width": 768,
+    "theme": "dark",
+    "passed": true,
+    "geometry": {
+      "height": 44,
+      "iconWidth": 16,
+      "iconContained": true,
+      "ellipsis": "ellipsis",
+      "title": "RFB — AUDITOR nomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacos",
+      "overlap": false,
+      "overflow": false
+    },
+    "popup": {
+      "contained": true,
+      "overflow": false,
+      "options": [
+        {
+          "overflow": false,
+          "text": "Concurso ativo…"
+        },
+        {
+          "overflow": false,
+          "text": "RFB — AUDITOR nomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacos"
+        },
+        {
+          "overflow": false,
+          "text": "TRT — Analista"
+        }
+      ]
+    }
+  },
+  {
+    "width": 1024,
+    "theme": "light",
+    "passed": true,
+    "geometry": {
+      "height": 44,
+      "iconWidth": 16,
+      "iconContained": true,
+      "ellipsis": "ellipsis",
+      "title": "RFB — AUDITOR nomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacos",
+      "overlap": false,
+      "overflow": false
+    },
+    "popup": {
+      "contained": true,
+      "overflow": false,
+      "options": [
+        {
+          "overflow": false,
+          "text": "Concurso ativo…"
+        },
+        {
+          "overflow": false,
+          "text": "RFB — AUDITOR nomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacos"
+        },
+        {
+          "overflow": false,
+          "text": "TRT — Analista"
+        }
+      ]
+    }
+  },
+  {
+    "width": 1024,
+    "theme": "dark",
+    "passed": true,
+    "geometry": {
+      "height": 44,
+      "iconWidth": 16,
+      "iconContained": true,
+      "ellipsis": "ellipsis",
+      "title": "RFB — AUDITOR nomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacos",
+      "overlap": false,
+      "overflow": false
+    },
+    "popup": {
+      "contained": true,
+      "overflow": false,
+      "options": [
+        {
+          "overflow": false,
+          "text": "Concurso ativo…"
+        },
+        {
+          "overflow": false,
+          "text": "RFB — AUDITOR nomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacos"
+        },
+        {
+          "overflow": false,
+          "text": "TRT — Analista"
+        }
+      ]
+    }
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "passed": true,
+    "geometry": {
+      "height": 44,
+      "iconWidth": 16,
+      "iconContained": true,
+      "ellipsis": "ellipsis",
+      "title": "RFB — AUDITOR nomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacos",
+      "overlap": false,
+      "overflow": false
+    },
+    "popup": {
+      "contained": true,
+      "overflow": false,
+      "options": [
+        {
+          "overflow": false,
+          "text": "Concurso ativo…"
+        },
+        {
+          "overflow": false,
+          "text": "RFB — AUDITOR nomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacos"
+        },
+        {
+          "overflow": false,
+          "text": "TRT — Analista"
+        }
+      ]
+    }
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "passed": true,
+    "geometry": {
+      "height": 44,
+      "iconWidth": 16,
+      "iconContained": true,
+      "ellipsis": "ellipsis",
+      "title": "RFB — AUDITOR nomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacos",
+      "overlap": false,
+      "overflow": false
+    },
+    "popup": {
+      "contained": true,
+      "overflow": false,
+      "options": [
+        {
+          "overflow": false,
+          "text": "Concurso ativo…"
+        },
+        {
+          "overflow": false,
+          "text": "RFB — AUDITOR nomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacos"
+        },
+        {
+          "overflow": false,
+          "text": "TRT — Analista"
+        }
+      ]
+    }
+  },
+  {
+    "width": 1920,
+    "theme": "light",
+    "passed": true,
+    "geometry": {
+      "height": 44,
+      "iconWidth": 16,
+      "iconContained": true,
+      "ellipsis": "ellipsis",
+      "title": "RFB — AUDITOR nomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacos",
+      "overlap": false,
+      "overflow": false
+    },
+    "popup": {
+      "contained": true,
+      "overflow": false,
+      "options": [
+        {
+          "overflow": false,
+          "text": "Concurso ativo…"
+        },
+        {
+          "overflow": false,
+          "text": "RFB — AUDITOR nomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacos"
+        },
+        {
+          "overflow": false,
+          "text": "TRT — Analista"
+        }
+      ]
+    }
+  },
+  {
+    "width": 1920,
+    "theme": "dark",
+    "passed": true,
+    "geometry": {
+      "height": 44,
+      "iconWidth": 16,
+      "iconContained": true,
+      "ellipsis": "ellipsis",
+      "title": "RFB — AUDITOR nomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacos",
+      "overlap": false,
+      "overflow": false
+    },
+    "popup": {
+      "contained": true,
+      "overflow": false,
+      "options": [
+        {
+          "overflow": false,
+          "text": "Concurso ativo…"
+        },
+        {
+          "overflow": false,
+          "text": "RFB — AUDITOR nomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacosnomeSemEspacos"
+        },
+        {
+          "overflow": false,
+          "text": "TRT — Analista"
+        }
+      ]
+    }
+  }
+]

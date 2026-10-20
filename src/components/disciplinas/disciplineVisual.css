@@ -1,4 +1,4 @@
-﻿[data-study-state="new"] { --subject-tone:var(--muted-foreground); --subject-ink:var(--muted-foreground); }
+[data-study-state="new"] { --subject-tone:var(--muted-foreground); --subject-ink:var(--muted-foreground); }
 [data-study-state="studying"] { --subject-tone:var(--info); --subject-ink:var(--info-text); }
 [data-study-state="completed"] { --subject-tone:var(--study-emerald); --subject-ink:var(--study-emerald-ink); }
 .discipline-icon,.discipline-status { color:var(--subject-ink); background:color-mix(in srgb,var(--subject-tone) 10%,var(--card)); }
@@ -6,7 +6,7 @@
 .discipline-progress-fill { background:var(--subject-tone); }
 .discipline-progress-value { color:var(--subject-ink); }
 .discipline-progress-block[data-progress-empty="true"] .discipline-progress-value { color:var(--muted-foreground); }
-.discipline-summary { border-color:color-mix(in srgb,var(--subject-tone) 22%,var(--border)); background:color-mix(in srgb,var(--subject-tone) 3%,var(--card)); }
+.discipline-summary { border-color:var(--border); background:var(--card); }
 .discipline-catalog-card { border:1px solid var(--border); background:var(--card); transition:border-color .15s,box-shadow .15s; }
 .discipline-catalog-card > .discipline-status { align-self:flex-start; }
 .discipline-catalog-card:hover { border-color:color-mix(in srgb,var(--primary) 40%,var(--border)); box-shadow:var(--shadow-sm); }
