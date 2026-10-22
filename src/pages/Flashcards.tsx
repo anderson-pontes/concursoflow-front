@@ -1,4 +1,6 @@
 ﻿import React from "react";
+import "@/components/flashcards/flashcards.css";
+import { FlashcardsLoadState } from "@/components/flashcards/FlashcardsLoadState";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
@@ -124,7 +126,7 @@ export function Flashcards() {
 
   const [streakRev, setStreakRev] = React.useState(0);
 
-  const { deckFlat, metrics, deckCards, reviewQuery, configQuery } =
+  const { deckFlat, metrics, deckCards, reviewQuery, configQuery, decksQuery, metricsQuery } =
     useFlashcardsQueries({
       selectedDeckId: selectedDeck?.id,
       reviewDeckId,
@@ -154,7 +156,7 @@ export function Flashcards() {
         )
       : 0;
 
-  const { data: cfgData, refetch: refetchCfg } = configQuery;
+  const { data: cfgData } = configQuery;
 
   React.useEffect(() => {
     if (cfgData) setConfigDraft(cfgData);
@@ -168,6 +170,7 @@ export function Flashcards() {
 
     const changed =
       refreshedDeck.nome !== selectedDeck.nome ||
+      refreshedDeck.total_cards !== selectedDeck.total_cards ||
       refreshedDeck.descricao !== selectedDeck.descricao ||
       refreshedDeck.cor_hex !== selectedDeck.cor_hex ||
       refreshedDeck.parent_id !== selectedDeck.parent_id ||
@@ -287,8 +290,8 @@ export function Flashcards() {
   const saveConfigMutation = useMutation({
     mutationFn: async () => api.put("/flashcards/config", configDraft),
 
-    onSuccess: () => {
-      refetchCfg();
+    onSuccess: (response) => {
+      qc.setQueryData(["flashcards-config"], response.data);
 
       toast.success("Configurações salvas!");
     },
@@ -385,12 +388,12 @@ export function Flashcards() {
   }, []);
 
   return (
-    <div className="-m-6 min-h-full bg-background p-4 text-foreground sm:p-6">
+    <div className="flashcards-page w-full min-w-0 text-foreground">
       <div
         className={
           reviewFocusMode
-            ? "mx-auto w-full max-w-[780px] space-y-4 px-4 pb-6 pt-2"
-            : "mx-auto max-w-6xl space-y-4 pb-6"
+            ? "mx-auto w-full min-w-0 max-w-[780px] space-y-4 pb-6 pt-2"
+            : "w-full min-w-0 space-y-5 pb-6"
         }
       >
         {!reviewFocusMode ? (
@@ -400,6 +403,8 @@ export function Flashcards() {
             dueTodayTotal={dueTodayTotal}
             avgDominio={avgDominio}
             showDeckMetrics={deckMetrics.length > 0}
+            loading={metricsQuery.isPending}
+            metricsError={metricsQuery.isError}
           />
         ) : null}
 
@@ -415,7 +420,8 @@ export function Flashcards() {
           />
         ) : null}
 
-        {tab === "baralhos" ? (
+        {tab === "baralhos" && (decksQuery.isPending || decksQuery.isError || metricsQuery.isPending || metricsQuery.isError) ? <FlashcardsLoadState loading={decksQuery.isPending || metricsQuery.isPending} onRetry={() => void Promise.all([decksQuery.refetch(),metricsQuery.refetch()])} /> : null}
+        {tab === "baralhos" && decksQuery.isSuccess && metricsQuery.isSuccess ? (
           <FlashcardsDecksTab
             view={view}
             decks={deckFlat}
@@ -446,9 +452,10 @@ export function Flashcards() {
           />
         ) : null}
 
-        {tab === "revisar" ? (
+        {tab === "revisar" && (reviewQuery.isError || decksQuery.isError || metricsQuery.isError) ? <FlashcardsLoadState loading={false} onRetry={() => void Promise.all([reviewQuery.refetch(), decksQuery.refetch(), metricsQuery.refetch()])} /> : null}
+        {tab === "revisar" && !reviewQuery.isError && !decksQuery.isError && !metricsQuery.isError ? (
           <FlashcardsReviewTab
-            isLoading={reviewQuery.isLoading}
+            isLoading={reviewQuery.isLoading || decksQuery.isPending || metricsQuery.isPending}
             dueCards={dueCards}
             decks={deckFlat}
             deckMetrics={deckMetrics}
@@ -505,7 +512,8 @@ export function Flashcards() {
           />
         ) : null}
 
-        {tab === "config" ? (
+        {tab === "config" && configQuery.isError ? <FlashcardsLoadState loading={false} onRetry={() => void configQuery.refetch()} /> : null}
+        {tab === "config" && !configQuery.isError ? (
           <FlashcardsConfigTab
             loading={!cfgData}
             configDraft={configDraft}
@@ -514,13 +522,18 @@ export function Flashcards() {
             configDirtyCount={configDirtyCount}
             cfgSections={cfgSections}
             saving={saveConfigMutation.isPending}
+            saveStatus={saveConfigMutation.status}
             onToggleSection={(section) =>
               setCfgSections((s) => ({ ...s, [section]: !s[section] }))
             }
-            onConfigChange={(patch) =>
-              setConfigDraft((d) => ({ ...d, ...patch }))
-            }
-            onRestoreDefaults={() => setConfigDraft({ ...ANKI_DEFAULTS })}
+            onConfigChange={(patch) => {
+              saveConfigMutation.reset();
+              setConfigDraft((d) => ({ ...d, ...patch }));
+            }}
+            onRestoreDefaults={() => {
+              saveConfigMutation.reset();
+              setConfigDraft({ ...ANKI_DEFAULTS });
+            }}
             onSave={() => saveConfigMutation.mutate()}
           />
         ) : null}

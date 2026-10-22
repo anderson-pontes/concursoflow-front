@@ -1,4 +1,5 @@
-import { BookOpen, MoreHorizontal, Pencil, Play, Trash2 } from "lucide-react";
+import type { CSSProperties } from "react";
+import { BookOpen, MoreHorizontal, Pencil, Play, Plus, Trash2 } from "lucide-react";
 
 import type { Deck, DeckMetricRow } from "@/lib/flashcards/types";
 import { Badge } from "@/components/ui/badge";
@@ -22,12 +23,13 @@ import { Progress } from "@/components/ui/progress";
 
 type Props = {
   deck: Deck;
-  metric: DeckMetricRow;
+  metric?: DeckMetricRow;
   deleting?: boolean;
   onOpen: (deck: Deck) => void;
   onEdit: (deck: Deck) => void;
   onDelete: (deck: Deck) => void;
   onReview: (deckId: string) => void;
+  onAddCards: (deck: Deck) => void;
 };
 
 export function DeckCatalogCard({
@@ -38,23 +40,27 @@ export function DeckCatalogCard({
   onEdit,
   onDelete,
   onReview,
+  onAddCards,
 }: Props) {
   const cardCount = deck.total_cards ?? 0;
-  const color = deck.cor_hex || "hsl(var(--primary))";
+  const empty = cardCount === 0;
+  const domain = metric?.dominio_pct;
+  const hasDomain = !empty && typeof domain === "number" && Number.isFinite(domain) && domain >= 0 && domain <= 100;
+  const color = deck.cor_hex || "var(--primary)";
 
   return (
-    <Card className="h-full transition-shadow hover:shadow-md">
+    <Card className="flash-deck h-full min-w-0 transition-shadow hover:shadow-md" style={{"--deck-color":color} as CSSProperties}>
       <CardHeader className="gap-x-3">
         <div className="flex min-w-0 items-start gap-3">
           <div
             className="flex size-11 shrink-0 items-center justify-center rounded-xl text-white shadow-sm"
-            style={{ backgroundColor: color }}
+            style={{ color, backgroundColor: "color-mix(in srgb, var(--deck-color) 12%, var(--card))" }}
             aria-hidden="true"
           >
             <BookOpen className="size-5" />
           </div>
           <div className="min-w-0">
-            <CardTitle className="truncate" title={deck.nome}>{deck.nome}</CardTitle>
+            <CardTitle className="line-clamp-2 leading-snug [overflow-wrap:anywhere]" title={deck.nome}>{deck.nome}</CardTitle>
             <CardDescription className="mt-1 truncate" title={deck.full_path}>
               {deck.parent_id ? deck.full_path ?? "Subbaralho" : "Baralho principal"}
             </CardDescription>
@@ -91,37 +97,37 @@ export function DeckCatalogCard({
       </CardHeader>
 
       <CardContent className="flex flex-1 flex-col gap-4">
-        <p className="line-clamp-2 min-h-10 text-sm text-muted-foreground">
+        <p className="line-clamp-2 min-h-10 text-sm leading-relaxed text-muted-foreground [overflow-wrap:anywhere]" title={deck.descricao??undefined}>
           {deck.descricao || "Organize seus cartões e acompanhe o avanço das revisões."}
         </p>
 
         <div className="flex flex-wrap gap-2">
           <Badge variant="secondary">
-            {cardCount} {cardCount === 1 ? "cartão" : "cartões"}
+            {empty ? "Sem cartões" : `${cardCount} ${cardCount === 1 ? "cartão" : "cartões"}`}
           </Badge>
-          {metric.vencidos > 0 ? (
+          {empty ? <Badge variant="outline">Não iniciado</Badge> : metric && metric.vencidos > 0 ? (
             <Badge variant="destructive">{metric.vencidos} para revisar</Badge>
           ) : (
-            <Badge variant="outline">Revisões em dia</Badge>
+            metric ? <Badge variant="outline">Revisões em dia</Badge> : null
           )}
         </div>
 
-        <div className="space-y-2">
+        {hasDomain ? <div className="space-y-2">
           <div className="flex items-center justify-between text-xs">
             <span className="font-medium text-muted-foreground">Domínio</span>
-            <span className="font-semibold tabular-nums text-foreground">{metric.dominio_pct}%</span>
+            <span className="font-semibold tabular-nums text-foreground">{domain}%</span>
           </div>
-          <Progress value={metric.dominio_pct} aria-label={`Domínio do baralho: ${metric.dominio_pct}%`} />
-        </div>
+          <Progress value={domain} aria-label={`Domínio do baralho: ${domain}%`} />
+        </div> : <p className="text-sm text-muted-foreground">{empty ? "Adicione o primeiro cartão para começar." : "Domínio indisponível"}</p>}
       </CardContent>
 
-      <CardFooter className="grid grid-cols-2 gap-2">
+      <CardFooter className="mt-auto grid grid-cols-2 gap-2">
         <Button type="button" variant="outline" onClick={() => onOpen(deck)}>
           Ver cartões
         </Button>
-        <Button type="button" onClick={() => onReview(deck.id)}>
-          <Play aria-hidden="true" />
-          Estudar
+        <Button type="button" className="min-w-0 px-2 text-xs sm:text-sm" onClick={() => empty ? onAddCards(deck) : onReview(deck.id)}>
+          {empty ? <Plus aria-hidden="true" /> : <Play aria-hidden="true" />}
+          {empty ? "Adicionar cartões" : "Estudar"}
         </Button>
       </CardFooter>
     </Card>

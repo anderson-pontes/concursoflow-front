@@ -1,11 +1,13 @@
 import { toast } from "sonner";
+import { SlidersHorizontal, TimerReset, Gauge, Info, AlertCircle, CheckCircle2, Circle, XCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 import {
   FlashCfgAccordion,
   FlashCfgFloatRow,
   FlashCfgIntRow,
 } from "@/components/flashcards/FlashcardConfigForms";
-import { ANKI_DEFAULTS, FLASH_CARD_SHADOW } from "@/lib/flashcards/constants";
+import { ANKI_DEFAULTS } from "@/lib/flashcards/constants";
 import type { FlashcardConfig } from "@/lib/flashcards/types";
 
 type Props = {
@@ -16,6 +18,7 @@ type Props = {
   configDirtyCount: number;
   cfgSections: { limits: boolean; algorithm: boolean; penalties: boolean };
   saving: boolean;
+  saveStatus?: "idle" | "pending" | "success" | "error";
   onToggleSection: (section: "limits" | "algorithm" | "penalties") => void;
   onConfigChange: (patch: Partial<FlashcardConfig>) => void;
   onRestoreDefaults: () => void;
@@ -30,6 +33,7 @@ export function FlashcardsConfigTab({
   configDirtyCount,
   cfgSections,
   saving,
+  saveStatus = "idle",
   onToggleSection,
   onConfigChange,
   onRestoreDefaults,
@@ -40,10 +44,9 @@ export function FlashcardsConfigTab({
   }
 
   return (
-    <div className="space-y-4 pb-4">
+    <fieldset disabled={saving} className="flash-settings w-full min-w-0 space-y-3 pb-4">
       <div
-        className="rounded-[12px] border border-neutral-100 bg-white p-4 dark:border-neutral-700 dark:bg-neutral-800"
-        style={{ boxShadow: FLASH_CARD_SHADOW }}
+        className="rounded-xl border border-border bg-card p-4"
       >
         <h2 className="text-lg font-bold text-foreground dark:text-neutral-100">Repetição espaçada</h2>
         <p className="mt-1 text-sm text-muted-foreground dark:text-neutral-400">
@@ -52,7 +55,9 @@ export function FlashcardsConfigTab({
       </div>
 
       <FlashCfgAccordion
-        title="📊 Limites diários"
+        title="Limites diários"
+        icon={SlidersHorizontal}
+        columns
         open={cfgSections.limits}
         onToggle={() => onToggleSection("limits")}
       >
@@ -84,7 +89,9 @@ export function FlashcardsConfigTab({
       </FlashCfgAccordion>
 
       <FlashCfgAccordion
-        title="⚙️ Algoritmo de intervalos"
+        title="Algoritmo de intervalos"
+        icon={TimerReset}
+        columns
         open={cfgSections.algorithm}
         onToggle={() => onToggleSection("algorithm")}
       >
@@ -93,6 +100,8 @@ export function FlashcardsConfigTab({
           tooltip="Multiplica o intervalo atual ao marcar Difícil. Valores maiores = intervalos mais longos mesmo com dificuldade."
           value={configDraft.intervalo_dificil_mult ?? ANKI_DEFAULTS.intervalo_dificil_mult}
           onChange={(v) => onConfigChange({ intervalo_dificil_mult: v })}
+          defaultVal={ANKI_DEFAULTS.intervalo_dificil_mult}
+          onChipReset={() => onConfigChange({ intervalo_dificil_mult: ANKI_DEFAULTS.intervalo_dificil_mult })}
           min={1}
           max={5}
           step={0.05}
@@ -105,6 +114,8 @@ export function FlashcardsConfigTab({
           tooltip="Fator extra no intervalo ao marcar Fácil. Aumenta o espaçamento de cartões que você domina."
           value={configDraft.bonus_facil_mult ?? ANKI_DEFAULTS.bonus_facil_mult}
           onChange={(v) => onConfigChange({ bonus_facil_mult: v })}
+          defaultVal={ANKI_DEFAULTS.bonus_facil_mult}
+          onChipReset={() => onConfigChange({ bonus_facil_mult: ANKI_DEFAULTS.bonus_facil_mult })}
           min={1}
           max={5}
           step={0.05}
@@ -117,6 +128,8 @@ export function FlashcardsConfigTab({
           tooltip="Fator de facilidade inicial dos cartões novos. Anki usa 2,5."
           value={configDraft.facilidade_inicial ?? ANKI_DEFAULTS.facilidade_inicial}
           onChange={(v) => onConfigChange({ facilidade_inicial: v })}
+          defaultVal={ANKI_DEFAULTS.facilidade_inicial}
+          onChipReset={() => onConfigChange({ facilidade_inicial: ANKI_DEFAULTS.facilidade_inicial })}
           min={1.3}
           max={9.9}
           step={0.1}
@@ -129,6 +142,8 @@ export function FlashcardsConfigTab({
           tooltip="Piso do EF: evita que intervalos fiquem ridiculamente curtos após muitas dificuldades."
           value={configDraft.facilidade_minima ?? ANKI_DEFAULTS.facilidade_minima}
           onChange={(v) => onConfigChange({ facilidade_minima: v })}
+          defaultVal={ANKI_DEFAULTS.facilidade_minima}
+          onChipReset={() => onConfigChange({ facilidade_minima: ANKI_DEFAULTS.facilidade_minima })}
           min={1}
           max={5}
           step={0.1}
@@ -139,7 +154,9 @@ export function FlashcardsConfigTab({
       </FlashCfgAccordion>
 
       <FlashCfgAccordion
-        title="🎯 Penalidades e bônus"
+        title="Penalidades e bônus"
+        icon={Gauge}
+        columns
         open={cfgSections.penalties}
         onToggle={() => onToggleSection("penalties")}
       >
@@ -148,6 +165,8 @@ export function FlashcardsConfigTab({
           tooltip="Quanto o fator de facilidade cai ao marcar Difícil."
           value={configDraft.penalidade_dificil ?? ANKI_DEFAULTS.penalidade_dificil}
           onChange={(v) => onConfigChange({ penalidade_dificil: v })}
+          defaultVal={ANKI_DEFAULTS.penalidade_dificil}
+          onChipReset={() => onConfigChange({ penalidade_dificil: ANKI_DEFAULTS.penalidade_dificil })}
           min={0}
           max={1}
           step={0.01}
@@ -160,6 +179,8 @@ export function FlashcardsConfigTab({
           tooltip="Quanto o EF sobe ao marcar Fácil, recompensando cartões fáceis."
           value={configDraft.bonus_facilidade_facil ?? ANKI_DEFAULTS.bonus_facilidade_facil}
           onChange={(v) => onConfigChange({ bonus_facilidade_facil: v })}
+          defaultVal={ANKI_DEFAULTS.bonus_facilidade_facil}
+          onChipReset={() => onConfigChange({ bonus_facilidade_facil: ANKI_DEFAULTS.bonus_facilidade_facil })}
           min={0}
           max={1}
           step={0.01}
@@ -169,28 +190,26 @@ export function FlashcardsConfigTab({
         />
       </FlashCfgAccordion>
 
-      <div className="sticky bottom-0 z-30 mt-6 flex flex-col gap-3 rounded-t-xl border border-border bg-card px-4 py-4 shadow-lg sm:flex-row sm:items-center sm:justify-between">
-        <div className="text-sm">
-          {configDirtyCount > 0 ? (
-            <span className="font-semibold text-amber-700 dark:text-amber-400">
-              ⚠️ {configDirtyCount} alteraç{configDirtyCount === 1 ? "ão" : "ões"} não salva
-              {configDirtyCount === 1 ? "" : "s"}
-            </span>
-          ) : (
-            <span className="text-muted-foreground dark:text-neutral-400">Nenhuma alteração pendente.</span>
-          )}
+      <div className="flex flex-col gap-3 rounded-xl border border-border bg-card p-4 sm:flex-row sm:items-center sm:justify-between">
+        <div role="status" aria-live="polite" className="min-w-0 text-sm">
+          {Object.keys(configErrors).length > 0 ? <span className="flex items-center gap-2 text-destructive"><XCircle className="size-4 shrink-0" aria-hidden />Corrija os valores indicados antes de salvar.</span>
+            : saving ? <span className="text-muted-foreground">Salvando configurações…</span>
+            : saveStatus === "error" ? <span className="flex items-center gap-2 text-destructive"><AlertCircle className="size-4 shrink-0" aria-hidden />Não foi possível salvar. Suas alterações foram mantidas. Tente novamente.</span>
+            : configDirtyCount > 0 ? <span className="flex items-center gap-2 rounded-lg bg-amber-50 px-3 py-2 font-medium text-amber-800 dark:bg-amber-950/30 dark:text-amber-300"><AlertCircle className="size-4 shrink-0" aria-hidden />Existem alterações não salvas.</span>
+            : saveStatus === "success" ? <span className="flex items-center gap-2 text-emerald-700 dark:text-emerald-400"><CheckCircle2 className="size-4 shrink-0" aria-hidden />Configurações salvas. Nenhuma alteração pendente.</span>
+            : <span className="text-muted-foreground">Nenhuma alteração pendente.</span>}
         </div>
         <div className="flex flex-wrap gap-2">
-          <button
+          <Button
             type="button"
             onClick={onRestoreDefaults}
-            className="rounded-[10px] border-2 border-neutral-200 px-4 py-2.5 text-sm font-semibold text-foreground transition hover:bg-neutral-50 dark:border-neutral-600 dark:text-neutral-200 dark:hover:bg-neutral-800"
+            variant="outline" className="min-h-11"
           >
             Restaurar padrões
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
-            disabled={saving || Object.keys(configErrors).length > 0}
+            disabled={saving || configDirtyCount === 0 || Object.keys(configErrors).length > 0}
             onClick={() => {
               if (Object.keys(configErrors).length > 0) {
                 toast.error("Corrija os campos em vermelho antes de salvar.");
@@ -198,22 +217,22 @@ export function FlashcardsConfigTab({
               }
               onSave();
             }}
-            className="rounded-[10px] px-5 py-2.5 text-sm font-bold text-white shadow-md transition hover:brightness-110 disabled:opacity-50 bg-primary"
+            className="min-h-11"
           >
             {saving ? "Salvando…" : "Salvar configurações"}
-          </button>
+          </Button>
         </div>
       </div>
 
-      <div className="rounded-[12px] border border-neutral-100 bg-violet-50/50 p-4 text-xs text-muted-foreground dark:border-violet-900/30 dark:bg-violet-950/20 dark:text-neutral-400">
-        <p className="font-semibold text-foreground dark:text-neutral-200">Lembretes rápidos</p>
-        <ul className="mt-2 list-inside list-disc space-y-1">
-          <li><span className="font-medium text-red-600">Errei</span> — reinicia o cartão.</li>
-          <li><span className="font-medium text-orange-600">Difícil</span> — intervalo × mult. difícil.</li>
-          <li><span className="font-medium text-blue-600">Bom</span> — SM-2 padrão.</li>
-          <li><span className="font-medium text-emerald-600">Fácil</span> — intervalo com bônus.</li>
+      <div className="rounded-xl border border-primary/10 bg-primary/5 p-4 text-xs text-muted-foreground">
+        <p className="flex items-center gap-2 text-sm font-semibold text-foreground"><Info className="size-4 shrink-0 text-primary" aria-hidden />Como funciona a repetição espaçada</p>
+        <ul className="mt-3 grid gap-x-6 gap-y-2 sm:grid-cols-2">
+          <li className="flex items-start gap-2"><Circle className="mt-0.5 size-3 shrink-0 fill-red-500 text-red-500" aria-hidden /><span><strong className="text-foreground">Errei</strong> — reinicia o cartão.</span></li>
+          <li className="flex items-start gap-2"><Circle className="mt-0.5 size-3 shrink-0 fill-amber-500 text-amber-500" aria-hidden /><span><strong className="text-foreground">Difícil</strong> — aplica o multiplicador de dificuldade ao intervalo.</span></li>
+          <li className="flex items-start gap-2"><Circle className="mt-0.5 size-3 shrink-0 fill-blue-500 text-blue-500" aria-hidden /><span><strong className="text-foreground">Bom</strong> — segue o comportamento padrão do algoritmo.</span></li>
+          <li className="flex items-start gap-2"><Circle className="mt-0.5 size-3 shrink-0 fill-emerald-500 text-emerald-500" aria-hidden /><span><strong className="text-foreground">Fácil</strong> — aplica o bônus ao intervalo.</span></li>
         </ul>
       </div>
-    </div>
+    </fieldset>
   );
 }

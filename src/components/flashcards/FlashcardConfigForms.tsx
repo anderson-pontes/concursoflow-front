@@ -1,206 +1,72 @@
 import React from "react";
-import { ChevronRight, Info } from "lucide-react";
+import { ChevronRight, Info, type LucideIcon } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
-import { FLASH_CARD_SHADOW } from "@/lib/flashcards/constants";
-
-export function FlashCfgAccordion({
-  title,
-  open,
-  onToggle,
-  children,
-}: {
-  title: string;
-  open: boolean;
-  onToggle: () => void;
-  children: React.ReactNode;
+export function FlashCfgAccordion({ title, open, onToggle, children, columns = false, icon: Icon }: {
+  title: string; open: boolean; onToggle: () => void; children: React.ReactNode; columns?: boolean; icon?: LucideIcon;
 }) {
+  const id = React.useId();
   return (
-    <div
-      className="overflow-hidden rounded-[12px] border border-neutral-200 bg-white dark:border-neutral-700 dark:bg-neutral-800"
-      style={{ boxShadow: FLASH_CARD_SHADOW }}
-    >
-      <button
-        type="button"
-        onClick={onToggle}
-        className="flex w-full items-center justify-between gap-2 px-4 py-3.5 text-left text-sm font-bold text-foreground transition hover:bg-neutral-50 dark:text-neutral-100 dark:hover:bg-neutral-700/50"
-      >
-        <span>{title}</span>
-        <ChevronRight
-          className={`h-5 w-5 shrink-0 text-muted-foreground transition-transform ${open ? "rotate-90" : ""}`}
-          aria-hidden
-        />
-      </button>
-      {open ? (
-        <div className="space-y-8 border-t border-neutral-100 px-4 py-5 dark:border-neutral-700">
-          {children}
-        </div>
-      ) : null}
-    </div>
+    <section className="min-w-0 overflow-hidden rounded-xl border border-border bg-card">
+      <Button type="button" variant="ghost" aria-expanded={open} aria-controls={id} onClick={onToggle}
+        className="flash-config-heading min-h-12 w-full justify-between rounded-none px-4 text-left text-sm font-semibold">
+        <span className="flex min-w-0 items-center gap-2">{Icon && <Icon className="size-4 shrink-0 text-primary" aria-hidden />}{title}</span>
+        <ChevronRight className={`size-4 shrink-0 transition-transform motion-reduce:transition-none ${open ? "rotate-90" : ""}`} aria-hidden />
+      </Button>
+      {open && <div id={id} className={`flash-config-fields border-t border-border p-4 ${columns ? "flash-config-columns" : ""}`}>{children}</div>}
+    </section>
   );
 }
 
-export function FlashCfgIntRow({
-  label,
-  tooltip,
-  value,
-  onChange,
-  min,
-  max,
-  sliderMax,
-  dirty,
-  error,
-  defaultVal,
-  onChipReset,
-}: {
-  label: string;
-  tooltip: string;
-  value: number;
-  onChange: (v: number) => void;
-  min: number;
-  max: number;
-  sliderMax?: number;
-  dirty: boolean;
-  error?: string;
-  defaultVal: number;
-  onChipReset: () => void;
-}) {
-  const sMax = sliderMax ?? max;
-  const clampFull = (n: number) => {
-    if (!Number.isFinite(n)) return min;
-    return Math.min(max, Math.max(min, Math.round(n)));
-  };
-  const sliderVal = Math.min(sMax, Math.max(min, Number.isFinite(value) ? Math.round(value) : min));
-  return (
-    <div className="space-y-3">
-      <div className="flex flex-wrap items-center gap-2 gap-y-2">
-        <label
-          className={`flex items-center gap-1.5 text-sm font-semibold ${
-            dirty ? "text-primary" : "text-foreground dark:text-neutral-100"
-          }`}
-        >
-          {dirty ? <span className="h-2 w-2 shrink-0 rounded-full bg-primary" aria-hidden /> : null}
-          {label}
-        </label>
-        <span className="cursor-help text-muted-foreground" title={tooltip}>
-          <Info className="h-4 w-4" aria-hidden />
-        </span>
-        <button
-          type="button"
-          onClick={onChipReset}
-          className="ml-auto rounded-full border border-violet-200 bg-violet-50 px-2.5 py-1 text-xs font-semibold text-primary transition hover:bg-violet-100 dark:border-violet-800 dark:bg-violet-950/50 dark:hover:bg-violet-900/40"
-        >
-          Padrão Anki: {defaultVal}
-        </button>
-      </div>
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-        <input
-          type="range"
-          min={min}
-          max={sMax}
-          value={sliderVal}
-          onChange={(e) => onChange(clampFull(Number(e.target.value)))}
-          className="h-2 flex-1 cursor-pointer accent-primary"
-        />
-        <input
-          type="number"
-          min={min}
-          max={max}
-          value={Number.isFinite(value) ? value : min}
-          onChange={(e) => onChange(clampFull(Number(e.target.value)))}
-          className={`w-full rounded-[10px] px-3 py-2.5 tabular-nums text-sm font-semibold outline-none sm:w-28 dark:bg-neutral-900 ${
-            error
-              ? "border-2 border-red-500"
-              : dirty
-                ? "border-2 border-primary"
-                : "border border-neutral-200 dark:border-neutral-600"
-          }`}
-        />
-      </div>
-      <div className="flex justify-between text-xs tabular-nums text-muted-foreground">
-        <span>{min}</span>
-        <span>{sMax < max ? `${sMax} (slider)` : max}</span>
-      </div>
-      {error ? <p className="text-xs font-medium text-red-600 dark:text-red-400">{error}</p> : null}
-    </div>
-  );
+type RowProps = { label: string; tooltip: string; value: number; onChange: (v: number) => void; min: number; max: number; dirty: boolean; error?: string };
+type DefaultProps = { defaultVal?: number; onChipReset?: () => void };
+const format = (n: number) => Number.isFinite(n) ? String(n).replace(".", ",") : "";
+function parseEntry(text: string) {
+  const normalized = text.trim().replace(",", ".");
+  return /^\d+(?:\.\d*)?$/.test(normalized) ? Number(normalized) : NaN;
 }
 
-export function FlashCfgFloatRow({
-  label,
-  tooltip,
-  value,
-  onChange,
-  min,
-  max,
-  step,
-  dirty,
-  error,
-  decimals,
-}: {
-  label: string;
-  tooltip: string;
-  value: number;
-  onChange: (v: number) => void;
-  min: number;
-  max: number;
-  step: number;
-  dirty: boolean;
-  error?: string;
-  decimals: number;
-}) {
-  const clamp = (n: number) => {
-    if (!Number.isFinite(n)) return min;
-    const t = 10 ** decimals;
-    const r = Math.round(n * t) / t;
-    return Math.min(max, Math.max(min, r));
-  };
-  const safe = clamp(value);
-  const steps = Math.round((max - min) / step);
+function ConfigRow({ label, tooltip, value, onChange, min, max, dirty, error, step = 1, decimals = 0, sliderMax = max, defaultVal, onChipReset }: RowProps & DefaultProps & { step?: number; decimals?: number; sliderMax?: number }) {
+  const id = React.useId();
+  const [entry, setEntry] = React.useState(() => format(value));
+  React.useEffect(() => {
+    setEntry(previous => Object.is(parseEntry(previous), value) ? previous : format(value));
+  }, [value]);
+  const sliderValue = Number.isFinite(value) ? Math.min(sliderMax, Math.max(min, value)) : min;
   return (
-    <div className="space-y-3">
-      <div className="flex flex-wrap items-center gap-2">
-        <label
-          className={`flex items-center gap-1.5 text-sm font-semibold ${
-            dirty ? "text-primary" : "text-foreground dark:text-neutral-100"
-          }`}
-        >
-          {dirty ? <span className="h-2 w-2 shrink-0 rounded-full bg-primary" aria-hidden /> : null}
-          {label}
-        </label>
-        <span className="cursor-help text-muted-foreground" title={tooltip}>
-          <Info className="h-4 w-4" aria-hidden />
-        </span>
+    <div className="min-w-0 space-y-2">
+      <div className="flex items-center gap-1.5">
+        <label htmlFor={id} className="min-w-0 text-sm font-semibold leading-snug text-foreground">{label}</label>
+        <TooltipProvider><Tooltip><TooltipTrigger asChild>
+          <Button type="button" variant="ghost" size="icon" className="size-8 shrink-0 text-muted-foreground" aria-label={`Sobre ${label}`}><Info className="size-4" aria-hidden /></Button>
+        </TooltipTrigger><TooltipContent className="max-w-[min(22rem,calc(100vw-32px))] whitespace-normal">{tooltip}</TooltipContent></Tooltip></TooltipProvider>
       </div>
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-        <input
-          type="range"
-          min={0}
-          max={steps}
-          value={Math.round((safe - min) / step)}
-          onChange={(e) => onChange(clamp(min + Number(e.target.value) * step))}
-          className="h-2 flex-1 cursor-pointer accent-primary"
-        />
-        <input
-          type="number"
-          min={min}
-          max={max}
-          step={step}
-          value={safe}
-          onChange={(e) => onChange(clamp(Number(e.target.value)))}
-          className={`w-full rounded-[10px] px-3 py-2.5 tabular-nums text-sm font-semibold outline-none sm:w-28 dark:bg-neutral-900 ${
-            error
-              ? "border-2 border-red-500"
-              : dirty
-                ? "border-2 border-primary"
-                : "border border-neutral-200 dark:border-neutral-600"
-          }`}
-        />
+      <div className="grid min-w-0 grid-cols-[minmax(0,1fr)_5rem] items-center gap-3">
+        <input type="range" aria-label={`${label} (controle deslizante)`} min={min} max={sliderMax} step={step} value={sliderValue}
+          onChange={e => onChange(Number(e.target.value))} className="flash-range focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" />
+        <Input id={id} type={decimals ? "text" : "number"} inputMode={decimals ? "decimal" : "numeric"}
+          aria-invalid={Boolean(error)} aria-describedby={`${id}-limits${error ? ` ${id}-error` : ""}`}
+          min={decimals ? undefined : min} max={decimals ? undefined : max} step={decimals ? undefined : step}
+          value={decimals ? entry : Number.isFinite(value) ? value : ""}
+          onChange={e => {
+            const raw = e.target.value;
+            setEntry(raw);
+            const parsed = parseEntry(raw);
+            onChange(decimals || !Number.isFinite(parsed) ? parsed : Math.min(max, Math.max(min, Math.round(parsed))));
+          }}
+          onBlur={() => { if (Number.isFinite(value)) setEntry(format(value)); }}
+          className={`min-h-11 min-w-0 tabular-nums ${error ? "border-destructive" : dirty ? "border-primary" : ""}`} />
       </div>
-      <div className="flex justify-between text-xs tabular-nums text-muted-foreground">
-        <span>{min}</span>
-        <span>{max}</span>
+      <div id={`${id}-limits`} className="space-y-1 text-xs leading-relaxed text-muted-foreground">
+        <p>{sliderMax < max ? `Slider: ${format(min)} a ${format(sliderMax)} · Campo numérico: até ${format(max)}` : `Mín. ${format(min)} · Máx. ${format(max)}`}</p>
       </div>
-      {error ? <p className="text-xs font-medium text-red-600 dark:text-red-400">{error}</p> : null}
+      {defaultVal != null && <Button variant="ghost" size="sm" type="button" onClick={onChipReset}
+        className="min-h-9 max-w-full rounded-full bg-primary/5 px-3 text-xs text-primary hover:bg-primary/10">Padrão Anki: {format(defaultVal)}</Button>}
+      {error && <p id={`${id}-error`} role="alert" className="text-xs font-medium text-destructive">{error}</p>}
     </div>
   );
 }
+export function FlashCfgIntRow(props: RowProps & { sliderMax?: number; defaultVal: number; onChipReset: () => void }) { return <ConfigRow {...props} />; }
+export function FlashCfgFloatRow(props: RowProps & DefaultProps & { step: number; decimals: number }) { return <ConfigRow {...props} />; }

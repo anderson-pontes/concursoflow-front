@@ -20,7 +20,7 @@ export function useFlashcardsQueries({
   reviewDeckId,
   tab,
 }: UseFlashcardsQueriesOptions) {
-  const { data: deckFlat = [] } = useQuery({
+  const decksQuery = useQuery({
     queryKey: ["flashcards-decks-flat"],
     queryFn: async () => (await api.get("/flashcards/decks/flat")).data as Deck[],
   });
@@ -30,7 +30,7 @@ export function useFlashcardsQueries({
     queryFn: async () => (await api.get("/flashcards/decks/tree")).data as Deck[],
   });
 
-  const { data: metrics } = useQuery({
+  const metricsQuery = useQuery({
     queryKey: ["flashcards-metrics"],
     queryFn: async () => (await api.get("/flashcards/metrics")).data as FlashcardsMetrics,
   });
@@ -60,5 +60,5 @@ export function useFlashcardsQueries({
     enabled: tab === "config",
   });
 
-  return { deckFlat, deckTree, metrics, deckCards, reviewQuery, configQuery };
+  return { deckFlat: decksQuery.data ?? [], deckTree, metrics: metricsQuery.data, deckCards, reviewQuery, configQuery, decksQuery, metricsQuery };
 }

@@ -21,6 +21,9 @@ export function validateFlashcardConfig(
   const pb = draft.bonus_facilidade_facil ?? ANKI_DEFAULTS.bonus_facilidade_facil;
   if (pd < 0 || pd > 1) e.penalidade_dificil = "Entre 0 e 1";
   if (pb < 0 || pb > 1) e.bonus_facilidade_facil = "Entre 0 e 1";
+  for (const key of Object.keys(ANKI_DEFAULTS) as (keyof FlashcardConfig)[]) {
+    if (draft[key] !== undefined && !Number.isFinite(draft[key])) e[key] = "Informe um número válido.";
+  }
   return e;
 }
 

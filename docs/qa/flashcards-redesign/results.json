@@ -1,0 +1,122 @@
+[
+  {
+    "width": 375,
+    "theme": "light",
+    "passed": true,
+    "overflow": false,
+    "externalScroll": false,
+    "fullWidth": true,
+    "columns": 1,
+    "ranges": [],
+    "dialog": null,
+    "rangeWidths": [
+      201,
+      201
+    ]
+  },
+  {
+    "width": 375,
+    "theme": "dark",
+    "passed": true,
+    "overflow": false,
+    "externalScroll": false,
+    "fullWidth": true,
+    "columns": 1,
+    "ranges": [],
+    "dialog": null,
+    "rangeWidths": [
+      201,
+      201
+    ]
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "passed": true,
+    "overflow": false,
+    "externalScroll": false,
+    "fullWidth": true,
+    "columns": 3,
+    "ranges": [],
+    "dialog": null,
+    "rangeWidths": [
+      429,
+      429
+    ]
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "passed": true,
+    "overflow": false,
+    "externalScroll": false,
+    "fullWidth": true,
+    "columns": 3,
+    "ranges": [],
+    "dialog": null,
+    "rangeWidths": [
+      429,
+      429
+    ]
+  },
+  {
+    "width": 1920,
+    "theme": "light",
+    "passed": true,
+    "overflow": false,
+    "externalScroll": false,
+    "fullWidth": true,
+    "columns": 4,
+    "ranges": [],
+    "dialog": null,
+    "rangeWidths": [
+      439,
+      439
+    ]
+  },
+  {
+    "width": 1920,
+    "theme": "dark",
+    "passed": true,
+    "overflow": false,
+    "externalScroll": false,
+    "fullWidth": true,
+    "columns": 4,
+    "ranges": [],
+    "dialog": null,
+    "rangeWidths": [
+      439,
+      439
+    ]
+  },
+  {
+    "width": 2560,
+    "theme": "light",
+    "passed": true,
+    "overflow": false,
+    "externalScroll": false,
+    "fullWidth": true,
+    "columns": 4,
+    "ranges": [],
+    "dialog": null,
+    "rangeWidths": [
+      439,
+      439
+    ]
+  },
+  {
+    "width": 2560,
+    "theme": "dark",
+    "passed": true,
+    "overflow": false,
+    "externalScroll": false,
+    "fullWidth": true,
+    "columns": 4,
+    "ranges": [],
+    "dialog": null,
+    "rangeWidths": [
+      439,
+      439
+    ]
+  }
+]

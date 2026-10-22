@@ -4,7 +4,7 @@ import { X, Layers } from "lucide-react";
 import { toast } from "sonner";
 
 import { api } from "@/services/api";
-import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import type { Deck } from "@/lib/flashcards/types";
 import { SelectField } from "@/components/ui/select-field";
 import { Button } from "@/components/ui/button";
@@ -23,15 +23,19 @@ type Props = {
   flatDecks?: Deck[];
 };
 
-export function DeckFormModal({ open, onClose, deck, flatDecks = [] }: Props) {
+export function DeckFormModal(props: Props) {
+  return props.open ? <DeckFormContent key={props.deck?.id ?? "new"} {...props} /> : null;
+}
+
+function DeckFormContent({ open, onClose, deck, flatDecks = [] }: Props) {
   const qc = useQueryClient();
   const isEdit = Boolean(deck);
 
-  const [nome, setNome] = React.useState("");
-  const [descricao, setDescricao] = React.useState("");
-  const [cor, setCor] = React.useState<string>(DEFAULT_DECK_COLOR);
-  const [disciplinaId, setDisciplinaId] = React.useState("");
-  const [parentId, setParentId] = React.useState("");
+  const [nome, setNome] = React.useState(deck?.nome ?? "");
+  const [descricao, setDescricao] = React.useState(deck?.descricao ?? "");
+  const [cor, setCor] = React.useState<string>(deck?.cor_hex ?? DEFAULT_DECK_COLOR);
+  const [disciplinaId, setDisciplinaId] = React.useState(deck?.disciplina_id ?? "");
+  const [parentId, setParentId] = React.useState(deck?.parent_id ?? "");
 
   const { data: disciplinas } = useQuery({
     queryKey: ["disciplinas-all"],
@@ -84,22 +88,23 @@ export function DeckFormModal({ open, onClose, deck, flatDecks = [] }: Props) {
     <Dialog open={open} onOpenChange={(o) => { if (!o) onClose(); }}>
       <DialogContent
         hideClose
-        aria-describedby={undefined}
-        className="block w-full max-w-md gap-0 overflow-hidden rounded-2xl border border-border bg-card p-0 shadow-2xl"
+                className="flex max-h-[calc(100dvh-2rem)] w-[calc(100%-2rem)] max-w-[600px] flex-col gap-0 overflow-hidden rounded-xl border border-border bg-card p-0"
       >
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-border px-6 py-4">
+        <div className="flex shrink-0 items-center justify-between gap-3 border-b border-border px-4 py-3">
           <div className="flex items-center gap-2">
-            <Layers className="h-5 w-5 text-primary" />
+            <Layers className="h-5 w-5 text-primary" aria-hidden />
             <DialogTitle className="text-base font-semibold text-card-foreground">
               {isEdit ? "Editar baralho" : "Novo baralho"}
             </DialogTitle>
+            <DialogDescription className="sr-only">Organize seus cartões por assunto e personalize o baralho.</DialogDescription>
           </div>
           <Button
             type="button"
             onClick={onClose}
             variant="ghost"
             size="icon"
+            className="size-11"
             aria-label="Fechar"
           >
             <X className="h-4 w-4" />
@@ -107,7 +112,8 @@ export function DeckFormModal({ open, onClose, deck, flatDecks = [] }: Props) {
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-4 px-6 py-5">
+        <form onSubmit={handleSubmit} className="flex min-h-0 flex-1 flex-col">
+          <div className="min-h-0 flex-1 space-y-3 overflow-y-auto px-4 py-4">
           {/* Nome */}
           <div className="space-y-1.5">
             <Label htmlFor="deck-name">
@@ -120,6 +126,7 @@ export function DeckFormModal({ open, onClose, deck, flatDecks = [] }: Props) {
               value={nome}
               onChange={(e) => setNome(e.target.value)}
               maxLength={100}
+              required
               autoFocus
             />
           </div>
@@ -139,20 +146,22 @@ export function DeckFormModal({ open, onClose, deck, flatDecks = [] }: Props) {
           </div>
 
           {/* Disciplina */}
+          <div className="grid gap-3 sm:grid-cols-2">
           <div className="space-y-1.5">
-            <Label>
+            <Label htmlFor="deck-discipline">
               Disciplina
             </Label>
-            <SelectField value={disciplinaId} onValueChange={setDisciplinaId} options={[{ value: "", label: "Nenhuma" }, ...(disciplinas ?? []).map((d) => ({ value: d.id, label: d.nome }))]} />
+            <SelectField id="deck-discipline" aria-label="Disciplina" value={disciplinaId} onValueChange={setDisciplinaId} options={[{ value: "", label: "Nenhuma" }, ...(disciplinaId && !(disciplinas ?? []).some(d => d.id === disciplinaId) ? [{value:disciplinaId,label:"Disciplina vinculada"}] : []), ...(disciplinas ?? []).map((d) => ({ value: d.id, label: d.nome }))]} />
           </div>
 
           <div className="space-y-1.5">
-            <Label>
+            <Label htmlFor="deck-parent">
               Baralho pai (opcional)
             </Label>
-            <SelectField value={parentId} onValueChange={setParentId} options={[{ value: "", label: "Nenhum (raiz)" }, ...flatDecks.filter((d) => d.id !== deck?.id).map((d) => ({ value: d.id, label: d.full_path ?? d.nome }))]} />
+            <SelectField id="deck-parent" aria-label="Baralho pai" value={parentId} onValueChange={setParentId} options={[{ value: "", label: "Nenhum (raiz)" }, ...(parentId && !flatDecks.some(d => d.id === parentId) ? [{value:parentId,label:"Baralho pai vinculado"}] : []), ...flatDecks.filter((d) => d.id !== deck?.id).map((d) => ({ value: d.id, label: d.full_path ?? d.nome }))]} />
           </div>
 
+          </div>
           {/* Cor */}
           <fieldset className="space-y-1.5">
             <legend className="text-sm font-medium text-card-foreground">Cor</legend>
@@ -162,7 +171,7 @@ export function DeckFormModal({ open, onClose, deck, flatDecks = [] }: Props) {
                   key={c}
                   type="button"
                   onClick={() => setCor(c)}
-                  className="h-8 w-8 rounded-full border-2 transition-transform hover:scale-110"
+                  className="size-10 rounded-full border-2 transition-shadow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                   style={{
                     background: c,
                     borderColor: cor === c ? "white" : "transparent",
@@ -180,7 +189,7 @@ export function DeckFormModal({ open, onClose, deck, flatDecks = [] }: Props) {
                 type="color"
                 value={cor}
                 onChange={(e) => setCor(e.target.value)}
-                className="h-7 w-14 cursor-pointer rounded border border-border"
+                className="h-11 w-14 cursor-pointer rounded border border-border"
               />
               <span className="text-xs text-muted-foreground">{cor}</span>
             </div>
@@ -192,17 +201,18 @@ export function DeckFormModal({ open, onClose, deck, flatDecks = [] }: Props) {
             style={{ background: `${cor}22`, border: `1.5px solid ${cor}44` }}
           >
             <div
-              className="h-10 w-10 rounded-xl"
+              className="h-10 w-10 shrink-0 rounded-xl"
               style={{ background: cor }}
             />
-            <div>
+            <div className="min-w-0 [overflow-wrap:anywhere]">
               <p className="text-sm font-semibold text-card-foreground">{nome || "Nome do baralho"}</p>
               <p className="text-xs text-muted-foreground">{descricao || "Sem descrição"}</p>
             </div>
           </div>
 
+          </div>
           {/* Actions */}
-          <div className="flex justify-end gap-2 pt-2">
+          <div className="flex shrink-0 flex-wrap justify-end gap-2 border-t border-border px-4 py-3">
             <Button
               type="button"
               onClick={onClose}
@@ -212,7 +222,7 @@ export function DeckFormModal({ open, onClose, deck, flatDecks = [] }: Props) {
             </Button>
             <Button
               type="submit"
-              disabled={saveMutation.isPending}
+              disabled={saveMutation.isPending || !nome.trim()}
             >
               {saveMutation.isPending ? "Salvando..." : isEdit ? "Salvar alterações" : "Criar baralho"}
             </Button>

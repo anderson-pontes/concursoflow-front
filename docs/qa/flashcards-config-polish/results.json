@@ -1,0 +1,212 @@
+[
+  {
+    "width": 375,
+    "theme": "light",
+    "passed": true,
+    "overflow": false,
+    "externalScroll": false,
+    "fullWidth": true,
+    "columns": 1,
+    "ranges": [],
+    "dialog": null,
+    "rangeWidths": [
+      217,
+      217
+    ]
+  },
+  {
+    "width": 375,
+    "theme": "dark",
+    "passed": true,
+    "overflow": false,
+    "externalScroll": false,
+    "fullWidth": true,
+    "columns": 1,
+    "ranges": [],
+    "dialog": null,
+    "rangeWidths": [
+      217,
+      217
+    ]
+  },
+  {
+    "width": 390,
+    "theme": "light",
+    "passed": true,
+    "overflow": false,
+    "externalScroll": false,
+    "fullWidth": true,
+    "columns": 1,
+    "ranges": [],
+    "dialog": null,
+    "rangeWidths": [
+      232,
+      232
+    ]
+  },
+  {
+    "width": 390,
+    "theme": "dark",
+    "passed": true,
+    "overflow": false,
+    "externalScroll": false,
+    "fullWidth": true,
+    "columns": 1,
+    "ranges": [],
+    "dialog": null,
+    "rangeWidths": [
+      232,
+      232
+    ]
+  },
+  {
+    "width": 768,
+    "theme": "light",
+    "passed": true,
+    "overflow": false,
+    "externalScroll": false,
+    "fullWidth": true,
+    "columns": 1,
+    "ranges": [],
+    "dialog": null,
+    "rangeWidths": [
+      334,
+      334
+    ]
+  },
+  {
+    "width": 768,
+    "theme": "dark",
+    "passed": true,
+    "overflow": false,
+    "externalScroll": false,
+    "fullWidth": true,
+    "columns": 1,
+    "ranges": [],
+    "dialog": null,
+    "rangeWidths": [
+      334,
+      334
+    ]
+  },
+  {
+    "width": 1366,
+    "theme": "light",
+    "passed": true,
+    "overflow": false,
+    "externalScroll": false,
+    "fullWidth": true,
+    "columns": 3,
+    "ranges": [],
+    "dialog": null,
+    "rangeWidths": [
+      388,
+      388
+    ]
+  },
+  {
+    "width": 1366,
+    "theme": "dark",
+    "passed": true,
+    "overflow": false,
+    "externalScroll": false,
+    "fullWidth": true,
+    "columns": 3,
+    "ranges": [],
+    "dialog": null,
+    "rangeWidths": [
+      388,
+      388
+    ]
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "passed": true,
+    "overflow": false,
+    "externalScroll": false,
+    "fullWidth": true,
+    "columns": 3,
+    "ranges": [],
+    "dialog": null,
+    "rangeWidths": [
+      388,
+      388
+    ]
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "passed": true,
+    "overflow": false,
+    "externalScroll": false,
+    "fullWidth": true,
+    "columns": 3,
+    "ranges": [],
+    "dialog": null,
+    "rangeWidths": [
+      388,
+      388
+    ]
+  },
+  {
+    "width": 1920,
+    "theme": "light",
+    "passed": true,
+    "overflow": false,
+    "externalScroll": false,
+    "fullWidth": true,
+    "columns": 4,
+    "ranges": [],
+    "dialog": null,
+    "rangeWidths": [
+      388,
+      388
+    ]
+  },
+  {
+    "width": 1920,
+    "theme": "dark",
+    "passed": true,
+    "overflow": false,
+    "externalScroll": false,
+    "fullWidth": true,
+    "columns": 4,
+    "ranges": [],
+    "dialog": null,
+    "rangeWidths": [
+      388,
+      388
+    ]
+  },
+  {
+    "width": 2560,
+    "theme": "light",
+    "passed": true,
+    "overflow": false,
+    "externalScroll": false,
+    "fullWidth": true,
+    "columns": 4,
+    "ranges": [],
+    "dialog": null,
+    "rangeWidths": [
+      388,
+      388
+    ]
+  },
+  {
+    "width": 2560,
+    "theme": "dark",
+    "passed": true,
+    "overflow": false,
+    "externalScroll": false,
+    "fullWidth": true,
+    "columns": 4,
+    "ranges": [],
+    "dialog": null,
+    "rangeWidths": [
+      388,
+      388
+    ]
+  }
+]

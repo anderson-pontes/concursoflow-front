@@ -9,7 +9,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { EmptyState } from "@/components/ui/empty-state";
 import { Progress } from "@/components/ui/progress";
 import type { Deck, DeckMetricRow, Flashcard, FlashcardsView } from "@/lib/flashcards/types";
-import { cardStudyStatus, metricForDeck, stripHtml } from "@/lib/flashcards/utils";
+import { cardStudyStatus, stripHtml } from "@/lib/flashcards/utils";
 
 type Props = {
   view: FlashcardsView;
@@ -64,13 +64,16 @@ export function FlashcardsDecksTab({
   if (view === "decks" || !selectedDeck) {
     return (
       <>
+        {decks.length > 0 ? (
         <Card>
-          <CardHeader>
-            <CardTitle>Biblioteca de baralhos</CardTitle>
+          <CardHeader className="flex min-w-0 flex-col gap-3 xl:flex-row xl:items-start xl:justify-between">
+            <div className="min-w-0">
+            <CardTitle>Meus Baralhos</CardTitle>
             <CardDescription className="max-w-2xl">
-              Organize os cartões por matéria ou edital e acompanhe o que precisa ser revisado.
+              Organize seus cartões por disciplina, assunto ou edital.
             </CardDescription>
-            <CardAction className="hidden gap-2 sm:flex">
+            </div>
+            <CardAction className="flex flex-wrap gap-2">
               <Button type="button" variant="outline" onClick={onOpenImport}>
                 <FileArchive aria-hidden="true" /> Importar Anki
               </Button>
@@ -107,22 +110,17 @@ export function FlashcardsDecksTab({
               ) : null}
             </CardAction>
           </CardHeader>
-          <CardContent className="flex flex-wrap gap-2 sm:hidden">
-            <Button type="button" className="flex-1" onClick={() => onOpenDeckModal(null)}>
-              <Plus aria-hidden="true" /> Novo baralho
-            </Button>
-            <Button type="button" variant="outline" className="flex-1" onClick={onOpenImport}>
-              <FileArchive aria-hidden="true" /> Importar
-            </Button>
-          </CardContent>
+
         </Card>
+
+        ) : <h2 className="text-lg font-semibold">Meus Baralhos</h2>}
 
         {decks.length === 0 ? (
           <EmptyState
-            className="mt-4"
+            className="mt-4 rounded-xl border-solid bg-primary/5 py-8"
             icon={BookOpen}
-            title="Crie seu primeiro baralho"
-            description="Adicione cartões manualmente ou importe um arquivo do Anki para começar suas revisões."
+            title="Comece criando seu primeiro baralho"
+            description="Organize seus cartões por disciplina ou importe um baralho do Anki."
             action={(
               <div className="flex flex-wrap justify-center gap-2">
                 <Button type="button" onClick={() => onOpenDeckModal(null)}><Plus aria-hidden="true" /> Criar baralho</Button>
@@ -138,17 +136,18 @@ export function FlashcardsDecksTab({
               </h2>
               <p className="text-xs text-muted-foreground">Ordenados pela sua organização atual</p>
             </div>
-            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+            <div className="flash-deck-grid">
               {decks.map((deck) => (
                 <DeckCatalogCard
                   key={deck.id}
                   deck={deck}
-                  metric={metricForDeck(deckMetrics, deck.id)}
+                  metric={deckMetrics.find((metric) => metric.deck_id === deck.id)}
                   deleting={deletingDeckId === deck.id}
                   onOpen={onSelectDeck}
                   onEdit={(item) => onOpenDeckModal(item)}
                   onDelete={requestDeckDeletion}
                   onReview={onStartReview}
+                  onAddCards={(item) => { onSelectDeck(item); onOpenCardModal(null); }}
                 />
               ))}
             </div>
@@ -160,7 +159,10 @@ export function FlashcardsDecksTab({
   }
 
   const d = selectedDeck;
-  const dm = metricForDeck(deckMetrics, d.id);
+  const dm = deckMetrics.find((metric) => metric.deck_id === d.id);
+  const empty = d.total_cards === 0;
+  const domain = dm?.dominio_pct;
+  const hasDomain = !empty && typeof domain === "number" && Number.isFinite(domain) && domain >= 0 && domain <= 100;
   const nDominados = deckCards.filter((card) => cardStudyStatus(card) === "dominado").length;
   const nAprendendo = deckCards.filter((card) => cardStudyStatus(card) === "aprendendo").length;
   const nNovos = deckCards.filter((card) => cardStudyStatus(card) === "novo").length;
@@ -212,34 +214,35 @@ export function FlashcardsDecksTab({
 
         <CardContent className="space-y-5">
           <div className="flex flex-wrap gap-2">
-            <Badge variant="secondary">{deckCards.length} {deckCards.length === 1 ? "cartão" : "cartões"}</Badge>
-            <Badge variant={dm.vencidos > 0 ? "destructive" : "outline"}>
+            <Badge variant="secondary">{empty ? "Sem cartões" : `${d.total_cards} cartões`}</Badge>
+            {empty ? <Badge variant="outline">Não iniciado</Badge> : dm ? <Badge variant={dm.vencidos > 0 ? "destructive" : "outline"}>
               {dm.vencidos > 0 ? `${dm.vencidos} para revisar` : "Revisões em dia"}
-            </Badge>
+            </Badge> : null}
           </div>
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-            {[["Novos", nNovos], ["Aprendendo", nAprendendo], ["Dominados", nDominados], ["Domínio", `${dm.dominio_pct}%`]].map(([label, value]) => (
+          {!empty && <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+            {[["Novos", nNovos], ["Aprendendo", nAprendendo], ["Dominados", nDominados], ["Domínio", hasDomain ? `${domain}%` : "Indisponível"]].map(([label, value]) => (
               <div key={label} className="rounded-lg border border-border bg-muted/30 p-3">
                 <p className="text-xs font-medium text-muted-foreground">{label}</p>
                 <p className="mt-1 text-lg font-semibold tabular-nums text-foreground">{value}</p>
               </div>
             ))}
-          </div>
-          <div className="space-y-2">
+          </div>}
+          {hasDomain && <div className="space-y-2">
             <div className="flex items-center justify-between text-xs">
               <span className="font-medium text-muted-foreground">Progresso do baralho</span>
-              <span className="font-semibold tabular-nums">{dm.dominio_pct}%</span>
+              <span className="font-semibold tabular-nums">{domain}%</span>
             </div>
-            <Progress value={dm.dominio_pct} aria-label={`Progresso do baralho: ${dm.dominio_pct}%`} />
-          </div>
+            <Progress value={domain} aria-label={`Progresso do baralho: ${domain}%`} />
+          </div>}
+          {empty ? <p className="text-sm text-muted-foreground">Adicione o primeiro cartão para começar a estudar com repetição espaçada.</p> : null}
           <div className="grid gap-2 sm:grid-cols-2">
-            <Button type="button" size="lg" onClick={() => onStartReview(d.id)}><Play aria-hidden="true" /> Estudar este baralho</Button>
-            <Button type="button" size="lg" variant="outline" onClick={() => onOpenCardModal(null)}><Plus aria-hidden="true" /> Novo cartão</Button>
+            {!empty && <Button type="button" size="lg" onClick={() => onStartReview(d.id)}><Play aria-hidden="true" /> Estudar este baralho</Button>}
+            <Button type="button" size="lg" variant={empty ? "default" : "outline"} onClick={() => onOpenCardModal(null)}><Plus aria-hidden="true" /> {empty ? "Adicionar cartões" : "Novo cartão"}</Button>
           </div>
         </CardContent>
       </Card>
 
-      {deckCards.length === 0 ? (
+      {empty ? null : deckCards.length === 0 ? (
         <EmptyState
           icon={BookOpen}
           title="Este baralho ainda não tem cartões"

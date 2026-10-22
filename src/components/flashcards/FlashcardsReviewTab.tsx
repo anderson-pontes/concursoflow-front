@@ -1,4 +1,5 @@
-import { RotateCcw, CheckCircle2, Play } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { RotateCcw, CheckCircle2, Layers, Play } from "lucide-react";
 
 import { FLASH_CARD_SHADOW } from "@/lib/flashcards/constants";
 import type { Deck, DeckMetricRow, Flashcard, FlashcardConfig } from "@/lib/flashcards/types";
@@ -8,7 +9,6 @@ import {
   formatProxBr,
   previewIntervalos,
   stripHtml,
-  todayYmd,
   urgencyForDueCard,
 } from "@/lib/flashcards/utils";
 
@@ -49,7 +49,6 @@ export function FlashcardsReviewTab({
   decks,
   deckMetrics,
   totalCardsGlobal,
-  dueTodayTotal,
   reviewDeckId,
   reviewIdx,
   flipped,
@@ -80,81 +79,20 @@ export function FlashcardsReviewTab({
   }
 
   if (dueCards.length === 0) {
+    const noDecks = decks.length === 0;
+    const noCards = totalCardsGlobal === 0;
     const nextIso = earliestFutureReview(deckMetrics);
-    const today = todayYmd();
-    let nextLine = "Consulte seus baralhos para a próxima leva.";
-    if (nextIso) {
-      const d = new Date(`${nextIso.slice(0, 10)}T12:00:00`);
-      const t0 = new Date(`${today}T12:00:00`);
-      const diff = Math.round((d.getTime() - t0.getTime()) / 86400000);
-      const when =
-        diff <= 0
-          ? "em breve"
-          : diff === 1
-            ? "amanhã às 08h"
-            : `${formatProxBr(nextIso)} (às 08h)`;
-      nextLine = `Próxima revisão: ${when}`;
-    }
-    const restantes = Math.max(0, totalCardsGlobal - dueTodayTotal);
-
-    return (
-      <div className="relative space-y-4 pb-28">
-        <div
-          className="mx-auto flex max-w-lg flex-col items-center gap-6 rounded-[12px] border border-neutral-100 bg-white px-6 py-12 text-center dark:border-neutral-700 dark:bg-neutral-800"
-          style={{ boxShadow: FLASH_CARD_SHADOW }}
-        >
-          <div className="relative h-28 w-36" aria-hidden>
-            <svg viewBox="0 0 140 110" className="h-full w-full text-primary">
-              <rect x="12" y="24" width="88" height="62" rx="10" fill="currentColor" fillOpacity="0.1" stroke="currentColor" strokeWidth="2" />
-              <rect x="32" y="14" width="88" height="62" rx="10" fill="white" stroke="currentColor" strokeWidth="2" className="dark:fill-neutral-800" />
-              <path d="M48 44h56M48 54h40" stroke="currentColor" strokeWidth="2" strokeLinecap="round" opacity="0.35" />
-            </svg>
-            <div className="absolute bottom-2 right-4 flex h-12 w-12 items-center justify-center rounded-full bg-success text-white fc-check-bounce shadow-lg">
-              <CheckCircle2 className="h-7 w-7" strokeWidth={2.5} />
-            </div>
-          </div>
-          <div>
-            <h2 className="text-xl font-bold text-foreground dark:text-neutral-100">Tudo em dia! 🎉</h2>
-            <p className="mt-2 text-sm leading-relaxed text-muted-foreground dark:text-neutral-400">
-              Você revisou todos os cartões programados para hoje.
-            </p>
-          </div>
-          <div
-            className="w-full rounded-[10px] border border-violet-100 bg-violet-50/80 px-4 py-3 text-sm text-foreground dark:border-violet-900/40 dark:bg-violet-950/30 dark:text-neutral-200"
-          >
-            <p className="font-medium">{nextLine}</p>
-            <p className="mt-1 text-xs text-muted-foreground dark:text-neutral-400">
-              <span className="tabular-nums font-semibold text-primary">{restantes}</span>
-              {" "}cartões ativos nos seus baralhos
-            </p>
-          </div>
-          <div className="flex w-full flex-col gap-2 sm:flex-row sm:justify-center">
-            <button
-              type="button"
-              onClick={onGoToConfig}
-              className="rounded-[10px] border-2 border-border bg-white px-4 py-2.5 text-sm font-semibold text-foreground transition hover:border-primary dark:border-neutral-600 dark:bg-neutral-800 dark:text-neutral-100"
-            >
-              Revisar no avançado
-            </button>
-            <button
-              type="button"
-              onClick={onGoToBaralhos}
-              className="rounded-[10px] px-4 py-2.5 text-sm font-semibold text-white shadow-md transition hover:brightness-110 bg-primary"
-            >
-              Ver meus baralhos
-            </button>
-          </div>
-          <button
-            type="button"
-            onClick={onRefetch}
-            className="inline-flex items-center gap-2 rounded-[10px] border-2 border-primary bg-white px-5 py-2 text-sm font-semibold text-primary transition hover:bg-violet-50 dark:bg-neutral-800 dark:hover:bg-violet-950/40"
-          >
-            <RotateCcw className="h-4 w-4" />
-            Atualizar lista
-          </button>
-        </div>
+    const EmptyIcon = noDecks || noCards ? Layers : CheckCircle2;
+    return <section className="w-full rounded-xl border border-border bg-primary/5 px-4 py-6 sm:p-8">
+      <div className="mx-auto flex max-w-3xl flex-col items-center gap-4 text-center">
+        <EmptyIcon className="size-10 text-primary" aria-hidden />
+        <div className="space-y-2"><h2 className="text-xl font-semibold">{noDecks ? "Comece pelo seu primeiro baralho" : noCards ? "Seus baralhos ainda não têm cartões" : "Tudo em dia!"}</h2>
+        <p className="text-sm leading-relaxed text-muted-foreground">{noDecks ? "Crie um baralho ou importe um arquivo do Anki para começar." : noCards ? "Adicione cartões a um baralho para iniciar suas revisões." : "Nenhum cartão disponível na fila de revisão de hoje."}</p></div>
+        {!noCards&&<p className="text-sm text-muted-foreground">{totalCardsGlobal} cartões cadastrados{nextIso ? ` · Próxima revisão: ${formatProxBr(nextIso)}` : ""}</p>}
+        <div className="flex flex-wrap justify-center gap-2"><Button className="min-h-11" onClick={onGoToBaralhos}>Ver meus baralhos</Button>{!noCards&&<Button variant="outline" className="min-h-11" onClick={onGoToConfig}>Revisar no avançado</Button>}</div>
+        <Button variant="ghost" className="min-h-11" onClick={onRefetch}><RotateCcw className="size-4" aria-hidden />Atualizar lista</Button>
       </div>
-    );
+    </section>;
   }
 
   if (reviewSessionActive && reviewIdx >= dueCards.length) {
@@ -252,7 +190,7 @@ export function FlashcardsReviewTab({
                 FRENTE
               </p>
               <div
-                className="fc-review-card-content mx-auto max-w-full text-center text-[18px] font-medium leading-[1.8] text-foreground"
+                className="flash-review-content fc-review-card-content mx-auto max-w-full text-center text-[18px] font-medium leading-[1.8] text-foreground"
                 style={{ overflowWrap: "break-word", fontWeight: 500 }}
                 dangerouslySetInnerHTML={{ __html: currentCard.frente }}
               />
@@ -281,7 +219,7 @@ export function FlashcardsReviewTab({
                   <div className="pt-2">
                     <p className="mb-2 text-[10px] font-medium uppercase tracking-[2px] text-muted-foreground">VERSO</p>
                     <div
-                      className="fc-review-card-content rounded-[12px] border-l-[3px] border-primary bg-surface-muted p-5 text-base leading-[1.8] text-foreground"
+                      className="flash-review-content fc-review-card-content rounded-[12px] border-l-[3px] border-primary bg-surface-muted p-5 text-base leading-[1.8] text-foreground"
                       dangerouslySetInnerHTML={{ __html: currentCard.verso }}
                     />
 
@@ -415,6 +353,18 @@ export function FlashcardsReviewTab({
           ))}
         </div>
 
+        <button
+          type="button"
+          onClick={() => onStartSession(0)}
+          className="flex min-h-11 w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground transition hover:bg-primary/90 sm:w-fit"
+        >
+          <Play className="h-4 w-4 fill-current" />
+          Iniciar sessão completa
+          <span className="rounded-full bg-white/20 px-2 py-0.5 tabular-nums text-xs">
+            {dueCards.length} cartões
+          </span>
+        </button>
+
         <ul className="space-y-3">
           {dueCards.map((c, i) => {
             const u = urgencyForDueCard(c);
@@ -425,12 +375,12 @@ export function FlashcardsReviewTab({
             return (
               <li
                 key={c.id}
-                className="rounded-[10px] border border-neutral-100 bg-white p-4 dark:border-neutral-700 dark:bg-neutral-800"
+                className="min-w-0 rounded-xl border border-border bg-card p-4 [overflow-wrap:anywhere]"
                 style={{ boxShadow: FLASH_CARD_SHADOW }}
               >
                 <p className={`text-xs font-semibold ${u.className}`}>{u.text}</p>
                 <p className="mt-1 text-xs text-muted-foreground">{deckNome}</p>
-                <p className="mt-2 text-[15px] font-bold leading-snug text-foreground dark:text-neutral-100">
+                <p className="mt-2 line-clamp-3 text-[15px] font-semibold leading-relaxed text-foreground" title={stripHtml(c.frente)}>
                   {stripHtml(c.frente) || "(sem conteúdo)"}
                 </p>
                 <button
@@ -446,17 +396,7 @@ export function FlashcardsReviewTab({
           })}
         </ul>
 
-        <button
-          type="button"
-          onClick={() => onStartSession(0)}
-          className="fixed bottom-8 right-6 z-40 flex items-center gap-2 rounded-full bg-primary px-5 py-3 text-sm font-bold text-white shadow-xl shadow-primary/40 transition hover:brightness-110 md:right-10"
-        >
-          <Play className="h-4 w-4 fill-current" />
-          Iniciar sessão completa
-          <span className="rounded-full bg-white/20 px-2 py-0.5 tabular-nums text-xs">
-            {dueCards.length} cartões
-          </span>
-        </button>
+
       </div>
     </div>
   );

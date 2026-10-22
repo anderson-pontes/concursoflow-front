@@ -28,6 +28,29 @@ const metric: DeckMetricRow = {
 };
 
 describe("DeckCatalogCard", () => {
+  it("oferece adicionar cartões sem atribuir desempenho a um baralho vazio", async () => {
+    const emptyDeck = {...deck, total_cards: 0};
+    const onAddCards = vi.fn();
+    render(<DeckCatalogCard deck={emptyDeck} metric={{...metric, dominio_pct: 0}} onOpen={vi.fn()} onEdit={vi.fn()} onDelete={vi.fn()} onReview={vi.fn()} onAddCards={onAddCards} />);
+    expect(screen.getByText("Sem cartões")).toBeInTheDocument();
+    expect(screen.getByText("Não iniciado")).toBeInTheDocument();
+    expect(screen.queryByRole("progressbar")).not.toBeInTheDocument();
+    expect(screen.queryByText("Revisões em dia")).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", {name: "Estudar"})).not.toBeInTheDocument();
+    await userEvent.setup().click(screen.getByRole("button", {name: "Adicionar cartões"}));
+    expect(onAddCards).toHaveBeenCalledWith(emptyDeck);
+  });
+
+  it.each([undefined, NaN, -1, 101])("não apresenta domínio inválido: %s", (value) => {
+    render(<DeckCatalogCard deck={deck} metric={value === undefined ? undefined : {...metric, dominio_pct: value}} onOpen={vi.fn()} onEdit={vi.fn()} onDelete={vi.fn()} onReview={vi.fn()} onAddCards={vi.fn()} />);
+    expect(screen.queryByRole("progressbar")).not.toBeInTheDocument();
+    expect(screen.getByText("Domínio indisponível")).toBeInTheDocument();
+  });
+
+  it("preserva domínio zero quando a métrica é real e há cartões", () => {
+    render(<DeckCatalogCard deck={deck} metric={{...metric, dominio_pct: 0}} onOpen={vi.fn()} onEdit={vi.fn()} onDelete={vi.fn()} onReview={vi.fn()} onAddCards={vi.fn()} />);
+    expect(screen.getByRole("progressbar", {name: "Domínio do baralho: 0%"})).toBeInTheDocument();
+  });
   it("resume o baralho e oferece acesso aos cartões e ao estudo", async () => {
     const user = userEvent.setup();
     const onOpen = vi.fn();
@@ -41,6 +64,7 @@ describe("DeckCatalogCard", () => {
         onEdit={vi.fn()}
         onDelete={vi.fn()}
         onReview={onReview}
+        onAddCards={vi.fn()}
       />,
     );
 
@@ -68,6 +92,7 @@ describe("DeckCatalogCard", () => {
         onEdit={onEdit}
         onDelete={onDelete}
         onReview={vi.fn()}
+        onAddCards={vi.fn()}
       />,
     );
 
