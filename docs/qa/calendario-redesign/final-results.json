@@ -1,0 +1,518 @@
+[
+  {
+    "width": 375,
+    "theme": "light",
+    "passed": true,
+    "geometry": {
+      "mode": "agenda",
+      "docOverflow": false,
+      "mainOverflow": false,
+      "externalVertical": false,
+      "cells": [
+        {
+          "date": "2026-10-05",
+          "status": "cumprido",
+          "height": 133,
+          "overflow": false
+        },
+        {
+          "date": "2026-10-06",
+          "status": "parcial",
+          "height": 133,
+          "overflow": false
+        },
+        {
+          "date": "2026-10-07",
+          "status": "nao_cumprido",
+          "height": 133,
+          "overflow": false
+        },
+        {
+          "date": "2026-10-08",
+          "status": "estudou_sem_plano",
+          "height": 78,
+          "overflow": false
+        },
+        {
+          "date": "2026-10-20",
+          "status": "parcial",
+          "height": 133,
+          "overflow": false
+        },
+        {
+          "date": "2026-10-22",
+          "status": "futuro",
+          "height": 226.5,
+          "overflow": false
+        },
+        {
+          "date": "2026-10-25",
+          "status": "futuro",
+          "height": 133,
+          "overflow": false
+        }
+      ],
+      "dialog": null
+    },
+    "requests": 62
+  },
+  {
+    "width": 375,
+    "theme": "dark",
+    "passed": true,
+    "geometry": {
+      "mode": "agenda",
+      "docOverflow": false,
+      "mainOverflow": false,
+      "externalVertical": false,
+      "cells": [
+        {
+          "date": "2026-10-05",
+          "status": "cumprido",
+          "height": 133,
+          "overflow": false
+        },
+        {
+          "date": "2026-10-06",
+          "status": "parcial",
+          "height": 133,
+          "overflow": false
+        },
+        {
+          "date": "2026-10-07",
+          "status": "nao_cumprido",
+          "height": 133,
+          "overflow": false
+        },
+        {
+          "date": "2026-10-08",
+          "status": "estudou_sem_plano",
+          "height": 78,
+          "overflow": false
+        },
+        {
+          "date": "2026-10-20",
+          "status": "parcial",
+          "height": 133,
+          "overflow": false
+        },
+        {
+          "date": "2026-10-22",
+          "status": "futuro",
+          "height": 226.5,
+          "overflow": false
+        },
+        {
+          "date": "2026-10-25",
+          "status": "futuro",
+          "height": 133,
+          "overflow": false
+        }
+      ],
+      "dialog": null
+    },
+    "requests": 8
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "passed": true,
+    "geometry": {
+      "mode": "month",
+      "docOverflow": false,
+      "mainOverflow": false,
+      "externalVertical": false,
+      "cells": [
+        {
+          "date": "2026-10-01",
+          "status": "sem_planejamento",
+          "height": 96,
+          "overflow": false
+        },
+        {
+          "date": "2026-10-02",
+          "status": "sem_planejamento",
+          "height": 96,
+          "overflow": false
+        },
+        {
+          "date": "2026-10-03",
+          "status": "sem_planejamento",
+          "height": 96,
+          "overflow": false
+        },
+        {
+          "date": "2026-10-04",
+          "status": "sem_planejamento",
+          "height": 165.5,
+          "overflow": false
+        },
+        {
+          "date": "2026-10-05",
+          "status": "cumprido",
+          "height": 165.5,
+          "overflow": false
+        },
+        {
+          "date": "2026-10-06",
+          "status": "parcial",
+          "height": 165.5,
+          "overflow": false
+        },
+        {
+          "date": "2026-10-07",
+          "status": "nao_cumprido",
+          "height": 165.5,
+          "overflow": false
+        },
+        {
+          "date": "2026-10-08",
+          "status": "estudou_sem_plano",
+          "height": 165.5,
+          "overflow": false
+        },
+        {
+          "date": "2026-10-09",
+          "status": "sem_planejamento",
+          "height": 165.5,
+          "overflow": false
+        },
+        {
+          "date": "2026-10-10",
+          "status": "sem_planejamento",
+          "height": 165.5,
+          "overflow": false
+        },
+        {
+          "date": "2026-10-11",
+          "status": "sem_planejamento",
+          "height": 96,
+          "overflow": false
+        },
+        {
+          "date": "2026-10-12",
+          "status": "sem_planejamento",
+          "height": 96,
+          "overflow": false
+        },
+        {
+          "date": "2026-10-13",
+          "status": "sem_planejamento",
+          "height": 96,
+          "overflow": false
+        },
+        {
+          "date": "2026-10-14",
+          "status": "sem_planejamento",
+          "height": 96,
+          "overflow": false
+        },
+        {
+          "date": "2026-10-15",
+          "status": "sem_planejamento",
+          "height": 96,
+          "overflow": false
+        },
+        {
+          "date": "2026-10-16",
+          "status": "sem_planejamento",
+          "height": 96,
+          "overflow": false
+        },
+        {
+          "date": "2026-10-17",
+          "status": "sem_planejamento",
+          "height": 96,
+          "overflow": false
+        },
+        {
+          "date": "2026-10-18",
+          "status": "sem_planejamento",
+          "height": 255,
+          "overflow": false
+        },
+        {
+          "date": "2026-10-19",
+          "status": "sem_planejamento",
+          "height": 255,
+          "overflow": false
+        },
+        {
+          "date": "2026-10-20",
+          "status": "parcial",
+          "height": 255,
+          "overflow": false
+        },
+        {
+          "date": "2026-10-21",
+          "status": "futuro",
+          "height": 255,
+          "overflow": false
+        },
+        {
+          "date": "2026-10-22",
+          "status": "futuro",
+          "height": 255,
+          "overflow": false
+        },
+        {
+          "date": "2026-10-23",
+          "status": "futuro",
+          "height": 255,
+          "overflow": false
+        },
+        {
+          "date": "2026-10-24",
+          "status": "futuro",
+          "height": 255,
+          "overflow": false
+        },
+        {
+          "date": "2026-10-25",
+          "status": "futuro",
+          "height": 145.5,
+          "overflow": false
+        },
+        {
+          "date": "2026-10-26",
+          "status": "futuro",
+          "height": 145.5,
+          "overflow": false
+        },
+        {
+          "date": "2026-10-27",
+          "status": "futuro",
+          "height": 145.5,
+          "overflow": false
+        },
+        {
+          "date": "2026-10-28",
+          "status": "futuro",
+          "height": 145.5,
+          "overflow": false
+        },
+        {
+          "date": "2026-10-29",
+          "status": "futuro",
+          "height": 145.5,
+          "overflow": false
+        },
+        {
+          "date": "2026-10-30",
+          "status": "futuro",
+          "height": 145.5,
+          "overflow": false
+        },
+        {
+          "date": "2026-10-31",
+          "status": "futuro",
+          "height": 145.5,
+          "overflow": false
+        }
+      ],
+      "dialog": null
+    },
+    "requests": 62
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "passed": true,
+    "geometry": {
+      "mode": "month",
+      "docOverflow": false,
+      "mainOverflow": false,
+      "externalVertical": false,
+      "cells": [
+        {
+          "date": "2026-10-01",
+          "status": "sem_planejamento",
+          "height": 96,
+          "overflow": false
+        },
+        {
+          "date": "2026-10-02",
+          "status": "sem_planejamento",
+          "height": 96,
+          "overflow": false
+        },
+        {
+          "date": "2026-10-03",
+          "status": "sem_planejamento",
+          "height": 96,
+          "overflow": false
+        },
+        {
+          "date": "2026-10-04",
+          "status": "sem_planejamento",
+          "height": 165.5,
+          "overflow": false
+        },
+        {
+          "date": "2026-10-05",
+          "status": "cumprido",
+          "height": 165.5,
+          "overflow": false
+        },
+        {
+          "date": "2026-10-06",
+          "status": "parcial",
+          "height": 165.5,
+          "overflow": false
+        },
+        {
+          "date": "2026-10-07",
+          "status": "nao_cumprido",
+          "height": 165.5,
+          "overflow": false
+        },
+        {
+          "date": "2026-10-08",
+          "status": "estudou_sem_plano",
+          "height": 165.5,
+          "overflow": false
+        },
+        {
+          "date": "2026-10-09",
+          "status": "sem_planejamento",
+          "height": 165.5,
+          "overflow": false
+        },
+        {
+          "date": "2026-10-10",
+          "status": "sem_planejamento",
+          "height": 165.5,
+          "overflow": false
+        },
+        {
+          "date": "2026-10-11",
+          "status": "sem_planejamento",
+          "height": 96,
+          "overflow": false
+        },
+        {
+          "date": "2026-10-12",
+          "status": "sem_planejamento",
+          "height": 96,
+          "overflow": false
+        },
+        {
+          "date": "2026-10-13",
+          "status": "sem_planejamento",
+          "height": 96,
+          "overflow": false
+        },
+        {
+          "date": "2026-10-14",
+          "status": "sem_planejamento",
+          "height": 96,
+          "overflow": false
+        },
+        {
+          "date": "2026-10-15",
+          "status": "sem_planejamento",
+          "height": 96,
+          "overflow": false
+        },
+        {
+          "date": "2026-10-16",
+          "status": "sem_planejamento",
+          "height": 96,
+          "overflow": false
+        },
+        {
+          "date": "2026-10-17",
+          "status": "sem_planejamento",
+          "height": 96,
+          "overflow": false
+        },
+        {
+          "date": "2026-10-18",
+          "status": "sem_planejamento",
+          "height": 255,
+          "overflow": false
+        },
+        {
+          "date": "2026-10-19",
+          "status": "sem_planejamento",
+          "height": 255,
+          "overflow": false
+        },
+        {
+          "date": "2026-10-20",
+          "status": "parcial",
+          "height": 255,
+          "overflow": false
+        },
+        {
+          "date": "2026-10-21",
+          "status": "futuro",
+          "height": 255,
+          "overflow": false
+        },
+        {
+          "date": "2026-10-22",
+          "status": "futuro",
+          "height": 255,
+          "overflow": false
+        },
+        {
+          "date": "2026-10-23",
+          "status": "futuro",
+          "height": 255,
+          "overflow": false
+        },
+        {
+          "date": "2026-10-24",
+          "status": "futuro",
+          "height": 255,
+          "overflow": false
+        },
+        {
+          "date": "2026-10-25",
+          "status": "futuro",
+          "height": 145.5,
+          "overflow": false
+        },
+        {
+          "date": "2026-10-26",
+          "status": "futuro",
+          "height": 145.5,
+          "overflow": false
+        },
+        {
+          "date": "2026-10-27",
+          "status": "futuro",
+          "height": 145.5,
+          "overflow": false
+        },
+        {
+          "date": "2026-10-28",
+          "status": "futuro",
+          "height": 145.5,
+          "overflow": false
+        },
+        {
+          "date": "2026-10-29",
+          "status": "futuro",
+          "height": 145.5,
+          "overflow": false
+        },
+        {
+          "date": "2026-10-30",
+          "status": "futuro",
+          "height": 145.5,
+          "overflow": false
+        },
+        {
+          "date": "2026-10-31",
+          "status": "futuro",
+          "height": 145.5,
+          "overflow": false
+        }
+      ],
+      "dialog": null
+    },
+    "requests": 8
+  }
+]

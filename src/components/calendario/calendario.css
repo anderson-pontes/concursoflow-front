@@ -1,0 +1,19 @@
+.calendar-summary { container-type: inline-size; }
+.calendar-summary-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); grid-auto-rows:1fr; gap:1rem; }
+@container (min-width:600px) { .calendar-summary-grid { grid-template-columns:repeat(3,minmax(0,1fr)); } }
+@container (min-width:1050px) { .calendar-summary-grid { grid-template-columns:repeat(6,minmax(0,1fr)); } }
+.calendar-study-view { container-type:inline-size; }
+.calendar-study-month { display:none; }
+.calendar-study-agenda { display:grid; gap:.75rem; }
+@container (min-width:850px) { .calendar-study-month { display:block; } .calendar-study-agenda { display:none; } }
+.calendar-day,.calendar-status { --day-tone:var(--muted-foreground); --day-ink:var(--muted-foreground); }
+.calendar-day[data-status="cumprido"],.calendar-status[data-status="cumprido"] { --day-tone:var(--study-emerald); --day-ink:var(--study-emerald-ink); }
+.calendar-day[data-status="parcial"],.calendar-status[data-status="parcial"] { --day-tone:var(--study-amber); --day-ink:var(--study-amber-ink); }
+.calendar-day[data-status="nao_cumprido"],.calendar-status[data-status="nao_cumprido"] { --day-tone:var(--study-violet); --day-ink:var(--study-violet-ink); }
+.calendar-day[data-status="estudou_sem_plano"],.calendar-status[data-status="estudou_sem_plano"] { --day-tone:var(--info); --day-ink:var(--info-text); }
+.calendar-day[data-status="futuro"][data-planned="true"],.calendar-status[data-status="futuro"][data-planned="true"] { --day-tone:var(--primary); --day-ink:var(--primary); }
+.calendar-day { background:color-mix(in srgb,var(--day-tone) 6%,var(--card)); border-color:color-mix(in srgb,var(--day-tone) 20%,var(--border)); }
+.calendar-status { color:var(--day-ink); }
+.calendar-study-event { border-left-color:var(--calendar-subject); }
+.calendar-month-status-label { display:none; }
+@container (min-width:1000px) { .calendar-month-status-label { display:inline; } }

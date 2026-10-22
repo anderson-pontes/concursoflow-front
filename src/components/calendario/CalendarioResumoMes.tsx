@@ -1,43 +1,20 @@
-import type { CalendarioResumoMes } from "@/lib/calendario/types";
-import { fmtMinutosEstudo } from "@/lib/calendario/format";
+import { CalendarDays, CheckCircle2, Clock3, Flag, Target, Timer } from "lucide-react";
+import type { CalendarioResumoMes as Resumo } from "@/lib/calendario/types";
+import { fmtMinutosEstudo, fmtDuracaoCalendario } from "@/lib/calendario/format";
+import { MetricCard, type MetricTone } from "@/components/ui/metric-card";
+import "@/components/calendario/calendario.css";
 
-type Props = {
-  resumo: CalendarioResumoMes | undefined;
-  compact?: boolean;
-};
-
-export function CalendarioResumoMes({ resumo, compact }: Props) {
-  if (!resumo) return null;
-
-  const cards = [
-    { label: "Cumprimento", value: `${resumo.taxa_cumprimento_pct.toFixed(0)}%` },
-    { label: "Dias cumpridos", value: `${resumo.dias_cumpridos}/${resumo.dias_com_planejamento || "—"}` },
-    { label: "Parciais", value: String(resumo.dias_parciais) },
-    { label: "Pendentes", value: String(resumo.dias_nao_cumpridos) },
-    { label: "Realizado", value: fmtMinutosEstudo(resumo.minutos_realizados) },
-    { label: "Planejado", value: fmtMinutosEstudo(resumo.minutos_planejados) },
+type Props = { resumo: Resumo | undefined; compact?: boolean; loading?:boolean };
+export function CalendarioResumoMes({ resumo, compact, loading=false }: Props) {
+  if (!resumo && (!loading || compact)) return null;
+  if (compact && resumo) return <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground"><span><strong className="text-foreground">{resumo.taxa_cumprimento_pct.toFixed(0)}%</strong> cumprimento</span><span>{fmtMinutosEstudo(resumo.minutos_realizados)} estudados</span><span>{resumo.dias_cumpridos} dias ok</span></div>;
+  const cards: {label:string;value:string;icon:typeof Target;tone:MetricTone}[] = [
+    {label:"Cumprimento",value:`${resumo?.taxa_cumprimento_pct.toFixed(0)??0}%`,icon:Target,tone:"indigo"},
+    {label:"Dias cumpridos",value:`${resumo?.dias_cumpridos??0}/${resumo?.dias_com_planejamento||"—"}`,icon:CheckCircle2,tone:"green"},
+    {label:"Parciais",value:String(resumo?.dias_parciais??0),icon:Clock3,tone:"orange"},
+    {label:"Pendentes",value:String(resumo?.dias_nao_cumpridos??0),icon:Flag,tone:"purple"},
+    {label:"Realizado",value:fmtDuracaoCalendario(resumo?.minutos_realizados??0),icon:Timer,tone:"blue"},
+    {label:"Planejado",value:fmtDuracaoCalendario(resumo?.minutos_planejados??0),icon:CalendarDays,tone:"indigo"},
   ];
-
-  if (compact) {
-    return (
-      <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
-        <span>
-          <strong className="text-foreground">{resumo.taxa_cumprimento_pct.toFixed(0)}%</strong> cumprimento
-        </span>
-        <span>{fmtMinutosEstudo(resumo.minutos_realizados)} estudados</span>
-        <span>{resumo.dias_cumpridos} dias ok</span>
-      </div>
-    );
-  }
-
-  return (
-    <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6">
-      {cards.map((c) => (
-        <div key={c.label} className="rounded-lg border border-border bg-muted/30 px-3 py-2">
-          <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{c.label}</p>
-          <p className="mt-0.5 text-sm font-semibold tabular-nums text-foreground">{c.value}</p>
-        </div>
-      ))}
-    </div>
-  );
+  return <section aria-label="Resumo do mês" aria-busy={loading} className="calendar-summary"><div className="calendar-summary-grid">{cards.map(card=><MetricCard key={card.label} {...card} value={loading?<span className="block h-8 w-16 animate-pulse rounded bg-muted" aria-label="Carregando"/>:card.value}/>)}</div></section>;
 }

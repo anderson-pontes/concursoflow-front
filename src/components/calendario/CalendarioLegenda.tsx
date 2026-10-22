@@ -1,5 +1,6 @@
 import type { DiaStatus } from "@/lib/calendario/types";
 import { STATUS_DOT_CLASS, STATUS_LABEL } from "@/lib/calendario/constants";
+import { CalendarioStatus } from "@/components/calendario/CalendarioPresentation";
 
 const LEGEND_STATUSES: DiaStatus[] = [
   "cumprido",
@@ -14,7 +15,8 @@ const LEGEND_HINT: Partial<Record<DiaStatus, string>> = {
   futuro: "dias à frente; se houver plano no cronograma, mostra os minutos",
 };
 
-export function CalendarioLegenda({ className }: { className?: string }) {
+export function CalendarioLegenda({ className, detailed=false }: { className?: string; detailed?:boolean }) {
+  if(detailed) return <aside aria-label="Legenda do calendário" className={className}><div className="flex flex-wrap gap-2">{LEGEND_STATUSES.map(status=><span key={status} data-status={status} data-planned={status==="futuro"} className="calendar-day inline-flex rounded-lg border px-2.5 py-1.5"><CalendarioStatus status={status} planejado={status==="futuro"?1:0}/></span>)}</div><p className="mt-2 text-xs leading-relaxed text-muted-foreground">Planejado indica dias futuros com estudos programados. A borda Indigo destaca hoje.</p></aside>;
   return (
     <div className={className}>
       <p className="mb-2 text-sm font-medium text-muted-foreground">Legenda</p>

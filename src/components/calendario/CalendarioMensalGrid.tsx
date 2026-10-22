@@ -1,4 +1,7 @@
 import React from "react";
+import { format } from "date-fns";
+import { Button } from "@/components/ui/button";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 import type { CalendarioDia } from "@/lib/calendario/types";
 import { DIAS_SEMANA_PT } from "@/lib/calendario/constants";
@@ -9,6 +12,7 @@ type Props = {
   mes: number;
   dias: CalendarioDia[];
   onDiaClick?: (data: string) => void;
+  detailed?: boolean;
 };
 
 function buildGridCells(ano: number, mes: number, dias: CalendarioDia[]) {
@@ -36,9 +40,27 @@ function buildGridCells(ano: number, mes: number, dias: CalendarioDia[]) {
   }));
 }
 
-export function CalendarioMensalGrid({ ano, mes, dias, onDiaClick }: Props) {
+export function CalendarioMensalGrid({ ano, mes, dias, onDiaClick, detailed=false }: Props) {
   const today = new Date().toISOString().slice(0, 10);
   const cells = React.useMemo(() => buildGridCells(ano, mes, dias), [ano, mes, dias]);
+  const [showEmpty,setShowEmpty]=React.useState(false);
+  if(detailed) {
+    const localToday=format(new Date(),"yyyy-MM-dd");
+    const days=cells.filter(cell=>cell.isCurrentMonth&&cell.data);
+    const agendaDays=days.filter(cell=>showEmpty||cell.data===localToday||(cell.dia?.minutos_planejados??0)>0||(cell.dia?.minutos_realizados??0)>0||(cell.dia?.planejado.length??0)>0);
+    const renderDay=(cell:typeof cells[number],agenda=false)=><CalendarioDiaCell key={cell.key} detailed agenda={agenda} dia={cell.dia} data={cell.data!} diaNumero={cell.diaNumero} isCurrentMonth isToday={cell.data===localToday} onClick={onDiaClick?()=>onDiaClick(cell.data!):undefined}/>;
+    return <TooltipProvider><div className="calendar-study-view">
+      <section className="calendar-study-month" aria-label="Calendário mensal de estudos">
+        <div className="mb-2 grid grid-cols-7 gap-2">{DIAS_SEMANA_PT.map(label=><span key={label} className="py-1 text-center text-xs font-medium text-muted-foreground">{label}</span>)}</div>
+        <div className="grid grid-cols-7 gap-2">{cells.map(cell=>cell.isCurrentMonth?renderDay(cell):<div key={cell.key} aria-hidden/>)}</div>
+      </section>
+      <section className="calendar-study-agenda" aria-label="Agenda de estudos do mês">
+        <div className="flex flex-wrap items-center justify-between gap-2"><h2 className="text-sm font-semibold">Agenda do mês</h2><Button variant="ghost" size="sm" aria-pressed={showEmpty} onClick={()=>setShowEmpty(value=>!value)}>{showEmpty?"Ocultar dias vazios":"Mostrar dias vazios"}</Button></div>
+        {!agendaDays.length&&<p className="rounded-lg border border-dashed border-border p-5 text-center text-sm text-muted-foreground">Nenhum estudo planejado ou registrado neste mês.</p>}
+        {agendaDays.map(cell=>renderDay(cell,true))}
+      </section>
+    </div></TooltipProvider>;
+  }
 
   return (
     <div

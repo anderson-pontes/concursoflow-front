@@ -267,8 +267,8 @@ export function CalendarioEstudos() {
   const contextStatus = resolveConcursoContextStatus({
     resolved: contextResolved,
     concursoId: concursoAtivoId,
-    essentialError: contextError || isError || disciplinasError || blocosError,
-    essentialLoading: isLoading || disciplinasLoading || blocosLoading,
+    essentialError: contextError || disciplinasError || blocosError,
+    essentialLoading: disciplinasLoading || blocosLoading,
     disciplinesLoaded: !disciplinasLoading,
     disciplinesCount: disciplinasVinculadas.length,
   });
@@ -276,49 +276,53 @@ export function CalendarioEstudos() {
   if (contextStatus === "hydrating") return <PageSkeleton cards={2} rows={3} />;
 
   if (contextStatus === "no_contest") {
-    return <div className="space-y-6 pb-8"><header><h1 className="text-2xl font-semibold tracking-tight text-foreground">Calendário de estudos</h1><p className="text-sm text-muted-foreground">Escolha um concurso antes de acompanhar o planejamento.</p></header><BannerSemConcurso /></div>;
+    return <div className="space-y-6 pb-8"><header><h1 className="text-2xl font-semibold tracking-tight text-foreground">Calendário de Estudos</h1><p className="text-sm text-muted-foreground">Escolha um concurso antes de acompanhar o planejamento.</p></header><BannerSemConcurso /></div>;
   }
 
   if (contextStatus === "error") {
-    return <div className="space-y-6 pb-8"><header><h1 className="text-2xl font-semibold tracking-tight text-foreground">Calendário de estudos</h1></header><div role="alert" className="rounded-xl border border-destructive/30 bg-card p-8 text-center"><h2 className="font-semibold">Não foi possível carregar o calendário</h2><p className="mt-1 text-sm text-muted-foreground">Tente novamente sem perder o concurso selecionado.</p><Button className="mt-5" onClick={() => void Promise.all([qc.invalidateQueries({ queryKey: ["concursos"] }), refetch(), refetchDisciplinas(), refetchBlocos()])}>Tentar novamente</Button></div></div>;
+    return <div className="space-y-6 pb-8"><header><h1 className="text-2xl font-semibold tracking-tight text-foreground">Calendário de Estudos</h1></header><div role="alert" className="rounded-xl border border-destructive/30 bg-card p-8 text-center"><h2 className="font-semibold">Não foi possível carregar o calendário</h2><p className="mt-1 text-sm text-muted-foreground">Tente novamente sem perder o concurso selecionado.</p><Button className="mt-5" onClick={() => void Promise.all([qc.invalidateQueries({ queryKey: ["concursos"] }), refetch(), refetchDisciplinas(), refetchBlocos()])}>Tentar novamente</Button></div></div>;
   }
 
   if (contextStatus === "no_disciplines") {
-    return <div className="space-y-6 pb-8"><header><h1 className="text-2xl font-semibold tracking-tight text-foreground">Calendário de estudos</h1></header><EmptyState title="Adicione disciplinas para montar o calendário" description="O calendário será criado a partir do conteúdo vinculado ao concurso ativo." action={<Button asChild><Link to="/disciplinas">Adicionar disciplinas</Link></Button>} /></div>;
+    return <div className="space-y-6 pb-8"><header><h1 className="text-2xl font-semibold tracking-tight text-foreground">Calendário de Estudos</h1></header><EmptyState title="Adicione disciplinas para montar o calendário" description="O calendário será criado a partir do conteúdo vinculado ao concurso ativo." action={<Button asChild><Link to="/disciplinas">Adicionar disciplinas</Link></Button>} /></div>;
   }
 
 
   return (
     <div className="space-y-6 pb-8">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight text-foreground">Calendário de estudos</h1>
-        <p className="text-sm text-muted-foreground">Acompanhe cumprimento do plano mês a mês</p>
+      <header className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
+      <div className="min-w-0 max-w-2xl">
+        <h1 className="text-2xl font-semibold tracking-tight text-foreground">Calendário de Estudos</h1>
+        <p className="text-sm text-muted-foreground">Visualize seus estudos planejados, acompanhe o cumprimento das metas e organize sua preparação.</p>
       </div>
 
-      <CalendarioMesToolbar
+      <div className="w-full shrink-0 xl:w-80"><CalendarioMesToolbar
         ano={ano}
         mes={mes}
         onPrev={() => shiftMonth(-1)}
         onNext={() => shiftMonth(1)}
         onToday={goToday}
-      />
+      /></div>
+      </header>
 
-      <CalendarioResumoMes resumo={resumo} />
+      <CalendarioResumoMes resumo={resumo} loading={isLoading} />
 
       {resumo?.dias_com_planejamento === 0 && (
         <p className="text-sm text-muted-foreground">Nenhuma atividade planejada neste mês.</p>
       )}
 
       <section className="rounded-xl border border-border bg-card p-4 shadow-sm">
-        {isLoading ? (
+        {isError ? <div role="alert" className="space-y-3 py-8 text-center"><p className="text-sm text-destructive">Não foi possível carregar este mês.</p><Button variant="outline" onClick={()=>void refetch()}>Tentar novamente</Button></div> : isLoading ? (
           <p className="py-12 text-center text-sm text-muted-foreground">Carregando…</p>
         ) : (
-          <CalendarioMensalGrid ano={ano} mes={mes} dias={dias} onDiaClick={openDia} />
+          <CalendarioMensalGrid detailed ano={ano} mes={mes} dias={dias} onDiaClick={openDia} />
         )}
-        <CalendarioLegenda className="mt-4 border-t border-border pt-4" />
+        <CalendarioLegenda detailed className="mt-4 border-t border-border pt-4" />
       </section>
 
       <CalendarioDiaDetalheDialog
+        enhanced
+        disciplinas={disciplinasCatalog}
         data={diaSel}
         concursoId={concursoAtivoId}
         open={detalheOpen}

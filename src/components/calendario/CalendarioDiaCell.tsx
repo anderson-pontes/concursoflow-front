@@ -3,6 +3,7 @@ import type { CalendarioDia, DiaStatus, PlanejadoItem } from "@/lib/calendario/t
 import { STATUS_CELL_CLASS, STATUS_DOT_CLASS, STATUS_LABEL } from "@/lib/calendario/constants";
 import { fmtMinutosEstudo } from "@/lib/calendario/format";
 import { getDisciplinaColor, getDisciplinaPalette } from "@/components/disciplinas/disciplinaPalettes";
+import { CalendarioDiaExpanded } from "@/components/calendario/CalendarioPresentation";
 
 type Props = {
   dia: CalendarioDia | null;
@@ -10,6 +11,9 @@ type Props = {
   isCurrentMonth: boolean;
   isToday: boolean;
   onClick?: () => void;
+  detailed?: boolean;
+  agenda?: boolean;
+  data?: string;
 };
 
 export type CalendarioDisciplinaResumo = {
@@ -63,7 +67,7 @@ function cellAriaLabel(
   return `Dia ${diaNumero}, ${STATUS_LABEL[status]}${resumoDisciplinas}`;
 }
 
-export function CalendarioDiaCell({ dia, diaNumero, isCurrentMonth, isToday, onClick }: Props) {
+export function CalendarioDiaCell({ dia, diaNumero, isCurrentMonth, isToday, onClick, detailed=false, agenda=false, data }: Props) {
   const status = dia?.status ?? (isCurrentMonth ? "sem_planejamento" : "futuro");
   const minutosPlanejados = dia?.minutos_planejados ?? 0;
   const minutosRealizados = dia?.minutos_realizados ?? 0;
@@ -75,6 +79,8 @@ export function CalendarioDiaCell({ dia, diaNumero, isCurrentMonth, isToday, onC
   const disciplinasOcultas = Math.max(0, disciplinas.length - disciplinasVisiveis.length);
 
   const disabled = !isCurrentMonth || futuroVazio;
+
+  if(detailed) return <CalendarioDiaExpanded dia={dia} data={data} numero={diaNumero} today={isToday} onClick={onClick} disciplinas={disciplinas} agenda={agenda}/>;
 
   return (
     <button
