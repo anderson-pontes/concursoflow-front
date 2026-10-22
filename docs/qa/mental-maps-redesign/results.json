@@ -1,0 +1,134 @@
+[
+  {
+    "width": 360,
+    "theme": "light",
+    "passed": true,
+    "overflow": false,
+    "cards": 6,
+    "columns": 1,
+    "aligned": true,
+    "mobileFilter": true,
+    "cardOverflow": false
+  },
+  {
+    "width": 360,
+    "theme": "dark",
+    "passed": true,
+    "overflow": false,
+    "cards": 6,
+    "columns": 1,
+    "aligned": true,
+    "mobileFilter": true,
+    "cardOverflow": false
+  },
+  {
+    "width": 390,
+    "theme": "light",
+    "passed": true,
+    "overflow": false,
+    "cards": 6,
+    "columns": 1,
+    "aligned": true,
+    "mobileFilter": true,
+    "cardOverflow": false
+  },
+  {
+    "width": 390,
+    "theme": "dark",
+    "passed": true,
+    "overflow": false,
+    "cards": 6,
+    "columns": 1,
+    "aligned": true,
+    "mobileFilter": true,
+    "cardOverflow": false
+  },
+  {
+    "width": 430,
+    "theme": "light",
+    "passed": true,
+    "overflow": false,
+    "cards": 6,
+    "columns": 1,
+    "aligned": true,
+    "mobileFilter": true,
+    "cardOverflow": false
+  },
+  {
+    "width": 430,
+    "theme": "dark",
+    "passed": true,
+    "overflow": false,
+    "cards": 6,
+    "columns": 1,
+    "aligned": true,
+    "mobileFilter": true,
+    "cardOverflow": false
+  },
+  {
+    "width": 768,
+    "theme": "light",
+    "passed": true,
+    "overflow": false,
+    "cards": 6,
+    "columns": 1,
+    "aligned": true,
+    "mobileFilter": true,
+    "cardOverflow": false
+  },
+  {
+    "width": 768,
+    "theme": "dark",
+    "passed": true,
+    "overflow": false,
+    "cards": 6,
+    "columns": 1,
+    "aligned": true,
+    "mobileFilter": true,
+    "cardOverflow": false
+  },
+  {
+    "width": 1024,
+    "theme": "light",
+    "passed": true,
+    "overflow": false,
+    "cards": 6,
+    "columns": 2,
+    "aligned": true,
+    "mobileFilter": true,
+    "cardOverflow": false
+  },
+  {
+    "width": 1024,
+    "theme": "dark",
+    "passed": true,
+    "overflow": false,
+    "cards": 6,
+    "columns": 2,
+    "aligned": true,
+    "mobileFilter": true,
+    "cardOverflow": false
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "passed": true,
+    "overflow": false,
+    "cards": 6,
+    "columns": 3,
+    "aligned": true,
+    "mobileFilter": false,
+    "cardOverflow": false
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "passed": true,
+    "overflow": false,
+    "cards": 6,
+    "columns": 3,
+    "aligned": true,
+    "mobileFilter": false,
+    "cardOverflow": false
+  }
+]

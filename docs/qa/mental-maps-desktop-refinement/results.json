@@ -1,0 +1,290 @@
+[
+  {
+    "width": 375,
+    "theme": "light",
+    "passed": true,
+    "usableWidth": 343,
+    "libraryWidth": 343,
+    "patterns": [
+      "connections",
+      "flow",
+      "security"
+    ],
+    "overflow": false,
+    "cards": 6,
+    "columns": 1,
+    "aligned": true,
+    "mobileFilter": true,
+    "cardOverflow": false
+  },
+  {
+    "width": 375,
+    "theme": "dark",
+    "passed": true,
+    "usableWidth": 343,
+    "libraryWidth": 343,
+    "patterns": [
+      "connections",
+      "flow",
+      "security"
+    ],
+    "overflow": false,
+    "cards": 6,
+    "columns": 1,
+    "aligned": true,
+    "mobileFilter": true,
+    "cardOverflow": false
+  },
+  {
+    "width": 390,
+    "theme": "light",
+    "passed": true,
+    "usableWidth": 358,
+    "libraryWidth": 358,
+    "patterns": [
+      "connections",
+      "flow",
+      "security"
+    ],
+    "overflow": false,
+    "cards": 6,
+    "columns": 1,
+    "aligned": true,
+    "mobileFilter": true,
+    "cardOverflow": false
+  },
+  {
+    "width": 390,
+    "theme": "dark",
+    "passed": true,
+    "usableWidth": 358,
+    "libraryWidth": 358,
+    "patterns": [
+      "connections",
+      "flow",
+      "security"
+    ],
+    "overflow": false,
+    "cards": 6,
+    "columns": 1,
+    "aligned": true,
+    "mobileFilter": true,
+    "cardOverflow": false
+  },
+  {
+    "width": 768,
+    "theme": "light",
+    "passed": true,
+    "usableWidth": 460,
+    "libraryWidth": 460,
+    "patterns": [
+      "connections",
+      "flow",
+      "security"
+    ],
+    "overflow": false,
+    "cards": 6,
+    "columns": 1,
+    "aligned": true,
+    "mobileFilter": true,
+    "cardOverflow": false
+  },
+  {
+    "width": 768,
+    "theme": "dark",
+    "passed": true,
+    "usableWidth": 460,
+    "libraryWidth": 460,
+    "patterns": [
+      "connections",
+      "flow",
+      "security"
+    ],
+    "overflow": false,
+    "cards": 6,
+    "columns": 1,
+    "aligned": true,
+    "mobileFilter": true,
+    "cardOverflow": false
+  },
+  {
+    "width": 1024,
+    "theme": "light",
+    "passed": true,
+    "usableWidth": 716,
+    "libraryWidth": 716,
+    "patterns": [
+      "connections",
+      "flow",
+      "security"
+    ],
+    "overflow": false,
+    "cards": 6,
+    "columns": 2,
+    "aligned": true,
+    "mobileFilter": true,
+    "cardOverflow": false
+  },
+  {
+    "width": 1024,
+    "theme": "dark",
+    "passed": true,
+    "usableWidth": 716,
+    "libraryWidth": 716,
+    "patterns": [
+      "connections",
+      "flow",
+      "security"
+    ],
+    "overflow": false,
+    "cards": 6,
+    "columns": 2,
+    "aligned": true,
+    "mobileFilter": true,
+    "cardOverflow": false
+  },
+  {
+    "width": 1366,
+    "theme": "light",
+    "passed": true,
+    "usableWidth": 1058,
+    "libraryWidth": 1058,
+    "patterns": [
+      "connections",
+      "flow",
+      "security"
+    ],
+    "overflow": false,
+    "cards": 6,
+    "columns": 3,
+    "aligned": true,
+    "mobileFilter": false,
+    "cardOverflow": false
+  },
+  {
+    "width": 1366,
+    "theme": "dark",
+    "passed": true,
+    "usableWidth": 1058,
+    "libraryWidth": 1058,
+    "patterns": [
+      "connections",
+      "flow",
+      "security"
+    ],
+    "overflow": false,
+    "cards": 6,
+    "columns": 3,
+    "aligned": true,
+    "mobileFilter": false,
+    "cardOverflow": false
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "passed": true,
+    "usableWidth": 1132,
+    "libraryWidth": 1132,
+    "patterns": [
+      "connections",
+      "flow",
+      "security"
+    ],
+    "overflow": false,
+    "cards": 6,
+    "columns": 3,
+    "aligned": true,
+    "mobileFilter": false,
+    "cardOverflow": false
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "passed": true,
+    "usableWidth": 1132,
+    "libraryWidth": 1132,
+    "patterns": [
+      "connections",
+      "flow",
+      "security"
+    ],
+    "overflow": false,
+    "cards": 6,
+    "columns": 3,
+    "aligned": true,
+    "mobileFilter": false,
+    "cardOverflow": false
+  },
+  {
+    "width": 1920,
+    "theme": "light",
+    "passed": true,
+    "usableWidth": 1612,
+    "libraryWidth": 1612,
+    "patterns": [
+      "connections",
+      "flow",
+      "security"
+    ],
+    "overflow": false,
+    "cards": 6,
+    "columns": 4,
+    "aligned": true,
+    "mobileFilter": false,
+    "cardOverflow": false
+  },
+  {
+    "width": 1920,
+    "theme": "dark",
+    "passed": true,
+    "usableWidth": 1612,
+    "libraryWidth": 1612,
+    "patterns": [
+      "connections",
+      "flow",
+      "security"
+    ],
+    "overflow": false,
+    "cards": 6,
+    "columns": 4,
+    "aligned": true,
+    "mobileFilter": false,
+    "cardOverflow": false
+  },
+  {
+    "width": 2560,
+    "theme": "light",
+    "passed": true,
+    "usableWidth": 2252,
+    "libraryWidth": 2252,
+    "patterns": [
+      "connections",
+      "flow",
+      "security"
+    ],
+    "overflow": false,
+    "cards": 6,
+    "columns": 4,
+    "aligned": true,
+    "mobileFilter": false,
+    "cardOverflow": false
+  },
+  {
+    "width": 2560,
+    "theme": "dark",
+    "passed": true,
+    "usableWidth": 2252,
+    "libraryWidth": 2252,
+    "patterns": [
+      "connections",
+      "flow",
+      "security"
+    ],
+    "overflow": false,
+    "cards": 6,
+    "columns": 4,
+    "aligned": true,
+    "mobileFilter": false,
+    "cardOverflow": false
+  }
+]
