@@ -43,12 +43,14 @@ describe("useRevisoes", () => {
       grupo: "hoje",
       limit: 20,
       cursor: null,
+      incluirResumo: true,
     });
     expect(listarRevisoes).toHaveBeenNthCalledWith(2, {
       concursoId: "concurso-a",
       grupo: "hoje",
       limit: 20,
       cursor: "pagina-2",
+      incluirResumo: false,
     });
   });
 

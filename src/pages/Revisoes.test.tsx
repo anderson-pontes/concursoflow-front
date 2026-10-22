@@ -1,6 +1,6 @@
 import React from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter, Route, Routes, useLocation } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -181,5 +181,49 @@ describe("Revisoes", () => {
 
     expect(await screen.findByText("A revisão foi atualizada")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Atualizar revisão" })).toBeInTheDocument();
+  });
+
+  it("mostra totais agregados e atualiza os indicadores após ignorar", async () => {
+    const original = vi.mocked(api.get).getMockImplementation()!;
+    vi.mocked(api.get).mockImplementation(((url, config) => url === "/revisoes" ? Promise.resolve({data:{...page(vi.mocked(api.post).mock.calls.length ? [] : [item]),resumo:{hoje:vi.mocked(api.post).mock.calls.length ? 192 : 193,atrasadas:7,proximas:9,concluidas:54,ignoradas:1}}}) : original(url,config as Parameters<typeof original>[1])) as typeof api.get);
+    renderPage();
+    const summary = screen.getByRole("region",{name:"Resumo das revisões"});
+    expect(await within(summary).findByText("193")).toBeInTheDocument();
+    const user = userEvent.setup();
+    await user.click(await screen.findByRole("button",{name:/Mais ações para Poder Executivo/i}));
+    await user.click(await screen.findByRole("menuitem",{name:"Ignorar revisão"}));
+    await user.click(screen.getByRole("button",{name:"Ignorar revisão"}));
+    expect(await within(summary).findByText("192")).toBeInTheDocument();
+    expect(screen.queryByText("Poder Executivo")).not.toBeInTheDocument();
+  });
+
+  it.each([
+    ["hoje","Você não tem revisões programadas para hoje."],
+    ["atrasadas","Nenhuma revisão atrasada."],
+    ["proximas","Não há próximas revisões agendadas."],
+    ["concluidas","Nenhuma revisão concluída neste filtro."],
+    ["ignoradas","Nenhuma revisão ignorada."],
+  ])("apresenta vazio contextual de %s", async (grupo,message) => {
+    const original = vi.mocked(api.get).getMockImplementation()!;
+    vi.mocked(api.get).mockImplementation(((url,config) => url==="/revisoes" ? Promise.resolve({data:page([])}) : original(url,config as Parameters<typeof original>[1])) as typeof api.get);
+    renderPage(`/revisoes?grupo=${grupo}`);
+    expect(await screen.findByText(message)).toBeInTheDocument();
+    expect(screen.getByText("Totais indisponíveis no momento.")).toBeInTheDocument();
+  });
+
+  it("diferencia filtros sem resultados e remove os filtros da URL", async () => {
+    const original = vi.mocked(api.get).getMockImplementation()!;
+    vi.mocked(api.get).mockImplementation(((url,config) => url==="/revisoes" ? Promise.resolve({data:page([])}) : original(url,config as Parameters<typeof original>[1])) as typeof api.get);
+    renderPage('/revisoes?grupo=hoje&disciplina=disciplina-1&inicio=2026-09-01');
+    expect(await screen.findByText("Nenhuma revisão encontrada para os filtros selecionados.")).toBeInTheDocument();
+    await userEvent.click(screen.getAllByRole("button",{name:"Limpar filtros"})[0]);
+    await waitFor(()=>expect(screen.getByTestId("location")).toHaveTextContent('/revisoes?grupo=hoje'));
+    expect(screen.getByTestId("location")).not.toHaveTextContent('disciplina=');
+  });
+
+  it("bloqueia uma URL com intervalo invertido antes de consultar a fila", () => {
+    renderPage('/revisoes?inicio=2026-09-30&fim=2026-09-01');
+    expect(screen.getByText("Período inválido")).toBeInTheDocument();
+    expect(api.get).not.toHaveBeenCalledWith('/revisoes',expect.anything());
   });
 });

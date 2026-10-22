@@ -124,6 +124,7 @@ try {
       { id: secondContestId, nome: "Concurso B", orgao: "Órgão B", cargo: "Cargo B", data_prova: null },
     ]));
     if (request.method() === "GET" && path === "/disciplinas") return request.respond(json([{ id: disciplineId, nome: "Disciplina QA", concurso_ids: [contestId] }]));
+    if (request.method() === "GET" && path === "/pomodoro-config") return request.respond(json({ mode: "pomodoro", focus_hours: 0, focus_minutes: 25, short_break_minutes: 5, long_break_minutes: 15, cycles_target: 4, last_disciplina_id: null, last_topico_id: null }));
     if (request.method() === "GET" && path.startsWith(`/disciplinas/${disciplineId}/topicos`)) return request.respond(json(Object.values(items).flat().map((item) => ({ id: item.topico_id, descricao: item.topico_nome }))));
     if (request.method() === "GET" && path === "/revisoes") {
       const group = url.searchParams.get("grupo") || "hoje";
@@ -171,7 +172,7 @@ try {
     title: document.querySelector("main h1")?.textContent,
     overflow: document.documentElement.scrollWidth > document.documentElement.clientWidth + 1,
   }));
-  if (!initial.title?.includes("Central de revisões") || initial.overflow) failures.push({ step: "initial", initial });
+  if (!initial.title?.includes("Central de Revisões") || initial.overflow) failures.push({ step: "initial", initial });
 
   stage = "reagendar";
   await openCardMenu(page, "Reagendamento");

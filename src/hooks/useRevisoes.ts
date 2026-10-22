@@ -16,6 +16,7 @@ export function useRevisoes({ concursoId, enabled = true, ...filters }: UseRevis
       concursoId: concursoId!,
       ...filters,
       cursor: pageParam,
+      incluirResumo: pageParam === null,
     }),
     initialPageParam: null as string | null,
     getNextPageParam: (lastPage) => lastPage.has_more ? lastPage.next_cursor || undefined : undefined,

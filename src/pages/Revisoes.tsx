@@ -10,6 +10,7 @@ import { RevisaoActionDialogs, type RevisaoDialogAction } from "@/components/rev
 import { RevisaoCard } from "@/components/revisoes/RevisaoCard";
 import { RevisoesFilters, type RevisoesFilterValues } from "@/components/revisoes/RevisoesFilters";
 import { RevisoesListSkeleton } from "@/components/revisoes/RevisoesListSkeleton";
+import { REVIEW_GROUPS as groups, RevisoesContest, RevisoesEmpty, RevisoesSummary } from "@/components/revisoes/RevisoesPresentation";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -26,14 +27,6 @@ import {
 } from "@/stores/concursoStore";
 import { useRevisaoPomodoroStore } from "@/stores/revisaoPomodoroStore";
 import type { RevisaoGrupo, RevisaoItem } from "@/types/revisao";
-
-const groups: Array<{ value: RevisaoGrupo; label: string }> = [
-  { value: "hoje", label: "Hoje" },
-  { value: "atrasadas", label: "Atrasadas" },
-  { value: "proximas", label: "Próximas" },
-  { value: "concluidas", label: "Concluídas" },
-  { value: "ignoradas", label: "Ignoradas" },
-];
 
 const groupSet = new Set<RevisaoGrupo>(groups.map((item) => item.value));
 
@@ -76,6 +69,7 @@ export function Revisoes() {
     dataInicio: readDate(searchParams.get("inicio")),
     dataFim: readDate(searchParams.get("fim")),
   };
+  const invalidDates = Boolean(filters.dataInicio && filters.dataFim && filters.dataInicio > filters.dataFim);
 
   const revisoes = useRevisoes({
     concursoId,
@@ -84,7 +78,7 @@ export function Revisoes() {
     dataInicio: filters.dataInicio || null,
     dataFim: filters.dataFim || null,
     limit: 20,
-    enabled: contextResolved && !contextError,
+    enabled: contextResolved && !contextError && !invalidDates,
   });
   const disciplinas = useQuery({
     queryKey: ["disciplinas", "revisoes", concursoId ?? null],
@@ -111,6 +105,10 @@ export function Revisoes() {
     setSearchParams(next, { replace: true });
   };
   const setFilters = (values: RevisoesFilterValues) => {
+    if (values.dataInicio && values.dataFim && values.dataInicio > values.dataFim) {
+      toast.error("A data inicial não pode ser posterior à data final.");
+      return;
+    }
     const next = new URLSearchParams(searchParams);
     const pairs = [
       ["disciplina", values.disciplinaId],
@@ -180,28 +178,31 @@ export function Revisoes() {
   const hasFilters = Boolean(filters.disciplinaId || filters.dataInicio || filters.dataFim);
 
   return (
-    <div className="space-y-5 pb-10">
-      <header>
-        <p className="text-sm font-medium text-primary">
-          Concurso ativo{concursoAtivo ? `: ${concursoAtivo.nome}` : ""}
-        </p>
-        <h1 className="text-2xl font-bold tracking-tight text-foreground">Central de revisões</h1>
+    <div className="reviews-page w-full min-w-0 space-y-5 pb-8">
+      <header className="flex min-w-0 flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+        <div className="min-w-0"><h1 className="text-2xl font-semibold tracking-tight text-foreground">Central de Revisões</h1>
         <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
-          Priorize tópicos pendentes e acompanhe cada transição sem perder o contexto.
+          Organize suas revisões, priorize conteúdos pendentes e acompanhe sua evolução.
         </p>
+        </div>
+        {concursoAtivo && <RevisoesContest nome={concursoAtivo.nome} />}
       </header>
 
+      <div className="space-y-3">
+      <RevisoesSummary resumo={revisoes.isError || invalidDates ? null : revisoes.data?.pages[0]?.resumo} loading={revisoes.isPending && !invalidDates} />
+
       <Tabs value={grupo} onValueChange={setGroup}>
-        <div className="overflow-x-auto pb-1 [scrollbar-width:thin]">
+        <div className="min-w-0 overflow-x-auto rounded-lg [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           <TabsList className="min-h-11 w-max min-w-full justify-start" aria-label="Grupos de revisão">
             {groups.map((item) => (
-              <TabsTrigger key={item.value} value={item.value} className="min-h-11 min-w-max">
-                {item.label}
+              <TabsTrigger key={item.value} value={item.value} data-group={item.value} className="review-tab min-h-11 min-w-max gap-1.5 px-3">
+                <item.Icon className="size-3.5" aria-hidden />{item.label}
               </TabsTrigger>
             ))}
           </TabsList>
         </div>
       </Tabs>
+      </div>
 
       <RevisoesFilters
         values={filters}
@@ -209,8 +210,9 @@ export function Revisoes() {
         onChange={setFilters}
       />
 
-      {revisoes.isPending ? <RevisoesListSkeleton /> : null}
-      {revisoes.isError ? (
+      {invalidDates && <Alert variant="destructive"><AlertTitle>Período inválido</AlertTitle><AlertDescription>A data inicial não pode ser posterior à data final. Ajuste ou limpe os filtros.</AlertDescription></Alert>}
+      {revisoes.isPending && !invalidDates ? <RevisoesListSkeleton /> : null}
+      {revisoes.isError && !invalidDates ? (
         <Alert variant="destructive">
           <RefreshCw aria-hidden="true" />
           <AlertTitle>Não foi possível carregar as revisões</AlertTitle>
@@ -222,17 +224,10 @@ export function Revisoes() {
           </AlertDescription>
         </Alert>
       ) : null}
-      {revisoes.isSuccess && items.length === 0 ? (
-        <EmptyState
-          icon={BookCheck}
-          title={hasFilters ? "Nenhuma revisão com estes filtros" : "Nenhuma revisão neste grupo"}
-          description={hasFilters
-            ? "Ajuste ou limpe os filtros para ampliar os resultados."
-            : "Quando houver revisões neste grupo, elas aparecerão aqui."}
-          action={hasFilters ? <Button type="button" variant="outline" onClick={() => setFilters({ disciplinaId: "", dataInicio: "", dataFim: "" })}>Limpar filtros</Button> : undefined}
-        />
+      {revisoes.isSuccess && !invalidDates && items.length === 0 ? (
+        <RevisoesEmpty grupo={grupo} filtered={hasFilters} resumo={revisoes.data?.pages[0]?.resumo} onClear={() => setFilters({ disciplinaId: "", dataInicio: "", dataFim: "" })} onNext={() => setGroup("proximas")} />
       ) : null}
-      {revisoes.isSuccess && items.length > 0 ? (
+      {revisoes.isSuccess && !invalidDates && items.length > 0 ? (
         <div className="space-y-6" aria-live="polite">
           {Object.entries(datedGroups).map(([date, dateItems]) => (
             <section key={date} aria-labelledby={`revisoes-${date}`} className="space-y-3">

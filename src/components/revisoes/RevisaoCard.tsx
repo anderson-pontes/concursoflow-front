@@ -42,24 +42,26 @@ type Props = {
 export function RevisaoCard({ item, grupo, conflict, onStart, onAction, onRefreshConflict }: Props) {
   const pending = item.status === "pendente";
   return (
-    <Card size="sm" className="gap-3">
-      <CardHeader className="gap-x-3">
-        <div className="min-w-0">
-          <p className="truncate text-xs font-semibold uppercase tracking-wide text-primary">
+    <Card size="sm" data-group={grupo} className="review-card h-full min-w-0 gap-3">
+      <CardHeader className="flex min-w-0 flex-wrap items-start justify-between gap-2">
+        <div className="min-w-0 flex-1">
+          <p className="line-clamp-2 text-xs font-semibold leading-relaxed text-primary [overflow-wrap:anywhere]" title={item.disciplina_nome}>
             {item.disciplina_nome}
           </p>
-          <CardTitle className="mt-1 line-clamp-3 sm:line-clamp-2">{item.topico_nome}</CardTitle>
+          <CardTitle className="mt-1 line-clamp-3 text-base font-semibold leading-relaxed [overflow-wrap:anywhere] sm:line-clamp-2" title={item.topico_nome}>{item.topico_nome}</CardTitle>
         </div>
-        <Badge variant="secondary" className="shrink-0">
+        <Badge variant="outline" data-group={grupo} className="review-status shrink-0">
           {groupLabels[grupo]}
         </Badge>
       </CardHeader>
-      <CardContent className="flex flex-wrap gap-x-5 gap-y-2 text-xs text-muted-foreground">
+      <CardContent className="flex flex-1 flex-wrap content-start gap-x-5 gap-y-2 text-xs leading-relaxed text-muted-foreground">
         <span className="inline-flex items-center gap-1.5">
           <CalendarClock className="size-4 text-primary" aria-hidden="true" />
           Prevista para {format(parseISO(item.data_prevista_atual), "dd/MM/yyyy", { locale: ptBR })}
         </span>
         <span>Última alteração em {formatDateTime(item.ultima_transicao_em)}</span>
+        {item.ciclo_indice != null && <span>Ciclo {item.ciclo_indice + 1}</span>}
+        <span>Intervalo de {item.intervalo_dias} {item.intervalo_dias === 1 ? "dia" : "dias"}</span>
         {conflict ? (
           <Alert variant="destructive" className="mt-2 basis-full">
             <AlertTriangle aria-hidden="true" />
@@ -73,7 +75,7 @@ export function RevisaoCard({ item, grupo, conflict, onStart, onAction, onRefres
           </Alert>
         ) : null}
       </CardContent>
-      <CardFooter className="gap-2 border-t bg-muted/30 px-3 py-3 sm:justify-end sm:px-4">
+      <CardFooter className="mt-auto flex-wrap gap-2 border-t bg-muted/20 px-3 py-3 sm:justify-end sm:px-4">
         {pending ? (
           <Button type="button" className="min-h-11 flex-1 sm:flex-none" onClick={() => onStart(item)}>
             <Play className="size-4" aria-hidden="true" />

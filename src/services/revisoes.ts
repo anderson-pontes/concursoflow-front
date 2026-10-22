@@ -30,6 +30,7 @@ export async function listarRevisoes(params: RevisaoListParams): Promise<Revisoe
       data_fim: params.dataFim || undefined,
       cursor: params.cursor || undefined,
       limit: params.limit,
+      ...(params.incluirResumo ? { incluir_resumo: true } : {}),
     },
   });
   return data;

@@ -1,0 +1,22 @@
+.reviews-page { container-type:inline-size; }
+.reviews-desktop-filters { display:none; }
+@container (min-width:640px) {
+  .reviews-desktop-filters { display:block; }
+  .reviews-mobile-filters { display:none; }
+  .reviews-filter-fields { grid-template-columns:minmax(0,1.4fr) minmax(0,1fr) minmax(0,1fr); }
+}
+.reviews-summary-grid { display:grid; grid-template-columns:minmax(0,1fr); gap:1rem; }
+@container (min-width:320px) { .reviews-summary-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+@container (min-width:1000px) { .reviews-summary-grid { grid-template-columns:repeat(4,minmax(0,1fr)); } }
+.reviews-page .reviews-overdue-metric { --study-tone:var(--study-coral); --study-ink:var(--study-coral-ink); }
+.review-status,.review-card { --review-tone:var(--muted-foreground); --review-ink:var(--muted-foreground); }
+.review-status[data-group="hoje"],.review-card[data-group="hoje"] { --review-tone:var(--study-indigo); --review-ink:var(--study-indigo-ink); }
+.review-status[data-group="atrasadas"],.review-card[data-group="atrasadas"] { --review-tone:var(--study-coral); --review-ink:var(--study-coral-ink); }
+.review-status[data-group="proximas"],.review-card[data-group="proximas"] { --review-tone:var(--study-amber); --review-ink:var(--study-amber-ink); }
+.review-status[data-group="concluidas"],.review-card[data-group="concluidas"] { --review-tone:var(--study-emerald); --review-ink:var(--study-emerald-ink); }
+.review-status { background:color-mix(in srgb,var(--review-tone) 10%,var(--card)); color:var(--review-ink); border-color:color-mix(in srgb,var(--review-tone) 25%,var(--border)); }
+.review-card { border-left:3px solid color-mix(in srgb,var(--review-tone) 65%,var(--border)); }
+.review-tab { border-color:transparent; }
+.review-tab[data-state="active"] { color:var(--sidebar-primary-foreground); background:var(--sidebar-primary); box-shadow:var(--shadow-sm); }
+.review-tab[data-state="inactive"] { color:var(--muted-foreground); background:transparent; }
+.review-tab[data-state="inactive"]:hover { color:var(--foreground); background:var(--surface-hover); }

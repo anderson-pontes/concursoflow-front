@@ -29,12 +29,13 @@ type Props = {
 };
 
 function FilterFields({ values, disciplinas, onChange }: Props) {
+  const id = React.useId();
   return (
-    <div className="grid gap-4 md:grid-cols-3">
-      <div className="space-y-2">
-        <Label htmlFor="revisoes-disciplina">Disciplina</Label>
+    <div className="reviews-filter-fields grid min-w-0 gap-3">
+      <div className="min-w-0 space-y-1.5">
+        <Label htmlFor={`${id}-disciplina`}>Disciplina</Label>
         <SelectField
-          id="revisoes-disciplina"
+          id={`${id}-disciplina`}
           value={values.disciplinaId}
           onValueChange={(disciplinaId) => onChange({ ...values, disciplinaId })}
           options={[
@@ -45,18 +46,19 @@ function FilterFields({ values, disciplinas, onChange }: Props) {
         />
       </div>
       <div className="space-y-2">
-        <Label htmlFor="revisoes-inicio">De</Label>
+        <Label htmlFor={`${id}-inicio`}>De</Label>
         <DatePicker
-          id="revisoes-inicio"
+          id={`${id}-inicio`}
+          max={values.dataFim || undefined}
           value={values.dataInicio}
           onValueChange={(dataInicio) => onChange({ ...values, dataInicio })}
           aria-label="Data inicial"
         />
       </div>
       <div className="space-y-2">
-        <Label htmlFor="revisoes-fim">Até</Label>
+        <Label htmlFor={`${id}-fim`}>Até</Label>
         <DatePicker
-          id="revisoes-fim"
+          id={`${id}-fim`}
           value={values.dataFim}
           min={values.dataInicio || undefined}
           onValueChange={(dataFim) => onChange({ ...values, dataFim })}
@@ -72,12 +74,13 @@ export function RevisoesFilters(props: Props) {
   const emptyValues = { disciplinaId: "", dataInicio: "", dataFim: "" };
   const [draft, setDraft] = React.useState(props.values);
   const [open, setOpen] = React.useState(false);
+  const invalidDraft = Boolean(draft.dataInicio && draft.dataFim && draft.dataInicio > draft.dataFim);
 
   React.useEffect(() => setDraft(props.values), [props.values]);
 
   return (
     <>
-      <div className="hidden rounded-xl border border-border bg-card p-4 md:block">
+      <div className="reviews-desktop-filters rounded-xl border border-border bg-card px-3 py-2.5">
         <FilterFields {...props} />
         {activeCount > 0 ? (
           <div className="mt-3 flex justify-end">
@@ -89,7 +92,7 @@ export function RevisoesFilters(props: Props) {
         ) : null}
       </div>
 
-      <div className="md:hidden">
+      <div className="reviews-mobile-filters">
         <Sheet open={open} onOpenChange={(next) => {
           setOpen(next);
           if (next) setDraft(props.values);
@@ -110,13 +113,14 @@ export function RevisoesFilters(props: Props) {
             </SheetHeader>
             <div className="py-5">
               <FilterFields values={draft} disciplinas={props.disciplinas} onChange={setDraft} />
+              {invalidDraft && <p role="alert" className="mt-3 text-sm text-destructive">A data inicial não pode ser posterior à data final.</p>}
             </div>
             <SheetFooter>
-              <Button type="button" variant="outline" onClick={() => setDraft(emptyValues)}>
+              {Object.values(draft).some(Boolean) && <Button type="button" variant="outline" onClick={() => setDraft(emptyValues)}>
                 Limpar
-              </Button>
+              </Button>}
               <SheetClose asChild>
-                <Button type="button" onClick={() => props.onChange(draft)}>Aplicar filtros</Button>
+                <Button type="button" disabled={invalidDraft} onClick={() => props.onChange(draft)}>Aplicar filtros</Button>
               </SheetClose>
             </SheetFooter>
           </SheetContent>

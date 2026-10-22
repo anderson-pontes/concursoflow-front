@@ -30,6 +30,7 @@ export type RevisoesPage = {
   next_cursor: string | null;
   has_more: boolean;
   limit: number;
+  resumo?: Record<RevisaoGrupo, number> | null;
 };
 
 export type RevisaoListFilters = {
@@ -43,6 +44,7 @@ export type RevisaoListFilters = {
 export type RevisaoListParams = RevisaoListFilters & {
   concursoId: string;
   cursor?: string | null;
+  incluirResumo?: boolean;
 };
 
 export type RevisaoSessaoConclusao = {
