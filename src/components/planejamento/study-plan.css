@@ -1,0 +1,26 @@
+.study-plan-page { width:100%; min-width:0; container-type:inline-size; }
+.availability-days { display:grid; grid-template-columns:minmax(0,1fr); gap:.75rem; }
+.availability-day { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,9rem); gap:.75rem; align-items:start; }
+@container (min-width:560px) {
+  .availability-days { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .availability-day { grid-template-columns:minmax(0,1fr); gap:.5rem; }
+}
+@container (min-width:760px) { .availability-days { grid-template-columns:repeat(3,minmax(0,1fr)); } }
+@container (min-width:1040px) { .availability-days { grid-template-columns:repeat(4,minmax(0,1fr)); } }
+.availability-segment { background:var(--primary); border-inline-end:1px solid var(--card); }
+.availability-segment-1 { background:color-mix(in srgb,var(--primary) 88%,var(--card)); }
+.availability-segment-2 { background:color-mix(in srgb,var(--primary) 76%,var(--card)); }
+.availability-segment-3 { background:color-mix(in srgb,var(--primary) 64%,var(--card)); }
+.availability-segment-4 { background:color-mix(in srgb,var(--primary) 52%,var(--card)); }
+.availability-segment-5 { background:color-mix(in srgb,var(--primary) 40%,var(--card)); }
+.availability-segment-6 { background:color-mix(in srgb,var(--primary) 28%,var(--card)); }
+.study-plan-stepper { display:grid; grid-template-columns:repeat(auto-fit,minmax(7rem,1fr)); gap:.5rem; }
+.study-plan-page input,.study-plan-page textarea { min-width:0; max-width:100%; }
+.study-plan-page strong { overflow-wrap:anywhere; }
+.study-plan-page li,.study-plan-page li>span { min-width:0; overflow-wrap:anywhere; }
+.discipline-priority-row { display:grid; grid-template-columns:5rem minmax(0,1fr); gap:.5rem .75rem; align-items:center; }
+.discipline-priority-name { grid-column:1/-1; }
+@container (min-width:800px) {
+  .discipline-priority-row { grid-template-columns:minmax(0,1fr) 6rem 11rem; }
+  .discipline-priority-name { grid-column:auto; }
+}

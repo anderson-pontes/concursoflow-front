@@ -1,0 +1,278 @@
+[
+  {
+    "width": 375,
+    "theme": "light",
+    "passed": true,
+    "minutes": 420,
+    "sessions": 10,
+    "contract": {
+      "tipo": "ciclo",
+      "disponibilidade_minutos": {
+        "0": 90,
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 0,
+        "6": 120
+      },
+      "sessao_min_minutos": 25,
+      "sessao_max_minutos": 50,
+      "data_inicio": "2026-11-02",
+      "data_fim": "2026-11-15"
+    }
+  },
+  {
+    "width": 375,
+    "theme": "dark",
+    "passed": true,
+    "minutes": 420,
+    "sessions": 10,
+    "contract": {
+      "tipo": "ciclo",
+      "disponibilidade_minutos": {
+        "0": 90,
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 0,
+        "6": 120
+      },
+      "sessao_min_minutos": 25,
+      "sessao_max_minutos": 50,
+      "data_inicio": "2026-11-02",
+      "data_fim": "2026-11-15"
+    }
+  },
+  {
+    "width": 390,
+    "theme": "light",
+    "passed": true,
+    "minutes": 420,
+    "sessions": 10,
+    "contract": {
+      "tipo": "ciclo",
+      "disponibilidade_minutos": {
+        "0": 90,
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 0,
+        "6": 120
+      },
+      "sessao_min_minutos": 25,
+      "sessao_max_minutos": 50,
+      "data_inicio": "2026-11-02",
+      "data_fim": "2026-11-15"
+    }
+  },
+  {
+    "width": 390,
+    "theme": "dark",
+    "passed": true,
+    "minutes": 420,
+    "sessions": 10,
+    "contract": {
+      "tipo": "ciclo",
+      "disponibilidade_minutos": {
+        "0": 90,
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 0,
+        "6": 120
+      },
+      "sessao_min_minutos": 25,
+      "sessao_max_minutos": 50,
+      "data_inicio": "2026-11-02",
+      "data_fim": "2026-11-15"
+    }
+  },
+  {
+    "width": 768,
+    "theme": "light",
+    "passed": true,
+    "minutes": 420,
+    "sessions": 10,
+    "contract": {
+      "tipo": "ciclo",
+      "disponibilidade_minutos": {
+        "0": 90,
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 0,
+        "6": 120
+      },
+      "sessao_min_minutos": 25,
+      "sessao_max_minutos": 50,
+      "data_inicio": "2026-11-02",
+      "data_fim": "2026-11-15"
+    }
+  },
+  {
+    "width": 768,
+    "theme": "dark",
+    "passed": true,
+    "minutes": 420,
+    "sessions": 10,
+    "contract": {
+      "tipo": "ciclo",
+      "disponibilidade_minutos": {
+        "0": 90,
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 0,
+        "6": 120
+      },
+      "sessao_min_minutos": 25,
+      "sessao_max_minutos": 50,
+      "data_inicio": "2026-11-02",
+      "data_fim": "2026-11-15"
+    }
+  },
+  {
+    "width": 1366,
+    "theme": "light",
+    "passed": true,
+    "minutes": 420,
+    "sessions": 10,
+    "contract": {
+      "tipo": "ciclo",
+      "disponibilidade_minutos": {
+        "0": 90,
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 0,
+        "6": 120
+      },
+      "sessao_min_minutos": 25,
+      "sessao_max_minutos": 50,
+      "data_inicio": "2026-11-02",
+      "data_fim": "2026-11-15"
+    }
+  },
+  {
+    "width": 1366,
+    "theme": "dark",
+    "passed": true,
+    "minutes": 420,
+    "sessions": 10,
+    "contract": {
+      "tipo": "ciclo",
+      "disponibilidade_minutos": {
+        "0": 90,
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 0,
+        "6": 120
+      },
+      "sessao_min_minutos": 25,
+      "sessao_max_minutos": 50,
+      "data_inicio": "2026-11-02",
+      "data_fim": "2026-11-15"
+    }
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "passed": true,
+    "minutes": 420,
+    "sessions": 10,
+    "contract": {
+      "tipo": "ciclo",
+      "disponibilidade_minutos": {
+        "0": 90,
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 0,
+        "6": 120
+      },
+      "sessao_min_minutos": 25,
+      "sessao_max_minutos": 50,
+      "data_inicio": "2026-11-02",
+      "data_fim": "2026-11-15"
+    }
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "passed": true,
+    "minutes": 420,
+    "sessions": 10,
+    "contract": {
+      "tipo": "ciclo",
+      "disponibilidade_minutos": {
+        "0": 90,
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 0,
+        "6": 120
+      },
+      "sessao_min_minutos": 25,
+      "sessao_max_minutos": 50,
+      "data_inicio": "2026-11-02",
+      "data_fim": "2026-11-15"
+    }
+  },
+  {
+    "width": 1920,
+    "theme": "light",
+    "passed": true,
+    "minutes": 420,
+    "sessions": 10,
+    "contract": {
+      "tipo": "ciclo",
+      "disponibilidade_minutos": {
+        "0": 90,
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 0,
+        "6": 120
+      },
+      "sessao_min_minutos": 25,
+      "sessao_max_minutos": 50,
+      "data_inicio": "2026-11-02",
+      "data_fim": "2026-11-15"
+    }
+  },
+  {
+    "width": 1920,
+    "theme": "dark",
+    "passed": true,
+    "minutes": 420,
+    "sessions": 10,
+    "contract": {
+      "tipo": "ciclo",
+      "disponibilidade_minutos": {
+        "0": 90,
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 0,
+        "6": 120
+      },
+      "sessao_min_minutos": 25,
+      "sessao_max_minutos": 50,
+      "data_inicio": "2026-11-02",
+      "data_fim": "2026-11-15"
+    }
+  }
+]
