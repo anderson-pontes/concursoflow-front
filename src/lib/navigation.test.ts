@@ -2,7 +2,7 @@ import {describe,expect,it} from 'vitest';
 import {adminPageLinks,pageBreadcrumb,pageLinks} from './navigation';
 
 describe('configuração central do breadcrumb',()=>{
-  it.each([...pageLinks,...adminPageLinks])('identifica $to pelo grupo e nome configurados',page=>{
+  it.each([...pageLinks,...adminPageLinks.filter(page=>page.to!=='/admin/editais/importar-documento')])('identifica $to pelo grupo e nome configurados',page=>{
     const [path,query]=page.to.split('?');
     expect(pageBreadcrumb(path,query)).toEqual([{label:page.group},{label:'breadcrumbLabel' in page?page.breadcrumbLabel:page.label}]);
   });
@@ -12,6 +12,7 @@ describe('configuração central do breadcrumb',()=>{
     ['/planos/123/replanejar','Principal','Meus Concursos','/concursos','Replanejar estudos'],
     ['/editais/ativar','Principal','Meus Concursos','/concursos','Ativar edital'],
     ['/admin/editais/novo','Administração','Catálogo de editais','/admin/editais','Novo edital'],
+    ['/admin/editais/importar-documento','Administração','Catálogo de editais','/admin/editais','Importação por Documento'],
     ['/admin/editais/123/editar','Administração','Catálogo de editais','/admin/editais','Editar edital'],
     ['/admin/editais/123','Administração','Catálogo de editais','/admin/editais','Detalhes do edital'],
     ['/admin/usuarios/123','Administração','Gestão de usuários','/admin/usuarios','Detalhes do usuário'],

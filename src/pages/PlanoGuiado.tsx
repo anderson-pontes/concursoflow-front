@@ -27,7 +27,8 @@ import type { ConfigPlanejamento, DisciplinaPlanoInput, PlanoGuiadoResponse, Tip
 
 import { StudyPlanPlanningStep } from "@/components/planejamento/StudyPlanPlanningStep";
 import { StudyPlanReviewSummary } from "@/components/planejamento/StudyPlanReviewSummary";
-import { planningValidation } from "@/lib/planejamento/availability";
+import { durationLabel, planningValidation } from "@/lib/planejamento/availability";
+import { invalidateCronogramaQueries } from "@/lib/cronograma/invalidateQueries";
 import "@/components/planejamento/study-plan.css";
 
 const ETAPAS = ["Origem", "Concurso", "Conteúdo", "Planejamento", "Revisão"];
@@ -53,7 +54,12 @@ export function PlanoGuiado() {
   const [config, setConfig] = React.useState<ConfigPlanejamento>({ tipo: "ciclo", disponibilidade_minutos: { 0: 60, 1: 60, 2: 60, 3: 60, 4: 60 }, sessao_min_minutos: 25, sessao_max_minutos: 50, data_inicio: isoDate(), data_fim: isoDate(90) });
   const availabilityMemory = React.useRef<Record<number,number>>({});
   const [availabilityValid, setAvailabilityValid] = React.useState(true);
-  const localValidation = React.useMemo(() => planningValidation(config, disciplinas), [config, disciplinas]);
+  const localValidation = React.useMemo(() => {
+    const result = planningValidation(config, disciplinas);
+    return dataProva && config.data_fim > dataProva
+      ? { ...result, errors: [...result.errors, "O planejamento deve terminar até a data da prova."] }
+      : result;
+  }, [config, disciplinas, dataProva]);
   const [draftCandidate, setDraftCandidate] = React.useState<OnboardingDraft | null>(null);
   const [draftReady, setDraftReady] = React.useState(false);
   const [completedPlan, setCompletedPlan] = React.useState<PlanoGuiadoResponse | null>(null);
@@ -194,7 +200,11 @@ export function PlanoGuiado() {
     && previewInputSignatureRef.current === previewInputSignature,
   );
   const confirm = useMutation({
-    mutationFn: () => confirmarPlanoGuiado({ tipo_plano: tipo!, nome, orgao, cargo: cargoNome || null, banca: banca || null, data_prova: dataProva || null, observacoes: observacoes || null, catalogo: tipo === "catalogo" ? { edital_id: edital!.id, version_id: versao!.id, cargo_id: cargo!.id } : null, disciplinas: disciplinas.filter((d) => d.ativa), planejamento: config, idempotency_key: idempotency.current, preview_fingerprint: isPreviewCurrent ? preview.data?.preview_fingerprint : undefined }),
+    mutationFn: async () => {
+      const result = await confirmarPlanoGuiado({ tipo_plano: tipo!, nome, orgao, cargo: cargoNome || null, banca: banca || null, data_prova: dataProva || null, observacoes: observacoes || null, catalogo: tipo === "catalogo" ? { edital_id: edital!.id, version_id: versao!.id, cargo_id: cargo!.id } : null, disciplinas: disciplinas.filter((d) => d.ativa), planejamento: config, idempotency_key: idempotency.current, preview_fingerprint: isPreviewCurrent ? preview.data?.preview_fingerprint : undefined });
+      if (!result.cronograma_id || result.sessoes_planejadas <= 0) throw new Error("O servidor não confirmou a geração do cronograma.");
+      return result;
+    },
     onSuccess: async (result) => {
       telemetryJourney.current.track("plan_confirmed", {
         planning_type: config.tipo === "semanal" ? "weekly" : "cycle",
@@ -208,8 +218,9 @@ export function PlanoGuiado() {
       });
       await Promise.all([qc.invalidateQueries({ queryKey: ["concursos"] }), qc.invalidateQueries({ queryKey: ["disciplinas"] })]);
       await transitionConcurso(result.concurso_id, tipo === "catalogo" ? "catalog" : "settings");
+      invalidateCronogramaQueries(qc);
       clearOnboardingDraft(userScope);
-      toast.success("Plano criado e pronto para estudar.");
+      toast.success("Plano de estudos criado com sucesso!");
       setCompletedPlan(result);
     },
     onError: (error) => {
@@ -221,7 +232,8 @@ export function PlanoGuiado() {
         setStalePreviewOpen(true);
         return;
       }
-      toast.error("Não foi possível criar o plano. Suas escolhas foram mantidas.");
+      const detail: unknown = isAxiosError(error) ? error.response?.data?.detail : null;
+      toast.error(typeof detail === "string" ? `${detail} Suas escolhas foram mantidas.` : "Não foi possível criar o plano. Suas escolhas foram mantidas.");
     },
   });
 
@@ -321,11 +333,19 @@ export function PlanoGuiado() {
     return <div className="mx-auto max-w-3xl pb-8">
       <section className="rounded-2xl border border-success/30 bg-card p-6 text-center shadow-sm sm:p-10" aria-live="polite">
         <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-success/10 text-success"><CircleCheck className="h-7 w-7" /></span>
-        <h1 ref={headingRef} tabIndex={-1} className="mt-5 text-2xl font-bold outline-none">Seu plano está pronto</h1>
-        <p className="mx-auto mt-2 max-w-xl text-sm text-muted-foreground">Criamos {completedPlan.sessoes_planejadas} sessões com {completedPlan.disciplinas_criadas} disciplinas. Confira sua próxima atividade e comece a estudar.</p>
+        <h1 ref={headingRef} tabIndex={-1} className="mt-5 text-2xl font-bold outline-none">Plano de estudos criado com sucesso!</h1>
+        <p className="mx-auto mt-2 max-w-xl text-sm text-muted-foreground">Seu cronograma foi gerado automaticamente com base nas disciplinas do plano e na disponibilidade de estudo configurada.</p>
+        <dl className="mt-6 grid gap-4 text-left text-sm sm:grid-cols-2">
+          <div className="min-w-0"><dt className="text-muted-foreground">Concurso e cargo</dt><dd className="mt-1 break-words font-medium">{nome}{cargoNome ? ` · ${cargoNome}` : ""}</dd></div>
+          <div><dt className="text-muted-foreground">Carga horária semanal</dt><dd className="mt-1 font-medium">{durationLabel(Object.values(config.disponibilidade_minutos).reduce((sum, value) => sum + value, 0))}</dd></div>
+          <div><dt className="text-muted-foreground">Dias disponíveis</dt><dd className="mt-1 font-medium">{Object.values(config.disponibilidade_minutos).filter(value => value > 0).length} dias por semana</dd></div>
+          <div><dt className="text-muted-foreground">Disciplinas e sessões</dt><dd className="mt-1 font-medium">{disciplinas.filter(value => value.ativa).length} {disciplinas.filter(value => value.ativa).length === 1 ? "disciplina" : "disciplinas"} · {completedPlan.sessoes_planejadas} {completedPlan.sessoes_planejadas === 1 ? "sessão" : "sessões"}</dd></div>
+          <div><dt className="text-muted-foreground">Início do cronograma</dt><dd className="mt-1 font-medium">{config.data_inicio.split("-").reverse().join("/")}</dd></div>
+          <div><dt className="text-muted-foreground">Término do cronograma</dt><dd className="mt-1 font-medium">{config.data_fim.split("-").reverse().join("/")}</dd></div>
+        </dl>
         <div className="mt-6 flex flex-col justify-center gap-2 sm:flex-row">
-          <Button type="button" onClick={() => navigate("/dashboard")}>Ver próxima ação <ArrowRight /></Button>
-          <Button asChild variant="outline"><Link to="/cronograma">Revisar cronograma</Link></Button>
+          <Button type="button" onClick={async () => { if (await transitionConcurso(completedPlan.concurso_id)) navigate(`/cronograma?inicio=${encodeURIComponent(config.data_inicio)}`); }}>Visualizar meu cronograma <ArrowRight /></Button>
+          <Button asChild variant="outline"><Link to="/dashboard">Ir para o Dashboard</Link></Button>
         </div>
       </section>
     </div>;
@@ -347,7 +367,7 @@ export function PlanoGuiado() {
         {preview.isPending && <p role="status" className="py-12 text-center">Calculando melhor distribuição…</p>}
         {isPreviewCurrent && preview.data && <>
           {tipo === "catalogo" && edital ? <div className="mt-5 flex flex-col gap-4 rounded-xl border border-border bg-muted/20 p-4 sm:flex-row sm:items-center"><div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-border bg-background">{edital.logo_url ? <img src={edital.logo_url} alt={`Logo de ${edital.orgao}`} className="h-full w-full object-contain p-2" /> : <Sparkles className="h-6 w-6 text-primary" />}</div><div className="min-w-0"><strong className="block text-base">{edital.nome}</strong><p className="mt-1 text-sm text-muted-foreground">{edital.orgao}{edital.banca ? ` · ${edital.banca}` : ""}</p><p className="mt-1 text-xs text-muted-foreground">{cargoNome}{dataProva ? ` · prova em ${new Date(`${dataProva}T12:00:00`).toLocaleDateString("pt-BR")}` : ""}</p></div></div> : null}
-          <StudyPlanReviewSummary name={nome} agency={orgao} position={cargoNome} examDate={dataProva} config={config} disciplines={disciplinas} onEdit={setStep} />
+          <StudyPlanReviewSummary name={nome} agency={orgao} position={cargoNome} examDate={dataProva} config={config} disciplines={disciplinas} onEdit={value => { if (!confirm.isPending) setStep(value); }} />
           <PlanejamentoExplicacao preview={preview.data} />
           <div className="mt-5 max-h-80 overflow-auto rounded-xl border border-border"><h3 className="border-b border-border px-3 py-2 text-sm font-semibold">Próximas sessões</h3><ul className="divide-y divide-border">{preview.data.sessoes.slice(0, 40).map((s, i) => <li key={`${s.data}-${s.ordem}-${i}`} className="flex items-center gap-3 p-3 text-sm"><CalendarClock className="h-4 w-4 text-primary" /><span className="flex-1"><strong>{s.disciplina_nome}</strong><span className="ml-2 text-muted-foreground">{new Date(`${s.data}T12:00:00`).toLocaleDateString("pt-BR")}</span></span><span>{s.duracao_minutos} min</span></li>)}</ul>{preview.data.sessoes.length > 40 && <p className="p-3 text-center text-xs text-muted-foreground">Mais {preview.data.sessoes.length - 40} sessões serão criadas.</p>}</div>
         </>}
@@ -355,7 +375,7 @@ export function PlanoGuiado() {
       {step === 4 && capacityDiagnostic ? <PlanejamentoCapacidadeAlert diagnostico={capacityDiagnostic} /> : null}
     </main>
     <PlanejamentoPreviewStaleDialog open={stalePreviewOpen} onOpenChange={setStalePreviewOpen} onReview={() => { setStalePreviewOpen(false); setStep(4); }} onRegenerate={() => { setStalePreviewOpen(false); preview.mutate(previewInputSignature); }} />
-    <footer className="border-t border-border pt-4"><div className="flex justify-between gap-3"><Button className="min-h-11" variant="outline" disabled={step === 1 || confirm.isPending} onClick={() => setStep((s) => Math.max(1, s - 1))}><ArrowLeft /> Voltar</Button>{step < 5 ? <Button className="min-h-11" disabled={!canNext || preview.isPending || (step > 2 && !catalogReady)} onClick={next}>Continuar <ArrowRight /></Button> : <Button className="min-h-11" disabled={!catalogReady || confirm.isPending || !isPreviewCurrent || !preview.data?.explicacao.confirmavel} onClick={() => confirm.mutate()}>{confirm.isPending ? "Criando plano…" : <><Check /> Confirmar e ativar</>}</Button>}</div></footer>
+    <footer className="border-t border-border pt-4" aria-busy={confirm.isPending}><div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-between"><Button className="min-h-11" variant="outline" disabled={step === 1 || confirm.isPending} onClick={() => setStep((s) => Math.max(1, s - 1))}><ArrowLeft /> Voltar</Button>{step < 5 ? <Button className="min-h-11" disabled={!canNext || preview.isPending || (step > 2 && !catalogReady)} onClick={next}>Continuar <ArrowRight /></Button> : <Button className="min-h-11 whitespace-normal" disabled={!catalogReady || confirm.isPending || !isPreviewCurrent || !preview.data?.explicacao.confirmavel} onClick={() => confirm.mutate()}>{confirm.isPending ? "Criando plano e gerando cronograma…" : <><Check /> Criar plano e gerar cronograma</>}</Button>}</div>{confirm.isPending && <p role="status" className="mt-3 text-sm text-muted-foreground">Aguarde a confirmação do servidor. Suas configurações estão preservadas.</p>}</footer>
   </div>;
 }
 

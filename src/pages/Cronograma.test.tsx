@@ -17,9 +17,9 @@ const emptyPlan = (): Planejamento => ({ id: "plano-1", user_id: "user-1", concu
 const summary: PlanejamentoResumo = { minutos_planejados_semana: 180, minutos_estudados_semana: 0, disciplinas_count: 3, atividades_planejadas: 3, atividades_concluidas: 0, progresso_pct: 0, disciplinas: [], questoes_total: 0, acertos: 0, erros: 0, rendimento_pct: 0 };
 let plan: Planejamento | null;
 let client: QueryClient;
-function setup() {
+function setup(initialEntry = "/cronograma") {
   client = new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } });
-  return render(<QueryClientProvider client={client}><MemoryRouter><Cronograma /></MemoryRouter></QueryClientProvider>);
+  return render(<QueryClientProvider client={client}><MemoryRouter initialEntries={[initialEntry]}><Cronograma /></MemoryRouter></QueryClientProvider>);
 }
 beforeEach(() => {
   vi.clearAllMocks();
@@ -102,5 +102,12 @@ describe("gerenciamento incremental do cronograma", () => {
     expect(screen.queryByText("Como deseja criar?")).not.toBeInTheDocument();
     expect(screen.queryByLabelText("Nome do cronograma")).not.toBeInTheDocument();
     expect(client.getQueryData(["cronograma-planejamento", "concurso-1"])).toMatchObject({ id: "plano-1" });
+  });
+
+  it("abre a semana inicial informada pelo Plano Guiado", async () => {
+    plan = { ...emptyPlan(), tipo: "automatico", data_inicio: "2026-11-09" };
+    setup("/cronograma?inicio=2026-11-09");
+    await screen.findByText("Meu plano");
+    await waitFor(() => expect(api.get).toHaveBeenCalledWith("/cronograma/planejamento/plano-1/atividades", { params: { inicio: "2026-11-09", fim: "2026-11-15" } }));
   });
 });

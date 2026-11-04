@@ -2,6 +2,7 @@ export type EditalStatus = "rascunho" | "publicado" | "arquivado";
 
 export type EditalTopicoCatalogo = {
   id: string;
+  parent_id?: string | null;
   descricao: string;
   ordem: number;
   numero_ordem?: number;
@@ -10,6 +11,7 @@ export type EditalTopicoCatalogo = {
 
 export type EditalDisciplinaCatalogo = {
   id: string;
+  grupo_codigo?: string | null;
   nome: string;
   sigla: string | null;
   ordem: number;
@@ -29,6 +31,7 @@ export type EditalCargoCatalogo = {
 
 export type EditalVersaoCatalogo = {
   id: string;
+  numero_oficial?: string | null;
   estrutura_revision?: number;
   numero: string;
   status: EditalStatus;

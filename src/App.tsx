@@ -38,6 +38,7 @@ const UsuarioDetalhe = lazyNamed(() => import("./pages/admin/UsuarioDetalhe"), "
 const EditaisCatalogo = lazyNamed(() => import("./pages/admin/EditaisCatalogo"), "EditaisCatalogo");
 const EditalCatalogoEditor = lazyNamed(() => import("./pages/admin/EditalCatalogoEditor"), "EditalCatalogoEditor");
 const NovoEditalCatalogo = lazyNamed(() => import("./pages/admin/NovoEditalCatalogo"), "NovoEditalCatalogo");
+const DocumentImport = lazyNamed(() => import("./pages/admin/DocumentImport"), "DocumentImport");
 const PlanoGuiado = lazyNamed(() => import("./pages/PlanoGuiado"), "PlanoGuiado");
 const AtivarEditalCatalogo = lazyNamed(() => import("./pages/AtivarEditalCatalogo"), "AtivarEditalCatalogo");
 const ReplanejarPlano = lazyNamed(() => import("./pages/ReplanejarPlano"), "ReplanejarPlano");
@@ -267,6 +268,7 @@ export default function App() {
           </Layout>
         }
       />
+      <Route path="/admin/editais/importar-documento" element={<Layout requireAuth={!isAuthed}><AdminRoute><LazyPage><DocumentImport /></LazyPage></AdminRoute></Layout>} />
       <Route
         path="/admin/editais/:id/editar"
         element={

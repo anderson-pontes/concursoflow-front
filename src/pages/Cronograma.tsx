@@ -1,4 +1,5 @@
 import React from "react";
+import { useLocation } from "react-router-dom";
 import {withActivityTopics} from "@/lib/cronograma/activityPresentation";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { isAxiosError } from "axios";
@@ -47,18 +48,33 @@ function dateForDay(day: Bloco["dia_semana"], base = hojeISO()) {
   date.setDate(date.getDate() - (date.getDay() + 6) % 7 + DIAS.indexOf(day));
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
 }
+
+function initialScheduleDate(search: string) {
+  const value = new URLSearchParams(search).get("inicio");
+  if (!value || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return null;
+  const day = new Date(`${value}T12:00:00`);
+  const canonical = `${day.getFullYear()}-${String(day.getMonth() + 1).padStart(2, "0")}-${String(day.getDate()).padStart(2, "0")}`;
+  return canonical === value ? value : null;
+}
 const EMPTY_IDS: string[] = [];
 
 export function Cronograma() {
   const qc = useQueryClient();
+  const requestedDate = initialScheduleDate(useLocation().search);
   const concursoId = useConcursoAtivoId();
   const resolved = useConcursoContextResolved();
   const contextError = useConcursoContextError();
   const enabled = resolved && Boolean(concursoId);
   const [tab, setTab] = React.useState("calendario");
   const [view, setView] = React.useState("semana");
-  const [weekBase, setWeekBase] = React.useState(hojeISO());
-  const [month, setMonth] = React.useState(() => ({ ano: new Date().getFullYear(), mes: new Date().getMonth() + 1 }));
+  const [weekBase, setWeekBase] = React.useState(() => requestedDate ?? hojeISO());
+  const [month, setMonth] = React.useState(() => { const day = new Date(`${requestedDate ?? hojeISO()}T12:00:00`); return { ano: day.getFullYear(), mes: day.getMonth() + 1 }; });
+  React.useEffect(() => {
+    if (!requestedDate) return;
+    setWeekBase(requestedDate);
+    const day = new Date(`${requestedDate}T12:00:00`);
+    setMonth({ ano: day.getFullYear(), mes: day.getMonth() + 1 });
+  }, [requestedDate]);
   const [filter, setFilter] = React.useState("");
   const [search, setSearch] = React.useState("");
   const [modeOpen, setModeOpen] = React.useState(false);

@@ -90,6 +90,7 @@ export type PlanejamentoExplicacao = {
 
 export type PlanoGuiadoResponse = {
   concurso_id: string;
+  cronograma_id?: string | null;
   criado: boolean;
   disciplinas_criadas: number;
   topicos_criados: number;

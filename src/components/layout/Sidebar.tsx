@@ -20,6 +20,7 @@ import {
   Timer,
   Trophy,
   Users,
+  FileUp,
   type LucideIcon,
 } from "lucide-react";
 
@@ -158,6 +159,7 @@ export function Sidebar({
         items: [
           { to: "/admin/usuarios", label: "Gestão de Usuários", icon: Users },
           { to: "/admin/editais", label: "Catálogo de Editais", icon: LibraryBig },
+          { to: "/admin/editais/importar-documento", label: "Importação por Documento", icon: FileUp, end: true },
         ],
       });
     }

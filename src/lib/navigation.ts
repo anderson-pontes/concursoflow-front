@@ -23,6 +23,7 @@ export const pageLinks = [
 export const adminPageLinks = [
   {label:'Gestão de usuários',to:'/admin/usuarios',group:'Administração'},
   {label:'Catálogo de editais',to:'/admin/editais',group:'Administração'},
+  {label:'Importação por Documento',to:'/admin/editais/importar-documento',group:'Administração'},
 ] as const satisfies readonly NavigationPage[];
 
 export type BreadcrumbItem = {label:string; to?:string};
@@ -32,6 +33,7 @@ const detailRoutes = [
   {path:'/planos/:concursoId/replanejar',parent:'/concursos',label:'Replanejar estudos'},
   {path:'/editais/ativar',parent:'/concursos',label:'Ativar edital'},
   {path:'/admin/editais/novo',parent:'/admin/editais',label:'Novo edital'},
+  {path:'/admin/editais/importar-documento',parent:'/admin/editais',label:'Importação por Documento'},
   {path:'/admin/editais/:id/editar',parent:'/admin/editais',label:'Editar edital'},
   {path:'/admin/editais/:id',parent:'/admin/editais',label:'Detalhes do edital'},
   {path:'/admin/usuarios/:id',parent:'/admin/usuarios',label:'Detalhes do usuário'},
