@@ -44,12 +44,13 @@ export type Planejamento = {
   data_inicio: string;
   data_fim: string | null;
   dias_disponiveis: Bloco["dia_semana"][];
+  disponibilidade_minutos?: Partial<Record<Bloco["dia_semana"], number>>;
   cargo: string | null;
   ativo: boolean;
   disciplinas: { disciplina_id: string; nome: string; ordem: number }[];
 };
 
-export type PlanejamentoForm = Pick<Planejamento, "nome" | "data_inicio" | "data_fim" | "dias_disponiveis" | "cargo">;
+export type PlanejamentoForm = Pick<Planejamento, "nome" | "data_inicio" | "data_fim" | "dias_disponiveis" | "disponibilidade_minutos" | "cargo">;
 export type DistribuicaoForm = {
   disciplina_ids: string[];
   dias_semana: Bloco["dia_semana"][];

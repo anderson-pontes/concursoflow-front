@@ -8,8 +8,8 @@ import { DIAS, diaAbrev } from "@/lib/cronograma/constants";
 import { hojeISO, type PlanejamentoForm } from "@/lib/cronograma/types";
 import { cn } from "@/lib/utils";
 
-const schema = z.object({ nome: z.string().trim().min(1, "Informe o nome.").max(200), data_inicio: z.string().min(1), data_fim: z.string().nullable(), dias_disponiveis: z.array(z.enum(["seg", "ter", "qua", "qui", "sex", "sab", "dom"])).min(1, "Escolha ao menos um dia."), cargo: z.string().nullable() }).refine(v => !v.data_fim || v.data_fim >= v.data_inicio, "O término deve ser após o início.");
-const defaults = (): PlanejamentoForm => ({ nome: "Meu cronograma", data_inicio: hojeISO(), data_fim: null, dias_disponiveis: ["seg", "ter", "qua", "qui", "sex"], cargo: null });
+const schema = z.object({ nome: z.string().trim().min(1, "Informe o nome.").max(200), data_inicio: z.string().min(1), data_fim: z.string().nullable(), dias_disponiveis: z.array(z.enum(["seg", "ter", "qua", "qui", "sex", "sab", "dom"])).min(1, "Escolha ao menos um dia."), disponibilidade_minutos: z.record(z.enum(["seg", "ter", "qua", "qui", "sex", "sab", "dom"]), z.number().int().min(0).max(1440)).default({}), cargo: z.string().nullable() }).refine(v => !v.data_fim || v.data_fim >= v.data_inicio, "O término deve ser após o início.");
+const defaults = (): PlanejamentoForm => ({ nome: "Meu cronograma", data_inicio: hojeISO(), data_fim: null, dias_disponiveis: ["seg", "ter", "qua", "qui", "sex"], disponibilidade_minutos: { seg: 60, ter: 60, qua: 60, qui: 60, sex: 60, sab: 0, dom: 0 }, cargo: null });
 
 export function PlanejamentoManualDialog({ open, onClose, onSave, initialValues, concursoNome, isSaving }: { open: boolean; onClose: () => void; onSave: (form: PlanejamentoForm) => void; initialValues?: PlanejamentoForm; concursoNome: string; isSaving: boolean }) {
   const [form, setForm] = React.useState<PlanejamentoForm>(defaults);
