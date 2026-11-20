@@ -23,6 +23,7 @@ const Dashboard = lazyNamed(() => import("./pages/Dashboard"), "Dashboard");
 const Concursos = lazyNamed(() => import("./pages/Concursos"), "Concursos");
 const Disciplinas = lazyNamed(() => import("./pages/Disciplinas"), "Disciplinas");
 const DisciplinaDashboard = lazyNamed(() => import("./pages/DisciplinaDashboard"), "DisciplinaDashboard");
+const DisciplinaEditor = lazyNamed(() => import("./pages/DisciplinaEditor"), "DisciplinaEditor");
 const ResetPassword = lazyNamed(() => import("./pages/Auth/ResetPassword"), "ResetPassword");
 const Cronograma = lazyNamed(() => import("./pages/Cronograma"), "Cronograma");
 const CalendarioEstudos = lazyNamed(() => import("./pages/CalendarioEstudos"), "CalendarioEstudos");
@@ -130,6 +131,14 @@ export default function App() {
             <LazyPage><ReplanejarPlano /></LazyPage>
           </Layout>
         }
+      />
+      <Route
+        path="/disciplinas/nova"
+        element={<Layout requireAuth={!isAuthed}><LazyPage><DisciplinaEditor /></LazyPage></Layout>}
+      />
+      <Route
+        path="/disciplinas/:disciplinaId/editar"
+        element={<Layout requireAuth={!isAuthed}><LazyPage><DisciplinaEditor /></LazyPage></Layout>}
       />
       <Route
         path="/disciplinas/:disciplinaId"

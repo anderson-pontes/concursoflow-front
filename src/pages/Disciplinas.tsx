@@ -1,6 +1,6 @@
 import React from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 
 import { DisciplinaCard } from "@/components/disciplinas/DisciplinaCard";
@@ -11,20 +11,15 @@ import {
   EmptyDisciplinasIllustration,
 } from "@/components/disciplinas/DisciplinaPageParts";
 import { DisciplinasToolbar } from "@/components/disciplinas/DisciplinasToolbar";
-import {
-  ModalDisciplinaForm,
-  toDisciplinaInput,
-  type DisciplinaFormValues,
-} from "@/components/disciplinas/ModalDisciplinaForm";
 import { getTopicosProgressFromCounts } from "@/components/disciplinas/disciplinaProgress";
-import type { Disciplina, FilterSeg } from "@/lib/disciplinas/types";
+import type { Disciplina } from "@/lib/disciplinas/types";
 import { api } from "@/services/api";
 import {
   useConcursoAtivoId,
   useConcursoContextError,
   useConcursoContextResolved,
 } from "@/stores/concursoStore";
-import { useUiStore } from "@/stores/uiStore";
+import { useDisciplinasView } from "@/hooks/useDisciplinasView";
 import { CatalogPagination } from "@/components/editais/CatalogPagination";
 import { BannerSemConcurso } from "@/components/dashboard/BannerSemConcurso";
 import { Button } from "@/components/ui/button";
@@ -51,80 +46,59 @@ export function Disciplinas() {
   const contextResolved = useConcursoContextResolved();
   const contextError = useConcursoContextError();
   const concursoId = concursoAtivoId ?? "";
-  const savedViewMode = useUiStore((s) => s.disciplinasViewMode);
-  const setViewMode = useUiStore((s) => s.setDisciplinasViewMode);
   const [pageParams, setPageParams] = useSearchParams();
-  // The URL identifies the page; a persisted display preference must not select
-  // the Edital page when the user opens Disciplinas from the sidebar.
-  const requestedView = pageParams.get("view");
-  const viewMode = requestedView === "edital" ? "edital"
-    : requestedView === "table" || requestedView === "cards" || requestedView === "list" ? requestedView
-    : savedViewMode === "table" || savedViewMode === "list" ? savedViewMode : "cards";
-
-  const [search, setSearch] = React.useState("");
-  const [filterSeg, setFilterSeg] = React.useState<FilterSeg>("todas");
-  const [modalOpen, setModalOpen] = React.useState(false);
-  const [modalMode, setModalMode] = React.useState<"create" | "edit">("create");
-  const [editingDisciplina, setEditingDisciplina] = React.useState<Disciplina | null>(null);
-  const [page, setPage] = React.useState(1);
-
-  React.useEffect(() => {
-    const requestedView = pageParams.get("view");
-    if ((requestedView === "cards" || requestedView === "list" || requestedView === "table" || (requestedView === "edital" && concursoId)) && viewMode !== requestedView) setViewMode(requestedView);
-  }, [concursoId, pageParams, setViewMode, viewMode]);
-
-  const changeViewMode = (value: "cards" | "list" | "table" | "edital") => {
-    setViewMode(value);
+  const navigate = useNavigate();
+  const [savedViewMode, setViewMode] = useDisciplinasView();
+  const viewMode = pageParams.get("view") === "edital" ? "edital" : savedViewMode;
+  const allContests = pageParams.get("escopo") === "todos";
+  const search = pageParams.get("busca") ?? "";
+  const requestedPage = Number(pageParams.get("pagina"));
+  const page = Number.isSafeInteger(requestedPage) && requestedPage > 0 ? requestedPage : 1;
+  const updateFilter = React.useCallback((name: string, value: string) => {
     const next = new URLSearchParams(pageParams);
-    next.set("view", value);
-    setPageParams(next);
-  };
+    if (value) next.set(name, value);
+    else next.delete(name);
+    if (name !== "pagina") next.delete("pagina");
+    setPageParams(next, { replace: true });
+  }, [pageParams, setPageParams]);
+  const setPage = React.useCallback((value: number) => updateFilter("pagina", value > 1 ? String(value) : ""), [updateFilter]);
+  const queryConcursoId = allContests ? null : concursoAtivoId;
+  const returnSearch = pageParams.toString();
 
-  const searchTerm = React.useDeferredValue(search.trim());
+  const searchTerm = React.useDeferredValue(search.trim().slice(0, 150));
 
   const pageQuery = useQuery({
-    queryKey: ["disciplinas", "paginated", searchTerm || null, concursoId || null, filterSeg, page],
-    queryFn: async () =>
+    queryKey: ["disciplinas", "paginated", searchTerm || null, queryConcursoId, allContests, page],
+    queryFn: async ({ signal }) =>
       (
         await api.get("/disciplinas/paginadas", {
+          signal,
           params: {
             page,
             page_size: PAGE_SIZE,
             ...(searchTerm ? { search: searchTerm } : {}),
-            ...(concursoId ? { concurso_id: concursoId, vinculo: filterSeg } : {}),
+            ...(queryConcursoId ? { concurso_id: queryConcursoId, vinculo: "concurso" } : {}),
           },
         })
       ).data as DisciplinaPage,
-    enabled: contextResolved && Boolean(concursoId) && viewMode !== "edital",
+    enabled: contextResolved && !contextError && (allContests || Boolean(concursoId)) && viewMode !== "edital",
     // Keep the controls mounted while searching/paging within this contest.
     // Never retain data from a different active contest.
-    placeholderData: (previous, previousQuery) => previousQuery?.queryKey[3] === (concursoId || null) ? previous : undefined,
+    placeholderData: (previous, previousQuery) => previousQuery?.queryKey[3] === queryConcursoId && previousQuery?.queryKey[4] === allContests ? previous : undefined,
   });
   React.useEffect(() => {
-    if (pageQuery.data && pageQuery.data.total_pages > 0 && page > pageQuery.data.total_pages) {
+    if (!pageQuery.isPlaceholderData && pageQuery.data && pageQuery.data.total_pages > 0 && page > pageQuery.data.total_pages) {
       setPage(pageQuery.data.total_pages);
     }
-  }, [page, pageQuery.data]);
+  }, [page, pageQuery.data, pageQuery.isPlaceholderData, setPage]);
   const disciplinas = pageQuery.data?.items ?? [];
   const loadingDisciplinas = viewMode === "edital" ? false : pageQuery.isLoading;
-
-  const createMutation = useMutation({
-    mutationFn: async (values: DisciplinaFormValues) =>
-      (await api.post("/disciplinas", toDisciplinaInput(values))).data as Disciplina,
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["disciplinas"] }),
-  });
-
-  const updateMutation = useMutation({
-    mutationFn: async ({ id, values }: { id: string; values: DisciplinaFormValues }) =>
-      (await api.put(`/disciplinas/${id}`, toDisciplinaInput(values))).data as Disciplina,
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["disciplinas"] }),
-  });
 
   const deleteDisciplinaMutation = useMutation({
     mutationFn: async (disciplinaId: string) => {
       await api.delete(`/disciplinas/${disciplinaId}`);
     },
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["disciplinas"] }),
+    onSuccess: () => Promise.all([qc.invalidateQueries({ queryKey: ["disciplinas"] }), qc.invalidateQueries({ queryKey: ["edital-verticalizado"] })]),
   });
 
   const toggleConcursoMutation = useMutation({
@@ -136,40 +110,15 @@ export function Disciplinas() {
         await api.post(`/concursos/${concursoId}/disciplinas`, { disciplina_id: d.id });
       }
     },
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["disciplinas"] }),
+    onSuccess: () => Promise.all([qc.invalidateQueries({ queryKey: ["disciplinas"] }), qc.invalidateQueries({ queryKey: ["edital-verticalizado"] })]),
   });
 
   const summary = pageQuery.data?.summary
     ? { n: pageQuery.data.summary.total, emProg: pageQuery.data.summary.em_progresso, noConcurso: pageQuery.data.summary.no_concurso, fora: pageQuery.data.summary.fora_concurso, media: pageQuery.data.summary.progresso_medio, topicosTotal:pageQuery.data.summary.topicos_total, topicosConcluidos:pageQuery.data.summary.topicos_concluidos }
     : { n: 0, emProg: 0, noConcurso: 0, fora: 0, media: 0 };
 
-  const openCreate = () => {
-    setModalMode("create");
-    setEditingDisciplina(null);
-    setModalOpen(true);
-  };
-
-  const openEdit = (d: Disciplina) => {
-    setModalMode("edit");
-    setEditingDisciplina(d);
-    setModalOpen(true);
-  };
-
-  const handleSubmit = async (values: DisciplinaFormValues) => {
-    if (modalMode === "create") {
-      await createMutation.mutateAsync(values);
-      toast.success(
-        values.concursoIds.length > 0
-          ? "Disciplina criada e vinculada ao(s) concurso(s)."
-          : "Disciplina adicionada ao catálogo.",
-      );
-    } else if (editingDisciplina) {
-      await updateMutation.mutateAsync({ id: editingDisciplina.id, values });
-      toast.success("Disciplina atualizada.");
-    }
-    setModalOpen(false);
-    setEditingDisciplina(null);
-  };
+  const openCreate = () => navigate({ pathname: "/disciplinas/nova", search: returnSearch });
+  const openEdit = (d: Disciplina) => navigate({ pathname: `/disciplinas/${d.id}/editar`, search: returnSearch });
 
   const selectedQueryLoading = viewMode === "edital" ? false : pageQuery.isLoading;
   const essentialError = viewMode === "edital" ? false : pageQuery.isError;
@@ -184,11 +133,11 @@ export function Disciplinas() {
 
   if (contextStatus === "hydrating") return <PageSkeleton cards={3} rows={2} />;
 
-  if (contextStatus === "no_contest") {
-    return <div className="space-y-6 pb-10"><header><h1 className="text-2xl font-semibold tracking-tight text-foreground">{viewMode === "edital" ? "Edital Verticalizado" : "Disciplinas & Tópicos"}</h1><p className="text-sm text-muted-foreground">Escolha um concurso para organizar o conteúdo correto.</p></header><BannerSemConcurso /></div>;
+  if (contextStatus === "no_contest" && (!allContests || viewMode === "edital")) {
+    return <div className="space-y-6 pb-10"><header><h1 className="text-2xl font-semibold tracking-tight text-foreground">{viewMode === "edital" ? "Edital Verticalizado" : "Disciplinas & Tópicos"}</h1><p className="text-sm text-muted-foreground">Escolha um concurso para organizar o conteúdo correto.</p></header><BannerSemConcurso />{viewMode !== "edital" && <Button variant="outline" onClick={() => updateFilter("escopo", "todos")}>Todos os concursos</Button>}</div>;
   }
 
-  if (contextStatus === "error") {
+  if (contextStatus === "error" || contextError || essentialError) {
     const retry = pageQuery.refetch;
     return <div className="space-y-6 pb-10"><header><h1 className="text-2xl font-semibold tracking-tight text-foreground">{viewMode === "edital" ? "Edital Verticalizado" : "Disciplinas & Tópicos"}</h1></header><div role="alert" className="rounded-xl border border-destructive/30 bg-card p-8 text-center"><h2 className="font-semibold">Não foi possível carregar o conteúdo</h2><p className="mt-1 text-sm text-muted-foreground">O conteúdo anterior foi ocultado. Tente novamente.</p><Button className="mt-5" onClick={() => void Promise.all([qc.invalidateQueries({ queryKey: ["concursos"] }), retry()])}>Tentar novamente</Button></div></div>;
   }
@@ -198,15 +147,14 @@ export function Disciplinas() {
       {viewMode !== "edital" ? <DisciplinasToolbar
         updating={pageQuery.isFetching}
         search={search}
-        onSearchChange={(value) => { setSearch(value); setPage(1); }}
-        filterSeg={filterSeg}
-        onFilterChange={(value) => { setFilterSeg(value); setPage(1); }}
+        onSearchChange={(value) => updateFilter("busca", value)}
+        onAllContestsChange={(all) => updateFilter("escopo", all ? "todos" : "")}
+        allContests={allContests}
         onCreate={openCreate}
         summary={summary}
         concursoId={concursoId}
-        isCreating={createMutation.isPending}
         viewMode={viewMode}
-        onViewModeChange={changeViewMode}
+        onViewModeChange={setViewMode}
       /> : null}
 
       {loadingDisciplinas ? (
@@ -220,7 +168,7 @@ export function Disciplinas() {
         </div>
       ) : null}
 
-      {viewMode !== "edital" && !loadingDisciplinas && disciplinas.length === 0 && !searchTerm && filterSeg === "todas" && summary.n === 0 ? (
+      {viewMode !== "edital" && !loadingDisciplinas && disciplinas.length === 0 && !searchTerm && summary.n === 0 ? (
         <div className="flex flex-col items-center rounded-xl border border-dashed border-border bg-card/50 px-6 py-16 text-center">
           <EmptyDisciplinasIllustration />
           <h2 className="mt-6 text-base font-semibold text-card-foreground">Nenhuma disciplina ainda</h2>
@@ -237,7 +185,7 @@ export function Disciplinas() {
         </div>
       ) : null}
 
-      {viewMode !== "edital" && !loadingDisciplinas && disciplinas.length === 0 && (searchTerm || filterSeg !== "todas" || summary.n > 0) ? (
+      {viewMode !== "edital" && !loadingDisciplinas && disciplinas.length === 0 && (searchTerm || summary.n > 0) ? (
         <div className="rounded-xl border border-border bg-card px-6 py-12 text-center text-sm text-muted-foreground">
           {searchTerm ? <>Nenhuma disciplina encontrada para &ldquo;{searchTerm}&rdquo;.</> : "Nenhuma disciplina neste filtro."}
         </div>
@@ -292,37 +240,6 @@ export function Disciplinas() {
         <EditalVerticalizadoOverview key={concursoId} concursoId={concursoId} />
       ) : null}
 
-      <ModalDisciplinaForm
-        open={modalOpen}
-        mode={modalMode}
-        defaultConcursoId={concursoId || undefined}
-        initialValues={
-          editingDisciplina
-            ? {
-                nome: editingDisciplina.nome,
-                sigla: editingDisciplina.sigla ?? "",
-                concursoIds: editingDisciplina.concurso_ids,
-              }
-            : undefined
-        }
-        computedTotals={
-          editingDisciplina
-            ? {
-                peso: editingDisciplina.peso ?? null,
-                totalPontos: editingDisciplina.total_pontos ?? null,
-                prioridadeCalculada: editingDisciplina.prioridade_calculada ?? null,
-                topicosTotal: editingDisciplina.topicos_total ?? null,
-              }
-            : undefined
-        }
-        onClose={() => {
-          if (createMutation.isPending || updateMutation.isPending) return;
-          setModalOpen(false);
-          setEditingDisciplina(null);
-        }}
-        onSubmit={handleSubmit}
-        isPending={createMutation.isPending || updateMutation.isPending}
-      />
     </div>
   );
 }

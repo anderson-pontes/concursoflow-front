@@ -47,7 +47,7 @@ export function useConcursoSync() {
 
     const stillExists = Boolean(concursoAtivoId && list.some((c) => c.id === concursoAtivoId));
     if (!stillExists) {
-      void transitionConcurso(list[0].id);
+      void transitionConcurso(list.length === 1 ? list[0].id : null);
       return;
     }
     resolveConcursoContext(concursoAtivoId);

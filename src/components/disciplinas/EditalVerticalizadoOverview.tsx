@@ -1,7 +1,7 @@
 import React from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { AlertCircle, BookOpen, CalendarClock, ChevronDown, Circle, FileSearch, Grid2X2, ListTree, Search, Target, Trophy } from "lucide-react";
-import { useLocation, useSearchParams } from "react-router-dom";
+import { Link, useLocation, useSearchParams } from "react-router-dom";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -173,6 +173,7 @@ export function EditalVerticalizadoOverview({ concursoId }: { concursoId: string
         {activeContest ? <p className="mt-1 break-words text-xs font-medium text-primary [overflow-wrap:anywhere]">{activeContest.orgao || activeContest.nome}</p> : null}
       </div>
       <div className="flex shrink-0 flex-wrap items-center gap-2">
+        <Button variant="outline" size="sm" asChild><Link to={`/disciplinas/nova${location.search}`} state={actionProps.returnState}>Nova disciplina</Link></Button>
         <Badge variant="outline" className="capitalize">Concurso {first.concurso.status}</Badge>
         <div role="group" className="flex rounded-lg border bg-card p-1" aria-label="Visualização do edital">
           <Button type="button" className="min-h-10" variant={display === "table" ? "secondary" : "ghost"} size="sm" onClick={() => setDisplay("table")} aria-pressed={display === "table"}><ListTree aria-hidden="true" />Tabela</Button>

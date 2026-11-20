@@ -28,6 +28,8 @@ export const adminPageLinks = [
 
 export type BreadcrumbItem = {label:string; to?:string};
 const detailRoutes = [
+  {path:'/disciplinas/nova',parent:'/disciplinas',label:'Cadastrar disciplina'},
+  {path:'/disciplinas/:id/editar',parent:'/disciplinas',label:'Editar disciplina'},
   {path:'/disciplinas/:id',parent:'/disciplinas',label:'Detalhes da disciplina'},
   {path:'/planos/novo',parent:'/concursos',label:'Criar plano de estudos'},
   {path:'/planos/:concursoId/replanejar',parent:'/concursos',label:'Replanejar estudos'},

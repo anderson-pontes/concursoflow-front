@@ -56,6 +56,17 @@ describe("useConcursoSync", () => {
     });
   });
 
+  it("aguarda escolha explícita quando há vários concursos sem seleção válida", async () => {
+    vi.mocked(api.get).mockResolvedValue({ data: [{ id: "primeiro" }, { id: "segundo" }] });
+
+    renderHook(() => useConcursoSync(), { wrapper: Wrapper });
+
+    await waitFor(() => expect(useConcursoStore.getState()).toMatchObject({
+      concursoAtivoId: null,
+      contextResolved: true,
+    }));
+  });
+
   it("preserva a seleção e expõe erro quando a lista de concursos falha", async () => {
     vi.mocked(api.get).mockRejectedValue(new Error("rede indisponível"));
 

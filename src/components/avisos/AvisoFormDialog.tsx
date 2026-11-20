@@ -1,14 +1,15 @@
-import React from "react";
-import { Bell } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
-
-import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
-import { cn } from "@/lib/utils";
-import { api } from "@/services/api";
+import { useRef, useState, type FormEvent } from "react";
+import { Bell, CalendarDays, Plus } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
+import { useConfirmDialog } from "@/components/ui/confirm-dialog";
 import { DatePicker } from "@/components/ui/date-picker";
+import { Input } from "@/components/ui/input";
 import { SelectField } from "@/components/ui/select-field";
+import { Textarea } from "@/components/ui/textarea";
+import { erroVigencia, type AvisoPeriodo } from "@/lib/avisoVigencia";
 
-export type AvisoFormValues = {
+export type AvisoFormValues = AvisoPeriodo & {
   concurso_id: string;
   titulo: string;
   tipo: string;
@@ -24,223 +25,127 @@ export const AVISO_TIPO_OPTIONS = [
   { value: "outro", label: "Outro" },
 ] as const;
 
-export function emptyAvisoForm(): AvisoFormValues {
-  return {
-    concurso_id: "",
-    titulo: "",
-    tipo: "inscricao",
-    descricao: "",
-    data_vencimento: new Date().toISOString().slice(0, 10),
-  };
+export function emptyAvisoForm(hoje: string, concursoId = ""): AvisoFormValues {
+  return { concurso_id: concursoId, titulo: "", tipo: "inscricao", descricao: "", data_vencimento: "", data_inicio: hoje, data_fim: "" };
 }
 
-export function tipoLabel(tipo: string): string {
-  const found = AVISO_TIPO_OPTIONS.find((o) => o.value === tipo);
-  return found?.label ?? tipo;
+export function tipoLabel(tipo: string) {
+  return AVISO_TIPO_OPTIONS.find((item) => item.value === tipo.toLowerCase())?.label ?? tipo;
 }
 
-type ConcursoOption = { id: string; nome: string };
-
-type AvisoFormDialogProps = {
-  open: boolean;
-  mode: "create" | "edit";
-  initialValues?: Partial<AvisoFormValues>;
+type Props = {
+  mode: "create" | "edit" | "view";
+  initialValues: AvisoFormValues;
+  concursos: { id: string; nome: string }[];
+  oficial?: boolean;
   onClose: () => void;
   onSubmit: (values: AvisoFormValues) => Promise<void>;
-  isPending?: boolean;
+  isPending: boolean;
 };
 
-export function AvisoFormDialog({
-  open,
-  mode,
-  initialValues,
-  onClose,
-  onSubmit,
-  isPending = false,
-}: AvisoFormDialogProps) {
-  const [values, setValues] = React.useState<AvisoFormValues>(emptyAvisoForm);
-  const tituloRef = React.useRef<HTMLInputElement>(null);
+export function AvisoFormDialog({ mode, initialValues, concursos, oficial, onClose, onSubmit, isPending }: Props) {
+  const [values, setValues] = useState(initialValues);
+  const [attempted, setAttempted] = useState(false);
+  const submitting = useRef(false);
+  const closing = useRef(false);
+  const { requestConfirmation, confirmDialog } = useConfirmDialog();
+  const readOnly = mode === "view";
+  const disabled = isPending || readOnly;
+  const periodError = erroVigencia(values);
+  const showPeriodError = Boolean(periodError) && (attempted || Boolean(values.data_inicio && values.data_fim));
+  const titleError = attempted && !values.titulo.trim();
+  const setField = (field: keyof AvisoFormValues, value: string) => setValues((current) => ({ ...current, [field]: value }));
+  const title = mode === "create" ? "Novo aviso" : readOnly ? "Detalhes do aviso" : "Editar aviso";
 
-  const { data: concursos = [] } = useQuery({
-    queryKey: ["concursos"],
-    queryFn: async () => (await api.get("/concursos")).data as ConcursoOption[],
-    enabled: open,
-  });
+  async function close() {
+    if (submitting.current || isPending || closing.current) return;
+    if (!readOnly && JSON.stringify(values) !== JSON.stringify(initialValues)) {
+      closing.current = true;
+      const discard = await requestConfirmation({
+        title: "Descartar alterações?",
+        description: "As alterações deste aviso ainda não foram salvas.",
+        confirmLabel: "Descartar",
+        cancelLabel: "Continuar editando",
+        variant: "destructive",
+      });
+      closing.current = false;
+      if (!discard) return;
+    }
+    onClose();
+  }
 
-  React.useEffect(() => {
-    if (!open) return;
-    setValues({ ...emptyAvisoForm(), ...initialValues });
-    const t = window.setTimeout(() => tituloRef.current?.focus(), 50);
-    return () => window.clearTimeout(t);
-  }, [open, mode, initialValues]);
+  async function submit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (submitting.current || disabled) return;
+    setAttempted(true);
+    if (!values.titulo.trim() || periodError) return;
+    submitting.current = true;
+    try {
+      await onSubmit({ ...values, titulo: values.titulo.trim(), descricao: values.descricao.trim() });
+    } finally {
+      submitting.current = false;
+    }
+  }
 
-  const tipoKnown = AVISO_TIPO_OPTIONS.some((o) => o.value === values.tipo);
-  const canSubmit = Boolean(values.titulo.trim()) && Boolean(values.data_vencimento) && !isPending;
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!canSubmit) return;
-    await onSubmit({
-      ...values,
-      titulo: values.titulo.trim(),
-      descricao: values.descricao.trim(),
-      tipo: values.tipo.trim() || "inscricao",
-    });
-  };
-
-  return (
-    <Dialog
-      open={open}
-      onOpenChange={(o) => {
-        if (!o && !isPending) onClose();
-      }}
-    >
-      <DialogContent
-        hideClose
-        aria-describedby={undefined}
-        className={cn(
-          "flex w-full max-w-[520px] flex-col gap-0 overflow-hidden border border-[var(--border-default)] bg-[var(--bg-surface)] p-0 font-sans shadow-xl",
-          "max-h-[92vh] max-sm:bottom-0 max-sm:left-0 max-sm:top-auto max-sm:max-h-[92vh] max-sm:translate-x-0 max-sm:translate-y-0 max-sm:rounded-t-[20px] sm:rounded-[20px]",
-        )}
-      >
-        <header className="relative shrink-0 border-b border-[var(--border-subtle)] px-6 pb-4 pt-6 pr-14">
-          <button
-            type="button"
-            onClick={onClose}
-            disabled={isPending}
-            className="absolute right-3 top-3 rounded-lg p-2 text-2xl leading-none text-[var(--text-muted)] hover:bg-[var(--bg-surface-hover)]"
-            aria-label="Fechar"
-          >
-            ×
-          </button>
-          <div className="flex items-start gap-3">
-            <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-muted text-primary dark:bg-[var(--ap-brand-light)]">
-              <Bell className="h-5 w-5" aria-hidden />
-            </span>
-            <div>
-              <DialogTitle className="text-lg font-bold text-[var(--text-primary)]">
-                {mode === "create" ? "Novo aviso" : "Editar aviso"}
-              </DialogTitle>
-              <p className="mt-1 text-sm text-[var(--text-secondary)]">
-                Defina o prazo e o contexto do lembrete
-              </p>
+  return <Dialog open onOpenChange={(open) => { if (!open) void close(); }}>
+    <DialogContent className="flex max-h-[92dvh] w-[calc(100%-1.5rem)] max-w-3xl min-w-0 flex-col gap-0 overflow-hidden rounded-xl p-0">
+      <header className="flex shrink-0 items-start gap-3 border-b px-4 py-4 pr-12 sm:px-6">
+        <span className="rounded-lg bg-primary/10 p-2.5 text-primary"><Bell className="size-5" aria-hidden /></span>
+        <div>
+          <DialogTitle>{title}</DialogTitle>
+          <DialogDescription className="mt-1">{readOnly ? "Consulte o evento e o período de exibição." : "Configure o evento e a vigência do lembrete."}</DialogDescription>
+        </div>
+      </header>
+      <form className="flex min-h-0 min-w-0 flex-col" onSubmit={submit} noValidate aria-busy={isPending}>
+        <div className="min-h-0 min-w-0 space-y-4 overflow-y-auto px-4 py-4 sm:px-6">
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="min-w-0 space-y-1.5">
+              <label htmlFor="aviso-concurso" className="text-sm font-medium">Concurso</label>
+              <SelectField id="aviso-concurso" disabled={disabled || oficial} value={values.concurso_id} onValueChange={(value) => setField("concurso_id", value)}
+                options={[{ value: "", label: "Sem concurso" }, ...concursos.map((item) => ({ value: item.id, label: item.nome }))]} />
+            </div>
+            <div className="min-w-0 space-y-1.5">
+              <label htmlFor="aviso-tipo" className="text-sm font-medium">Tipo</label>
+              <SelectField id="aviso-tipo" disabled={disabled} value={values.tipo} onValueChange={(value) => setField("tipo", value)}
+                options={[...(!AVISO_TIPO_OPTIONS.some((item) => item.value === values.tipo) ? [{ value: values.tipo, label: tipoLabel(values.tipo) }] : []), ...AVISO_TIPO_OPTIONS]} />
             </div>
           </div>
-        </header>
-
-        <form className="flex min-h-0 flex-1 flex-col" onSubmit={handleSubmit}>
-          <div className="min-h-0 flex-1 space-y-4 overflow-y-auto px-6 py-5">
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div>
-                <label
-                  htmlFor="aviso-concurso"
-                  className="mb-1.5 block text-sm font-medium text-[var(--text-secondary)]"
-                >
-                  Concurso <span className="text-[var(--text-muted)]">(opcional)</span>
-                </label>
-                <SelectField
-                  id="aviso-concurso"
-                  disabled={isPending}
-                  value={values.concurso_id}
-                  onValueChange={(value) => setValues((s) => ({ ...s, concurso_id: value }))}
-                  options={[{ value: "", label: "Sem concurso" }, ...concursos.map((c) => ({ value: c.id, label: c.nome }))]}
-                />
-              </div>
-
-              <div>
-                <label
-                  htmlFor="aviso-tipo"
-                  className="mb-1.5 block text-sm font-medium text-[var(--text-secondary)]"
-                >
-                  Tipo
-                </label>
-                <SelectField
-                  id="aviso-tipo"
-                  disabled={isPending}
-                  value={values.tipo}
-                  onValueChange={(value) => setValues((s) => ({ ...s, tipo: value }))}
-                  options={[...(!tipoKnown && values.tipo ? [{ value: values.tipo, label: values.tipo }] : []), ...AVISO_TIPO_OPTIONS]}
-                />
-              </div>
-            </div>
-
-            <div>
-              <label
-                htmlFor="aviso-titulo"
-                className="mb-1.5 block text-sm font-medium text-[var(--text-secondary)]"
-              >
-                Título <span className="text-red-500">*</span>
-              </label>
-              <input
-                ref={tituloRef}
-                id="aviso-titulo"
-                required
-                disabled={isPending}
-                value={values.titulo}
-                onChange={(e) => setValues((s) => ({ ...s, titulo: e.target.value }))}
-                className="h-11 w-full rounded-[10px] border border-[var(--border-default)] bg-[var(--bg-surface)] px-3 text-sm text-[var(--text-primary)] outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
-              />
-            </div>
-
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div>
-                <label
-                  htmlFor="aviso-data"
-                  className="mb-1.5 block text-sm font-medium text-[var(--text-secondary)]"
-                >
-                  Data vencimento <span className="text-red-500">*</span>
-                </label>
-                <DatePicker
-                  id="aviso-data"
-                  disabled={isPending}
-                  value={values.data_vencimento}
-                  onValueChange={(value) => setValues((s) => ({ ...s, data_vencimento: value }))}
-                />
-              </div>
-
-              <div>
-                <label
-                  htmlFor="aviso-descricao"
-                  className="mb-1.5 block text-sm font-medium text-[var(--text-secondary)]"
-                >
-                  Descrição <span className="text-[var(--text-muted)]">(opcional)</span>
-                </label>
-                <input
-                  id="aviso-descricao"
-                  disabled={isPending}
-                  value={values.descricao}
-                  onChange={(e) => setValues((s) => ({ ...s, descricao: e.target.value }))}
-                  className="h-11 w-full rounded-[10px] border border-[var(--border-default)] bg-[var(--bg-surface)] px-3 text-sm text-[var(--text-primary)] outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
-                />
-              </div>
-            </div>
+          <div className="space-y-1.5">
+            <label htmlFor="aviso-titulo" className="text-sm font-medium">Título *</label>
+            <Input id="aviso-titulo" required maxLength={200} aria-invalid={titleError} aria-describedby={titleError ? "aviso-titulo-erro" : undefined} disabled={disabled} value={values.titulo} onChange={(event) => setField("titulo", event.target.value)} placeholder="Ex.: Inscrições abertas para o concurso" />
+            {titleError && <p id="aviso-titulo-erro" role="alert" className="text-sm text-destructive">Informe o título do aviso.</p>}
           </div>
-
-          <footer className="flex shrink-0 items-center justify-end gap-3 border-t border-[var(--border-subtle)] px-6 py-4">
-            <button
-              type="button"
-              disabled={isPending}
-              onClick={onClose}
-              className="rounded-[10px] border border-[var(--border-default)] px-4 py-2.5 text-sm font-semibold text-[var(--text-secondary)] hover:bg-[var(--bg-surface-hover)]"
-            >
-              Cancelar
-            </button>
-            <button
-              type="submit"
-              disabled={!canSubmit}
-              className="rounded-[10px] bg-primary px-5 py-2.5 text-sm font-bold text-white hover:bg-primary-700 disabled:opacity-50"
-            >
-              {isPending
-                ? mode === "create"
-                  ? "Criando…"
-                  : "Salvando…"
-                : mode === "create"
-                  ? "Criar aviso"
-                  : "Salvar"}
-            </button>
-          </footer>
-        </form>
-      </DialogContent>
-    </Dialog>
-  );
+          <div className="space-y-1.5">
+            <label htmlFor="aviso-evento" className="text-sm font-medium">Data do evento <span className="font-normal text-muted-foreground">({oficial ? "do edital" : "opcional"})</span></label>
+            <DatePicker id="aviso-evento" aria-label="Data do evento" disabled={disabled || oficial} value={values.data_vencimento} onValueChange={(value) => setField("data_vencimento", value)} />
+            <p className="text-xs text-muted-foreground">{oficial ? "A data oficial é sincronizada com o edital." : "Informe o dia da prova, da inscrição ou de outro prazo real."}</p>
+          </div>
+          <fieldset className="min-w-0 space-y-2 rounded-lg border bg-muted/20 p-3" aria-describedby="aviso-vigencia-ajuda">
+            <legend className="flex items-center gap-2 px-1 text-sm font-semibold"><CalendarDays className="size-4 text-primary" aria-hidden />Período de exibição</legend>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <div className="min-w-0 space-y-1.5">
+                <label htmlFor="aviso-inicio" className="text-sm font-medium">Data de início *</label>
+                <DatePicker id="aviso-inicio" aria-label="Data de início" disabled={disabled} value={values.data_inicio} onValueChange={(value) => setField("data_inicio", value)} />
+              </div>
+              <div className="min-w-0 space-y-1.5">
+                <label htmlFor="aviso-fim" className="text-sm font-medium">Data de término *</label>
+                <DatePicker id="aviso-fim" aria-label="Data de término" disabled={disabled} min={values.data_inicio} defaultMonth={values.data_inicio} value={values.data_fim} onValueChange={(value) => setField("data_fim", value)} />
+              </div>
+            </div>
+            {showPeriodError && <p role="alert" className="text-sm text-destructive">{periodError}</p>}
+            <p id="aviso-vigencia-ajuda" className="text-xs text-muted-foreground">O lembrete fica ativo durante todo o período, incluindo o dia de término.</p>
+          </fieldset>
+          <div className="space-y-1.5">
+            <label htmlFor="aviso-descricao" className="text-sm font-medium">Descrição <span className="font-normal text-muted-foreground">(opcional)</span></label>
+            <Textarea id="aviso-descricao" disabled={disabled} value={values.descricao} onChange={(event) => setField("descricao", event.target.value)} placeholder="Adicione detalhes sobre o aviso…" />
+          </div>
+        </div>
+        <footer className="flex shrink-0 flex-wrap justify-end gap-2 border-t px-4 py-3 sm:px-6">
+          <Button type="button" variant="outline" disabled={isPending} onClick={() => void close()}>{readOnly ? "Fechar" : "Cancelar"}</Button>
+          {!readOnly && <Button type="submit" disabled={isPending}>{mode === "create" && !isPending && <Plus />}{isPending ? "Salvando…" : mode === "create" ? "Criar aviso" : "Salvar alterações"}</Button>}
+        </footer>
+      </form>
+      {confirmDialog}
+    </DialogContent>
+  </Dialog>;
 }

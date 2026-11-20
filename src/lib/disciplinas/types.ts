@@ -13,14 +13,3 @@ export type Disciplina = {
   topicos_estudados?: number | null;
   topicos_iniciados?: number | null;
 };
-
-export type DisciplinaInput = {
-  nome: string;
-  sigla?: string | null;
-  prioridade?: number | null;
-  cor_hex?: string | null;
-  ordem?: number | null;
-  concurso_ids?: string[];
-};
-
-export type FilterSeg = "todas" | "concurso" | "fora";

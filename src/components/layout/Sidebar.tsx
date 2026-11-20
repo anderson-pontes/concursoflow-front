@@ -47,7 +47,7 @@ const navSections = [
     items: [
       { to: "/pomodoro", label: "Pomodoro", icon: Timer },
       { to: "/disciplinas?view=edital", label: "Edital Verticalizado", icon: LibraryBig },
-      { to: "/disciplinas?view=cards", label: "Disciplinas", icon: BookOpen },
+      { to: "/disciplinas", label: "Disciplinas", icon: BookOpen },
       { to: "/estudos/calendario", label: "Calendário", icon: CalendarDays },
       { to: "/revisoes", label: "Revisões", icon: Repeat2 },
       { to: "/flashcards", label: "Flashcards", icon: Layers },
@@ -371,7 +371,9 @@ function SidebarNavRow({
   const Icon = item.icon;
   const end = "end" in item ? item.end : false;
   const [itemPath, itemQuery] = item.to.split("?");
-  const isActive = Boolean(matchPath({ path: itemPath, end: Boolean(end) }, location.pathname)) && (!itemQuery || new URLSearchParams(location.search).get("view") === new URLSearchParams(itemQuery).get("view"));
+    const isEdital = new URLSearchParams(location.search).get("view") === "edital";
+    const matchesView = itemPath !== "/disciplinas" || isEdital === (itemQuery === "view=edital");
+    const isActive = Boolean(matchPath({ path: itemPath, end: Boolean(end) }, location.pathname)) && matchesView;
 
   return (
     <NavLink
