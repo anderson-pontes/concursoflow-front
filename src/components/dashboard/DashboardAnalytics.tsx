@@ -2,32 +2,22 @@ import { DisciplineIdentity, DisciplineSummary, disciplineStudyState } from "@/c
 import {useState} from 'react';
 import {apiUnavailableMessage} from '@/lib/apiQuery';
 import {Link} from 'react-router-dom';
-import {BookOpen,CheckCheck,Clock3,ListChecks} from 'lucide-react';
 import {CartesianGrid,Line,LineChart,XAxis,YAxis,PieChart,Pie,Cell} from 'recharts';
 import {ChartContainer,ChartTooltip} from '@/components/ui/chart';
 import {CardContent,CardTitle,CardDescription} from '@/components/ui/card';
 import {DashboardCard as Card,DashboardCardHeader as CardHeader,DashboardCardActions,DashboardEmptyPlot} from '@/components/dashboard/DashboardCard';
 import {Button} from '@/components/ui/button';
 import {DashboardStudyProgress} from '@/components/dashboard/DashboardStudyProgress';
-import {Skeleton} from '@/components/ui/skeleton';
 import {getDisciplinaColor} from '@/components/disciplinas/disciplinaPalettes';
 import {formatDashboardDuration as fmtMinutosEstudo} from '@/lib/dashboard/analysis';
 import {formatNumericDate} from '@/lib/dashboard/dates';
 import {percentBR,type DashboardAnalysis,type AnalysisDay,type AnalysisDiscipline} from '@/lib/dashboard/analysis';
-import {MetricCard, type MetricTone} from "@/components/ui/metric-card";
+import {DashboardKpiSkeleton} from "@/components/dashboard/DashboardPeriodKpis";
+export {DashboardPeriodKpis} from "@/components/dashboard/DashboardPeriodKpis";
 
 export function AnalyticsState({loading,error,retry,cause}:{loading:boolean;error:boolean;retry:()=>void;cause?:unknown}) {
- return loading?<div className="grid grid-cols-2 gap-3 lg:grid-cols-4" aria-label="Carregando indicadores">{[0,1,2,3].map(i=><Skeleton key={i} className="h-32 rounded-xl"/>)}</div>:error?<Card><CardContent className="pt-2"><p role="alert" className="text-sm">{apiUnavailableMessage(cause) ?? 'Não foi possível carregar os dados deste período.'}</p><Button className="mt-3" variant="outline" onClick={retry}>Tentar novamente</Button></CardContent></Card>:null;
-}
-export function DashboardPeriodKpis({data}:{data:DashboardAnalysis}) {
- const t=data.totais;
- const rows=[
-  {label:'Tempo estudado',value:fmtMinutosEstudo(t.minutos_estudados),sub:t.meta_periodo_minutos==null?'Meta não definida · período selecionado':`Meta do período: ${fmtMinutosEstudo(t.meta_periodo_minutos)}`,Icon:Clock3,tone:'indigo'},
-  {label:'Questões respondidas',value:t.questoes_total.toLocaleString('pt-BR'),sub:'Acertos + erros · sem questões em branco',Icon:ListChecks,tone:'blue'},
-  {label:'Taxa de acertos',value:percentBR(t.questoes_total>0?t.acertos_pct:null),sub:`${t.acertos.toLocaleString('pt-BR')} acertos em ${t.questoes_total.toLocaleString('pt-BR')} questões`,Icon:CheckCheck,tone:'green'},
-  {label:'Progresso do edital',value:percentBR(t.topicos_total>0?t.progresso_edital_pct:null),sub:`${t.topicos_concluidos} de ${t.topicos_total} tópicos · acumulado atual`,Icon:BookOpen,tone:'purple'},
- ];
- return <div aria-label="Indicadores de desempenho" className="grid min-w-0 auto-rows-fr grid-cols-2 gap-3 lg:grid-cols-4">{rows.map(({label,value,sub,Icon,tone})=><MetricCard key={label} label={label} labelAs="h2" value={value} description={sub} icon={Icon} tone={tone as MetricTone}/>)}</div>;
+ if (loading) return <DashboardKpiSkeleton />;
+ return error ? <Card><CardContent className="pt-2"><p role="alert" className="text-sm">{apiUnavailableMessage(cause) ?? 'Não foi possível carregar os dados deste período.'}</p><Button className="mt-3" variant="outline" onClick={retry}>Tentar novamente</Button></CardContent></Card> : null;
 }
 function DailyTooltip({day,accuracy}:{day?:AnalysisDay;accuracy:boolean}) {
  if(!day)return null;

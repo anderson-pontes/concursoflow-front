@@ -18,7 +18,28 @@ describe('indicadores e planejamento do dashboard',()=>{
   expect(screen.queryByRole('button',{name:/13\/10\/2026/})).not.toBeInTheDocument();
   expect(screen.getByText('Nenhum planejamento ou estudo neste período.')).toBeInTheDocument();
  });
- it('mostra duração legível, denominador ponderado e progresso acumulado',()=>{render(<DashboardPeriodKpis data={sample}/>);expect(screen.getByText('2h 30min')).toBeInTheDocument();expect(screen.getByText('10,0%')).toBeInTheDocument();expect(screen.getByText('1 acertos em 10 questões')).toBeInTheDocument();expect(screen.getByText(/3 de 10 tópicos · acumulado atual/)).toBeInTheDocument();});
+ it('mostra duração legível, acertos e erros do período e progresso acumulado',()=>{
+  render(<DashboardPeriodKpis data={sample}/>);
+  expect(screen.getByText('2h 30min')).toBeInTheDocument();
+  expect(screen.getByText('10,0%')).toBeInTheDocument();
+  expect(screen.getByText('1 acerto em 10 questões')).toBeInTheDocument();
+  expect(screen.getByText('9 erros')).toBeInTheDocument();
+  expect(screen.getByText('3 de 10 tópicos concluídos')).toBeInTheDocument();
+  expect(screen.getByRole('progressbar',{name:'Conclusão acumulada do edital'})).toHaveAttribute('aria-valuenow','30');
+ });
+ it('mostra meta ultrapassada com valor real e limita o preenchimento da barra',()=>{
+  render(<DashboardPeriodKpis data={{...sample,totais:{...sample.totais,minutos_estudados:90,meta_periodo_minutos:60}}}/>);
+  expect(screen.getByText('150,0% da meta')).toBeInTheDocument();
+  const bar=screen.getByRole('progressbar',{name:'Meta do período atingida'});
+  expect(bar).toHaveAttribute('aria-valuenow','100');
+  expect(bar).toHaveAttribute('aria-valuetext','150,0%');
+ });
+ it('oculta as barras de metas, acertos e edital quando faltam dados',()=>{
+  render(<DashboardPeriodKpis data={{...sample,totais:{...sample.totais,meta_periodo_minutos:null,questoes_total:0,acertos:0,erros:0,acertos_pct:null,topicos_total:0,topicos_concluidos:0,progresso_edital_pct:null}}}/>);
+  expect(screen.getByText('Meta não definida para o período')).toBeInTheDocument();
+  expect(screen.getByText('Sem tópicos')).toBeInTheDocument();
+  expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
+ });
  it('distingue sem questões de zero acertos real e zero minutos',()=>{const t={...sample.totais,minutos_estudados:0,acertos:0,questoes_total:0,acertos_pct:0};const {rerender}=render(<DashboardPeriodKpis data={{...sample,totais:t}}/>);expect(screen.getByText('0 min')).toBeInTheDocument();expect(screen.getByText('Sem dados')).toBeInTheDocument();rerender(<DashboardPeriodKpis data={{...sample,totais:{...t,questoes_total:10,acertos_pct:0}}}/>);expect(screen.getByText('0,0%')).toBeInTheDocument();expect(screen.queryByText('Sem dados')).not.toBeInTheDocument();});
  it('ordena disciplinas por menor progresso e mantém acesso aos acompanhamentos',()=>{const rows=[{id:'a',nome:'Mais avançada',topicos_total:10,topicos_concluidos:8,progresso_pct:80,minutos_estudados:30,participacao_tempo_pct:100},{id:'b',nome:'Precisa atenção',topicos_total:10,topicos_concluidos:1,progresso_pct:10,minutos_estudados:0,participacao_tempo_pct:0}];render(<MemoryRouter><DashboardDisciplineCharts data={{...sample,disciplinas:rows}}/></MemoryRouter>);const links=screen.getAllByRole('link');expect(links[0]).toHaveAttribute('href','/disciplinas/b');expect(screen.getAllByRole('link',{name:'Precisa atenção'})).toHaveLength(1);expect(screen.getByText('30 min')).toBeInTheDocument();});
  it('prioriza duas sessões, calcula o progresso sobre todas e registra pelo painel cronológico',async()=>{

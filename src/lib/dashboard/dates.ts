@@ -22,9 +22,7 @@ function dateOnlyAtUtc(value: string): Date {
 
 export function formatExamDate(value: string): string {
   return new Intl.DateTimeFormat("pt-BR", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
+    dateStyle: "long",
     timeZone: "UTC",
   }).format(dateOnlyAtUtc(value));
 }

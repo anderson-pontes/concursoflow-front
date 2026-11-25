@@ -1,8 +1,8 @@
 import React from 'react';
 import {useQueryClient} from '@tanstack/react-query';
-import {Link} from 'react-router-dom';
+import {TrendingUp} from 'lucide-react';
 import {BannerSemConcurso} from '@/components/dashboard/BannerSemConcurso';
-import {DashboardContextHeader,NextActionCard,UrgentReviewsCard} from '@/components/dashboard/DashboardPrimary';
+import {NextActionCard,UrgentReviewsCard} from '@/components/dashboard/DashboardPrimary';
 import {AnalyticsState,DashboardPeriodKpis,DashboardDailyCharts,DashboardDisciplineCharts} from '@/components/dashboard/DashboardAnalytics';
 import {DashboardTodayPlan} from '@/components/dashboard/DashboardTodayPlan';
 import {DashboardMiniCalendar} from '@/components/dashboard/DashboardMiniCalendar';
@@ -12,9 +12,9 @@ import {Button} from '@/components/ui/button';
 import {Alert,AlertTitle,AlertDescription} from '@/components/ui/alert';
 import {PageSkeleton} from '@/components/ui/page-skeleton';
 import {Skeleton} from '@/components/ui/skeleton';
-import {SelectField} from '@/components/ui/select-field';
+import {DashboardContextHeader,DashboardPeriodFilter} from '@/components/dashboard/DashboardContextHeader';
 import {dashboardRange,dashboardDayISO,resolveNextStudyStatus,todaySessionWithTimer,type DashboardPeriod,type TodaySession} from '@/lib/dashboard/analysis';
-import {calendarDaysFromToday,formatNumericDate} from '@/lib/dashboard/dates';
+import {calendarDaysFromToday} from '@/lib/dashboard/dates';
 import {resolveDashboardActionState} from '@/lib/dashboard/presentation';
 import {useDashboardAnalysis} from '@/hooks/useDashboardAnalysis';
 import {trackTelemetry} from '@/services/telemetry';
@@ -49,8 +49,8 @@ export function Dashboard() {
  if(contests.isLoading)return <PageSkeleton cards={4} rows={2}/>;
  if(!contest)return <div className="space-y-6"><h1 className="text-2xl font-semibold">Painel</h1><BannerSemConcurso/></div>;
  return <div className="min-w-0 space-y-5 pb-8">
-  <DashboardContextHeader contest={contest} daysUntilExam={days}><div className="flex min-w-0 flex-wrap items-center gap-2"><SelectField aria-label="Período do dashboard" className="w-40" value={period} onValueChange={v=>setPeriod(v as DashboardPeriod)} options={[{value:'week',label:'Esta semana'},{value:'month',label:'Este mês'},{value:'30days',label:'Últimos 30 dias'}]}/><p className="text-xs text-muted-foreground">{formatNumericDate(range.inicio)} a {formatNumericDate(range.fim)}</p></div>{!contest.data_prova&&<Link to="/concursos" className="text-xs font-medium text-primary underline">Cadastrar data da prova</Link>}</DashboardContextHeader>
-  <section aria-labelledby="dashboard-evolution" className="space-y-3"><h2 id="dashboard-evolution" className="text-base font-semibold">Como estou evoluindo?</h2>
+  <DashboardContextHeader contest={contest} daysUntilExam={days}><DashboardPeriodFilter value={period} onValueChange={setPeriod} range={range}/></DashboardContextHeader>
+  <section aria-labelledby="dashboard-evolution" className="space-y-3"><div className="flex items-center justify-between gap-3"><div><h2 id="dashboard-evolution" className="text-lg font-semibold tracking-tight">Como estou evoluindo?</h2><p className="mt-0.5 text-sm text-muted-foreground">Acompanhe seu desempenho e suas metas de estudo.</p></div><TrendingUp className="size-5 shrink-0 text-primary" aria-hidden/></div>
   <AnalyticsState cause={analysis.error} loading={analysis.isLoading} error={analysis.isError} retry={()=>void analysis.refetch()}/>
   {!analysis.isError&&analysis.data&&<DashboardPeriodKpis data={analysis.data}/>}
   </section>

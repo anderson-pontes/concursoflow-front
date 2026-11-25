@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Progress } from "@/components/ui/progress";
 import { buildPomodoroLaunchUrlFromStudy } from "@/lib/pomodoro/launchFromCronograma";
 import { dashboardStateMessage, type DashboardActionState } from "@/lib/dashboard/presentation";
-import { formatExamDate, formatStudyDate } from "@/lib/dashboard/dates";
+import { formatStudyDate } from "@/lib/dashboard/dates";
 import type { Bloco } from "@/lib/cronograma/types";
 import { getTipo } from "@/lib/cronograma/constants";
 import { cn } from "@/lib/utils";
@@ -18,12 +18,7 @@ import { disciplineColorStyle } from "@/components/disciplinas/DisciplineColorIn
 import { studySurface } from "@/lib/ui/studySurface";
 import { StudyHistoryDetails } from "@/components/estudos/StudyHistoryDetails";
 
-export type DashboardContest = {
-  nome: string;
-  orgao: string;
-  cargo: string | null;
-  data_prova: string | null;
-};
+export { DashboardContextHeader, type DashboardContest } from "@/components/dashboard/DashboardContextHeader";
 
 export type NextStudy = {
   fonte?: "cronograma_item" | "bloco_semanal";
@@ -66,32 +61,6 @@ function formatHours(hours: number): string {
   const fullHours = Math.floor(minutes / 60);
   const rest = minutes % 60;
   return rest ? `${fullHours}h ${rest}min` : `${fullHours}h`;
-}
-
-export function DashboardContextHeader({ contest, daysUntilExam, children }: { contest: DashboardContest; daysUntilExam: number | null; children?: React.ReactNode }) {
-  const examLabel = daysUntilExam === null
-    ? "Data da prova ainda não informada"
-    : daysUntilExam > 0
-      ? `${daysUntilExam} dias para a prova`
-      : daysUntilExam === 0
-        ? "A prova é hoje"
-        : `Prova realizada há ${Math.abs(daysUntilExam)} dias`;
-
-  return (
-    <header className="grid min-w-0 gap-3 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-start">
-      <div className="min-w-0">
-        <p className="text-xs font-semibold uppercase tracking-wide text-primary">Concurso ativo</p>
-        <h1 className="mt-1 break-words text-2xl font-semibold tracking-tight text-foreground [overflow-wrap:anywhere]">{contest.nome}</h1>
-        <p className="mt-1 break-words text-sm text-muted-foreground">{[contest.orgao !== contest.nome ? contest.orgao : null, contest.cargo].filter(Boolean).join(' · ')}</p>
-      </div>
-      <div className="flex min-w-0 flex-col items-start gap-2 lg:items-end"><Badge variant="outline" className="h-auto max-w-full flex-wrap justify-start whitespace-normal border-0 bg-muted px-2.5 py-1.5 text-xs font-medium">
-        <Target aria-hidden="true" />
-        {examLabel}
-        {contest.data_prova ? <span className="font-normal text-muted-foreground">· {formatExamDate(contest.data_prova)}</span> : null}
-      </Badge>
-      {children}</div>
-    </header>
-  );
 }
 
 export function NextActionCard({

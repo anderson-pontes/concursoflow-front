@@ -6,7 +6,7 @@ export type MetricTone = "indigo" | "green" | "purple" | "blue" | "orange";
 const tones: Record<MetricTone,string> = {indigo:"study-tone-indigo",green:"study-tone-emerald",purple:"study-tone-violet",blue:"metric-tone-blue",orange:"study-tone-amber"};
 type Props = Omit<HTMLAttributes<HTMLDivElement>,"children"> & {
  label:string; value:ReactNode; description?:ReactNode; icon:LucideIcon; tone:MetricTone;
- labelAs?:"p"|"h2"; as?:"div"|"section"; children?:ReactNode;
+ labelAs?:"p"|"h2"|"h3"; as?:"div"|"section"; children?:ReactNode;
 };
 /** KPI-only surface. The visual rules are shared with the reference discipline KPIs. */
 export function MetricCard({label,value,description,icon:Icon,tone,labelAs:Label="p",as:Root="div",children,className,...props}:Props){

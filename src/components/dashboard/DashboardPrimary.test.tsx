@@ -6,11 +6,21 @@ import { DashboardContextHeader, NextActionCard, TodayPlanCard, UrgentReviewsCar
 
 describe("organismos primários do dashboard", () => {
   it("identifica o concurso com um único h1 e trata data ausente", () => {
-    render(<DashboardContextHeader contest={{ nome: "TRT 8ª Região", orgao: "TRT 8", cargo: "Analista", data_prova: null }} daysUntilExam={null} />);
+    render(<MemoryRouter><DashboardContextHeader contest={{ nome: "TRT 8ª Região", orgao: "TRT 8", cargo: "Analista", data_prova: null }} daysUntilExam={null} /></MemoryRouter>);
 
     expect(screen.getAllByRole("heading", { level: 1 })).toHaveLength(1);
     expect(screen.getByRole("heading", { name: "TRT 8ª Região" })).toBeInTheDocument();
     expect(screen.getByText("Data da prova ainda não informada")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Cadastrar data da prova" })).toHaveAttribute("href", "/concursos");
+  });
+
+  it.each([
+    [91, "indigo", "91"], [68, "blue", "68"], [30, "amber", "30"], [15, "orange", "15"],
+    [0, "today", "A prova é hoje"], [-2, "neutral", "Prova realizada há 2 dias"],
+  ] as const)("mostra o prazo de %s dias com o estado correspondente", (days, tone, text) => {
+    render(<DashboardContextHeader contest={{ nome: "Receita Federal", orgao: "RFB", cargo: "Auditor Fiscal", data_prova: "2027-01-31" }} daysUntilExam={days} />);
+    expect(screen.getByText(text).closest("[data-tone]")).toHaveAttribute("data-tone", tone);
+    expect(screen.getByText("31 de janeiro de 2027")).toHaveAttribute("datetime", "2027-01-31");
   });
 
   it("preserva o prefill completo do Pomodoro e um único CTA primário", () => {
