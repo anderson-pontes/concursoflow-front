@@ -1,4 +1,4 @@
-import { BookOpenCheck, CheckCircle2, Clock3, Play, RefreshCw, Target, Trophy } from "lucide-react";
+import { BookOpenCheck, CalendarClock, CalendarDays, CheckCircle2, Clock3, Play, RefreshCw, SquarePen, Target, Trophy } from "lucide-react";
 import { Link } from "react-router-dom";
 
 import { Badge } from "@/components/ui/badge";
@@ -9,11 +9,14 @@ import { buildPomodoroLaunchUrlFromStudy } from "@/lib/pomodoro/launchFromCronog
 import { dashboardStateMessage, type DashboardActionState } from "@/lib/dashboard/presentation";
 import { formatExamDate, formatStudyDate } from "@/lib/dashboard/dates";
 import type { Bloco } from "@/lib/cronograma/types";
+import { getTipo } from "@/lib/cronograma/constants";
 import { cn } from "@/lib/utils";
 import { DashboardCard, DashboardCardHeader, DashboardCardBody, DashboardCardActions } from "@/components/dashboard/DashboardCard";
-import { formatDashboardDuration } from "@/lib/dashboard/analysis";
-import { DisciplineColorIndicator } from "@/components/disciplinas/DisciplineColorIndicator";
+import { DashboardSessionStatus } from "@/components/dashboard/DashboardSessionStatus";
+import { formatDashboardDuration, type TodaySession } from "@/lib/dashboard/analysis";
+import { disciplineColorStyle } from "@/components/disciplinas/DisciplineColorIndicator";
 import { studySurface } from "@/lib/ui/studySurface";
+import { StudyHistoryDetails } from "@/components/estudos/StudyHistoryDetails";
 
 export type DashboardContest = {
   nome: string;
@@ -28,10 +31,12 @@ export type NextStudy = {
   concurso_id?: string;
   disciplina_id: string;
   disciplina_nome: string;
+  disciplina_cor?: string | null;
   topico_id: string | null;
   topico_nome: string | null;
   data: string;
   duracao_minutos: number;
+  atividade?: string | null;
 };
 
 export type PendingReview = {
@@ -91,23 +96,33 @@ export function DashboardContextHeader({ contest, daysUntilExam, children }: { c
 
 export function NextActionCard({
   study,
+  studyStatus,
   state,
   isError,
   onRetry,
   onStart,
   onManual,
+  registering = false,
   replanUrl,
+  concursoId,
   compact = false,
 }: {
   study: NextStudy | null | undefined;
+  studyStatus?: TodaySession["status"];
   state: Exclude<DashboardActionState, "no_plan" | "empty_plan">;
   isError: boolean;
   onRetry: () => void;
   onStart: () => void;
   onManual: () => void;
+  registering?: boolean;
   replanUrl: string;
+  concursoId?: string;
   compact?: boolean;
 }) {
+  const historyDetails = !isError && study && concursoId ? (
+    <StudyHistoryDetails key={`${concursoId}:${study.disciplina_id}`}
+      concursoId={concursoId} disciplinaId={study.disciplina_id} disciplinaNome={study.disciplina_nome} disciplinaCor={study.disciplina_cor} />
+  ) : null;
   const launchUrl = study
     ? buildPomodoroLaunchUrlFromStudy({
         source: "dashboard",
@@ -121,21 +136,64 @@ export function NextActionCard({
       })
     : null;
 
-  if (compact) return <DashboardCard aria-labelledby="next-action-title" className="border-border bg-card">
-    <DashboardCardHeader><CardTitle><h3 id="next-action-title">Próxima sessão</h3></CardTitle><CardDescription>Seu próximo estudo no planejamento</CardDescription></DashboardCardHeader>
-    <DashboardCardBody>
-      {isError ? <p role="alert" className="text-sm text-muted-foreground">Não foi possível carregar a próxima ação. Tente novamente.</p> : study ? <div className="flex flex-1 flex-col justify-center gap-3">
-        <p className="flex min-w-0 items-start gap-2 text-lg font-semibold [overflow-wrap:anywhere]"><DisciplineColorIndicator disciplinaId={study.disciplina_id}/>{study.disciplina_nome}</p>
-        {study.topico_nome && <p className="break-words text-sm text-muted-foreground">{study.topico_nome}</p>}
-        <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs"><span className="inline-flex items-center gap-1.5"><Clock3 className="size-4" aria-hidden/>{formatStudyDate(study.data)} · {formatDashboardDuration(study.duracao_minutos)}</span><Badge variant="outline" className="border-primary/20 bg-card/60">No planejamento</Badge></div>
-      </div> : <p className="text-sm text-muted-foreground">Planejamento concluído por enquanto. Ajuste o cronograma para receber uma nova recomendação.</p>}
-      <DashboardCardActions className="items-center border-primary/15">
-        {isError && <Button type="button" onClick={onRetry}>Tentar novamente</Button>}
-        {launchUrl && <Button asChild><Link to={launchUrl} onClick={onStart}><Play aria-hidden="true"/>Iniciar estudo</Link></Button>}
-        {study && <Button type="button" variant="ghost" onClick={onManual}>Registrar manualmente</Button>}<Button asChild variant="ghost"><Link to={replanUrl}><RefreshCw aria-hidden="true"/>Replanejar</Link></Button>
-      </DashboardCardActions>
-    </DashboardCardBody>
-  </DashboardCard>;
+  if (compact) return (
+    <DashboardCard aria-labelledby="next-action-title" className="min-w-0 gap-3 border-border bg-card lg:h-auto xl:h-full">
+      <DashboardCardHeader>
+        <div className="grid w-full grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2.5">
+          <span className="grid size-10 shrink-0 place-items-center rounded-lg bg-primary/10 text-primary">
+            <CalendarClock className="size-5" aria-hidden />
+          </span>
+          <div className="min-w-0">
+            <CardTitle className="font-semibold"><h3 id="next-action-title">Próxima sessão</h3></CardTitle>
+            <CardDescription>Continue seu planejamento de estudos</CardDescription>
+          </div>
+          {!isError && study && studyStatus && <DashboardSessionStatus status={studyStatus} />}
+        </div>
+      </DashboardCardHeader>
+      <DashboardCardBody className="gap-3">
+        {isError ? (
+          <p role="alert" className="text-sm text-muted-foreground">Não foi possível carregar a próxima ação. Tente novamente.</p>
+        ) : study ? (
+          <div className="flex min-w-0 flex-col gap-3 xl:flex-1 xl:justify-center">
+            <div style={disciplineColorStyle(study.disciplina_id, study.disciplina_cor)}
+              className="min-w-0 space-y-1 rounded-lg border-l-4 bg-[var(--discipline-soft)] px-3.5 py-3 [overflow-wrap:anywhere] dark:bg-[color-mix(in_srgb,var(--discipline-color)_13%,var(--card))]">
+              <p className={cn("text-[var(--discipline-on-soft)] dark:text-card-foreground", study.topico_nome ? "text-sm font-medium" : "text-base font-semibold")}>{study.disciplina_nome}</p>
+              {study.topico_nome && <p className="text-base font-semibold leading-snug text-card-foreground">{study.topico_nome}</p>}
+            </div>
+            <dl className={cn("grid grid-cols-2 gap-2", study.atividade && "sm:grid-cols-3")}>
+              <div className="min-w-0 rounded-lg bg-muted/50 px-3 py-2.5">
+                <dt className="flex items-center gap-1.5 text-xs text-muted-foreground"><CalendarDays className="size-3.5" aria-hidden /> Data prevista</dt>
+                <dd className="mt-1 text-sm font-semibold"><time dateTime={study.data}>{formatStudyDate(study.data)}</time></dd>
+              </div>
+              <div className="min-w-0 rounded-lg bg-muted/50 px-3 py-2.5">
+                <dt className="flex items-center gap-1.5 text-xs text-muted-foreground"><Clock3 className="size-3.5" aria-hidden /> Duração</dt>
+                <dd className="mt-1 text-sm font-semibold">{formatDashboardDuration(study.duracao_minutos)}</dd>
+              </div>
+              {study.atividade && <div className="col-span-2 min-w-0 rounded-lg bg-muted/50 px-3 py-2.5 sm:col-span-1">
+                <dt className="flex items-center gap-1.5 text-xs text-muted-foreground"><Target className="size-3.5" aria-hidden /> Atividade</dt>
+                <dd className="mt-1 break-words text-sm font-semibold">{getTipo(study.atividade).label}</dd>
+              </div>}
+            </dl>
+          </div>
+        ) : (
+          <p className="text-sm text-muted-foreground">Planejamento concluído por enquanto. Ajuste o cronograma para receber uma nova recomendação.</p>
+        )}
+        <div className="space-y-2">
+          <div className={cn("grid gap-2", launchUrl && study && "sm:grid-cols-2")}>
+            {isError && <Button type="button" onClick={onRetry}>Tentar novamente</Button>}
+            {launchUrl && <Button asChild className="min-h-11 w-full active:brightness-90"><Link to={launchUrl} onClick={onStart}><Play aria-hidden /> Iniciar estudo</Link></Button>}
+            {study && <Button type="button" variant="outline" className="min-h-11 w-full" onClick={onManual} disabled={registering} aria-busy={registering}>
+              <SquarePen aria-hidden /> {registering ? "Abrindo registro…" : "Registrar manualmente"}
+            </Button>}
+          </div>
+          <div className={cn("grid gap-2 border-t border-border pt-1 [&>button]:w-full", historyDetails && "grid-cols-2")}>
+            {historyDetails}
+            <Button asChild variant="ghost" size="sm" className={cn("min-h-11 px-2", !historyDetails && "justify-self-end")}><Link to={replanUrl}><RefreshCw aria-hidden /> Replanejar</Link></Button>
+          </div>
+        </div>
+      </DashboardCardBody>
+    </DashboardCard>
+  );
 
   return (
     <Card className="border-border bg-card" aria-labelledby="next-action-title">
@@ -163,6 +221,7 @@ export function NextActionCard({
           {isError ? <Button type="button" onClick={onRetry}>Tentar novamente</Button> : null}
           {launchUrl ? <Button asChild><Link to={launchUrl} onClick={onStart}><Play aria-hidden="true" /> Iniciar estudo</Link></Button> : null}
           {study ? <Button type="button" variant="outline" onClick={onManual}>Registrar manualmente</Button> : null}
+          {historyDetails}
           <Button asChild variant="outline"><Link to={replanUrl}><RefreshCw aria-hidden="true" /> Replanejar</Link></Button>
         </div>
       </CardContent>

@@ -13,7 +13,7 @@ import {Alert,AlertTitle,AlertDescription} from '@/components/ui/alert';
 import {PageSkeleton} from '@/components/ui/page-skeleton';
 import {Skeleton} from '@/components/ui/skeleton';
 import {SelectField} from '@/components/ui/select-field';
-import {dashboardRange,dashboardDayISO,todaySessionWithTimer,type DashboardPeriod,type TodaySession} from '@/lib/dashboard/analysis';
+import {dashboardRange,dashboardDayISO,resolveNextStudyStatus,todaySessionWithTimer,type DashboardPeriod,type TodaySession} from '@/lib/dashboard/analysis';
 import {calendarDaysFromToday,formatNumericDate} from '@/lib/dashboard/dates';
 import {resolveDashboardActionState} from '@/lib/dashboard/presentation';
 import {useDashboardAnalysis} from '@/hooks/useDashboardAnalysis';
@@ -35,6 +35,7 @@ export function Dashboard() {
  React.useEffect(()=>{if(analysis.data?.timezone)setTimezone(analysis.data.timezone);},[analysis.data?.timezone]);
  const activity=usePomodoroStore(s=>s.activityContext);const hasSession=usePomodoroSessionStore(s=>s.hasSession);const phase=usePomodoroSessionStore(s=>s.phase);
  const todayPlan=React.useMemo(()=>analysis.data?.plano_hoje.map(item=>todaySessionWithTimer(item,activity,concursoId,hasSession&&phase==='foco'))??[],[analysis.data,activity,concursoId,hasSession,phase]);
+ const nextStudyStatus=next.data?resolveNextStudyStatus(next.data,today,todayPlan):undefined;
  const contest=contests.data?.find(c=>c.id===concursoId);
  const days=contest?.data_prova?calendarDaysFromToday(contest.data_prova,userDate):null;
  const state=resolveDashboardActionState({contextStatus:'ready',overdueReviews:reviews.data?.items.filter(r=>r.dias_atraso>0).length??0,daysUntilExam:days,hoursToday:summary.data?.horas_hoje??0,dailyGoalHours:summary.data?.meta_horas??0});
@@ -54,9 +55,9 @@ export function Dashboard() {
   {!analysis.isError&&analysis.data&&<DashboardPeriodKpis data={analysis.data}/>}
   </section>
   <section aria-labelledby="dashboard-now" className="space-y-3"><h2 id="dashboard-now" className="text-base font-semibold">O que estudar agora?</h2>
-  <div data-dashboard-row="actions" className="grid items-start gap-4 lg:items-stretch lg:grid-cols-2">
-   {next.isLoading?<Skeleton className="h-48 rounded-xl"/>:<NextActionCard compact study={next.data} state={actionState} isError={next.isError} onRetry={()=>void next.refetch()} onStart={()=>trackTelemetry('next_action_started',{action_type:'study',source:'dashboard'})} onManual={()=>{if(!next.data)return;const s=next.data;setPrefill({disciplinaId:s.disciplina_id,topicoId:s.topico_id,blocoId:s.fonte==='bloco_semanal'?s.item_id:undefined,itemId:s.fonte==='cronograma_item'?s.item_id:undefined,dataReferencia:s.data});trackTelemetry('manual_study_opened',{source:'dashboard'});}} replanUrl={`/planos/${concursoId}/replanejar`}/>}
-   {analysis.isLoading?<Skeleton className="h-48 rounded-xl"/>:<DashboardTodayPlan items={todayPlan} onRegister={register} error={analysis.isError} retry={()=>void analysis.refetch()}/>}
+  <div data-dashboard-row="actions" className="grid items-start gap-4 xl:items-stretch xl:grid-cols-2">
+   {next.isLoading?<Skeleton className="h-48 rounded-xl xl:h-full xl:min-h-48"/>:<NextActionCard compact concursoId={concursoId} study={next.data} studyStatus={nextStudyStatus} registering={Boolean(prefill)} state={actionState} isError={next.isError} onRetry={()=>void next.refetch()} onStart={()=>trackTelemetry('next_action_started',{action_type:'study',source:'dashboard'})} onManual={()=>{if(!next.data)return;const s=next.data;setPrefill({disciplinaId:s.disciplina_id,topicoId:s.topico_id,blocoId:s.fonte==='bloco_semanal'?s.item_id:undefined,itemId:s.fonte==='cronograma_item'?s.item_id:undefined,dataReferencia:s.data});trackTelemetry('manual_study_opened',{source:'dashboard'});}} replanUrl={`/planos/${concursoId}/replanejar`}/>}
+   {analysis.isLoading?<Skeleton className="h-48 rounded-xl xl:h-full xl:min-h-48"/>:<DashboardTodayPlan concursoId={concursoId} items={todayPlan} day={today} studiedMinutes={analysis.data?.plano_hoje_minutos_estudados} onRegister={register} error={analysis.isError} retry={()=>void analysis.refetch()}/>}
   </div>
   </section>
   {!analysis.isError&&analysis.data&&<DashboardDailyCharts data={analysis.data}/>}

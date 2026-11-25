@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { invalidateEstudosQueries } from "@/lib/estudos/invalidateQueries";
+import { apiErrorMessage } from "@/lib/calendario/pageHelpers";
 import { cn } from "@/lib/utils";
 import { api } from "@/services/api";
 import { createCategoria, listCategorias } from "@/services/categorias";
@@ -37,7 +38,7 @@ export function RegistroEstudoModal({
   const concursoAtivoId = useConcursoAtivoId();
 
   const [dateKind, setDateKind] = React.useState<"hoje" | "ontem" | "outro">("hoje");
-  const [dateCustom, setDateCustom] = React.useState(new Date().toISOString().slice(0, 10));
+  const [dateCustom, setDateCustom] = React.useState(() => fmtDateValue("hoje", ""));
 
   const [categoriaId, setCategoriaId] = React.useState("");
   const [novaCategoriaOpen, setNovaCategoriaOpen] = React.useState(false);
@@ -108,7 +109,7 @@ export function RegistroEstudoModal({
       setDateCustom(defaultDataReferencia);
     } else {
       setDateKind("hoje");
-      setDateCustom(new Date().toISOString().slice(0, 10));
+      setDateCustom(fmtDateValue("hoje", ""));
     }
   }, [
     open,
@@ -140,6 +141,12 @@ export function RegistroEstudoModal({
     enabled: open && Boolean(sessaoId),
   });
   const registroConcursoId = sessaoId ? sessaoData?.concurso_id : defaultConcursoId ?? concursoAtivoId;
+  const blocoId = sessaoId ? sessaoData?.bloco_cronograma_id : defaultBlocoId;
+  const cronogramaItemId = sessaoId ? sessaoData?.cronograma_item_id : defaultCronogramaItemId;
+  const hasActivity = Boolean(blocoId || cronogramaItemId) && disciplinaId === (sessaoData?.disciplina_id ?? defaultDisciplinaId);
+  const occurrenceDate = sessaoId ? null : defaultDataReferencia;
+  const matchesActivityDate = (date: string) => !occurrenceDate || date === occurrenceDate;
+  const selectedDateMatchesActivity = matchesActivityDate(fmtDateValue(dateKind, dateCustom));
 
   const { data: disciplinas } = useQuery({
     queryKey: ["registro-disciplinas", registroConcursoId],
@@ -301,8 +308,9 @@ export function RegistroEstudoModal({
 
   const saveMutation = useMutation({
     mutationFn: async () => {
-      const baseDate = fmtDateValue(dateKind, dateCustom);
       const now = new Date();
+      const baseDate = fmtDateValue(dateKind, dateCustom, now);
+      const linkActivity = hasActivity && matchesActivityDate(baseDate);
       const segundos = hmsToSeconds(hours, minutes, seconds);
       let inicio: Date;
       if (sessaoId && sessaoData) {
@@ -320,9 +328,9 @@ export function RegistroEstudoModal({
         topico_ids: selectedTopicos.map((t) => t.id),
         plano_id: sessaoId && sessaoData ? sessaoData.plano_id : null,
         concurso_id: sessaoId && sessaoData ? sessaoData.concurso_id : defaultConcursoId ?? concursoAtivoId,
-        bloco_cronograma_id: disciplinaId === (sessaoData?.disciplina_id ?? defaultDisciplinaId) ? (sessaoId ? sessaoData?.bloco_cronograma_id ?? null : defaultBlocoId ?? null) : null,
-        cronograma_item_id: disciplinaId === (sessaoData?.disciplina_id ?? defaultDisciplinaId) ? (sessaoId ? sessaoData?.cronograma_item_id ?? null : defaultCronogramaItemId ?? null) : null,
-        atividade_concluida: disciplinaId === (sessaoData?.disciplina_id ?? defaultDisciplinaId) && atividadeConcluida,
+        bloco_cronograma_id: linkActivity ? blocoId ?? null : null,
+        cronograma_item_id: linkActivity ? cronogramaItemId ?? null : null,
+        atividade_concluida: linkActivity && atividadeConcluida,
         modalidade,
         categoria_id: categoriaId || null,
         data_referencia: baseDate,
@@ -352,6 +360,7 @@ export function RegistroEstudoModal({
         await api.post("/sessoes-estudo", body);
       }
     },
+    onError: (error) => toast.error(apiErrorMessage(error, "Não foi possível salvar o registro. Tente novamente.")),
     onSuccess: () => {
       toast.success(sessaoId ? "Registro atualizado" : "Registro salvo");
       qc.invalidateQueries({ queryKey: ["disciplina-dashboard"] });
@@ -436,8 +445,13 @@ export function RegistroEstudoModal({
               <p className="text-sm font-medium text-slate-600 dark:text-neutral-300">Carregando registro…</p>
             </div>
           ) : null}
-          {(defaultBlocoId || defaultCronogramaItemId || sessaoData?.bloco_cronograma_id || sessaoData?.cronograma_item_id) && disciplinaId === (sessaoData?.disciplina_id ?? defaultDisciplinaId) && <label className="flex min-h-11 items-start gap-3 rounded-lg border border-primary/30 bg-primary/5 p-3 text-sm"><input type="checkbox" checked={atividadeConcluida} onChange={e => setAtividadeConcluida(e.target.checked)} /><span>Concluir atividade desta ocorrência<span className="mt-1 block text-xs text-muted-foreground">O tempo estudado será registrado mesmo se a atividade continuar pendente.</span></span></label>}
           <RegistroDateSelector kind={dateKind} customDate={dateCustom} onKindChange={setDateKind} onCustomDateChange={setDateCustom} />
+          {hasActivity && selectedDateMatchesActivity && <label className="flex min-h-11 items-start gap-3 rounded-lg border border-primary/30 bg-primary/5 p-3 text-sm"><input type="checkbox" checked={atividadeConcluida} onChange={e => setAtividadeConcluida(e.target.checked)} /><span>Concluir atividade desta ocorrência<span className="mt-1 block text-xs text-muted-foreground">O tempo estudado será registrado mesmo se a atividade continuar pendente.</span></span></label>}
+          {hasActivity && !selectedDateMatchesActivity && (
+            <p role="status" className="rounded-lg border border-border bg-muted/50 p-3 text-sm text-muted-foreground">
+              O estudo será registrado na data selecionada. A ocorrência original ficará no cronograma.
+            </p>
+          )}
 
           <div className="grid gap-4 md:grid-cols-2">
             <div className="block">
@@ -540,6 +554,7 @@ export function RegistroEstudoModal({
           onClose={onClose}
           onSave={() => {
             if (!disciplinaId) return void toast.error("Selecione uma disciplina");
+            if (dateKind === "outro" && !dateCustom) return void toast.error("Selecione a data do estudo");
             const totalSeconds = hmsToSeconds(hours, minutes, seconds);
             if (totalSeconds <= 0) return void toast.error("Informe um tempo de estudo maior que zero");
             if (totalSeconds > 24 * 3600) return void toast.error("O tempo máximo é 24 horas");

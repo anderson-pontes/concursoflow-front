@@ -1,4 +1,5 @@
 import { Minus, Plus } from "lucide-react";
+import { localDateISO } from "@/lib/dashboard/analysis";
 
 export type DisciplinaOpt = { id: string; nome: string };
 export type TopicoOpt = { id: string; nome: string; status?: string };
@@ -52,11 +53,11 @@ export type SessaoEstudoApi = {
 export const NOVA_CATEGORIA_VALUE = "__nova_categoria__";
 export const NONE_DISCIPLINA = "__none_disciplina__";
 
-export function fmtDateValue(kind: "hoje" | "ontem" | "outro", custom: string) {
+export function fmtDateValue(kind: "hoje" | "ontem" | "outro", custom: string, now = new Date()) {
   if (kind === "outro") return custom;
-  const date = new Date();
+  const date = new Date(now);
   if (kind === "ontem") date.setDate(date.getDate() - 1);
-  return date.toISOString().slice(0, 10);
+  return localDateISO(date);
 }
 
 export function hmsToSeconds(hours: number, minutes: number, seconds: number) {

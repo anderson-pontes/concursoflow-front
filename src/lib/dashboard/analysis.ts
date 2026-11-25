@@ -1,11 +1,12 @@
 export type DashboardPeriod = 'week' | 'month' | '30days';
 export type AnalysisDay = {data:string;minutos_planejados:number;minutos_estudados:number;questoes_total:number;acertos:number;acertos_pct:number|null};
 export type AnalysisDiscipline = {id:string;nome:string;topicos_total:number;topicos_concluidos:number;progresso_pct:number|null;minutos_estudados:number;participacao_tempo_pct:number};
-export type TodaySession = {id:string;fonte:'cronograma_item'|'bloco_semanal';bloco_cronograma_id?:string|null;disciplina_id:string;disciplina_nome:string;topico_id:string|null;topico_nome:string|null;data:string;hora_inicio:string|null;hora_fim:string|null;duracao_minutos:number;status:'planejada'|'em_andamento'|'concluida'|'atrasada'};
+export type TodaySession = {id:string;fonte:'cronograma_item'|'bloco_semanal';bloco_cronograma_id?:string|null;disciplina_id:string;disciplina_nome:string;disciplina_cor?:string|null;topico_id:string|null;topico_nome:string|null;data:string;hora_inicio:string|null;hora_fim:string|null;duracao_minutos:number;status:'planejada'|'em_andamento'|'concluida'|'atrasada'};
 export type DashboardAnalysis = {
  inicio:string;fim:string;timezone:string;
  totais:{minutos_planejados:number;minutos_estudados:number;meta_periodo_minutos:number|null;sessoes:number;questoes_total:number;acertos:number;erros:number;acertos_pct:number|null;topicos_total:number;topicos_concluidos:number;progresso_edital_pct:number|null};
  dias:AnalysisDay[];disciplinas:AnalysisDiscipline[];plano_hoje:TodaySession[];
+ plano_hoje_minutos_estudados?:number;
 };
 export function localDateISO(date:Date) {return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;}
 export function dashboardDayISO(timezone='America/Sao_Paulo',now=new Date()) {
@@ -32,4 +33,15 @@ export function todaySessionWithTimer(item:TodaySession,context:{concursoId?:str
  const linked=context?.itemId===item.id||(item.bloco_cronograma_id!=null&&context?.blocoId===item.bloco_cronograma_id)||(item.fonte==='bloco_semanal'&&context?.blocoId===item.id);
  const current=active&&context?.concursoId===concursoId&&context?.dataReferencia===item.data&&linked;
  return current&&item.status!=='concluida'?{...item,status:'em_andamento'}:item;
+}
+
+export function resolveNextStudyStatus(
+  study: { item_id?: string; fonte?: TodaySession["fonte"]; data: string },
+  today: string,
+  plan: TodaySession[],
+): TodaySession["status"] | undefined {
+  const matchedStatus = plan.find((item) =>
+    item.data === study.data && item.id === study.item_id && item.fonte === study.fonte
+  )?.status;
+  return matchedStatus ?? (study.data > today ? "planejada" : undefined);
 }

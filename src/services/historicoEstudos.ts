@@ -2,6 +2,7 @@ import type {
   HistoricoAgregadoResponse,
   HistoricoFilters,
   SessaoEstudoListResponse,
+  StudyHistoryFilters, StudyHistoryOrder, StudyHistoryPage, StudyHistorySummary,
 } from "@/lib/historico/types";
 import { api } from "@/services/api";
 
@@ -19,9 +20,10 @@ function buildSearch(filters: Partial<HistoricoFilters>): URLSearchParams {
 }
 
 export async function fetchHistoricoSessoes(
-  filters: HistoricoFilters,
+  filters: Omit<HistoricoFilters, "dataInicio" | "dataFim"> & Partial<Pick<HistoricoFilters, "dataInicio" | "dataFim">>,
+  signal?: AbortSignal,
 ): Promise<SessaoEstudoListResponse> {
-  return (await api.get(`/sessoes-estudo?${buildSearch(filters)}`)).data as SessaoEstudoListResponse;
+  return (await api.get<SessaoEstudoListResponse>(`/sessoes-estudo?${buildSearch(filters)}`, { signal })).data;
 }
 
 export async function fetchHistoricoAgregado(params: {
@@ -37,4 +39,18 @@ export async function fetchHistoricoAgregado(params: {
   });
   if (params.concursoId) p.set("concurso_id", params.concursoId);
   return (await api.get(`/sessoes-estudo/agregado?${p}`)).data as HistoricoAgregadoResponse;
+}
+
+export async function fetchStudyHistory(
+  filters: StudyHistoryFilters,
+  order: StudyHistoryOrder,
+  cursor: string | null,
+  signal: AbortSignal,
+) {
+  const params = { ...filters, ordem: order, limite: 15, cursor };
+  return (await api.get<StudyHistoryPage>("/sessoes-estudo/historico", { params, signal })).data;
+}
+
+export async function fetchStudyHistorySummary(filters: StudyHistoryFilters, signal: AbortSignal) {
+  return (await api.get<StudyHistorySummary>("/sessoes-estudo/historico/resumo", { params: filters, signal })).data;
 }

@@ -28,6 +28,20 @@ describe("organismos primários do dashboard", () => {
     expect(screen.getByRole("link", { name: /replanejar/i })).toHaveAttribute("href", "/planos/concurso-1/replanejar");
   });
 
+  it("exibe o status fornecido pelo plano e bloqueia outro clique enquanto abre o registro", () => {
+    const onManual = vi.fn();
+    render(<MemoryRouter><NextActionCard compact studyStatus="atrasada" registering state="ready"
+      study={{ disciplina_id: "disc-1", disciplina_nome: "Português", topico_id: null, topico_nome: null, data: "2026-11-24", duracao_minutos: 50 }}
+      isError={false} onRetry={vi.fn()} onStart={vi.fn()} onManual={onManual} replanUrl="/replanejar" /></MemoryRouter>);
+
+    expect(screen.getByText("Atrasada")).toBeInTheDocument();
+    expect(screen.queryByText("Planejada")).not.toBeInTheDocument();
+    const manual = screen.getByRole("button", { name: "Abrindo registro…" });
+    expect(manual).toBeDisabled();
+    fireEvent.click(manual);
+    expect(onManual).not.toHaveBeenCalled();
+  });
+
   it.each([
     ["overdue", "Há revisões que merecem atenção hoje"],
     ["upcoming_exam", "A prova está próxima"],

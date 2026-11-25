@@ -54,9 +54,10 @@ const CONTEXTUAL_ROOTS = new Set([
  * heatmap/histórico geral e estatísticas globais são preservados deliberadamente.
  */
 export function isConcursoContextQueryKey(queryKey: QueryKey): boolean {
-  const [root, scope] = queryKey;
+  const [root, scope, interfaceName] = queryKey;
   if (root === "dashboard-heatmap") return scope != null;
   if (root === "disciplinas") return scope !== "catalog" && scope !== "catalogo-plano";
+  if (root === "historico-sessoes") return interfaceName === "cursor" || interfaceName === "resumo";
   return typeof root === "string" && CONTEXTUAL_ROOTS.has(root);
 }
 

@@ -73,3 +73,48 @@ export type HistoricoFilters = {
   page: number;
   pageSize: number;
 };
+
+export type StudyHistoryActivity = "livre" | "pomodoro" | "revisao" | "teoria" | "questoes";
+
+export type StudyHistoryFilters = {
+  concurso_id: string;
+  disciplina_id: string;
+  plano_id?: string;
+  data_inicio?: string;
+  data_fim?: string;
+  topico_id?: string;
+  tipo?: StudyHistoryActivity;
+  busca?: string;
+  com_comentarios?: boolean;
+};
+
+export type StudyHistoryOrder = "recentes" | "antigos";
+
+export type StudyHistoryEntry = {
+  id: string;
+  dia: string;
+  inicio: string;
+  segundos: number;
+  tipo: string;
+  modalidade: string | null;
+  questoes_acertos: number;
+  questoes_erros: number;
+  questoes_em_branco: number;
+  comentarios: string | null;
+  anotacoes: string | null;
+  topicos: { id: string; nome: string }[];
+};
+
+export type StudyHistoryPage = {
+  items: StudyHistoryEntry[];
+  next_cursor: string | null;
+  timezone: string;
+};
+
+export type StudyHistorySummary = {
+  total_sessoes: number;
+  total_segundos: number;
+  topicos_distintos: number;
+  ultimo_estudo: string | null;
+  ultimo_id: string | null;
+};
