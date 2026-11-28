@@ -133,6 +133,8 @@ export function ReplanejarPlano() {
         queryClient.invalidateQueries({ queryKey: ["cronograma"] }),
         queryClient.invalidateQueries({ queryKey: ["cronograma-blocos"] }),
         queryClient.invalidateQueries({ queryKey: ["dashboard"] }),
+        queryClient.invalidateQueries({ queryKey: ["calendario"] }),
+        queryClient.invalidateQueries({ queryKey: ["calendario-dia"] }),
       ]);
       toast.success("Planejamento atualizado. Seus registros concluídos foram preservados.");
       navigate("/cronograma");

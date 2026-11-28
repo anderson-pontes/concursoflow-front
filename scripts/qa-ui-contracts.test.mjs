@@ -36,11 +36,11 @@ test("CTAs comerciais não retornam ao cadastro público", () => {
   }
 });
 
-test("heatmap possui um resumo acessível e oculta células decorativas", () => {
+test("heatmap agrupa dias interativos com rótulo acessível e foco navegável", () => {
   const heatmap = read("src/components/dashboard/HeatmapCard.tsx");
-  assert.match(heatmap, /role="img"/);
-  assert.match(heatmap, /aria-label=/);
-  assert.match(heatmap, /aria-hidden="true"/);
+  assert.match(heatmap, /role="group" aria-label="Duração registrada por dia"/);
+  assert.match(heatmap, /aria-label=\{cell.label\}/);
+  assert.match(heatmap, /tabIndex=\{focused === index \? 0 : -1\}/);
 });
 
 test("não há diálogos nativos nem controles de data, hora ou select nativos", () => {

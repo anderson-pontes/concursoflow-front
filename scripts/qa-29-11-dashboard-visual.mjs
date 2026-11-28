@@ -7,8 +7,9 @@ import puppeteer from "puppeteer";
 const baseUrl = process.env.QA_BASE_URL || "http://127.0.0.1:3000";
 assert.ok(["127.0.0.1", "localhost"].includes(new URL(baseUrl).hostname));
 const v2 = process.env.QA_VARIANT === "v2";
+const activity = process.env.QA_VARIANT === "activity";
 const scrollAudit=process.env.QA_SCROLL_AUDIT==='1';
-const output = new URL(scrollAudit?"../docs/qa/layout-scroll-dashboard/":v2 ? "../docs/qa/dashboard-v2/" : "../docs/qa/dashboard-29-11/", import.meta.url);
+const output = new URL(activity ? "../docs/qa/dashboard-activity/" : scrollAudit?"../docs/qa/layout-scroll-dashboard/":v2 ? "../docs/qa/dashboard-v2/" : "../docs/qa/dashboard-29-11/", import.meta.url);
 await mkdir(output, { recursive: true });
 const id = index => `29110000-0000-4000-8000-${String(index).padStart(12, "0")}`;
 const contest = { id: id(1), nome: "Concurso QA Dashboard", orgao: "Órgão QA", cargo: "Analista", data_prova: null };
@@ -17,7 +18,7 @@ const names = ["Direito Constitucional e Administrativo com identificação long
 const disciplines = names.map((nome, index) => ({ id: id(index + 2), nome, concurso_ids: [contest.id], topicos_total: 10, topicos_estudados: index * 3 }));
 const today = new Date().toLocaleDateString("en-CA", { timeZone: "America/Sao_Paulo" });
 const json = (data, status = 200) => ({ status, contentType: "application/json", body: JSON.stringify(data) });
-const browser = await puppeteer.launch({ headless: true, args: ["--no-sandbox"] });
+const browser = await puppeteer.launch({ headless: true, executablePath: process.env.QA_CHROME_PATH, args: ["--no-sandbox"] });
 const results = [];
 const profiles = [
   { name: "desktop-light", width: 1440, height: 900, theme: "light", scenario: "data" },
@@ -32,6 +33,11 @@ const profiles = [
 if (v2) {
   profiles.push(...[320,390,430,1024,1920].flatMap(width=>['light','dark'].map(theme=>({name:`v2-${width}-${theme}`,width,height:1000,theme,scenario:'data'}))));
   profiles.push({name:'v2-mobile-empty',width:320,height:1000,theme:'light',scenario:'empty'});
+}
+if (activity) {
+  profiles.splice(0, profiles.length, ...[360, 390, 768, 1024, 1280, 1440, 1920].flatMap(width =>
+    ["light", "dark"].map(theme => ({ name: `activity-${width}-${theme}`, width, height: 1000, theme, scenario: "data" })),
+  ));
 }
 
 function analysis(url, scenario) {
@@ -55,7 +61,8 @@ try {
     const errors = [];
     const requests = [];
     page.on("pageerror", error => errors.push(error.message));
-    await page.setViewport({ width: profile.width, height: profile.height });
+    const touch = activity && profile.width < 768;
+    await page.setViewport({ width: profile.width, height: profile.height, hasTouch: touch, isMobile: touch });
     await page.emulateMediaFeatures([{ name: "prefers-reduced-motion", value: "reduce" }]);
     await page.evaluateOnNewDocument(({ contestId, theme }) => {
       localStorage.setItem("aprovingo-auth", JSON.stringify({ state: { accessToken: "qa-mock", refreshToken: "qa-mock", user: { id: "qa-user", name: "QA", email: "qa@example.invalid", daily_goal_hours: 2, role: "user", status: "ativo" } }, version: 4 }));
@@ -74,7 +81,35 @@ try {
       if (path === "/dashboard/resumo") return request.respond(json({ horas_hoje: 2.5, meta_horas: 2, horas_semana: 2.5, sessoes_semana: 2, questoes_semana: 10, rendimento_medio: 10, avisos_proximos: 0, flashcards_para_revisar: 3, streak_dias: 2, taxa_cumprimento_mes: 50, minutos_planejados_mes: 300, minutos_realizados_mes: 150 }));
       if (path === "/dashboard/proximo-estudo") return request.respond(json(profile.scenario === "empty" ? null : { item_id: id(9), fonte: "cronograma_item", concurso_id: contest.id, disciplina_id: disciplines[1].id, disciplina_nome: disciplines[1].nome, topico_id: null, topico_nome: null, data: today, duracao_minutos: 60, sessoes_recentes: 0 }));
       if (path === "/dashboard/revisoes-pendentes") return request.respond(json({ total: 0, items: [] }));
-      if (path === "/dashboard/heatmap") return request.respond(json(profile.scenario === "empty" ? [] : [{ date: today, count: 2, minutes: 150 }]));
+      if (activity && path === "/dashboard/heatmap") {
+        const history = Array.from({ length: 111 }, (_, index) => {
+          const date = new Date(today + "T12:00:00Z");
+          date.setUTCDate(date.getUTCDate() - 111 + index);
+          return { date: date.toISOString().slice(0, 10), count: index % 3 + 1, minutes: [25, 65, 135, 300, null][index % 5] };
+        }).filter((_, index) => index % 7 < 2 || index % 5 === 1);
+        return request.respond(json([...history, { date: today, count: 2, minutes: 150 }]));
+      }
+      if (path === "/dashboard/heatmap") return request.respond(json(profile.scenario === "empty" || url.searchParams.get("concurso_id") === secondContest.id ? [] : [{ date: today, count: 2, minutes: 150 }]));
+      if (activity && path === "/cronograma/calendario") {
+        const ano = Number(url.searchParams.get("ano"));
+        const mes = Number(url.searchParams.get("mes"));
+        const data = `${ano}-${String(mes).padStart(2, "0")}-15`;
+        const planejado = disciplines.map((d, i) => ({
+          id: d.id, fonte: "cronograma_item", disciplina_id: d.id, disciplina_nome: d.nome,
+          duracao_minutos: 30, modo: i === 2 ? "revisao" : "aprendizado",
+        }));
+        return request.respond(json({ ano, mes, timezone: "America/Sao_Paulo", dias: [
+          { data, status: "parcial", minutos_planejados: 90, minutos_realizados: 30, sessoes_realizadas: 1, planejado },
+        ] }));
+      }
+      if (activity && path.startsWith("/sessoes-estudo/dia/")) {
+        const data = path.split("/").at(-1);
+        const planejado = disciplines.map((d, i) => ({
+          id: d.id, fonte: "cronograma_item", disciplina_id: d.id, disciplina_nome: d.nome,
+          duracao_minutos: 30, modo: i === 2 ? "revisao" : "aprendizado",
+        }));
+        return request.respond(json({ data, status: "parcial", timezone: "America/Sao_Paulo", totais: { planejados: 90, realizados: 30 }, planejado, realizado: [] }));
+      }
       if (path === "/cronograma/calendario") return request.respond(json({ ano: Number(url.searchParams.get("ano")), mes: Number(url.searchParams.get("mes")), timezone: "America/Sao_Paulo", resumo_mes: { dias_com_planejamento: 1, dias_cumpridos: 0, dias_parciais: 1, dias_nao_cumpridos: 0, dias_estudou_sem_plano: 0, minutos_planejados: 180, minutos_realizados: 150, taxa_cumprimento_pct: 83.3 }, dias: v2&&profile.scenario!=='empty'?[{data:`${url.searchParams.get('ano')}-${String(url.searchParams.get('mes')).padStart(2,'0')}-15`,status:'parcial',minutos_planejados:60,minutos_realizados:30,minutos_extra:0,sessoes_realizadas:1,planejado:[{id:id(50),fonte:'cronograma_item',disciplina_id:disciplines[0].id,disciplina_nome:disciplines[0].nome,topico_id:null,topico_nome:'Direitos fundamentais',duracao_minutos:60,modo:'revisao'}]}]:[] }));
       if (path.includes("/calendario/dia") || path.includes('/sessoes-estudo/dia/')) return request.respond(json({ data: today, status: "parcial", totais: { planejados: 180, realizados: 150 }, planejado: [], realizado: [] }));
       if (path === "/notifications/unread-count") return request.respond(json({ count: 0 }));
@@ -84,6 +119,66 @@ try {
     try {
       await page.goto(`${baseUrl}/dashboard`, { waitUntil: "networkidle2" });
       await page.waitForFunction(name => document.querySelector("main")?.textContent?.includes(name), {}, contest.nome);
+      if (activity) {
+        const row = '[data-dashboard-row="tracking"]';
+        const reportLayout = () => page.evaluate(selector => {
+          const grid = document.querySelector(selector);
+          const [a, b] = [...grid.children].map(node => node.getBoundingClientRect());
+          const main = document.querySelector("main");
+          const markers = [...grid.querySelectorAll(".activity-calendar-markers")];
+          return {
+            overflow: main.scrollWidth > main.clientWidth + 1 || document.documentElement.scrollWidth > innerWidth + 1,
+            widths: [innerWidth, document.documentElement.scrollWidth, main.clientWidth, main.scrollWidth, grid.clientWidth],
+            sideBySide: Math.abs(a.top - b.top) < 1,
+            columnsExpected: grid.clientWidth >= 780,
+            equalWidths: Math.abs(a.width - b.width) < 1,
+            markersFit: markers.every(node => node.scrollWidth <= node.clientWidth + 1),
+          };
+        }, row);
+        await page.waitForSelector(".activity-calendar-day[data-active='true']");
+        await page.waitForSelector(".activity-heatmap-cell[data-level='3']");
+        for (const collapsed of profile.width >= 768 ? [false, true] : [false]) {
+          if (collapsed) {
+            const oldWidth = await page.$eval(row, node => node.clientWidth);
+            await page.click('#app-sidebar [aria-label="Recolher menu"]');
+            await page.waitForFunction((selector, width) => document.querySelector(selector).clientWidth > width + 150, {}, row, oldWidth);
+          }
+          const layout = await reportLayout();
+          assert.equal(layout.overflow, false, `overflow horizontal (viewport, documento, main, scroll do main e grade: ${layout.widths.join(", ")})`);
+          assert.equal(layout.sideBySide, layout.columnsExpected, "colunas conforme o espaço disponível");
+          assert.equal(layout.equalWidths, true, "larguras equivalentes");
+          assert.equal(layout.markersFit, true, "marcadores dentro da célula");
+        }
+        assert.equal(await page.$$eval(".activity-heatmap-cell", nodes => nodes.length), 112);
+        assert.ok(await page.$$eval(".activity-heatmap-cell:not([data-level='0'])", nodes => nodes.length) > 40);
+        await page.focus(".activity-heatmap-cell[tabindex='0']");
+        await page.keyboard.press("Enter");
+        assert.match(await page.$eval(".activity-heatmap-detail", node => node.textContent), /2 sessões/);
+        if (touch) {
+          await page.tap(".activity-calendar-day[data-active='true']");
+        } else {
+          await page.click(".activity-calendar-day[data-active='true']");
+        }
+        await page.waitForSelector(".activity-day-summary li");
+        assert.equal(await page.$$eval(".activity-day-summary li", items => items.length), 2);
+        const fullDay = await page.$eval(".activity-day-summary a", node => node.getAttribute("href"));
+        assert.match(fullDay, /&data=\d{4}-\d{2}-15$/);
+        if (profile.name === "activity-1440-light") {
+          const before = requests.filter(r => ["/dashboard/heatmap", "/cronograma/calendario"].includes(r.path)).length;
+          const previousAnalysis = requests.filter(r => r.path === "/dashboard/analise").length;
+          await page.click('[aria-label="Período do dashboard"]');
+          await page.waitForSelector('[role="option"]');
+          await page.evaluate(() => [...document.querySelectorAll('[role="option"]')].find(node => node.textContent === "Este mês")?.click());
+          await page.waitForNetworkIdle({ idleTime: 250 });
+          assert.equal(requests.filter(r => r.path === "/dashboard/analise").length, previousAnalysis + 1);
+          assert.equal(requests.filter(r => ["/dashboard/heatmap", "/cronograma/calendario"].includes(r.path)).length, before);
+        }
+        await page.evaluate(selector => document.querySelector(selector).scrollIntoView({ block: "start" }), row);
+        await page.screenshot({ path: fileURLToPath(new URL(`${profile.name}.png`, output)) });
+        assert.deepEqual(errors, []);
+        results.push({ profile: profile.name, passed: true, requests });
+        continue;
+      }
       await page.waitForFunction(() => document.body.innerText.includes("Tempo estudado") || document.body.innerText.includes("Tentar novamente"));
       const audit = await page.evaluate(() => ({ overflow: document.documentElement.scrollWidth > innerWidth + 1 || document.querySelector('main').scrollWidth > document.querySelector('main').clientWidth+1, text: document.querySelector("main")?.innerText ?? "", dark: document.documentElement.classList.contains("dark"), charts: document.querySelectorAll(".recharts-wrapper").length, kpis: document.querySelector('[aria-label="Indicadores de desempenho"]') ? getComputedStyle(document.querySelector('[aria-label="Indicadores de desempenho"]')).gridTemplateColumns.split(' ').length : null }));
       assert.equal(audit.overflow, false, "overflow horizontal");
@@ -100,7 +195,7 @@ try {
           const cards=[...document.querySelector(`[data-dashboard-row="${name}"]`)?.children??[]].filter(node=>node.matches('[data-slot="card"]')).slice(0,name==='complementary'?3:2);
           return {name,rects:cards.map(node=>{const r=node.getBoundingClientRect();return {top:r.top,bottom:r.bottom};})};
         }));
-        for(const row of rows) for(const rect of row.rects.slice(1)) {
+        for(const row of rows.filter(row => row.name !== "tracking")) for(const rect of row.rects.slice(1)) {
           assert.ok(Math.abs(rect.top-row.rects[0].top)<=1,`${row.name}: topo dos cards`);
           assert.ok(Math.abs(rect.bottom-row.rects[0].bottom)<=1,`${row.name}: base dos cards`);
         }
@@ -154,6 +249,7 @@ try {
       await page.screenshot({path:fileURLToPath(new URL(`${profile.name}-calendar.png`,output))});
       results.push({ profile: profile.name, passed: true, overflow: audit.overflow, charts: audit.charts, errors, requests });
     } catch (error) {
+      if (activity) console.error(profile.name, error.message);
       await page.screenshot({ path: fileURLToPath(new URL(`${profile.name}-failure.png`, output)), fullPage: true });
       results.push({ profile: profile.name, passed: false, error: error.message, errors, requests });
     } finally { await context.close(); }

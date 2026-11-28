@@ -1,7 +1,6 @@
 import { BookOpenCheck, CalendarClock, CalendarDays, CheckCircle2, Clock3, Play, RefreshCw, SquarePen, Target, Trophy } from "lucide-react";
 import { Link } from "react-router-dom";
 
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -11,11 +10,11 @@ import { formatStudyDate } from "@/lib/dashboard/dates";
 import type { Bloco } from "@/lib/cronograma/types";
 import { getTipo } from "@/lib/cronograma/constants";
 import { cn } from "@/lib/utils";
-import { DashboardCard, DashboardCardHeader, DashboardCardBody, DashboardCardActions } from "@/components/dashboard/DashboardCard";
+import { DashboardCard, DashboardCardHeader, DashboardCardBody } from "@/components/dashboard/DashboardCard";
+import { DashboardSummaryCard, DashboardSummaryEmpty, DashboardSummaryError, DashboardSummaryLoading } from "@/components/dashboard/DashboardSummaryCard";
 import { DashboardSessionStatus } from "@/components/dashboard/DashboardSessionStatus";
 import { formatDashboardDuration, type TodaySession } from "@/lib/dashboard/analysis";
 import { disciplineColorStyle } from "@/components/disciplinas/DisciplineColorIndicator";
-import { studySurface } from "@/lib/ui/studySurface";
 import { StudyHistoryDetails } from "@/components/estudos/StudyHistoryDetails";
 
 export { DashboardContextHeader, type DashboardContest } from "@/components/dashboard/DashboardContextHeader";
@@ -250,12 +249,41 @@ export function WeeklyGoalCard({ hours, goalHours, questions, isError, onRetry }
   );
 }
 
-export function UrgentReviewsCard({ reviews, total, isError, onRetry }: { reviews: PendingReview[]; total: number; isError: boolean; onRetry: () => void }) {
- const overviewUrl=reviews.some(r=>r.dias_atraso>0)?'/revisoes?grupo=atrasadas':'/revisoes?grupo=hoje';
- return <DashboardCard aria-labelledby="urgent-reviews-title"><DashboardCardHeader><div className="flex flex-wrap items-center justify-between gap-2"><CardTitle className="flex items-center gap-2"><span className={`rounded-lg p-2 ${studySurface('coral')}`}><BookOpenCheck className="size-4" aria-hidden/></span><h2 id="urgent-reviews-title">Revisões urgentes</h2></CardTitle><Badge variant="outline">{total}</Badge></div><CardDescription>Revisões previstas e em atraso</CardDescription></DashboardCardHeader><DashboardCardBody>
-  {isError?<div><p role="alert" className="text-sm text-muted-foreground">Não foi possível carregar as revisões.</p><Button variant="outline" size="sm" className="mt-3" onClick={onRetry}>Tentar novamente</Button></div>:reviews.length?<ul className="divide-y divide-border">{reviews.slice(0,3).map(r=><li key={r.topico_id} className="flex items-center gap-3 py-2"><div className="min-w-0 flex-1"><strong className="block break-words text-sm">{r.topico_nome}</strong><span className="break-words text-xs text-muted-foreground">{r.disciplina_nome}{r.dias_atraso>0?` · ${r.dias_atraso} dia(s) em atraso`:' · revisar hoje'}</span></div><Button asChild size="sm" variant="outline"><Link to={buildReviewCenterUrl(r)}>Revisar</Link></Button></li>)}</ul>:<p className="text-sm text-muted-foreground">Nenhuma revisão urgente no concurso ativo.</p>}
-  <DashboardCardActions><Button asChild variant="ghost" className="ml-auto"><Link to={overviewUrl}>Ver todas</Link></Button></DashboardCardActions>
- </DashboardCardBody></DashboardCard>;
+export function UrgentReviewsCard({ reviews, total, isError, isLoading = false, onRetry }: {
+  reviews: PendingReview[]; total: number; isError: boolean; isLoading?: boolean; onRetry: () => void;
+}) {
+  const overdue = reviews.filter(review => review.dias_atraso > 0).length;
+  const overviewUrl = buildReviewCenterUrl({ dias_atraso: overdue });
+  return <DashboardSummaryCard title="Revisões urgentes" description="Revisões previstas e em atraso" icon={BookOpenCheck} tone="coral"
+    count={isError || isLoading ? undefined : total} action={{ label: "Ver todas", to: overviewUrl }}>
+    {isError ? <DashboardSummaryError message="Não foi possível carregar as revisões." onRetry={onRetry} />
+      : isLoading ? <DashboardSummaryLoading />
+      : total === 0 ? <DashboardSummaryEmpty icon={CheckCircle2} title="Nenhuma revisão urgente no concurso ativo"
+        description="As revisões previstas estão em dia." />
+      : <div className="space-y-2">
+        {reviews.length === total && <div className="flex flex-wrap gap-1.5 text-xs font-medium tabular-nums">
+          <span className="rounded-md border border-border bg-card px-2 py-1">Hoje · {total - overdue}</span>
+          <span className="dashboard-summary-count rounded-md px-2 py-1">Em atraso · {overdue}</span>
+        </div>}
+        <ul aria-label="Próximas revisões" className="space-y-1.5">
+          {reviews.slice(0, 3).map(review => <li key={review.topico_id} className="dashboard-summary-panel flex min-w-0 items-center gap-2 rounded-lg px-2.5 py-2">
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-semibold leading-snug [overflow-wrap:anywhere]">{review.topico_nome}</p>
+              <div className="mt-0.5 flex flex-wrap gap-x-2 text-xs leading-snug">
+                <p className="text-muted-foreground [overflow-wrap:anywhere]">{review.disciplina_nome}</p>
+                <p className={`font-medium ${review.dias_atraso > 0 ? "text-[color:var(--soft-ink)]" : "text-muted-foreground"}`}>
+                  {review.dias_atraso > 0 ? `${review.dias_atraso} ${review.dias_atraso === 1 ? "dia" : "dias"} em atraso` : "Prevista para hoje"}
+                </p>
+              </div>
+            </div>
+            <Button asChild size="sm" variant="outline" className="shrink-0">
+              <Link to={buildReviewCenterUrl(review)}>Revisar</Link>
+            </Button>
+          </li>)}
+        </ul>
+        {total > 3 && <p className="text-xs text-muted-foreground">Mostrando {Math.min(reviews.length, 3)} de {total} revisões</p>}
+      </div>}
+  </DashboardSummaryCard>;
 }
 export function SecondarySection({ children, className }: { children: React.ReactNode; className?: string }) {
   return <section aria-labelledby="secondary-dashboard-title" className={cn("space-y-4", className)}><div><h2 id="secondary-dashboard-title" className="text-lg font-semibold">Visão complementar</h2><p className="text-sm text-muted-foreground">Progresso, constância e calendário para consulta.</p></div>{children}</section>;

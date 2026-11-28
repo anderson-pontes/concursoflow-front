@@ -1,0 +1,81 @@
+.dashboard-summary-section {
+  container: dashboard-summary / inline-size;
+}
+
+.dashboard-summary-card[data-slot="card"] {
+  --soft-tone: var(--study-coral);
+  --soft-ink: var(--study-coral-ink);
+  border-radius: 1.125rem;
+  border-color: color-mix(in srgb, var(--soft-tone) 19%, var(--border));
+  background: radial-gradient(ellipse at 100% 0%, color-mix(in srgb, var(--soft-tone) 9%, transparent), transparent 10rem),
+    linear-gradient(145deg, var(--card), color-mix(in srgb, var(--soft-tone) 4%, var(--card)));
+  box-shadow: var(--shadow-sm), 0 6px 16px color-mix(in srgb, var(--soft-tone) 8%, transparent),
+    inset 0 1px color-mix(in srgb, var(--card) 85%, transparent),
+    inset 0 -2px color-mix(in srgb, var(--soft-tone) 12%, transparent);
+}
+
+.dashboard-summary-card[data-tone="violet"] {
+  --soft-tone: var(--study-violet);
+  --soft-ink: var(--study-violet-ink);
+}
+
+.dashboard-summary-card[data-tone="amber"] {
+  --soft-tone: var(--study-amber);
+  --soft-ink: var(--study-amber-ink);
+}
+
+.dashboard-summary-description {
+  color: color-mix(in srgb, var(--muted-foreground) 88%, var(--foreground));
+}
+
+.dashboard-summary-panel {
+  background: color-mix(in srgb, var(--soft-tone) 6%, var(--card));
+  border: 1px solid color-mix(in srgb, var(--soft-tone) 13%, var(--border));
+}
+
+.dashboard-summary-count,
+.dashboard-summary-action {
+  color: var(--soft-ink);
+  background: color-mix(in srgb, var(--soft-tone) 11%, var(--card));
+}
+
+.dashboard-summary-footer {
+  border-color: color-mix(in srgb, var(--soft-tone) 15%, var(--border));
+}
+
+.dashboard-summary-action:hover {
+  background: color-mix(in srgb, var(--soft-tone) 18%, var(--card));
+  text-decoration: underline;
+}
+
+.dashboard-summary-progress {
+  background: color-mix(in srgb, var(--soft-tone) 15%, var(--card));
+}
+
+.dashboard-summary-progress [data-slot="progress-indicator"] {
+  border-radius: inherit;
+  background: var(--soft-tone);
+}
+
+.dashboard-summary-progress[data-achieved] [data-slot="progress-indicator"] {
+  background: var(--study-emerald);
+}
+
+@container dashboard-summary (min-width: 840px) {
+  .dashboard-summary-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .dashboard-summary-card { transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease; }
+  .dashboard-summary-action { transition: background-color 180ms ease; }
+  .dashboard-summary-card[data-slot="card"]:hover {
+    transform: translateY(-2px);
+    border-color: color-mix(in srgb, var(--soft-tone) 30%, var(--border));
+    box-shadow: var(--shadow-sm), 0 9px 20px color-mix(in srgb, var(--soft-tone) 13%, transparent),
+      inset 0 1px color-mix(in srgb, var(--card) 85%, transparent);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dashboard-summary-progress [data-slot="progress-indicator"] { transition: none; }
+}

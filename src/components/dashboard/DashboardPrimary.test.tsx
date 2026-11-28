@@ -1,8 +1,10 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, within } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { describe, expect, it, vi } from "vitest";
 
 import { DashboardContextHeader, NextActionCard, TodayPlanCard, UrgentReviewsCard } from "@/components/dashboard/DashboardPrimary";
+import { DashboardComplementary } from "@/components/dashboard/DashboardComplementary";
+import { dashboardDayISO } from "@/lib/dashboard/analysis";
 
 describe("organismos primários do dashboard", () => {
   it("identifica o concurso com um único h1 e trata data ausente", () => {
@@ -85,5 +87,55 @@ describe("organismos primários do dashboard", () => {
     expect(screen.getAllByRole("link", { name: "Revisar" })[1]).toHaveAttribute("href", "/revisoes?grupo=hoje");
     expect(screen.getByRole("link", { name: "Ver todas" })).toHaveAttribute("href", "/revisoes?grupo=atrasadas");
     expect(screen.queryByText("Proposições")).not.toBeInTheDocument();
+    expect(screen.getByText("Hoje · 2")).toBeInTheDocument();
+    expect(screen.getByText("Em atraso · 2")).toBeInTheDocument();
+  });
+
+  it("não apresenta a lista parcial de revisões como totais por grupo", () => {
+    const reviews = [{ disciplina_id: "disc", disciplina_nome: "Direito", topico_id: "top", topico_nome: "Constituição", dias_atraso: 1 }];
+    render(<MemoryRouter><UrgentReviewsCard reviews={reviews} total={7} isError={false} onRetry={vi.fn()} /></MemoryRouter>);
+    expect(screen.getByText("Mostrando 1 de 7 revisões")).toBeInTheDocument();
+    expect(screen.queryByText(/^Em atraso ·/)).not.toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Ver todas" })).toHaveAttribute("href", "/revisoes?grupo=atrasadas");
+  });
+
+  it("preserva a meta mensal e destaca o próximo evento sem perder os links", () => {
+    const query = { isError: false, isLoading: false, refetch: vi.fn() };
+    const today = dashboardDayISO();
+    const later = dashboardDayISO(undefined, new Date(Date.now() + 7 * 86_400_000));
+    const data = [
+      { id: "past", titulo: "Evento passado", data_vencimento: "2020-01-01", data_fim: later },
+      { id: "later", titulo: "Simulado", data_vencimento: later, data_fim: later },
+      { id: "now", titulo: "Aula ao vivo", data_vencimento: today, data_fim: later },
+      { id: "only", titulo: "Lembrete", data_vencimento: null, data_fim: later },
+      { id: "extra", titulo: "Aviso adicional", data_vencimento: null, data_fim: later },
+    ];
+    render(<MemoryRouter><DashboardComplementary
+      summary={{ ...query, data: { horas_hoje: 0, meta_horas: 2, flashcards_para_revisar: 3, streak_dias: 1, taxa_cumprimento_mes: 100, minutos_planejados_mes: 200, minutos_realizados_mes: 325 } }}
+      notices={{ ...query, data }}
+    /></MemoryRouter>);
+    expect(screen.getByText("Meta superada em 2h 5min")).toBeInTheDocument();
+    expect(screen.getByRole("progressbar", { name: "Cumprimento da meta mensal de estudo" })).toHaveAttribute("aria-valuenow", "100");
+    expect(screen.getByRole("link", { name: "Revisar flashcards" })).toHaveAttribute("href", "/flashcards");
+    const notices = within(screen.getByRole("region", { name: "Avisos ativos" }));
+    const items = notices.getAllByRole("listitem");
+    expect(items).toHaveLength(4);
+    expect(items[0]).toHaveTextContent("Próximo eventoAula ao vivo");
+    expect(notices.getByRole("link", { name: "Ver avisos ativos" })).toHaveAttribute("href", "/avisos?status=ativo");
+  });
+
+  it("mantém estado vazio, dados em carregamento e nova tentativa independentes", () => {
+    const refetch = vi.fn();
+    render(<MemoryRouter>
+      <UrgentReviewsCard reviews={[]} total={0} isError={false} onRetry={vi.fn()} />
+      <DashboardComplementary
+        summary={{ data: undefined, isError: false, isLoading: true, refetch }}
+        notices={{ data: undefined, isError: true, isLoading: false, refetch }} />
+    </MemoryRouter>);
+    expect(screen.getByText("Nenhuma revisão urgente no concurso ativo")).toBeInTheDocument();
+    expect(screen.getByRole("status", { name: "Carregando dados do card" })).toBeInTheDocument();
+    expect(screen.getByRole("alert")).toHaveTextContent("Avisos indisponíveis.");
+    fireEvent.click(screen.getByRole("button", { name: "Tentar novamente" }));
+    expect(refetch).toHaveBeenCalledTimes(1);
   });
 });

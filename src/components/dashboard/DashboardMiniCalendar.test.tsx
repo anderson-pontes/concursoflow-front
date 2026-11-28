@@ -1,10 +1,11 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { DashboardMiniCalendar } from "@/components/dashboard/DashboardMiniCalendar";
 import { fetchCalendarioMes, fetchDiaDetalhe } from "@/services/calendario";
 import type { CalendarioDia, CalendarioMesResponse, DiaDetalheResponse } from "@/lib/calendario/types";
+import { invalidateEstudosQueries } from "@/lib/estudos/invalidateQueries";
 vi.mock("@/services/calendario", () => ({ fetchCalendarioMes: vi.fn(), fetchDiaDetalhe: vi.fn() }));
 const day: CalendarioDia = { data: "2026-12-31", status: "parcial", minutos_planejados: 60, minutos_realizados: 30, minutos_extra: 0, sessoes_realizadas: 1, planejado: [{ id: "bloco", fonte: "bloco_semanal", disciplina_id: "direito", disciplina_nome: "Direito", topico_id: null, topico_nome: null, duracao_minutos: 60 }] };
 const response = (year: number, month: number): CalendarioMesResponse => ({ ano: year, mes: month, timezone: "America/Sao_Paulo", resumo_mes: { dias_com_planejamento: 1, dias_cumpridos: 0, dias_parciais: 1, dias_nao_cumpridos: 0, dias_estudou_sem_plano: 0, minutos_planejados: 60, minutos_realizados: 30, taxa_cumprimento_pct: 50 }, dias: year === 2026 && month === 12 ? [day] : [] });
@@ -76,6 +77,63 @@ describe("mini calendário independente do período", () => {
     await screen.findByRole("button", { name: /31\/12\/2026, hoje/ });
     vi.mocked(fetchDiaDetalhe).mockResolvedValueOnce({ data: "2026-12-30", status: "sem_planejamento", timezone: "America/Sao_Paulo", totais: { planejados: 0, realizados: 0, extra: 0 }, planejado: [], realizado: [] });
     fireEvent.click(screen.getByRole("button", { name: "30/12/2026" }));
-    expect(await screen.findByText(/Nenhuma sessão neste dia/)).toBeInTheDocument();
+    expect(await screen.findByText(/Nenhuma atividade planejada ou registrada para este dia/)).toBeInTheDocument();
+  });
+
+  it.each([[2026, 2, 28], [2028, 2, 29], [2026, 11, 30], [2026, 8, 31]])(
+    "exibe os %i/%i com %i dias e mantém a grade de seis semanas",
+    async (year, month, days) => {
+      vi.setSystemTime(new Date(year, month - 1, 10, 12));
+      setup();
+      const grid = await screen.findByRole("group", { name: "Dias do mini calendário" });
+      expect(within(grid).getAllByRole("button")).toHaveLength(days);
+      expect(grid.children).toHaveLength(42);
+    },
+  );
+
+  it("mostra marcadores simultâneos, limita o resumo e abre o dia no calendário", async () => {
+    const planned = [
+      day.planejado[0],
+      { ...day.planejado[0], id: "mat", disciplina_id: "mat", disciplina_nome: "Matemática" },
+      { ...day.planejado[0], id: "por", disciplina_id: "por", disciplina_nome: "Português", modo: "revisao" as const },
+    ];
+    vi.mocked(fetchCalendarioMes).mockResolvedValue({ ...response(2026, 12), dias: [{ ...day, planejado: planned, minutos_realizados: 0 }] });
+    vi.mocked(fetchDiaDetalhe).mockResolvedValue({ data: day.data, timezone: "America/Sao_Paulo", status: "parcial", totais: { planejados: 180, realizados: 0, extra: 0 }, planejado: planned, realizado: [] });
+    setup();
+    const button = await screen.findByRole("button", { name: /31\/12\/2026.*Direito.*Matemática.*Português.*estudo registrado.*revisão programada/ });
+    expect(within(button).getByText("+1")).toBeInTheDocument();
+    fireEvent.click(button);
+    const list = await screen.findByRole("list", { name: "Sessões do dia selecionado" });
+    expect(within(list).getAllByRole("listitem")).toHaveLength(2);
+    expect(screen.getByText("1 revisão")).toBeInTheDocument();
+    expect(screen.getByText("1 realizada")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Ver todas as atividades do dia" })).toHaveAttribute("href", "/estudos/calendario?ano=2026&mes=12&data=2026-12-31");
+  });
+
+  it("atualiza o mês e o dia selecionado após invalidar o registro de estudos", async () => {
+    const { client } = setup();
+    fireEvent.click(await screen.findByRole("button", { name: /31\/12\/2026, hoje/ }));
+    expect(await screen.findByText("1 realizada")).toBeVisible();
+    const updated = { ...day, sessoes_realizadas: 2 };
+    vi.mocked(fetchCalendarioMes).mockResolvedValue({ ...response(2026, 12), dias: [updated] });
+    invalidateEstudosQueries(client);
+    expect(await screen.findByText("2 realizadas")).toBeVisible();
+    expect(fetchDiaDetalhe).toHaveBeenCalledTimes(2);
+  });
+
+  it("mostra o horário local de uma sessão que atravessou a meia-noite", async () => {
+    vi.mocked(fetchDiaDetalhe).mockResolvedValue({
+      data: day.data, status: "parcial", timezone: "America/Sao_Paulo",
+      totais: { planejados: 60, realizados: 30, extra: 0 },
+      planejado: day.planejado,
+      realizado: [{
+        id: "sessao", disciplina_id: "direito", topico_id: null, data_referencia: "2026-12-31",
+        inicio: "2027-01-01T02:40:00Z", fim: "2027-01-01T03:10:00Z", tempo_estudo_segundos: 1800,
+      } as DiaDetalheResponse["realizado"][number]],
+    });
+    setup();
+    fireEvent.click(await screen.findByRole("button", { name: /31\/12\/2026, hoje/ }));
+    expect(await screen.findByText("Realizada · 23:40")).toBeVisible();
+    expect(screen.getByText("30 min")).toBeVisible();
   });
 });

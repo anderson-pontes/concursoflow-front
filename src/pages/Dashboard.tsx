@@ -61,10 +61,20 @@ export function Dashboard() {
   </div>
   </section>
   {!analysis.isError&&analysis.data&&<DashboardDailyCharts data={analysis.data}/>}
-  <section aria-labelledby="dashboard-improve" className="space-y-4"><h2 id="dashboard-improve" className="text-base font-semibold">Onde posso melhorar?</h2>
-  {!analysis.isError&&analysis.data&&<DashboardDisciplineCharts data={analysis.data}/>}
-  <div data-dashboard-row="complementary" className="grid items-start gap-4 lg:items-stretch lg:grid-cols-3">{reviews.isLoading?<Skeleton className="h-36 rounded-xl"/>:<UrgentReviewsCard reviews={reviews.data?.items??[]} total={reviews.data?.total??0} isError={reviews.isError} onRetry={()=>void reviews.refetch()}/>}<DashboardComplementary summary={summary} notices={notices}/></div>
-  <div data-dashboard-row="tracking" className="grid items-start gap-4 lg:items-stretch lg:grid-cols-2"><HeatmapCard className="flex flex-col lg:h-full lg:self-stretch" data={heatmap.data??[]} scopeLabel="Concurso ativo" endDate={today} isLoading={heatmap.isLoading} isError={heatmap.isError} onRetry={()=>void heatmap.refetch()}/><DashboardMiniCalendar timezone={timezone} concursoId={concursoId} disciplineNames={new Map(analysis.data?.disciplinas.map(d=>[d.id,d.nome]))}/></div>
+  <section aria-labelledby="dashboard-improve" className="space-y-4">
+  <div><h2 id="dashboard-improve" className="text-lg font-semibold tracking-tight">Onde posso melhorar?</h2><p className="mt-0.5 text-sm text-muted-foreground">Acompanhe o avanço no edital e veja onde investiu seu tempo de estudo.</p></div>
+  {analysis.isError?<AnalyticsState cause={analysis.error} loading={false} error retry={()=>void analysis.refetch()}/>:<DashboardDisciplineCharts key={concursoId} data={analysis.data}/>}
+  <div className="dashboard-summary-section"><div data-dashboard-row="complementary" className="dashboard-summary-grid grid gap-4">
+   <UrgentReviewsCard reviews={reviews.data?.items??[]} total={reviews.data?.total??0} isError={reviews.isError} isLoading={reviews.isLoading} onRetry={()=>void reviews.refetch()}/>
+   <DashboardComplementary summary={summary} notices={notices}/>
+  </div></div>
+  <div className="dashboard-activity-shell">
+   <div data-dashboard-row="tracking" className="dashboard-activity-grid grid items-start gap-4">
+    <HeatmapCard key={concursoId} data={heatmap.data ?? []} scopeLabel="Concurso ativo" endDate={today} historyHref="/estudos/historico"
+      isLoading={heatmap.isLoading} isError={heatmap.isError} onRetry={()=>void heatmap.refetch()}/>
+    <DashboardMiniCalendar timezone={timezone} concursoId={concursoId} disciplines={new Map(analysis.data?.disciplinas.map(d=>[d.id,d]))}/>
+   </div>
+  </div>
   </section>
   {prefill&&<React.Suspense fallback={null}><RegistroEstudoModal open onClose={()=>setPrefill(null)} defaultDisciplinaId={prefill.disciplinaId} defaultBlocoId={prefill.blocoId} defaultCronogramaItemId={prefill.itemId} defaultDataReferencia={prefill.dataReferencia} defaultConcursoId={concursoId} defaultTopicos={prefill.topicoId?[{id:prefill.topicoId,nome:''}]:null}/></React.Suspense>}
  </div>;
