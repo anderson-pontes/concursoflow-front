@@ -1,4 +1,5 @@
 import React from "react";
+import { isAxiosError } from "axios";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -12,7 +13,8 @@ import {
   ConcursosSummaryBar,
   ConcursosToolbar,
 } from "@/components/concursos/ConcursosToolbar";
-import { ModalConcurso, type ConcursoFormInput } from "@/components/concursos/ModalConcurso";
+import { ModalConcurso, type ConcursoFormInput, type ConcursoSaveFeedback } from "@/components/concursos/ModalConcurso";
+import type { DocumentKind } from "@/components/concursos/DocumentUploadCard";
 import {
   DEFAULT_CONCURSO_INPUT,
   type Concurso,
@@ -22,6 +24,22 @@ import { getProximaProva, isEncerradoStatus } from "@/lib/concursos/utils";
 import { api } from "@/services/api";
 import { cn } from "@/lib/utils";
 import type { Disciplina } from "@/lib/disciplinas/types";
+
+function buildPayload({ nome, orgao, cargo, banca, data_prova, status }: Omit<ConcursoFormInput, "logo_file" | "edital_file">) {
+  return { nome, orgao, cargo, banca, data_prova, status };
+}
+
+function saveErrorMessage(error: unknown, kind?: DocumentKind) {
+  if (isAxiosError(error)) {
+    const status = error.response?.status;
+    if (!status) return "Falha na comunicação com o servidor. Tente novamente.";
+    if (status === 401 || status === 403) return "Sua sessão não permite concluir o cadastro. Entre novamente.";
+    if (status === 413) return "O arquivo excede o limite de tamanho aceito pelo servidor.";
+    const detail = error.response?.data?.detail;
+    if (status < 500 && typeof detail === "string") return detail;
+  }
+  return kind ? "Não foi possível armazenar o arquivo. Tente novamente." : "Não foi possível salvar o concurso. Tente novamente.";
+}
 
 export function Concursos() {
   const qc = useQueryClient();
@@ -65,6 +83,10 @@ export function Concursos() {
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [editing, setEditing] = React.useState<Concurso | null>(null);
   const [input, setInput] = React.useState<ConcursoFormInput>(DEFAULT_CONCURSO_INPUT);
+  const [saveState, setSaveState] = React.useState({ contest: null as Concurso | null, baseline: DEFAULT_CONCURSO_INPUT });
+  const [uploading, setUploading] = React.useState<DocumentKind | null>(null);
+  const [saveError, setSaveError] = React.useState<ConcursoSaveFeedback | null>(null);
+  const saving = React.useRef(false);
   const [detalhe, setDetalhe] = React.useState<Concurso | null>(null);
 
   const [search, setSearch] = React.useState("");
@@ -88,6 +110,8 @@ export function Concursos() {
   const openCreate = () => {
     setEditing(null);
     setInput(DEFAULT_CONCURSO_INPUT);
+    setSaveState({ contest: null, baseline: DEFAULT_CONCURSO_INPUT });
+    setSaveError(null);
     setIsModalOpen(true);
   };
 
@@ -101,76 +125,72 @@ export function Concursos() {
 
   const openEdit = (c: Concurso) => {
     setEditing(c);
-    setInput({
-      nome: c.nome,
-      orgao: c.orgao,
-      cargo: c.cargo,
-      banca: c.banca,
-      data_prova: c.data_prova,
-      status: c.status,
+    const baseline = {
+      ...buildPayload(c),
       logo_file: null,
       edital_file: null,
-    });
+    };
+    setInput(baseline);
+    setSaveState({ contest: c, baseline });
+    setSaveError(null);
     setIsModalOpen(true);
   };
 
   const closeModal = () => {
     setIsModalOpen(false);
     setEditing(null);
+    setInput(DEFAULT_CONCURSO_INPUT);
+    setSaveState({ contest: null, baseline: DEFAULT_CONCURSO_INPUT });
+    setSaveError(null);
   };
 
-  const uploadConcursoFiles = async (concursoId: string, values: ConcursoFormInput) => {
-    if (values.logo_file) {
-      const form = new FormData();
-      form.append("file", values.logo_file);
-      await api.post(`/concursos/${concursoId}/upload-logo`, form, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-    }
-    if (values.edital_file) {
-      const form = new FormData();
-      form.append("file", values.edital_file);
-      await api.post(`/concursos/${concursoId}/upload-edital`, form, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-    }
-  };
-
-  const buildPayload = (values: ConcursoFormInput) => ({
-    nome: values.nome,
-    orgao: values.orgao,
-    cargo: values.cargo || null,
-    banca: values.banca || null,
-    data_prova: values.data_prova || null,
-    status: values.status || null,
-  });
-
-  const createMutation = useMutation({
+  const saveMutation = useMutation({
     mutationFn: async (values: ConcursoFormInput) => {
-      const res = await api.post("/concursos", buildPayload(values));
-      const created = res.data as Concurso;
-      await uploadConcursoFiles(created.id, values);
-      return created;
+      let { contest, baseline } = saveState;
+      let currentUpload: DocumentKind | undefined;
+      const payload = buildPayload(values);
+      try {
+        if (!contest || JSON.stringify(payload) !== JSON.stringify(buildPayload(baseline))) {
+          const response = contest
+            ? await api.put<Concurso>(`/concursos/${contest.id}`, payload)
+            : await api.post<Concurso>("/concursos", payload);
+          contest = response.data;
+          baseline = { ...baseline, ...payload };
+          setSaveState({ contest, baseline });
+        }
+        const contestId = contest.id;
+
+        for (const kind of ["logo", "edital"] as const) {
+          const key = `${kind}_file` as const;
+          const file = values[key];
+          if (!file || file === baseline[key]) continue;
+          currentUpload = kind;
+          setUploading(kind);
+          const form = new FormData();
+          form.append("file", file);
+          const response = await api.post<Concurso>(`/concursos/${contestId}/upload-${kind}`, form);
+          contest = response.data;
+          baseline = { ...baseline, [key]: file };
+          setSaveState({ contest, baseline });
+        }
+      } catch (error) {
+        setSaveError({
+          kind: currentUpload,
+          file: currentUpload ? values[`${currentUpload}_file`] : null,
+          message: saveErrorMessage(error, currentUpload),
+        });
+        throw error;
+      } finally {
+        setUploading(null);
+      }
     },
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["concursos"] });
       closeModal();
-      toast.success("Concurso criado com sucesso!");
+      toast.success(editing ? "Concurso atualizado!" : "Concurso criado com sucesso!");
     },
-  });
-
-  const updateMutation = useMutation({
-    mutationFn: async (values: ConcursoFormInput) => {
-      if (!editing) throw new Error("No editing contest");
-      const res = await api.put(`/concursos/${editing.id}`, buildPayload(values));
-      const updated = res.data as Concurso;
-      await uploadConcursoFiles(editing.id, values);
-      return updated;
-    },
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["concursos"] });
-      closeModal();
-      toast.success("Concurso atualizado!");
+    onSettled: () => {
+      saving.current = false;
+      void qc.invalidateQueries({ queryKey: ["concursos"] });
     },
   });
 
@@ -184,8 +204,10 @@ export function Concursos() {
   });
 
   const submitForm = () => {
-    if (editing) updateMutation.mutate(input);
-    else createMutation.mutate(input);
+    if (saving.current) return;
+    saving.current = true;
+    setSaveError(null);
+    saveMutation.mutate(input);
   };
 
   const showSkeleton = isLoading;
@@ -255,11 +277,15 @@ export function Concursos() {
       <ModalConcurso
         open={isModalOpen}
         onClose={closeModal}
-        editing={editing}
+        editing={Boolean(editing)}
         input={input}
+        baseline={saveState.baseline}
         setInput={setInput}
         onSubmit={submitForm}
-        isPending={createMutation.isPending || updateMutation.isPending}
+        isPending={saveMutation.isPending}
+        uploading={uploading}
+        storedUrls={{ logo: saveState.contest?.logo_url ?? null, edital: saveState.contest?.edital_url ?? null }}
+        error={saveError}
         orgaoSuggestions={orgaoSuggestions}
       />
 

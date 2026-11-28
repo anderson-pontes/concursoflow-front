@@ -15,6 +15,7 @@ type CreatableSelectProps = {
   required?: boolean;
   placeholder?: string;
   disabled?: boolean;
+  error?: string;
   /** Estilo da página Concursos (design system Aprovingo). */
   appearance?: "default" | "aprov";
 };
@@ -29,6 +30,7 @@ export function CreatableSelect({
   required,
   placeholder = "Digite ou selecione…",
   disabled,
+  error,
   appearance = "default",
 }: CreatableSelectProps) {
   const [open, setOpen] = React.useState(false);
@@ -66,12 +68,12 @@ export function CreatableSelect({
   const isAprov = appearance === "aprov";
 
   return (
-    <div ref={containerRef} className="relative w-full">
+    <div ref={containerRef} className="relative w-full min-w-0">
       <label
         htmlFor={id}
         className={cn(
-          "mb-1.5 block text-xs font-medium",
-          isAprov ? "text-muted-foreground" : "text-slate-600 dark:text-neutral-400",
+          "mb-1 block font-medium",
+          isAprov ? "text-sm text-foreground" : "text-xs text-slate-600 dark:text-neutral-400",
         )}
       >
         {label}
@@ -97,20 +99,25 @@ export function CreatableSelect({
           aria-controls={listboxId}
           aria-autocomplete="list"
           aria-activedescendant={activeId}
+          required={required}
+          aria-invalid={error ? true : undefined}
+          aria-describedby={error ? `${id}-error` : undefined}
           disabled={disabled}
           placeholder={placeholder}
+          title={value || undefined}
           value={value}
           onChange={(e) => {
             onChange(e.target.value);
             setOpen(true);
           }}
           onFocus={() => setOpen(true)}
+          onBlur={() => setOpen(false)}
           onKeyDown={onKeyDown}
           className={cn(
             "h-11 w-full rounded-[10px] border-[1.5px] bg-white px-4 py-2 pr-9 text-sm outline-none transition",
             isAprov
               ? cn(
-                  "border-border bg-[var(--bg-surface)] text-foreground placeholder:text-muted-foreground",
+                  "rounded-xl border border-border bg-background pl-3 pr-9 text-base text-foreground placeholder:text-muted-foreground hover:border-primary/50 sm:text-sm",
                   "focus:border-primary focus:ring-2 focus:ring-primary/20",
                 )
               : cn(
@@ -119,6 +126,7 @@ export function CreatableSelect({
                   "dark:border-neutral-600 dark:bg-neutral-900 dark:text-neutral-100 dark:placeholder:text-neutral-500 dark:focus:border-primary-400 dark:focus:ring-primary-400/20",
                 ),
             "disabled:cursor-not-allowed disabled:opacity-50",
+            error && "border-destructive",
           )}
         />
         <ChevronDown
@@ -135,7 +143,7 @@ export function CreatableSelect({
           id={listboxId}
           className={cn(
             "absolute z-50 mt-1 max-h-48 w-full overflow-auto rounded-[10px] border py-1 shadow-lg",
-            isAprov ? "border-border bg-white" : "rounded-lg border-slate-200 bg-white dark:border-neutral-600 dark:bg-neutral-900",
+            isAprov ? "border-border bg-popover" : "rounded-lg border-slate-200 bg-white dark:border-neutral-600 dark:bg-neutral-900",
           )}
         >
           {filtered.map((s, index) => (
@@ -149,7 +157,7 @@ export function CreatableSelect({
                 type="button"
                 tabIndex={-1}
                 className={cn(
-                  "w-full px-3 py-2 text-left text-sm",
+                  "w-full px-3 py-2 text-left text-sm [overflow-wrap:anywhere]",
                   isAprov
                     ? "text-foreground hover:bg-primary-muted"
                     : "text-slate-800 hover:bg-slate-50 dark:text-neutral-100 dark:hover:bg-neutral-800",
@@ -168,6 +176,7 @@ export function CreatableSelect({
           ))}
         </ul>
       ) : null}
+      {error ? <p id={`${id}-error`} role="alert" className="mt-1 text-sm text-destructive">{error}</p> : null}
     </div>
   );
 }

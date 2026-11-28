@@ -16,6 +16,7 @@ type DatePickerProps = {
   className?: string;
   id?: string;
   "aria-label"?: string;
+  "aria-describedby"?: string;
   allowClear?: boolean;
   min?: string;
   max?: string;
@@ -29,8 +30,9 @@ function parseDate(value?: string) {
   return isValid(parsed) ? parsed : undefined;
 }
 
-export function DatePicker({ value, onValueChange, placeholder = "Selecione uma data", disabled, className, id, "aria-label": ariaLabel, allowClear = true, min, max, showMonthYearSelectors = false, defaultMonth }: DatePickerProps) {
+export function DatePicker({ value, onValueChange, placeholder = "Selecione uma data", disabled, className, id, "aria-label": ariaLabel, "aria-describedby": ariaDescribedBy, allowClear = true, min, max, showMonthYearSelectors = false, defaultMonth }: DatePickerProps) {
   const [open, setOpen] = React.useState(false);
+  const trigger = React.useRef<HTMLButtonElement>(null);
   const selected = parseDate(value);
   const minDate = parseDate(min);
   const maxDate = parseDate(max);
@@ -40,11 +42,13 @@ export function DatePicker({ value, onValueChange, placeholder = "Selecione uma 
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button
+            ref={trigger}
             id={id}
             type="button"
             variant="outline"
             disabled={disabled}
             aria-label={ariaLabel}
+            aria-describedby={ariaDescribedBy}
             className={cn("min-h-11 w-full justify-start gap-2 px-3 text-left font-normal", !selected && "text-muted-foreground", allowClear && selected && "pr-11")}
           >
             <CalendarDays className="size-4 text-primary" aria-hidden />
@@ -82,7 +86,10 @@ export function DatePicker({ value, onValueChange, placeholder = "Selecione uma 
           size="icon"
           className="absolute right-0.5 top-0.5 size-10 text-muted-foreground"
           aria-label={ariaLabel ? `Limpar ${ariaLabel.toLowerCase()}` : "Limpar data"}
-          onClick={() => onValueChange("")}
+          onClick={() => {
+            onValueChange("");
+            trigger.current?.focus();
+          }}
         >
           <X className="size-4" />
         </Button>
